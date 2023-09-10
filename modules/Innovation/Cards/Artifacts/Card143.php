@@ -24,7 +24,7 @@ class Card143 extends Card
       self::setMaxSteps(1);
     } else if (self::isGreen($card)) {
       foreach (Colors::ALL as $color) {
-        self::unsplay($color); 
+        self::unsplay($color);
       }
     } else if (self::isRed($card)) {
       self::setAuxiliaryValue(Colors::RED);
@@ -38,10 +38,10 @@ class Card143 extends Card
   public function getInteractionOptions(): array
   {
     $location = self::getAuxiliaryValue() == Colors::YELLOW ? 'hand' : 'score';
-      return [
-        'location_from' => $location,
-        'return_keyword' => true,
-      ];
+    return [
+      'location_from'  => $location,
+      'return_keyword' => true,
+    ];
   }
 
 }

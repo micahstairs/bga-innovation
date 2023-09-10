@@ -12489,11 +12489,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 144, Artifacts age 3: Shroud of Turin
-            case "144N1":
-                $step_max = 1;
-                break;
-            
             // id 145, Artifacts age 4: Petition of Right
             case "145C1":
                 $num_cards = 0;
@@ -15993,65 +15988,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-        
-        // id 144, Artifacts age 3: Shroud of Turin
-        case "144N1A":
-            // "Return a card from hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck'
-            );
-            break;
-
-        case "144N1B":
-            // "Return a top card from your board of the returned card's color"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'color' => array($this->innovationGameState->get('color_last_selected'))
-            );
-            break;
-
-        case "144N1C":
-            // "Return a card from score pile of the returned card's color"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-
-                'color' => array($this->innovationGameState->get('color_last_selected'))
-            );
-            break;
-
-        case "144N1D":
-            // "Claim an achievement ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
-            );
-            break;
 
         // id 145, Artifacts age 4: Petition of Right
         case "145C1A":    
@@ -18842,34 +18778,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-
-                // id 144, Artifacts age 3: Shroud of Turin
-                case "144N1A":
-                    if ($n > 0) {
-                        self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array(
-                            'i18n' => array('color'),
-                            'color' => Colors::render($this->innovationGameState->get('color_last_selected'))
-                        ));
-                        self::setAuxiliaryValue(1);
-                        self::incrementStepMax(2);
-                    }
-                    break;
-                
-                case "144N1B":
-                    if ($n > 0) {
-                        self::setAuxiliaryValue(2);
-                    }
-                    break;
-                
-                case "144N1C":
-                    // "If you did all three"
-                    if ($n == 0) {
-                        // Reveal score pile to prove that no cards of the specified color could have been returned
-                        self::revealScorePile($player_id);
-                    } else if ($n > 0 && self::getAuxiliaryValue() == 2) {
-                        self::incrementStepMax(1);
                     }
                     break;
 

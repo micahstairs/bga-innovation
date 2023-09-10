@@ -963,8 +963,9 @@ $this->textual_card_infos = array(
     ),
 
     144 => array(
-        'name'                => clienttranslate('Shroud of Turin'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. If you do, return a top card from your board and a card from your score pile of the returned card\'s color. If you did all three, claim an achievement ignoring eligibility.'),
+        'name'                                => clienttranslate('Shroud of Turin'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. If you do, return a top card from your board and a card from your score pile of the returned card\'s color. If you did all three, claim an achievement ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. If you do, return a top card of the same color from your board and a card of the same color from your score pile. If you do all three, claim an achievement ignoring eligibility.'),
     ),
 
     /* Artifacts - Age 4 */
