@@ -42,9 +42,8 @@ class Card478 extends Card
       ];
     } else {
       return [
-        'location_from' => 'board',
-        'location_to'   => 'none',
-        'not_id'        => CardIds::DEEPFAKE,
+        'choose_from' => 'board',
+        'not_id'      => CardIds::DEEPFAKE,
       ];
     }
   }

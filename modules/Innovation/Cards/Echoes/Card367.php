@@ -45,8 +45,7 @@ class Card367 extends Card
     if (self::isEcho()) {
       return [
         'owner_from'    => 'any player',
-        'location_from' => 'board',
-        'location_to'   => 'none',
+        'choose_from' => 'board',
       ];
     } else {
       return [

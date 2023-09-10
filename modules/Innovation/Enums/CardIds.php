@@ -18,6 +18,7 @@ class CardIds
   const SCISSORS = 350;
   const PIANO = 383;
   const SAXOPHONE = 404;
+  const HELICOPTER = 417;
   const WEALTH = 435;
   const DESTINY = 436;
   const HERITAGE = 437;

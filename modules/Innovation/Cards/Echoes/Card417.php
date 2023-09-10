@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card417 extends Card
 {
@@ -26,10 +27,9 @@ class Card417 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'owner_from'    => 'any player',
-        'location_from' => 'board',
-        'location_to'   => 'none',
-        'not_id'        => 417, // Helicopter
+        'owner_from'  => 'any player',
+        'choose_from' => 'board',
+        'not_id'      => CardIds::HELICOPTER,
       ];
     } else {
       return [

@@ -45,8 +45,7 @@ class Card350 extends Card
     } else if (self::isFirstInteraction() || self::isThirdInteraction()) {
       return [
         'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'none',
+        'choose_from' => 'hand',
       ];
     } else {
       return [
