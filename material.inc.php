@@ -901,8 +901,10 @@ $this->textual_card_infos = array(
     ),
 
     134 => array(
-        'name'                => clienttranslate('Cyrus Cylinder'),
-        'non_demand_effect_1' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
+        'name'                                => clienttranslate('Cyrus Cylinder'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Splay left a color on any player\'s board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Choose any other top purple card on any player\'s board. Self-execute it. '),
     ),
 
     /* Artifacts - Age 3 */

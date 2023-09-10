@@ -7291,7 +7291,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /** Nested dogma excution management system: FIFO stack **/
-    function selfExecute($card, $replace_may_with_must = false) {
+    function selfExecute($card, $replace_may_with_must = false): bool {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
         // TODO(4E): There may be a bug here if a card calls this which does not actually use the word "self-execute".
@@ -12487,15 +12487,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 134, Artifacts age 2: Cyrus Cylinder
-            case "134N1":
-                $step_max = 1;
-                break;
-
-            case "134N1+":
-                $step_max = 1;
-                break;
-
             // id 135, Artifacts age 3: Dunhuang Star Chart
             case "135N1":
                 $step_max = 1;
@@ -16085,37 +16076,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        // id 134, Artifacts age 2: Cyrus Cylinder
-        case "134N1A":
-            // "Choose any other top purple card on any player's board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-
-                'color' => array(4), // Purple
-
-                // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
-                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
-            );
-            break;
-
-        case "134N1B":
-        case "134N1+A":
-            // Prompt player to pick a stack which to splay left.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-            );
-            break;
-            
         // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
             // "Return all cards from your hand"
@@ -19109,27 +19069,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-                
-                // id 134, Artifacts age 2: Cyrus Cylinder
-                case "134N1A":
-                    // "Execute its non-demand dogma effects"
-                    $card_id = $this->innovationGameState->get('id_last_selected');
-                    if ($n > 0 && self::getNonDemandEffect($card_id, 1) != null) {
-                        self::selfExecute(self::getCardInfo($card_id));
-                    } else {
-                        self::incrementStepMax(1); // Still need to do the splay
-                    }
-                    break;
-
-                case "134N1B":
-                case "134N1+A":
-                    // "Splay left a color on any player's board"
-                    if ($n > 0) {
-                        $color = $this->innovationGameState->get('color_last_selected');
-                        $target_player_id = $this->innovationGameState->get('owner_last_selected');
-                        self::splayLeft($player_id, $target_player_id, $color);
                     }
                     break;
                 
