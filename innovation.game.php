@@ -12489,20 +12489,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 142, Artifacts age 3: Along the River during the Qingming Festival
-            case "142N1":
-                do {
-                    $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                    if ($card['color'] == 4) { // "If it is purple, score it"
-                        self::transferCardFromTo($card, $player_id, 'score');
-                    } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
-                        self::tuckCard($card, $player_id);
-                    } else { // Put it in hand
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
-                break;
-            
             // id 143, Artifacts age 3: Necronomicon
             case "143N1":
                 $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
