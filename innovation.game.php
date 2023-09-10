@@ -12492,24 +12492,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 137, Artifacts age 2: Excalibur
-            case "137C1":
-                // Determine colors where top card has a higher value than the launcher's top card of the same color
-                $colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($player_top_card === null) {
-                        continue;
-                    }
-                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
-                        $colors[] = $color;
-                    }
-                }
-                self::setAuxiliaryValueFromArray($colors);
-                $step_max = 1;
-                break;
             
             // id 138, Artifacts age 3: Mjolnir Amulet
             case "138C1":
@@ -16073,23 +16055,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 137, Artifacts age 2: Excalibur
-        case "137C1A":
-            // "I compel you to transfer a top card of higher value than my
-            // top card of the same color from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'color' => self::getAuxiliaryValueAsArray()
             );
             break;
             
