@@ -947,8 +947,9 @@ $this->textual_card_infos = array(
     ),
 
     141 => array(
-        'name'            => clienttranslate('Moylough Belt Shrine'),
-        'i_compel_effect' => clienttranslate('${I compel} you to reveal all cards in your hand and transfer the card of my choice to my board!'),
+        'name'                            => clienttranslate('Moylough Belt Shrine'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to reveal all cards in your hand and transfer the card of my choice to my board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to reveal all cards in your hand and transfer the card of my choice to my board! If you do, junk all cards in the deck of the chosen card\'s value!'),
     ),
 
     142 => array(
