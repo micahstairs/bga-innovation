@@ -12489,26 +12489,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 143, Artifacts age 3: Necronomicon
-            case "143N1":
-                $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
-                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
-                if ($card['color'] == 0)  { // Blue
-                    self::executeDraw($player_id, 9); // "Draw a 9"
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
-                } else if ($card['color'] == 2) { // Green
-                    for ($color = 0; $color < 5; $color++) {
-                        self::unsplay($player_id, $player_id, $color);
-                    }
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
-                } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
-                    self::setAuxiliaryValue($card['color']);
-                    $step_max = 1;
-                } else {
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
-                };
-                break;
-            
             // id 144, Artifacts age 3: Shroud of Turin
             case "144N1":
                 $step_max = 1;
@@ -16013,33 +15993,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-
-        // id 143, Artifacts age 3: Necronomicon
-        case "143N1A":
-            // "If red, return all cards in your score pile"
-            if (self::getAuxiliaryValue() == 1) { // Red
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-                    
-                    'owner_from' => $player_id,
-                    'location_from' => 'score',
-                    'owner_to' => 0,
-                    'location_to' => 'deck'
-                );     
-            // "If yellow, return all cards in your hand"
-            } else if (self::getAuxiliaryValue() == 3) { // Yellow
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-                    
-                    'owner_from' => $player_id,
-                    'location_from' => 'revealed,hand',
-                    'owner_to' => 0,
-                    'location_to' => 'deck',
-                );
-            };
-            break;
         
         // id 144, Artifacts age 3: Shroud of Turin
         case "144N1A":
@@ -18889,14 +18842,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-                    
-                // id 143, Artifacts age 3: Necronomicon
-                case "143N1A":
-                    if (self::getAuxiliaryValue() == 1) { // Red
-                        $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-                        self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Keep revealed card
                     }
                     break;
 
