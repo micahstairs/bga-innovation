@@ -934,8 +934,9 @@ $this->textual_card_infos = array(
     ),
 
     139 => array(
-        'name'                => clienttranslate('Philosopher\'s Stone'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Score a number of cards from your hand equal to the value of the card returned.'),
+        'name'                                => clienttranslate('Philosopher\'s Stone'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Score a number of cards from your hand equal to the value of the card returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Score a number of cards from your hand equal to the value of the card you return. Junk all cards in the deck of value equal to the total value of the cards you score.'),
     ),
 
     140 => array(

@@ -5913,6 +5913,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function junkBaseDeck($age): bool {
+        if ($age == 0) {
+            // TODO(FIGURES): Handle junking the age 0 deck
+            return false;
+        }
         $cardCount = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', CardTypes::BASE)[$age];
         if ($cardCount == 0) {
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, CardTypes::BASE)));
@@ -12493,11 +12497,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 139, Artifacts age 3: Philosopher's Stone
-            case "139N1":
-                $step_max = 1;
-                break;
-
             // id 140, Artifacts age 3: Beauvais Cathedral Clock
             case "140N1":
                 // "Draw and reveal a 4"
@@ -16052,36 +16051,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-            
-        // id 139, Artifacts age 3: Philosopher's Stone
-        case "139N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-
-        case "139N1B":
-            // "Score a number of cards from your hand equal to the value of the card returned"
-            $age_selected = $this->innovationGameState->get('age_last_selected');
-            $options = array(
-                'player_id' => $player_id,
-                'n' => $age_selected,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true
-            );
-            break;
 
         // id 141, Artifacts age 3: Moylough Belt Shrine
         case "141C1A":
@@ -18975,14 +18944,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 139, Artifacts age 3: Philosopher's Stone
-                case "139N1A":
-                    // Move to next interaction if a card was returned
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-            
                 // id 141, Artifacts age 3: Moylough Belt Shrine
                 case "141C1A":
                     // Return revealed cards back to player's hand.
