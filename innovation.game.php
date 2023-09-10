@@ -7014,10 +7014,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getJSCardEffectQuery($card, $effect_type, $effect_number) {
-        if ($effect_type == 3) {
-            return self::getJSCardId($card) . " .echo_effect";
+        switch ($effect_type) {
+            case self::ECHO_EFFECT:
+                return self::getJSCardId($card) . " .echo_effect";
+            case self::COMPEL_EFFECT:
+                return self::getJSCardId($card) . " .i_compel_effect";
+            case self::DEMAND_EFFECT:
+                return self::getJSCardId($card) . " .i_demand_effect";
+            default:
+                return self::getJSCardId($card) . " .non_demand_effect_" . $effect_number;        
         }
-        return self::getJSCardId($card) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
 
     function setLauncherId($launcher_id) {
