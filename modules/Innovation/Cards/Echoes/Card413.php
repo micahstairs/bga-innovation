@@ -37,7 +37,7 @@ class Card413 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstOrThirdEdition()) {
+    if (self::isFirstNonDemand()) {
       return [
         'choose_value' => true,
         'age'          => self::getAuxiliaryArray(),
