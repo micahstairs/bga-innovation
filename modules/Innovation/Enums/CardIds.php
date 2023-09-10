@@ -19,7 +19,10 @@ class CardIds
   const PIANO = 383;
   const SAXOPHONE = 404;
   const WEALTH = 435;
+  const DESTINY = 436;
+  const HERITAGE = 437;
   const HISTORY = 438;
+  const SUPREMACY = 439;
   const DEEPFAKE = 478;
   const SPANISH_INQUISITION = 518;
   const CONFIDENCE = 595;

@@ -17,7 +17,7 @@ class Card556 extends Card
   {
     $card1 = self::transferToHand(self::drawAndReveal(9));
     $card2 = self::transferToHand(self::drawAndReveal(9));
-    $this->game->setAuxiliaryArray([$card1['id'], $card2['id']]);
+    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
     self::setMaxSteps(1);
   }
 

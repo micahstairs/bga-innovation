@@ -29,10 +29,10 @@ class Card374 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
+      $bonuses = self::getBonuses(self::getLauncherId());
       if (self::isFirstOrThirdEdition()) {
-        $value = $this->game->getMaxBonusIconOnBoard(self::getLauncherId());
+        $value = $bonuses ? max($bonuses) : 0;
       } else {
-        $bonuses = self::getBonuses(self::getLauncherId());
         $scorePileValues = self::getUniqueValues('score');
         $intersection = array_intersect($bonuses, $scorePileValues);
         if (!$intersection) {

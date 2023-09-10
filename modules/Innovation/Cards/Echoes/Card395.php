@@ -49,7 +49,7 @@ class Card395 extends Card
       return [
         'location_from' => 'board',
         'location_to'   => 'hand',
-        'age'           => $this->game->getMaxAgeOnBoardTopCards(self::getPlayerId()),
+        'age'           => self::getMaxValue(self::getTopCards()),
       ];
     }
   }

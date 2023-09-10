@@ -4943,14 +4943,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getMinOrMaxAgeInLocation($player_id, 'score', 'MAX');
     }
     
-    function getMaxBonusIconOnBoard($player_id) {
-        /**
-        Get the maximum visible bonus
-        **/
-        $visible_bonus_icons = self::getVisibleBonusesOnBoard($player_id);
-        return count($visible_bonus_icons) == 0 ? 0 : max($visible_bonus_icons);
-    }
-
     function getCardsWithVisibleEchoEffects($dogma_card) {
         /**
         Gets the list of cards with visible echo effects given a specific card being executed (from top to bottom)
@@ -5284,9 +5276,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function countBonusPoints($player_id) {
-        $num_visible_bonus_icons = count(self::getVisibleBonusesOnBoard($player_id));
-        if ($num_visible_bonus_icons > 0) {
-            return self::getMaxBonusIconOnBoard($player_id) + $num_visible_bonus_icons - 1;
+        $bonuses = self::getVisibleBonusesOnBoard($player_id);
+        if (count($bonuses) > 0) {
+            return max($bonuses) + count($bonuses) - 1;
         }
         return 0;
     }

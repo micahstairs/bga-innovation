@@ -63,7 +63,7 @@ class Card586 extends Card
     );
 
     if ($choice != $coinFlip) {
-      if (self::isDemand() || $this->game->countCardsInLocation(self::getPlayerId(), 'safe') == 0) {
+      if (self::isDemand() || self::countCards('safe') == 0) {
         self::lose();
       } else {
         self::setMaxSteps(2);

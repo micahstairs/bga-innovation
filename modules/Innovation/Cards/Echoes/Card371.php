@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 
 class Card371 extends Card
@@ -117,7 +118,7 @@ class Card371 extends Card
           self::setAuxiliaryValue2(1);
         }
       } else if (self::isThirdInteraction() && self::getAuxiliaryValue2() === 1) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 436);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::DESTINY);
       }
     }
   }

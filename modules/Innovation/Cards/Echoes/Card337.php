@@ -46,7 +46,7 @@ class Card337 extends Card
       return [
         'location_from'  => 'board',
         'return_keyword' => true,
-        'age'            => $this->game->getMaxAgeOnBoardTopCards(self::getPlayerId()),
+        'age'            => self::getMaxValue(self::getTopCards()),
       ];
     }
   }

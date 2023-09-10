@@ -44,7 +44,7 @@ class Card506 extends Card
       $this->game->setAuxiliaryValueFromArray(array_unique($colors));
     } else {
       // Score the other card
-      $cardIds = $this->game->getAuxiliaryArray();
+      $cardIds = self::getAuxiliaryArray();
       $cardIdToScore = $card['id'] == $cardIds[0] ? $cardIds[1] : $cardIds[0];
       self::score(self::getCard($cardIdToScore));
     }
@@ -57,7 +57,7 @@ class Card506 extends Card
       $numColors = count($this->game->getAuxiliaryValueAsArray());
       $card1 = self::draw($numColors);
       $card2 = self::draw($numColors);
-      $this->game->setAuxiliaryArray([$card1['id'], $card2['id']]);
+      self::setAuxiliaryArray([$card1['id'], $card2['id']]);
     }
   }
 }

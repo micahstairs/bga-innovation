@@ -32,7 +32,7 @@ class Card484 extends Card
         $cardIds[] = $card['id'];
       }
     }
-    $this->game->setAuxiliaryArray($cardIds);
+    self::setAuxiliaryArray($cardIds);
     return [
       'location_from' => 'hand',
       'score_keyword' => true,

@@ -432,6 +432,11 @@ abstract class Card
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age);
   }
 
+  protected function drawAndRevealType(int $age, int $type, int $playerId = null)
+  {
+    return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age, $type);
+  }
+
   protected function getTopCardOfColor(int $color, int $playerId = null): ?array
   {
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);

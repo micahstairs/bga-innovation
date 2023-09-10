@@ -14,12 +14,11 @@ class Card540 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
-      if ($this->game->countCardsInLocation(self::getPlayerId(), 'score') > 0) {
-        self::setMaxSteps(1);
-      }
+    if (self::isFirstNonDemand()) {
+      self::setMaxSteps(1);
     } else {
-      for ($i = 0; $i < $this->game->countCardsInLocation(self::getPlayerId(), 'safe'); $i++) {
+      $numCardsInSafe = self::countCards('safe');
+      for ($i = 0; $i < $numCardsInSafe; $i++) {
         self::draw(6);
       }
     }
@@ -31,7 +30,7 @@ class Card540 extends Card
       'owner_from'        => 0,
       'location_from'     => 'achievements',
       'safeguard_keyword' => true,
-      'age'               => $this->game->countCardsInLocation(self::getPlayerId(), 'score'),
+      'age'               => self::countCards('score'),
     ];
 
   }
