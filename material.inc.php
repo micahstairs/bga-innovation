@@ -940,8 +940,10 @@ $this->textual_card_infos = array(
     ),
 
     140 => array(
-        'name'                => clienttranslate('Beauvais Cathedral Clock'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_4}. Splay right the color matching the drawn card.'),
+        'name_first_and_third'                => clienttranslate('Beauvais Cathedral Clock'),
+        'name_fourth'                         => clienttranslate('Ife Head'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_4}. Splay right the color matching the drawn card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Splay right an unsplayed color on your board. Junk an available achievement of value equal to the number of cards of that color on your board. If you don\'t, draw a card of that value.'),
     ),
 
     141 => array(

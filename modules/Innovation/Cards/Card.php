@@ -655,6 +655,11 @@ abstract class Card
     return $this->game->innovationGameState->get('age_last_selected');
   }
 
+  protected function getLastSelectedFaceUpAge(): int
+  {
+    return self::getLastSelectedCard()['faceup_age'];
+  }
+
   protected function getLastSelectedColor(): int
   {
     return $this->game->innovationGameState->get('color_last_selected');

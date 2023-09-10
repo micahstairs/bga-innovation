@@ -12496,15 +12496,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 140, Artifacts age 3: Beauvais Cathedral Clock
-            case "140N1":
-                // "Draw and reveal a 4"
-                $card = self::executeDraw($player_id, 4, 'revealed');
-                // "Splay right the color matching the drawn card"
-                self::splayRight($player_id, $player_id, $card['color']);
-                self::transferCardFromTo($card, $player_id, 'hand');
-                break;
 
             // id 141, Artifacts age 3: Moylough Belt Shrine
             case "141C1":
