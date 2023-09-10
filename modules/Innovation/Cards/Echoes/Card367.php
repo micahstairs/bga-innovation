@@ -62,7 +62,7 @@ class Card367 extends Card
     if (self::isEcho()) {
       $this->game->splayLeft(self::getPlayerId(), $card['owner'], $card['color']);
     } else if (self::isDemand()) {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue();
     }
   }
 

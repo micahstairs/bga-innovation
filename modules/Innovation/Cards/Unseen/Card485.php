@@ -41,7 +41,7 @@ class Card485 extends Card
         self::setMaxSteps(2);
       }
     } else {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue();
       self::setNextStep(1);
       self::setMaxSteps(1);
     }

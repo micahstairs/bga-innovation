@@ -39,7 +39,7 @@ class Card528 extends Card
 
   public function handleCardChoice(array $card)
   {
-    self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+    self::incrementAuxiliaryValue();
   }
 
   public function afterInteraction()

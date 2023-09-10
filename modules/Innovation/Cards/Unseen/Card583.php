@@ -69,7 +69,7 @@ class Card583 extends Card
     if (self::isSecondInteraction()) {
       self::setAuxiliaryValue($card['age']);
     } else {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue();
     }
   }
 

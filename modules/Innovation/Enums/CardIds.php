@@ -27,6 +27,9 @@ class CardIds
   const DEEPFAKE = 478;
   const SPANISH_INQUISITION = 518;
   const CONFIDENCE = 595;
+  const ZEN = 596;
+  const ANONYMITY = 597;
+
   const FOLKLORE = 598;
   const MYSTERY = 599;
 }
