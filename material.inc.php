@@ -928,8 +928,9 @@ $this->textual_card_infos = array(
     ),
 
     138 => array(
-        'name'            => clienttranslate('Mjolnir Amulet'),
-        'i_compel_effect' => clienttranslate('${I compel} you to choose a top card on your board! Transfer all cards of that card\'s color from your board to my score pile!'),
+        'name_first_and_third' => clienttranslate('Mjolnir Amulet'),
+        'name_fourth'          => clienttranslate('Mjölnir Amulet'),
+        'i_compel_effect'      => clienttranslate('${I compel} you to choose a top card on your board! Transfer all cards of that card\'s color from your board to my score pile!'),
     ),
 
     139 => array(

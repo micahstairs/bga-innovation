@@ -12493,11 +12493,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 138, Artifacts age 3: Mjolnir Amulet
-            case "138C1":
-                $step_max = 1;
-                break;
-
             // id 139, Artifacts age 3: Philosopher's Stone
             case "139N1":
                 $step_max = 1;
@@ -16058,20 +16053,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 138, Artifacts age 3: Mjolnir Amulet
-        case "138C1A":
-            // "I compel you to choose a top card on your board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-            );
-            break;
-            
         // id 139, Artifacts age 3: Philosopher's Stone
         case "139N1A":
             // "Return a card from your hand"
@@ -18990,18 +18971,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
-                        }
-                    }
-                    break;
-                    
-                // id 138, Artifacts age 3: Mjolnir Amulet
-                case "138C1A":
-                    if ($n > 0) {
-                        // "Transfer all cards of that card's color from your board to my score pile"
-                        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                        $pile = $board[$this->innovationGameState->get('color_last_selected')];
-                        for ($i = count($pile) - 1; $i >= 0; $i--) {
-                            self::transferCardFromTo($pile[$i], $launcher_id, 'score'); 
                         }
                     }
                     break;
