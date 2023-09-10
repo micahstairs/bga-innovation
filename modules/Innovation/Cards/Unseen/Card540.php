@@ -27,8 +27,6 @@ class Card540 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'owner_from'        => 0,
-      'location_from'     => 'achievements',
       'safeguard_keyword' => true,
       'age'               => self::countCards('score'),
     ];

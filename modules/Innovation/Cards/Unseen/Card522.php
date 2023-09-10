@@ -28,8 +28,6 @@ class Card522 extends Card
       ];
     } else {
       return [
-        'owner_from'        => 0,
-        'location_from'     => 'achievements',
         'safeguard_keyword' => true,
         'age'               => self::getTopCardOfColor(Colors::RED)['faceup_age'],
       ];

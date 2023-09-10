@@ -26,8 +26,6 @@ class Card571 extends Card
     } else {
       return [
         'n'                 => 2,
-        'owner_from'        => 0,
-        'location_from'     => 'achievements',
         'safeguard_keyword' => true,
       ];
     }

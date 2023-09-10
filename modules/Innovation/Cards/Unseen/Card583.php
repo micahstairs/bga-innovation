@@ -47,11 +47,7 @@ class Card583 extends Card
         'age'             => $value,
       ];
     } else {
-      return [
-        'location_from'     => 'achievements',
-        'owner_from'        => 0,
-        'safeguard_keyword' => true,
-      ];
+      return ['safeguard_keyword' => true];
     }
   }
 

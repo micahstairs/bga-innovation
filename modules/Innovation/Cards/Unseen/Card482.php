@@ -38,8 +38,6 @@ class Card482 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'owner_from'                      => 0,
-        'location_from'                   => 'achievements',
         'safeguard_keyword'               => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];

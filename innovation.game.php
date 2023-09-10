@@ -13990,6 +13990,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if (array_key_exists('safeguard_keyword', $options)) {
                     $options['location_to'] = 'safe';
+                    if (!array_key_exists('owner_from', $options) && !array_key_exists('location_from', $options)) {
+                        $options['owner_from'] = 0;
+                        $options['location_from'] = 'achievements';
+                    }
                 }
                 if (array_key_exists('foreshadow_keyword', $options)) {
                     $options['location_to'] = 'forecast';
