@@ -3,8 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
-use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card146 extends Card
 {

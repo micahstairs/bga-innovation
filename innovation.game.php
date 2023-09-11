@@ -9764,12 +9764,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 147, Artifacts age 4: East India Company Charter
-            case "147N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
- 
             // id 152, Artifacts age 5: Mona Lisa
             case "152N1A":
                 $message_for_player = clienttranslate('Choose a color');
@@ -12490,11 +12484,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 147, Artifacts age 4: East India Company Charter
-            case "147N1":
-                $step_max = 2;
                 break;
 
             // id 148, Artifacts age 4: Tortugas Galleon
@@ -15947,46 +15936,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 147, Artifacts age 4: East India Company Charter
-        case "147N1A":
-            // "Choose a value other than 5"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-
-                'age' => array(1, 2, 3, 4, 6, 7, 8, 9, 10, 11)
-            );
-            break;
-
-        case "147N1B":
-            // "Return all cards of that value from all score piles"
-            $value_to_return = self::getAuxiliaryValue();
-            $num_players_who_returned = 0;
-            foreach (self::getAllActivePlayerIds() as $id) {
-                $score_pile = self::getCardsInLocation($id, 'score');
-                foreach ($score_pile as $card) {
-                    if ($card['age'] == $value_to_return) {
-                        $num_players_who_returned++;
-                        break;
-                    }
-                }
-            }
-            self::setAuxiliaryValue($num_players_who_returned);
-            
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'age' => $value_to_return
-            );
-            break;
-
         // id 148, Artifacts age 4: Tortugas Galleon
         case "148C1A":
             // "Transfer a top card on your board of that value to my board"
@@ -18677,14 +18626,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
-                // id 147, Artifacts age 4: East India Company Charter
-                case "147N1B":
-                    // "For each player that returned cards, draw and score a 5"
-                    for ($i = 0; $i < self::getAuxiliaryValue(); $i++) {
-                        self::executeDraw($player_id, 5, 'score');
-                    }
-                    break;
-                    
                 // id 149, Artifacts age 4: Molasses Reef Caravel
                 case "149N1A":
                     // "Draw three 4's"
@@ -20225,13 +20166,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 147, Artifacts age 4: East India Company Charter
-            case "147N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
 
             // id 152, Artifacts age 5: Mona Lisa

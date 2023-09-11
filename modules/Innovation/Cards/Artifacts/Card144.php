@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
-use Innovation\Enums\Colors;
 
 class Card144 extends Card
 {

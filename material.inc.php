@@ -984,8 +984,9 @@ $this->textual_card_infos = array(
     ),
 
     147 => array(
-        'name'                => clienttranslate('East India Company Charter'),
-        'non_demand_effect_1' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
+        'name'                                => clienttranslate('East India Company Charter'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each score pile from which cards are returned, draw and score a ${age_5}. If you do, junk all cards in the deck of the chosen value.'),
     ),
 
     148 => array(
