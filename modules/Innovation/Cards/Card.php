@@ -584,7 +584,7 @@ abstract class Card
     return $card['color'] == Colors::PURPLE;
   }
 
-  protected function getCard(int $cardId)
+  protected function getCard(int $cardId): array
   {
     return $this->game->getCardInfo($cardId);
   }

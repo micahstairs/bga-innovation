@@ -15,7 +15,8 @@ class Card149 extends Card
   //     card from your hand. Return a card from your score pile.
   // - 4th edition:
   //   - Return all cards from your hand.
-  //   - Draw three [4]. Meld a green card from your hand. Junk all cards in the deck of value equal to your top green card.
+  //   - Draw three [4]. Meld a green card from your hand. Junk all cards in the deck of value
+  //     equal to your top green card.
 
 
   public function initialExecution()

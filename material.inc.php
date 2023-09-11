@@ -1004,8 +1004,10 @@ $this->textual_card_infos = array(
     ),
 
     150 => array(
-        'name'                => clienttranslate('Hunt-Lenox Globe'),
-        'non_demand_effect_1' => clienttranslate('If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
+        'name'                                => clienttranslate('Hunt-Lenox Globe'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have fewer than four cards in your hand, return your top card of each non-green color. Draw a ${age_5} for each card you return.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Meld a card from your hand.'),
     ),
 
     151 => array(

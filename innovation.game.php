@@ -12486,11 +12486,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 150, Artifacts age 4: Hunt-Lenox Globe
-            case "150N1":
-                $step_max = 1;
-                break;
-            
             // id 151, Artifacts age 4: Moses
             case "151C1":    
                 // "I compel you transfer all top cards with a crown from your board to my score pile"
@@ -13806,10 +13801,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ->setMaxSteps(self::getStepMax());
 
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-
-        $card_id_1 = $this->innovationGameState->get('card_id_1');
-        $card_id_2 = $this->innovationGameState->get('card_id_2');
-        $card_id_3 = $this->innovationGameState->get('card_id_3');
         
         $leaf = Icons::render(2);
         $lightbulb = Icons::render(3);
@@ -15914,57 +15905,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-            
-        // id 150, Artifacts age 4: Hunt-Lenox Globe
-        case "150N1A":
-            // "If you have fewer than four cards in your hand"
-            if (self::countCardsInLocation($player_id, 'hand') < 4) {
-                // "Return all non-green top cards from your board"
-                self::setAuxiliaryValue(1); // Indicate that player had fewer than four cards in hands
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-
-                    'owner_from' => $player_id,
-                    'location_from' => 'board',
-                    'owner_to' => 0,
-                    'location_to' => 'deck',
-
-                    'color' => array(0,1,3,4)
-                );
-                self::incrementStepMax(1);
-
-            // "Meld a card from your hand"
-            } else {
-                self::setAuxiliaryValue(0); // Indicate that player had at least four cards in hands
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => false,
-
-                    'owner_from' => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to' => $player_id,
-                    'location_to' => 'board',
-
-                    'meld_keyword' => true,
-                );
-            }
-            break;
-            
-        case "150N1B":
-            // "Meld a card from your hand"
-            self::setAuxiliaryValue(0);
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board'
             );
             break;
 
@@ -18548,16 +18488,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
                         $step = $step + 1;
                         self::incrementStep(1);
-                    }
-                    break;
-                    
-                // id 150, Artifacts age 4: Hunt-Lenox Globe
-                case "150N1A":
-                    if (self::getAuxiliaryValue() == 1) {
-                        // "Draw a 5 for each card returned"
-                        for ($i = 1; $i <= $n; $i++) {
-                            self::executeDraw($player_id, 5);
-                        }
                     }
                     break;
 
