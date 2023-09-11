@@ -55,6 +55,8 @@ abstract class Card
         return static::getPromptForTypeChoice();
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
+      case 11: // choose_non_negative_integer
+        return static::getPromptForNumberChoice():
       case 12: // choose_icon_type
         return static::getPromptForIconChoice();
       default:
@@ -785,8 +787,8 @@ abstract class Card
   {
     if (self::canPass()) {
       return [
-        "message_for_player" => clienttranslate('Choose a value'),
-        "message_for_others" => clienttranslate('${player_name} may choose a value'),
+        "message_for_player" => clienttranslate('Choose a icon'),
+        "message_for_others" => clienttranslate('${player_name} may choose a icon'),
       ];
     } else {
       return [
@@ -807,6 +809,21 @@ abstract class Card
       return [
         "message_for_player" => clienttranslate('Choose a value'),
         "message_for_others" => clienttranslate('${player_name} must choose a value'),
+      ];
+    }
+  }
+
+  protected function getPromptForNumberChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a number'),
+        "message_for_others" => clienttranslate('${player_name} may choose a number'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose an number'),
+        "message_for_others" => clienttranslate('${player_name} must choose an number'),
       ];
     }
   }

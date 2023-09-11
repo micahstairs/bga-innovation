@@ -9764,17 +9764,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 152, Artifacts age 5: Mona Lisa
-            case "152N1A":
-                $message_for_player = clienttranslate('Choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-                
-            case "152N1B":
-                $message_for_player = clienttranslate('Choose a number');
-                $message_for_others = clienttranslate('${player_name} must choose a number');
-                break;
-
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -12484,11 +12473,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 152, Artifacts age 4: Mona Lisa
-            case "152N1":
-                $step_max = 2;
                 break;
 
             // id 153, Artifacts age 4: Cross of Coronado
@@ -15886,44 +15870,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-        
-        // id 152, Artifacts age 4: Mona Lisa
-        case "152N1A":
-            // Choose a color
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_color' => true,
-            );
-            break;
-
-        case "152N1B":
-            // Help the UI pick a reasonable default for the integer selection
-            $chosen_color = self::getAuxiliaryValue2();
-            $cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
-            self::setAuxiliaryValue(count($cards[$chosen_color]));
-
-            // Choose a number
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_non_negative_integer' => true,
-            );
-            break;
-
-        case "152N1C":
-            // "Otherwise, return all cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
             
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
@@ -18485,34 +18431,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                    
-                // id 152, Artifacts age 4: Mona Lisa
-                case "152N1B":
-                    // "Draw five 4s, then reveal your hand"
-                    for ($i = 0; $i < 5; $i++) {
-                        self::executeDraw($player_id, 4);
-                    }
-                    self::revealHand($player_id);
-                    
-                    $chosen_color = self::getAuxiliaryValue2();
-                    $cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
-                    $colored_cards = $cards[$chosen_color];
-                    $num_cards = count($colored_cards);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'You' => 'You', 'n' => $num_cards, 'color' => Colors::render($chosen_color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'n' => $num_cards, 'color' => Colors::render($chosen_color)));
-                    
-                    // "If you have exactly that many cards of that color, score them, and splay right your cards of that color"
-                    if ($num_cards == self::getAuxiliaryValue()) {
-                        foreach ($colored_cards as $card) {
-                            $card = self::getCardInfo($card['id']);
-                            self::scoreCard($card, $player_id);
-                        }
-                        self::splayRight($player_id, $player_id, $chosen_color);
-                    // "Otherwise"
-                    } else {
-                        self::incrementStepMax(1);
-                    }
-                    break;
 
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1A":
@@ -19964,19 +19882,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 152, Artifacts age 5: Mona Lisa
-            case "152N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
-                self::setAuxiliaryValue2($choice);
-                break;
-
-            case "152N1B":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the number ${n}.'), array('You' => 'You', 'n' => $choice));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the number ${n}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $choice));
-                self::setAuxiliaryValue($choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
