@@ -2459,8 +2459,8 @@ $this->textual_card_infos = array(
     ),
 
     453 => array(
-        'name'              => clienttranslate('Pizza Pacaya'),
-        'i_compel_effect_1' => clienttranslate('${I compel} you to junk all cards from your board! Draw and meld a card of each value in ascending order!'),
+        'name'            => clienttranslate('Pizza Pacaya'),
+        'i_compel_effect' => clienttranslate('${I compel} you to junk all cards from your board! Draw and meld a card of each value in ascending order!'),
     ),
 
     454 => array(
