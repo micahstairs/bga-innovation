@@ -2464,9 +2464,9 @@ $this->textual_card_infos = array(
     ),
 
     454 => array(
-        'name'                => clienttranslate('Greenland'),
-        'i_compel_effect_1'   => clienttranslate('${I compel} you to return all of your top cards with a ${icon_6}!'),
-        'non_demand_effect_1' => clienttranslate('Return all your top cards with a ${icon_1}.'),
+        'name'              => clienttranslate('Greenland'),
+        'i_compel_effect_1' => clienttranslate('${I compel} you to return all of your top cards with a ${icon_6}!'),
+        'non_demand_effect' => clienttranslate('Return all your top cards with a ${icon_1}.'),
     ),
 
     455 => array(
@@ -2490,8 +2490,8 @@ $this->textual_card_infos = array(
     ),
 
     459 => array(
-        'name'              => clienttranslate('Oculus Quest'),
-        'i_compel_effect_1' => clienttranslate('${I compel} you to transfer all cards on your board to your hand!'),
+        'name'            => clienttranslate('Oculus Quest'),
+        'i_compel_effect' => clienttranslate('${I compel} you to transfer all cards on your board to your hand!'),
     ),
 
     /* Cities - Age 11 */
