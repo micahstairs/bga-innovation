@@ -28,7 +28,6 @@ class Card148 extends Card
     }
   }
 
-
   public function getInteractionOptions(): array
   {
     return [

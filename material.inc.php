@@ -997,8 +997,10 @@ $this->textual_card_infos = array(
     ),
 
     149 => array(
-        'name'                => clienttranslate('Molasses Reef Caravel'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw three ${age_4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.'),
+        'name'                                => clienttranslate('Molasses Reef Caravel'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. Draw three ${age_4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw three ${age_4}. Meld a green card from your hand. Junk all cards in the deck of value equal to your top green card.'),
     ),
 
     150 => array(

@@ -12486,11 +12486,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 149, Artifacts age 4: Molasses Reef Caravel
-            case "149N1":
-                $step_max = 4;
-                break;
-
             // id 150, Artifacts age 4: Hunt-Lenox Globe
             case "150N1":
                 $step_max = 1;
@@ -15919,64 +15914,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-            
-        // id 149, Artifacts age 4: Molasses Reef Caravel
-        case "149N1A":
-            // "Return all cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-            
-        case "149N1B":
-            // "Meld a blue card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'color' => array(0), // blue
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "149N1C":
-            // "Score a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true
-            );
-            break;
-            
-        case "149N1D":
-            // "Return a card from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
             );
             break;
             
