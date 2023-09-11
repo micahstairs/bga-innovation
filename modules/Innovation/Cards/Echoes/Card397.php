@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card397 extends Card
 {
@@ -45,8 +46,7 @@ class Card397 extends Card
       } else {
         return [
           'n'             => 4,
-          'location_from' => 'achievements',
-          'owner_from'    => 0,
+          'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
           'junk_keyword'  => true,
         ];
       }

@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\Card;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card394 extends Card
 {
@@ -40,8 +41,7 @@ class Card394 extends Card
       $count = self::getStandardIconCount(Icons::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
       return [
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
         'age'           => $count,
       ];

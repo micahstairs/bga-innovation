@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card416 extends Card
 {
@@ -32,15 +33,14 @@ class Card416 extends Card
   {
     if (self::isFirstOrThirdEdition() && self::isFirstInteraction() || self::isFourthEdition() && self::isSecondInteraction()) {
       return [
-        'n' => 'all',
-        'owner_from' => 0,
-        'location_from' => 'achievements',
+        'n'              => 'all',
+        'location_from'  => Locations::AVAILABLE_ACHIEVEMENTS,
         'return_keyword' => true,
       ];
     } else {
       return [
-        'n' => ceil(self::countCards('score') / 2),
-        'location_from' => 'score',
+        'n'              => ceil(self::countCards(Locations::SCORE) / 2),
+        'location_from'  => Locations::SCORE,
         'return_keyword' => true,
       ];
     }

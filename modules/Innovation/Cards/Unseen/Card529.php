@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card529 extends Card
 {
@@ -27,8 +28,7 @@ class Card529 extends Card
     } else {
       return [
         'n'             => 3,
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'score_keyword' => true,
       ];
     }

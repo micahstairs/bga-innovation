@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card145 extends Card
 {
@@ -35,14 +36,13 @@ class Card145 extends Card
       return [
         'n'             => $numCardsWithAuthority,
         'owner_from'    => self::getPlayerId(),
-        'location_from' => 'score',
+        'location_from' => Locations::SCORE,
         'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'score'
+        'location_to'   => Locations::SCORE,
       ];
     } else {
       return [
-        'location_from' => 'achievements',
-        'owner_from'    => 0,
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
         'age'           => $numCardsWithAuthority,
       ];

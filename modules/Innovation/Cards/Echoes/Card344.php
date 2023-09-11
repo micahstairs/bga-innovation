@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card344 extends Card
 {
@@ -31,9 +32,8 @@ class Card344 extends Card
     }
     self::setAuxiliaryArray($cardIds);
     return [
-      'owner_from'                      => 0,
-      'location_from'                   => 'achievements',
-      'location_to'                     => 'junk',
+      'location_from'                   => Locations::AVAILABLE_ACHIEVEMENTS,
+      'junk_keyword'                    => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
   }

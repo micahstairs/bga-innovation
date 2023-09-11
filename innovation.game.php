@@ -25,6 +25,7 @@ require_once('modules/Innovation/Enums/CardTypes.php');
 require_once('modules/Innovation/Enums/Colors.php');
 require_once('modules/Innovation/Enums/Directions.php');
 require_once('modules/Innovation/Enums/Icons.php');
+require_once('modules/Innovation/Enums/Locations.php');
 require_once('modules/Innovation/Utils/Arrays.php');
 require_once('modules/Innovation/Utils/Notifications.php');
 require_once('modules/Innovation/Utils/Strings.php');
@@ -32,12 +33,13 @@ require_once('modules/Innovation/Utils/Strings.php');
 
 use Innovation\GameState;
 use Innovation\Cards\ExecutionState;
-use Innovation\Utils\Arrays;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
+use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 use Innovation\Utils\Strings;
 
@@ -13946,6 +13948,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (array_key_exists('reveal_keyword', $options)) {
                     $options['location_to'] = 'revealed';
                     unset($options['reveal_keyword']);
+                }
+                if (array_key_exists('location_from', $options) && $options['location_from'] == Locations::AVAILABLE_ACHIEVEMENTS) {
+                    $options['location_from'] = Locations::ACHIEVEMENTS;
+                    $options['owner_from'] = Locations::ACHIEVEMENTS;
+                }
+                if (array_key_exists('location_to', $options) && $options['location_to'] == Locations::AVAILABLE_ACHIEVEMENTS) {
+                    $options['location_to'] = Locations::ACHIEVEMENTS;
+                    $options['owner_to'] = Locations::ACHIEVEMENTS;
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;

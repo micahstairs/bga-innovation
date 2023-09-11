@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card522 extends Card
 {
@@ -23,8 +24,7 @@ class Card522 extends Card
     if (self::isFirstInteraction()) {
       return [
         'location_from' => 'safe',
-        'owner_to'      => 0,
-        'location_to'   => 'achievements',
+        'location_to'   => Locations::AVAILABLE_ACHIEVEMENTS,
       ];
     } else {
       return [

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card346 extends Card
 {
@@ -41,9 +42,8 @@ class Card346 extends Card
     } else {
       return [
         'n'             => 'all',
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
-        'location_to'   => 'junk',
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
+        'junk_keyword'  => true,
         'age'           => self::getAuxiliaryValue(),
       ];
     }
