@@ -990,8 +990,10 @@ $this->textual_card_infos = array(
     ),
 
     148 => array(
-        'name'            => clienttranslate('Tortugas Galleon'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer all the highest cards from your score pile to my score pile! If you transfered any, transfer a top card on your board of that value to my board!'),
+        'name_first_and_third'            => clienttranslate('Tortugas Galleon'),
+        'name_fourth'                     => clienttranslate('Galleon Nuestra Señora De Atocha'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer all the highest cards from your score pile to my score pile! If you transfered any, transfer a top card on your board of that value to my board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer all the highest cards from your score pile to my score pile! If you transfer any, transfer a top card on your board of that value to my board!'),
     ),
 
     149 => array(

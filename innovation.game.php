@@ -12485,20 +12485,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 148, Artifacts age 4: Tortugas Galleon
-            case "148C1":
-                $card_ids = self::getIdsOfHighestCardsInLocation($player_id, 'score');
-                if (count($card_ids) > 0) {
-                    // "I compel you to transfer all the highest cards from your score pile to my score pile!"
-                    foreach ($card_ids as $card_id) {
-                        $card = self::getCardInfo($card_id);
-                        self::transferCardFromTo($card, $launcher_id, 'score');
-                    }
-                    self::setAuxiliaryValue($card['age']);
-                    $step_max = 1;
-                }
-                break;
             
             // id 149, Artifacts age 4: Molasses Reef Caravel
             case "149N1":
@@ -15933,22 +15919,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 148, Artifacts age 4: Tortugas Galleon
-        case "148C1A":
-            // "Transfer a top card on your board of that value to my board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-
-                'age' => self::getAuxiliaryValue()
             );
             break;
             
