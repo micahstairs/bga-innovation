@@ -12475,23 +12475,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 154, Artifacts age 4: Abell Gallery Harpsichord
-            case "154N1":
-                // "For each value of top card on your board appearing exactly once draw and score a card of that value in ascending order"
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $top_values = array();
-                foreach ($top_cards as $top_card) {
-                    $top_values[] = $top_card['faceup_age'];
-                }
-                asort($top_values);
-                foreach (array_count_values($top_values) as $value => $count) {
-                    // Appears exactly once
-                    if ($count == 1) {
-                        self::executeDraw($player_id, $value, 'score');
-                    }
-                }
-                break;
-
             // id 155, Artifacts age 5: Boerhavve Silver Microscope
             case "155N1":
                 $step_max = 2;

@@ -56,7 +56,7 @@ abstract class Card
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
       case 11: // choose_non_negative_integer
-        return static::getPromptForNumberChoice():
+        return static::getPromptForNumberChoice();
       case 12: // choose_icon_type
         return static::getPromptForIconChoice();
       default:
