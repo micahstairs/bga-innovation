@@ -971,8 +971,10 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 4 */
 
     145 => array(
-        'name'            => clienttranslate('Petition of Right'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each top card with a ${icon_4} on your board!'),
+        'name'                            => clienttranslate('Petition of Right'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each top card with a ${icon_4} on your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each color with a ${icon_4} on your board!'),
+        'non_demand_effect_1_fourth'      => clienttranslate('Junk an available achievement of value equal to the number of ${icon_4} on your board.'),
     ),
 
     146 => array(

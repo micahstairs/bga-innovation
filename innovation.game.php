@@ -12488,23 +12488,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 145, Artifacts age 4: Petition of Right
-            case "145C1":
-                $num_cards = 0;
-                for ($color = 0; $color < 5 ; $color++) {
-                    $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if (self::hasRessource($top_card, 4 /* tower */)) {
-                        $num_cards++;
-                    }
-                }
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top card(s) with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::renderNumber($num_cards), 'tower' => $tower));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card(s) with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($num_cards), 'tower' => $tower));
-                self::setAuxiliaryValue($num_cards);
-                if ($num_cards > 0) {
-                    $step_max = 1;
-                }
-                break;
 
             // id 146, Artifacts age 4: Delft Pocket Telescope
             case "146N1":
@@ -15986,20 +15969,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 145, Artifacts age 4: Petition of Right
-        case "145C1A":    
-            // "I compel you to transfer a card from your score pile to my score pile for each top card with a tower on your board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => self::getAuxiliaryValue(),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score'
             );
             break;
 
