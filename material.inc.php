@@ -1046,8 +1046,9 @@ $this->textual_card_infos = array(
     ),
 
     157 => array(
-        'name'            => clienttranslate('Bill of Rights'),
-        'i_compel_effect' => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
+        'name_first_and_third' => clienttranslate('Bill of Rights'),
+        'name_fourth'          => clienttranslate('Galley Whydah'),
+        'i_compel_effect'      => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
     ),
 
     158 => array(
@@ -1066,8 +1067,9 @@ $this->textual_card_infos = array(
     ),
 
     161 => array(
-        'name'                => clienttranslate('Gujin Tushu Jinsheng'),
-        'non_demand_effect_1' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
+        'name_first_and_third' => clienttranslate('Gujin Tushu Jinsheng'),
+        'name_fourth'          => clienttranslate('Gujin Tushu Jicheng'),
+        'non_demand_effect_1'  => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
     ),
 
     162 => array(
@@ -2438,7 +2440,59 @@ $this->textual_card_infos = array(
         'i_demand_effect' => clienttranslate('${I demand} you transfer a top card with a demand effect of each color from your board to my board! If you transfer any cards, exchange all cards in your score pile with all cards in my score pile!'),
     ),
 
-    /* 450-459 are reserved for Artifacts - Age 11 */
+    /* Artifacts - Age 11 */
+
+    450 => array(
+        'name'                => clienttranslate('Great Barrier Reef'),
+        'non_demand_effect_1' => clienttranslate('Junk all cards on your board other than the top three of each color.'),
+        'non_demand_effect_2' => clienttranslate('Splay each color on your board aslant.'),
+    ),
+
+    451 => array(
+        'name'                => clienttranslate('Martian Internet'),
+        'non_demand_effect_1' => clienttranslate('Start a new game, each player drawing a ${age_9} to begin, without shuffling any cards, ignoring all players\' current cards. The winner of that game transfers their cards to this game. Junk each player\'s cards from that game.'),
+    ),
+
+    452 => array(
+        'name'                => clienttranslate('Psyche'),
+        'non_demand_effect_1' => clienttranslate('Choose a value different from any top card on your board. Score all cards in the deck of that value.  Score all junked cards of that value.'),
+    ),
+
+    453 => array(
+        'name'              => clienttranslate('Pizza Pacaya'),
+        'i_compel_effect_1' => clienttranslate('${I compel} you to junk all cards from your board! Draw and meld a card of each value in ascending order!'),
+    ),
+
+    454 => array(
+        'name'                => clienttranslate('Greenland'),
+        'i_compel_effect_1'   => clienttranslate('${I compel} you to return all of your top cards with a ${icon_6}!'),
+        'non_demand_effect_1' => clienttranslate('Return all your top cards with a ${icon_1}.'),
+    ),
+
+    455 => array(
+        'name'                => clienttranslate('Sanskrit'),
+        'non_demand_effect_1' => clienttranslate('Junk all cards in all score piles. If you don\'t, for each player, choose the highest top card on their board, then for each other different color, transfer the top card of that color from their board to their score pile.'),
+    ),
+
+    456 => array(
+        'name'                => clienttranslate('What Does The Fox Say'),
+        'non_demand_effect_1' => clienttranslate('If it is your turn, draw and meld an ${age_11}. Fully execute the melded card. If any player is eligible to share an effect of the dogma, repeat this effect.'),
+    ),
+
+    457 => array(
+        'name'                => clienttranslate('Tasmanian Tiger'),
+        'non_demand_effect_1' => clienttranslate('Choose a card in your score pile. Choose a top card of the same color on any player\'s board. Exchange the two cards, maintaining any splay. You may return two cards from your hand. If you do, repeat this effect.'),
+    ),
+
+    458 => array(
+        'name'                => clienttranslate('Jumbo Kingdom'),
+        'non_demand_effect_1' => clienttranslate('Choose a color on your board. Junk all cards of that color from all boards.'),
+    ),
+
+    459 => array(
+        'name'              => clienttranslate('Oculus Quest'),
+        'i_compel_effect_1' => clienttranslate('${I compel} you to transfer all cards on your board to your hand!'),
+    ),
 
     /* Cities - Age 11 */
 
