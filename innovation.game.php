@@ -13891,11 +13891,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if (array_key_exists('location_from', $options) && $options['location_from'] == Locations::AVAILABLE_ACHIEVEMENTS) {
                     $options['location_from'] = Locations::ACHIEVEMENTS;
-                    $options['owner_from'] = Locations::ACHIEVEMENTS;
+                    $options['owner_from'] = 0;
                 }
                 if (array_key_exists('location_to', $options) && $options['location_to'] == Locations::AVAILABLE_ACHIEVEMENTS) {
                     $options['location_to'] = Locations::ACHIEVEMENTS;
-                    $options['owner_to'] = Locations::ACHIEVEMENTS;
+                    $options['owner_to'] = 0;
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;
