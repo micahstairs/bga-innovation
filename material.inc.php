@@ -1011,10 +1011,10 @@ $this->textual_card_infos = array(
     ),
 
     151 => array(
-        'name'                => clienttranslate('Moses'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
-        // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
-        'non_demand_effect_1' => clienttranslate('Score a top card on your board with a ${icon_1}.'),
+        'name'                            => clienttranslate('Moses'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer a top card with a ${icon_1} of each color from your board to my score pile!'),
+        'non_demand_effect_1'             => clienttranslate('Score a top card on your board with a ${icon_1}.'),
     ),
 
     152 => array(

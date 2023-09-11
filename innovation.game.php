@@ -12485,27 +12485,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 151, Artifacts age 4: Moses
-            case "151C1":    
-                // "I compel you transfer all top cards with a crown from your board to my score pile"
-                $no_top_card_with_crown = true;
-                foreach (Colors::ALL as $color) {
-                    $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if (self::hasRessource($top_card, 1 /* crown */)) {
-                        $no_top_card_with_crown = false;
-                        self::transferCardFromTo($top_card, $launcher_id, 'score');
-                    }
-                }
-                if ($no_top_card_with_crown) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top cards with a ${crown} on your board.'), array('You' => 'You', 'crown' => $crown));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top cards with a ${crown} on his board.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
-                }
-                break;
-
-            case "151N1":
-                $step_max = 1;
-                break;
 
             // id 152, Artifacts age 4: Mona Lisa
             case "152N1":
@@ -15905,24 +15884,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 151, Artifacts age 4: Moses
-        case "151N1A":    
-            // "Score a top card on your board with a crown"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'with_icon' => 1, /* crown */
-
-                'score_keyword' => true
             );
             break;
         
