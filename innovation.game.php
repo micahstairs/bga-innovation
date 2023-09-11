@@ -548,6 +548,8 @@ class Innovation extends Table
             }
             if ($edition == 4) {
                 self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 450 <= id AND id <= 459");
+                // TODO(4E): Implement Martian Internet later.
+                self::DbQuery("UPDATE card SET location = 'removed' WHERE id = 451");
             }
         }
 

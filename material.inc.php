@@ -2455,7 +2455,7 @@ $this->textual_card_infos = array(
 
     452 => array(
         'name'                => clienttranslate('Psyche'),
-        'non_demand_effect_1' => clienttranslate('Choose a value different from any top card on your board. Score all cards in the deck of that value.  Score all junked cards of that value.'),
+        'non_demand_effect_1' => clienttranslate('Choose a value different from any top card on your board. Score all cards in the deck of that value. Score all junked cards of that value.'),
     ),
 
     453 => array(
