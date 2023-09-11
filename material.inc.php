@@ -978,8 +978,9 @@ $this->textual_card_infos = array(
     ),
 
     146 => array(
-        'name'                => clienttranslate('Delft Pocket Telescope'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your score pile. If you do, draw a ${age_5} and a ${age_6}, then reveal one of the drawn cards that has a symbol in common with the returned card. If you cannot, return the drawn cards and repeat this effect.'),
+        'name'                                => clienttranslate('Delft Pocket Telescope'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your score pile. If you do, draw a ${age_5} and a ${age_6}, then reveal one of the drawn cards that has a symbol in common with the returned card. If you cannot, return the drawn cards and repeat this effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your score pile. If you do, draw a ${age_5} and a ${age_6}, then reveal one of the drawn cards that has an icon in common with the returned card. If you cannot, return the drawn cards and repeat this effect.'),
     ),
 
     147 => array(

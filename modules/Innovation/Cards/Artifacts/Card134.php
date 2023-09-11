@@ -51,7 +51,7 @@ class Card134 extends Card
   public function handleCardChoice(array $card)
   {
     if (self::isSplayInteraction()) {
-      $this->game->splayLeft(self::getPlayerId(), $card['owner'], $card['color']);
+      self::splayLeft($card['color'], $card['owner'], self::getPlayerId());
     }
 
   }

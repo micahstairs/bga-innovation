@@ -60,7 +60,7 @@ class Card367 extends Card
   public function handleCardChoice(array $card)
   {
     if (self::isEcho()) {
-      $this->game->splayLeft(self::getPlayerId(), $card['owner'], $card['color']);
+      self::splayLeft($card['color'], $card['owner'], self::getPlayerId());
     } else if (self::isDemand()) {
       self::incrementAuxiliaryValue();
     }

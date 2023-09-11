@@ -12492,11 +12492,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 146, Artifacts age 4: Delft Pocket Telescope
-            case "146N1":
-                $step_max = 1;
-                break;
-
             // id 147, Artifacts age 4: East India Company Charter
             case "147N1":
                 $step_max = 2;
@@ -15952,54 +15947,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 146, Artifacts age 4: Delft Pocket Telescope
-        case "146N1A":
-            // "Return a card from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck'
-            );
-            break;
-            
-        case "146N1B":            
-            // "Return the drawn cards"
-             $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2
-            );            
-            break;
-
-        case "146N1C":
-            // "Reveal one of the drawn cards that has a symbol in common with the returned card"   
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed',
-
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-
-                'enable_autoselection' => false, // Automating this always reveals hidden info
-            );
-            break;
-
         // id 147, Artifacts age 4: East India Company Charter
         case "147N1A":
             // "Choose a value other than 5"
@@ -18728,64 +18675,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
                     }
-                    break;
-
-                // id 146, Artifacts age 4: Delft Pocket Telescope
-                case "146N1A":
-                    // Reset the max steps in case the effect is being repeated
-                    self::setStepMax(1);
-
-                    if ($n > 0) { // "If you do"
-                        // "Draw a 5 and a 6"
-                        $card_1 = self::executeDraw($player_id, 5);
-                        $this->innovationGameState->set('card_id_1', $card_1['id']);
-                        $card_2 = self::executeDraw($player_id, 6);
-                        $this->innovationGameState->set('card_id_2', $card_2['id']);
-
-                        // Check if any icons on the returned card match one of the drawn cards
-                        $returned_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        $matching_icon_on_card_1 = false;
-                        $matching_icon_on_card_2 = false;
-                        for ($icon = 1; $icon <= 7; $icon++) { 
-                            $has_icon = self::hasRessource($returned_card, $icon);
-                            if ($has_icon && self::hasRessource($card_1, $icon)) {
-                                $matching_icon_on_card_1 = true;
-                            }
-                            if ($has_icon && self::hasRessource($card_2, $icon)) {
-                                $matching_icon_on_card_2 = true;
-                            }
-                        }
-                        
-                        if (!$matching_icon_on_card_1 && !$matching_icon_on_card_2) {
-                            // Reveal cards to prove that no icons matched with the previously returned card
-                            self::transferCardFromTo($card_1, $player_id, 'revealed');
-                            self::transferCardFromTo($card_2, $player_id, 'revealed');
-                            self::notifyGeneralInfo(clienttranslate('Neither card has a symbol in common with the returned card.'));
-                            self::setStepMax(2);
-                        } else {
-                            // Skip to the third interaction
-                            $step++;
-                            self::incrementStep(1);
-                            self::setStepMax(3);
-
-                            // Remove card as an option if it does not have any matching symbols
-                            if (!$matching_icon_on_card_1) {
-                                $this->innovationGameState->set('card_id_1', -1);
-                            } else if (!$matching_icon_on_card_2) {
-                                $this->innovationGameState->set('card_id_2', -1);
-                            }
-                        }
-                    }
-                    break;
-
-                case "146N1B":
-                    $step = $step - 2;
-                    self::incrementStep(-2); // "And repeat this effect"
-                    break;
-
-                case "146N1C":
-                    // Move revealed card back to the player's hand
-                    self::transferCardFromTo(self::getCardInfo($this->innovationGameState->get('id_last_selected')), $player_id, 'hand');
                     break;
                     
                 // id 147, Artifacts age 4: East India Company Charter
