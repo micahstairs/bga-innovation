@@ -732,7 +732,7 @@ class Innovation extends Table
         foreach($players as $player_id => $player) {
             $result['board_splay_directions'][$player_id] = array();
             $result['board_splay_directions_in_clear'][$player_id] = array();
-            for($color = 0; $color < 5 ; $color++) {
+            foreach (Colors::ALL as $color) {
                 $direction = self::getCurrentSplayDirection($player_id, $color);
                 $result['board_splay_directions'][$player_id][] = $direction;
                 $result['board_splay_directions_in_clear'][$player_id][] = Directions::render($direction);
@@ -3287,7 +3287,7 @@ class Innovation extends Table
                 break;
             case 107: // Wonder: 5 colors, each being splayed right, up, or aslant
                 $eligible = true;
-                for($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (self::getCurrentSplayDirection($player_id, $color) <= 1) { // This color is missing, unsplayed or splayed left
                         $eligible = false;
                         break;
@@ -3299,7 +3299,7 @@ class Innovation extends Table
                 break;
             case 109: // Universe: Five top cards, each being of value 8 or more
                 $eligible = true;
-                for($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card === null || $top_card['age'] < 8) { // This color is missing or its top card has value less than 8
                         $eligible = false;
@@ -3316,7 +3316,7 @@ class Innovation extends Table
                 break;
             case 437: // Heritage: 8 or more visible hexagons in a pile
                 $eligible = false;
-                for ($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (self::countVisibleIconsInPile($player_id, 0 /* empty hex */, $color) >= 8) {
                         $eligible = true;
                         break;
@@ -3325,7 +3325,7 @@ class Innovation extends Table
                 break;
             case 438: // History: A total of 4 or more visible echo effects in a pile
                 $eligible = false;
-                for ($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (self::countVisibleIconsInPile($player_id, 10 /* echo effect */, $color) >= 4) {
                         $eligible = true;
                         break;
@@ -3434,7 +3434,7 @@ class Innovation extends Table
 
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
             $opponent_ids = self::getActiveOpponentIds($player_id);
-            for ($color = 0; $color < 5 ; $color++) {
+            foreach (Colors::ALL as $color) {
                 // Flags
                 $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
                 $num_visible_cards = self::countVisibleCards($player_id, $color);
@@ -3484,7 +3484,7 @@ class Innovation extends Table
 
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
             $opponent_ids = self::getActiveOpponentIds($player_id);
-            for ($color = 0; $color < 5 ; $color++) {
+            foreach (Colors::ALL as $color) {
                 // Flags
                 $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
                 $num_visible_cards = self::countVisibleCards($player_id, $color);
@@ -9417,7 +9417,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 43: // Enterprise
                 // This demand has no effect unless the player has a top non-purple card with a crown.
-                for ($color = 0; $color < 4; $color++) {
+                foreach (Colors::NON_PURPLE as $color) {
                     $top_card = self::getTopCardOnBoard($executing_player_id, $color);
                     if (self::hasRessource($top_card, 1 /* crown */)) {
                         return false;
@@ -9443,7 +9443,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 54: // Societies
                 if ($this->innovationGameState->usingFirstEditionRules()) {
                     // This demand has no effect unless the player has a top non-purple card with a lightbulb.
-                    for ($color = 0; $color < 4; $color++) {
+                    foreach (Colors::NON_PURPLE as $color) {
                         $top_card = self::getTopCardOnBoard($executing_player_id, $color);
                         if (self::hasRessource($top_card, 3 /* lightbulb */)) {
                             return false;
@@ -11109,7 +11109,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "26N2":
                 $eligible = true;
-                for($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null && !self::hasRessource($top_card, 1)) { // This top card is present, with no crown on it
                         $eligible = false;
@@ -11132,7 +11132,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "27D1":
                 // "I demand you transfer all top cards with a tower from your board to my score pile"
                 $no_top_card_with_tower = true;
-                for($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if (self::hasRessource($top_card, 4)) { // This top card has a tower on it
                         $no_top_card_with_tower = false;
@@ -11180,7 +11180,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "30N2_3E":
                 // "Draw a 4 for every color you have splayed left"
                 $number_of_colors_splayed_left = 0;
-                for ($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
                         $number_of_colors_splayed_left++;
                     }
@@ -11344,7 +11344,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "39N2":
                 $eligible = true;
-                for($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (self::getCurrentSplayDirection($player_id, $color) == 0) { // This color is missing or unsplayed
                         $eligible = false;
                     };
@@ -11528,7 +11528,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             case "53N2":
                 $eligible = true;
-                for($color = 0; $color < 4 /* purple is not tested */ ; $color++) {
+                foreach (Colors::NON_PURPLE as $color) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null && $top_card['age'] < 6) { // This top card is value 5 or fewer
                         $eligible = false;
@@ -12529,7 +12529,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "151C1":    
                 // "I compel you transfer all top cards with a crown from your board to my score pile"
                 $no_top_card_with_crown = true;
-                for ($color = 0; $color < 5 ; $color++) {
+                foreach (Colors::ALL as $color) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if (self::hasRessource($top_card, 1 /* crown */)) {
                         $no_top_card_with_crown = false;
@@ -12633,7 +12633,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 160, Artifacts age 5: Hudson's Bay Company Archives
             case "160N1":
                 // "Score the bottom card of every color on your board"
-                for ($color = 0; $color< 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
                     if ($card !== null) {
                         self::scoreCard($card, $player_id);
@@ -18248,7 +18248,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "30N2A_4E":
                     if ($n > 0) { // "If you do, draw a 4 for every color you have splayed left"
                         $number_of_colors_splayed_left = 0;
-                        for ($color = 0; $color < 5 ; $color++) {
+                        foreach (Colors::ALL as $color) {
                             if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
                                 $number_of_colors_splayed_left++;
                             }
