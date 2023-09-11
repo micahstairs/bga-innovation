@@ -4469,7 +4469,7 @@ class Innovation extends Table
         return self::getCardsInLocation($player_id, 'hand');
     }
 
-    function countCardsInHand($player_id) {
+    function countCardsInHand($player_id): int {
         return self::countCardsInLocation($player_id, 'hand');
     }
 
@@ -4492,11 +4492,11 @@ class Innovation extends Table
         return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, 'color');
     }
     
-    function countCardsInLocation($owner, $location, $type=null) {
+    function countCardsInLocation($owner, $location, $type=null): int {
         /**
             Count all the cards in a particular location.
         **/
-        return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, /*key=*/ null, $type);
+        return intval(self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, /*key=*/ null, $type));
     }
     
     function getTopCardOnBoard($player_id, $color) {
@@ -12472,25 +12472,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                }
-                break;
-
-            // id 153, Artifacts age 4: Cross of Coronado
-            case "153N1":
-                // "Reveal your hand"
-                self::revealHand($player_id);
-            
-                // "If you have exactly five cards and five colors in your hand, you win"
-                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                if (count(array_diff($card_count_by_color, array(1))) == 0) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
-                    throw new EndOfGame();
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have exactly five cards and five colors in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have exactly five cards and five colors in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
                 }
                 break;
 
