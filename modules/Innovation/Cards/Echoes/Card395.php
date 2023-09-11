@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
 class Card395 extends Card
@@ -25,7 +26,7 @@ class Card395 extends Card
     if (self::isEcho() || self::isDemand()) {
       self::setMaxSteps(1);
     } else {
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::ECHO_EFFECT, $color) >= 3) {
           $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::HISTORY);
           if (self::wasForeseen()) {

@@ -14,10 +14,9 @@ class Card594 extends Card
   public function initialExecution()
   {
     $numScoredCards = 0;
-    for ($color = 0; $color < 5; $color++) {
-      $topCard = self::getTopCardOfColor($color);
-      if ($topCard !== null && $topCard['splay_direction'] > 0) {
-        self::score($topCard);
+    foreach (self::getTopCards() as $card) {
+      if ($card['splay_direction'] > 0) {
+        self::score($card);
         $numScoredCards++;
       }
     }

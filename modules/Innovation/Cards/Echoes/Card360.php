@@ -58,7 +58,7 @@ class Card360 extends Card
   {
     if (self::isNonDemand() && self::wasForeseen()) {
       // TODO(4E): Does afterInteraction() get called if there are no colors which can be splayed left?
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         self::splayLeft($color);
       }
     }

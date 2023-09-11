@@ -35,7 +35,7 @@ class Card22 extends Card
         );
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
-        for ($color = 0; $color < 5; $color++) {
+        foreach (Colors::ALL as $color) {
           if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, Icons::HEALTH)) {
             $numToDraw++;
           }

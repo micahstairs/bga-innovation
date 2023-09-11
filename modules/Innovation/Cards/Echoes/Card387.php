@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
 class Card387 extends Card
@@ -31,7 +32,7 @@ class Card387 extends Card
         self::setMaxSteps(1);
       }
     } else {
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::HEX_IMAGE, $color) >= 5) {
           $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::HERITAGE);
           break;

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card423 extends Card
 {
@@ -31,7 +32,7 @@ class Card423 extends Card
       if (self::isFirstOrThirdEdition()) {
         self::setMaxSteps(1);
       } else {
-        for ($color = 0; $color < 5; $color++) {
+        foreach (Colors::ALL as $color) {
           self::transferToHand(self::getBottomCardOfColor($color));
         }
       }

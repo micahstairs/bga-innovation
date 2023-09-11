@@ -970,7 +970,7 @@ abstract class Card
   {
     $colors = [];
     $counts = self::countCardsKeyedByColor($location, $playerId);
-    for ($color = 0; $color < 5; $color++) {
+    foreach (Colors::ALL as $color) {
       if ($counts[$color] > 0) {
         $colors[] = $color;
       }

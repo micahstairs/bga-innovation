@@ -19,7 +19,7 @@ class Card365 extends Card
       self::setMaxSteps(1);
     } else {
       $value = self::getMinValue(self::getTopCards());
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         if (self::isSplayed($color)) {
           $value++;
         }

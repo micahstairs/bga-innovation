@@ -3336,7 +3336,7 @@ class Innovation extends Table
                 $eligible = false;
                 for ($icon = 1; $icon <= 7 && !$eligible; $icon++) {
                     $num_piles = 0;
-                    for ($color = 0; $color < 5; $color++) {
+                    foreach (Colors::ALL as $color) {
                         if (self::countVisibleIconsInPile($player_id, $icon, $color) >= 3) {
                             $num_piles = $num_piles + 1;
                             if ($num_piles >= 4) {
@@ -3393,7 +3393,7 @@ class Innovation extends Table
                 if (self::getMaxAgeOnBoardTopCards($player_id) >= 9) {        
                     $top_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
                     $top_card_count = 0;
-                    for ($color = 0; $color < 5; $color++) {
+                    foreach (Colors::ALL as $color) {
                         if ($top_cards[$color] > 0) {
                             $top_card_count++;
                         }
@@ -5063,7 +5063,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getVisibleBonusesOnBoard($player_id) {
         $visible_bonus_icons = array();
         
-        for ($color = 0; $color < 5; $color++) {
+        foreach (Colors::ALL as $color) {
             $visible_bonus_icons = array_merge($visible_bonus_icons, self::getVisibleBonusesOnPile($player_id, $color));
         }
         return $visible_bonus_icons;
@@ -6110,7 +6110,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Unsplay all stacks which only have one card left in them.
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
             $number_of_cards_per_pile = self::countCardsInLocationKeyedByColor($player_id, 'board');
-            for ($color = 0; $color < 5; $color++) {
+            foreach (Colors::ALL as $color) {
                 if ($number_of_cards_per_pile[$color] == 1) {
                     self::splay($player_id, $player_id, $color, Directions::UNSPLAYED);
                 }
@@ -9213,7 +9213,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $executing_player_has_five_top_cards = false;
                 foreach ($boards as $player_id => $board) {
                     $number_of_top_cards = 0;
-                    for ($color = 0; $color < 5; $color++) {
+                    foreach (Colors::ALL as $color) {
                         if (count($board[$color]) > 0) {
                             $number_of_top_cards++;
                         }
@@ -9453,7 +9453,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 // This demand has no effect unless the player has a top card with a lightbulb higher than the
                 // launcher's top card of the same color.
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
                     $player_top_card = self::getTopCardOnBoard($executing_player_id, $color);
                     if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
@@ -10237,7 +10237,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 4:
                 $color_log = clienttranslate('non-${color}');
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (!in_array($color, $colors)) {
                         $color_args['color'] = Colors::render($color);
                         break;
@@ -10871,7 +10871,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Compute the number of specific colors
                 $number_to_be_scored = 0;
                 $boards = self::getBoards(self::getAllActivePlayerIds());
-                for ($color = 0; $color < 5; $color++) { // Evaluate each color
+                foreach (Colors::ALL as $color) { // Evaluate each color
                     if (count($boards[$player_id][$color]) == 0) { // The player does not have this color => no point
                         continue;
                     }
@@ -11554,7 +11554,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     $colors = array();
                     // Determine colors which top cards with a lightbulb of the player have a value higher than the tops cards of the launcher
-                    for ($color = 0; $color < 5; $color++) {
+                    foreach (Colors::ALL as $color) {
                         $player_top_card = self::getTopCardOnBoard($player_id, $color);
                         if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
                             continue;
@@ -11698,7 +11698,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "66N1_3E":
                 // Make sure there's at least one pile which can be rearranged
                 $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     if ($number_of_cards_on_board[$color] > 1) {
                         $step_max = 1;
                         break;
@@ -12601,7 +12601,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "157C1":
                 // "A color where you have more visible cards than I do"
                 $colors_with_more_visible_cards = array();
-                for ($color = 0; $color < 5; $color++){
+                foreach (Colors::ALL as $color){
                     if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color)) {
                         $colors_with_more_visible_cards[] = $color;
                         $step_max = 1;
@@ -12723,7 +12723,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card = self::executeDrawAndMeld($player_id, 6);
                     // "If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board"
                     $num_visible_cards_of_drawn_color = self::countVisibleCards($player_id, $card['color']);
-                    for ($color = 0; $color < 5; $color++) {
+                    foreach (Colors::ALL as $color) {
                         if ($num_visible_cards_of_drawn_color > self::countVisibleCards($player_id, $color)) {
                             break 2; // Exit do-while loop
                         }
@@ -12936,7 +12936,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 189, Artifacts age 8: Ocean Liner Titanic
             case "189N1":
                 // "Score all bottom cards from your board"
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
                     if ($card !== null) {
                         $card = self::scoreCard($card, $player_id);
@@ -13054,7 +13054,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 199, Artifacts age 9: Philips Compact Cassette
             case "199C1":
                 // "I compel you to unsplay all splayed colors on your board!"
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     self::unsplay($player_id, $player_id, $color);
                 }
                 break;
@@ -13431,7 +13431,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Find unique colors
                 $cards_in_player_hand = self::countCardsInLocationKeyedByColor($player_id, 'hand');
                 $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     if ($cards_in_player_hand[$color] > 0) {
                         $color_array[] = $color;
                     }
@@ -13470,7 +13470,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $stack_size = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 $largest_stack = max($stack_size);
                 $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     if ($stack_size[$color] == $largest_stack) {
                         $color_array[] = $color;
                     }
@@ -13589,7 +13589,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 504, Unseen age 2: Steganography
             case "504N1":
                 $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
+                foreach (Colors::ALL as $color) {
                     if (self::countVisibleIconsInPile($player_id, 3, $color) > 0) {
                         $color_array[] = $color;
                     }
@@ -14629,7 +14629,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 39, age 4: Invention
         case "39N1A":
             $splayed_left_colors = array();
-            for ($color = 0; $color < 5; $color++) {
+            foreach (Colors::ALL as $color) {
                 if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
                     $splayed_left_colors[] = $color;
                 }
@@ -15361,7 +15361,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "74N2A_3E":
         case "74N3A_4E":
             $splayed_right_colors = array();
-            for ($color = 0; $color < 5; $color++) {
+            foreach (Colors::ALL as $color) {
                 if (self::getCurrentSplayDirection($player_id, $color) == Directions::RIGHT) {
                     $splayed_right_colors[] = $color;
                 }
@@ -16644,7 +16644,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color on your board having the highest top card"
             $max_age = self::getMaxAgeOnBoardTopCards($player_id);
             $color_array = array();
-            for ($color = 0; $color < 5; $color++) {
+            foreach (Colors::ALL as $color) {
                 $top_card = self::getTopCardOnBoard($player_id, $color);
                 if ($top_card !== null && $top_card['age'] == $max_age) {
                     $color_array[] = $color;
@@ -18132,7 +18132,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $hand_count = self::countCardsInLocation($player_id, 'hand');
                         if ($hand_count > 0) {
                             $pile_sizes = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                            for ($color = 0; $color < 5; $color++) {
+                            foreach (Colors::ALL as $color) {
                                 if ($pile_sizes[$color] == 0) {
                                     self::revealHand($player_id);
                                     break;
@@ -20217,7 +20217,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
                     
                     // Make the transfers
-                    for ($color = 0; $color < 5; $color++) {
+                    foreach (Colors::ALL as $color) {
                         $card = self::getTopCardOnBoard($player_id, $color);
                         if ($card !== null && !self::hasRessource($card, 5)) {
                             self::scoreCard($card, $player_id); // "Score all your top cards without a factory"
