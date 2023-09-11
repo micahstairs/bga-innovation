@@ -1647,36 +1647,36 @@ class Innovation extends Table
     
     /** Splay mechanism **/
 
-    function unsplay($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, Directions::UNSPLAYED, /*force_unsplay=*/ true);
+    function unsplay($player_id, $target_player_id, $color): bool {
+        return self::splay($player_id, $target_player_id, $color, Directions::UNSPLAYED, /*force_unsplay=*/ true);
     }
 
-    function splayLeft($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, Directions::LEFT);
+    function splayLeft($player_id, $target_player_id, $color): bool {
+        return self::splay($player_id, $target_player_id, $color, Directions::LEFT);
     }
 
-    function splayRight($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, Directions::RIGHT);
+    function splayRight($player_id, $target_player_id, $color): bool {
+        return self::splay($player_id, $target_player_id, $color, Directions::RIGHT);
     }
 
-    function splayUp($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, Directions::UP);
+    function splayUp($player_id, $target_player_id, $color): bool {
+        return self::splay($player_id, $target_player_id, $color, Directions::UP);
     }
 
-    function splayAslant($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, Directions::ASLANT);
+    function splayAslant($player_id, $target_player_id, $color): bool {
+        return self::splay($player_id, $target_player_id, $color, Directions::ASLANT);
     }
 
-    function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
+    function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false): bool {
 
         // Return early if the stack is already splayed in the requested direction.
         if (self::getCurrentSplayDirection($target_player_id, $color) == $splay_direction) {
-            return;
+            return false;
         }
 
         // Return early if a stack with less than 2 cards is attempting to be splayed.
-        if ($splay_direction >= 1 && self::countCardsInLocationKeyedByColor($target_player_id, 'board')[$color] <= 1) {
-            return;
+        if ($splay_direction != Directions::UNSPLAYED && self::countCardsInLocationKeyedByColor($target_player_id, 'board')[$color] <= 1) {
+            return false;
         }
 
         self::DbQuery(self::format("
@@ -1720,6 +1720,7 @@ class Innovation extends Table
         }
         
         self::recordThatChangeOccurred();
+        return true;
     }
 
     function getForecastAndSafeLimit($player_id): int {
@@ -10694,7 +10695,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 72
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
-            || (440 <= $card_id && $card_id == 441)
+            || (440 <= $card_id && $card_id == 442)
             || $card_id == 445
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13302,37 +13303,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 442, age 11: Astrogeology
-            case "442N1":
-                // "Draw and reveal an 11."
-                $revealed_card = self::executeDraw($player_id, 11, 'revealed');
-                
-                // "Splay its color on your board aslant. If you do, transfer all but your top two cards of that color into your hand."
-                $color = $revealed_card['color'];
-                $num_cards_in_pile = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
-                if ($revealed_card['splay_direction'] != 4 && $num_cards_in_pile >= 2) { // aslant
-                    self::splayAslant($player_id, $player_id, $color);
-                    
-                    while ($num_cards_in_pile > 2) {
-                        $card = self::getBottomCardOnBoard($player_id, $color);
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                        $num_cards_in_pile--;
-                    }
-                }
-                self::transferCardFromTo($revealed_card, $player_id, 'hand'); // put revealed card in hand
-                break;
-
-            case "442N2":
-                if (self::countCardsInLocation($player_id, 'hand') >= 11) { 
-                    // "If you have eleven or more cards in your hand, you win."
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 11 or more cards in hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 11 or more cards in hand.'), array('player_name' => self::renderPlayerName($player_id)));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Astrogeology');
-                    throw new EndOfGame();
-                }
                 break;
             
             // id 443, age 11: Fusion

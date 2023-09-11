@@ -600,37 +600,37 @@ abstract class Card
     $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
   }
 
-  protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null)
+  protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
     $targetPlayerId = self::coercePlayerId($targetPlayerId);
     if ($triggeringPlayerId === null) {
       $triggeringPlayerId = $targetPlayerId;
     }
-    $this->game->unsplay($triggeringPlayerId, $targetPlayerId, $color);
+    return $this->game->unsplay($triggeringPlayerId, $targetPlayerId, $color);
   }
 
-  protected function splayLeft(int $color, int $playerId = null)
+  protected function splayLeft(int $color, int $playerId = null, int $triggeringPlayerId = null): bool
   {
     $playerId = self::coercePlayerId($playerId);
-    $this->game->splayLeft($playerId, $playerId, $color);
+    return $this->game->splayLeft($triggeringPlayerId, $playerId, $color);
   }
 
-  protected function splayRight(int $color, int $playerId = null)
+  protected function splayRight(int $color, int $playerId = null, int $triggeringPlayerId = null): bool
   {
     $playerId = self::coercePlayerId($playerId);
-    $this->game->splayRight($playerId, $playerId, $color);
+    return $this->game->splayRight($triggeringPlayerId, $playerId, $color);
   }
 
-  protected function splayUp(int $color, int $playerId = null)
+  protected function splayUp(int $color, int $playerId = null, int $triggeringPlayerId = null): bool
   {
     $playerId = self::coercePlayerId($playerId);
-    $this->game->splayUp($playerId, $playerId, $color);
+    return $this->game->splayUp($triggeringPlayerId, $playerId, $color);
   }
 
-  protected function splayAslant(int $color, int $playerId = null)
+  protected function splayAslant(int $color, int $playerId = null, int $triggeringPlayerId = null): bool
   {
     $playerId = self::coercePlayerId($playerId);
-    $this->game->splayAslant($playerId, $playerId, $color);
+    return $this->game->splayAslant($triggeringPlayerId, $playerId, $color);
   }
 
   protected function getSplayDirection(int $color, int $playerId = null): int
