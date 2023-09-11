@@ -2767,53 +2767,9 @@ $L_y_position: 8;
         }
     }
 
-    // Age 11 base cards
-    @for $i from 440 through 449 {
-        &.hexagon_icon_#{$i} {
-            filter: brightness(0%);
-
-            &.M {
-                background-position: -3px -3px;
-            }
-
-            &.L {
-                background-position: -8px -8px;
-            }
-        }
-    }
-
-    // Age 11 Cities
-    @for $i from 460 through 469 {
-        &.hexagon_icon_#{$i} {
-            filter: brightness(0%);
-
-            &.M {
-                background-position: -3px -3px;
-            }
-
-            &.L {
-                background-position: -8px -8px;
-            }
-        }
-    }
-
-    // Age 11 Echoes
-    @for $i from 470 through 479 {
-        &.hexagon_icon_#{$i} {
-            filter: brightness(0%);
-
-            &.M {
-                background-position: -3px -3px;
-            }
-
-            &.L {
-                background-position: -8px -8px;
-            }
-        }
-    }
-
-    // Unseen cards
-    @for $i from 480 through 594 {
+    // Age 11 cards and Unseen cards
+    // TODO(4E): Add real hex icons once we have the graphics
+    @for $i from 440 through 594 {
         &.hexagon_icon_#{$i} {
             filter: brightness(0%);
 

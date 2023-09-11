@@ -540,10 +540,14 @@ class Innovation extends Table
         }
         
         // Add cards from expansions that are in use.
+
         if ($this->innovationGameState->artifactsExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 110 <= id AND id <= 214");
             if ($this->innovationGameState->artifactsExpansionEnabledWithRelics()) {
                 self::DbQuery("UPDATE card SET location = 'relics', position = 0 WHERE is_relic");
+            }
+            if ($edition == 4) {
+                self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 450 <= id AND id <= 459");
             }
         }
 
