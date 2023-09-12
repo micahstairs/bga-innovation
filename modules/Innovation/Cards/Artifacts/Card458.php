@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
 class Card458 extends Card
@@ -27,11 +28,13 @@ class Card458 extends Card
   public function handleSpecialChoice(int $color)
   {
     foreach (self::getPlayerIds() as $playerId) {
-      $stack = self::getCardsKeyedByColor(Locations::BOARD, $playerId)[$color];
-      foreach (array_reverse($stack) as $card) {
-        self::junk($card);
+      foreach (self::getCardsKeyedByColor(Locations::BOARD, $playerId)[$color] as $card) {
+        self::junkAsPartOfBulkTransfer($card);
       }
     }
+    $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
+    self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), array_merge($args, ['You' => 'You']));
+    self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), array_merge($args, ['player_name' => self::renderPlayerName()]));
   }
 
 }
