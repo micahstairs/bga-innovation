@@ -369,6 +369,11 @@ abstract class Card
     return $this->game->transferCardFromTo($card, 0, 'deck', ['bottom_to' => false]);
   }
 
+  protected function junkAsPartOfBulkTransfer($card): ?array
+  {
+    return $this->game->junkCard($card, /*isPartOfBulkTransfer=*/ true);
+  }
+
   protected function junk($card): ?array
   {
     if (!$card) {

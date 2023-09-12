@@ -16,9 +16,11 @@ class Card453 extends Card
   {
     foreach (Colors::ALL as $color) {
       foreach (self::getCardsKeyedByColor(Locations::BOARD)[$color] as $card) {
-        self::junk($card);
+        self::junkAsPartOfBulkTransfer($card);
       }
     }
+    self::notifyPlayer(clienttranslate('${You} junked all cards on your board.'), ['You' => 'You']);
+    self::notifyOthers(clienttranslate('${player_name} junked all cards on his board.'), ['player_name' => self::renderPlayerName()]);
     for ($i = 1; $i <= 11; $i++) {
       self::drawAndMeld($i);
     }

@@ -1341,8 +1341,8 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'forecast', ['foreshadow_keyword' => true]);
     }
 
-    function junkCard($card): ?array {
-        return self::transferCardFromTo($card, 0, 'junk');
+    function junkCard($card, $bulk_transfer = false): ?array {
+        return self::transferCardFromTo($card, 0, 'junk', ['bulk_transfer' => $bulk_transfer]);
     }
 
     function safeguardCard($card, $owner_to): ?array {
@@ -1371,6 +1371,7 @@ class Innovation extends Table
         $return_keyword = array_key_exists('return_keyword', $properties) ? $properties['return_keyword'] : $location_to == 'deck';
         $foreshadow_keyword = array_key_exists('foreshadow_keyword', $properties) ? $properties['foreshadow_keyword'] : $location_to == 'forecast';
         $force = array_key_exists('force', $properties) ? $properties['force'] : false;
+        $bulk_transfer = array_key_exists('bulk_transfer', $properties) ? $properties['bulk_transfer'] : false;
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("  - Transferring ". self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
@@ -1425,7 +1426,7 @@ class Innovation extends Table
         if ($location_to == 'board') {
             // The card must continue the current splay
             $splay_direction_to = self::getCurrentSplayDirection($owner_to, $color);
-        } else { // $location_to != 'board'
+        } else {
             $splay_direction_to = 'NULL';
         }
         
@@ -1581,6 +1582,7 @@ class Innovation extends Table
             'safeguard_keyword' => $safeguard_keyword,
             'return_keyword' => $return_keyword,
             'foreshadow_keyword' => $foreshadow_keyword,
+            'bulk_transfer' => $bulk_transfer,
         );
         
         // Update the current state of the card
@@ -1912,6 +1914,7 @@ class Innovation extends Table
     function updateGameSituation($card, $transferInfo) {
         self::recordThatChangeOccurred();
 
+        $bulk_transfer = $transferInfo['bulk_transfer'];
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
         $location_from = $transferInfo['location_from'];
@@ -2030,19 +2033,21 @@ class Innovation extends Table
             }
         }
 
-        if ($location_from == 'board' || $location_to == 'board') {
-            self::removeOldFlagsAndFountains();
+        if (!$bulk_transfer) {
+            if ($location_from == 'board' || $location_to == 'board') {
+                self::removeOldFlagsAndFountains();
+                try {
+                    self::addNewFlagsAndFountains();
+                } catch(EndOfGame $e) {
+                    $end_of_game = true;
+                }
+            }
+
             try {
-                self::addNewFlagsAndFountains();
+                self::checkForSpecialAchievements();
             } catch(EndOfGame $e) {
                 $end_of_game = true;
             }
-        }
-
-        try {
-            self::checkForSpecialAchievements();
-        } catch(EndOfGame $e) {
-            $end_of_game = true;
         }
 
         if ($end_of_game) {
@@ -2206,6 +2211,7 @@ class Innovation extends Table
     }
 
     function notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo) {
+        $bulk_transfer = $transferInfo['bulk_transfer'];
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
 
@@ -2229,12 +2235,17 @@ class Innovation extends Table
         $notif_args['type'] = $card['type'];
         $notif_args['is_relic'] = $card['is_relic'];
         
-        self::notifyAllPlayers("transferedCard", $message, $notif_args);
+        if ($bulk_transfer) {
+            self::notifyAllPlayers("transferedCardNoDelay", "", $notif_args);
+        } else {
+            self::notifyAllPlayers("transferedCard", $message, $notif_args);
+        }
     }
     
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo) {
         $is_special_achievement = $card['age'] === null;
 
+        $bulk_transfer = $transferInfo['bulk_transfer'];
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
         $owner_from = $transferInfo['owner_from'];
@@ -2500,8 +2511,13 @@ class Innovation extends Table
         $notif_args_for_player = array_merge($notif_args_for_player, $info, $delimiters_for_player);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
         $notif_args_for_others = array_merge($notif_args_for_others, $info, $delimiters_for_others);
-        self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
-        self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCard", $message_for_others, $notif_args_for_others);
+        if ($bulk_transfer) {
+            self::notifyPlayer($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_player);
+            self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_others);
+        } else {
+            self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
+            self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCard", $message_for_others, $notif_args_for_others);
+        }
     }
     
     function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $achieve_keyword, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
@@ -2719,6 +2735,7 @@ class Innovation extends Table
     }
     
     function notifyWithTwoPlayersInvolved($card, $transferInfo, $progressInfo) {
+        $bulk_transfer = $transferInfo['bulk_transfer'];
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
         $location_from = $transferInfo['location_from'];
@@ -2983,9 +3000,15 @@ class Innovation extends Table
         $notif_args_for_opponent = array_merge($notif_args_for_opponent, $info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
         $notif_args_for_others = array_merge($notif_args_for_others, $info, self::getDelimiterMeanings($message_for_others, $card['id']));
         
-        self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
-        self::notifyPlayer($transferInfo['opponent_id'], "transferedCard", $message_for_opponent, $notif_args_for_opponent);
-        self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCard", $message_for_others, $notif_args_for_others);
+        if ($bulk_transfer) {
+            self::notifyPlayer($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_player);
+            self::notifyPlayer($transferInfo['opponent_id'], "transferedCardNoDelay", "", $notif_args_for_opponent);
+            self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCardNoDelay", "", $notif_args_for_others);
+        } else {
+            self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
+            self::notifyPlayer($transferInfo['opponent_id'], "transferedCard", $message_for_opponent, $notif_args_for_opponent);
+            self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCard", $message_for_others, $notif_args_for_others);
+        }
     }
         
     function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $opponent_id_is_owner_from, $opponent_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {

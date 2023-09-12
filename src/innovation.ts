@@ -5006,6 +5006,7 @@ class Innovation extends BgaGame {
 
         dojo.subscribe('transferedCard', this, "notif_transferedCard");
         this.notifqueue.setSynchronous('transferedCard', reasonnable_delay);   // Wait X milliseconds after executing the transferedCard handler
+        dojo.subscribe('transferedCardNoDelay', this, "notif_transferedCard");
 
         dojo.subscribe('logWithCardTooltips', this, "notif_logWithCardTooltips");  // This kind of notification does not need any delay
 
@@ -5028,6 +5029,7 @@ class Innovation extends BgaGame {
         if (this.isSpectator) {
             dojo.subscribe('transferedCard_spectator', this, "notif_transferedCard_spectator");
             this.notifqueue.setSynchronous('transferedCard_spectator', reasonnable_delay);   // Wait X milliseconds after executing the handler
+            dojo.subscribe('transferedCardNoDelay_spectator', this, "notif_transferedCard_spectator");
 
             dojo.subscribe('logWithCardTooltips_spectator', this, "notif_logWithCardTooltips_spectator");  // This kind of notification does not need any delay
 
