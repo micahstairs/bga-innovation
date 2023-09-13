@@ -14,13 +14,10 @@ class Card453 extends Card
 
   public function initialExecution()
   {
-    foreach (Colors::ALL as $color) {
-      foreach (self::getCardsKeyedByColor(Locations::BOARD)[$color] as $card) {
-        self::junkAsPartOfBulkTransfer($card);
-      }
-    }
+    self::junkCards(self::getCards(Locations::BOARD));
     self::notifyPlayer(clienttranslate('${You} junked all cards on your board.'));
     self::notifyOthers(clienttranslate('${player_name} junked all cards on his board.'));
+
     for ($i = 1; $i <= 11; $i++) {
       self::drawAndMeld($i);
     }

@@ -1341,8 +1341,8 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'forecast', ['foreshadow_keyword' => true]);
     }
 
-    function junkCard($card, $bulk_transfer = false): ?array {
-        return self::transferCardFromTo($card, 0, 'junk', ['bulk_transfer' => $bulk_transfer]);
+    function junkCard($card, array $properties = []): ?array {
+        return self::transferCardFromTo($card, 0, 'junk', $properties);
     }
 
     function safeguardCard($card, $owner_to): ?array {
@@ -1915,6 +1915,7 @@ class Innovation extends Table
         self::recordThatChangeOccurred();
 
         $bulk_transfer = $transferInfo['bulk_transfer'];
+        $last_card_of_bulk_transfer = $transferInfo['last_card_of_bulk_transfer'];
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
         $location_from = $transferInfo['location_from'];
@@ -2033,7 +2034,7 @@ class Innovation extends Table
             }
         }
 
-        if (!$bulk_transfer) {
+        if (!$bulk_transfer || $last_card_of_bulk_transfer) {
             if ($location_from == 'board' || $location_to == 'board') {
                 self::removeOldFlagsAndFountains();
                 try {
@@ -5947,8 +5948,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return false;
         }
 
-        foreach ($cards as $card) {
-            self::junkCard($card, /*bulk_transfer=*/ true);
+        for ($i = 0; $i < count($cards); $i++) {
+            self::junkCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
         }
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
