@@ -5017,7 +5017,6 @@ class Innovation extends BgaGame {
 
         dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
         dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
-        dojo.subscribe('junkedBaseDeck', this, "notif_junkedBaseDeck");  // This kind of notification does not need any delay
         dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
         dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
@@ -5040,7 +5039,6 @@ class Innovation extends BgaGame {
 
             dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
             dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
-            dojo.subscribe('junkedBaseDeck_spectator', this, "notif_junkedBaseDeck_spectator");  // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
@@ -5418,30 +5416,6 @@ class Innovation extends BgaGame {
         this.refreshSpecialAchievementProgression();
     }
 
-    notif_junkedBaseDeck(notif: any) {
-        let zone = this.zone["deck"][0][notif.args.age_to_junk];
-        let nextJunkPosition = notif.args.next_junk_position;
-        for (let i = zone.items.length - 1; i >= 0; i--) {
-            this.notif_transferedCard({
-                'args': {
-                    'age': notif.args.age_to_junk,
-                    'type': 0,
-                    'is_relic': 0,
-                    'owner_from': 0,
-                    'location_from': 'deck',
-                    'position_from': i,
-                    'owner_to': 0,
-                    'location_to': 'junk',
-                    'position_to': nextJunkPosition++,
-                },
-            });
-        }
-        if (!zone.counter.display_zero) {
-            dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
-        }
-        this.updateDeckOpacities();
-    }
-
     notif_removedPlayer(notif: any) {
         let player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
@@ -5574,14 +5548,6 @@ class Innovation extends BgaGame {
 
         // Call normal notif
         this.notif_removedTopCardsAndHands(notif);
-    }
-
-    notif_junkedBaseDeck_spectator(notif: any) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-
-        // Call normal notif
-        this.notif_junkedBaseDeck(notif);
     }
 
     notif_removedPlayer_spectator(notif: any) {

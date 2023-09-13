@@ -4496,7 +4496,6 @@ var Innovation = /** @class */ (function (_super) {
         dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile"); // This kind of notification does not need any delay
         dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores"); // This kind of notification does not need any delay
         dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands"); // This kind of notification does not need any delay
-        dojo.subscribe('junkedBaseDeck', this, "notif_junkedBaseDeck"); // This kind of notification does not need any delay
         dojo.subscribe('removedPlayer', this, "notif_removedPlayer"); // This kind of notification does not need any delay
         dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay"); // This kind of notification does not need any delay
         dojo.subscribe('resetMonumentCounters', this, "notif_resetMonumentCounters"); // This kind of notification does not need any delay
@@ -4512,7 +4511,6 @@ var Innovation = /** @class */ (function (_super) {
             dojo.subscribe('rearrangedPile_spectator', this, "notif_rearrangedPile_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator"); // This kind of notification does not need any delay
-            dojo.subscribe('junkedBaseDeck_spectator', this, "notif_junkedBaseDeck_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('resetMonumentCounters_spectator', this, "notif_resetMonumentCounters_spectator"); // This kind of notification does not need any delay
@@ -4858,29 +4856,6 @@ var Innovation = /** @class */ (function (_super) {
         // Update special achievements overview with progression towards each achievement
         this.refreshSpecialAchievementProgression();
     };
-    Innovation.prototype.notif_junkedBaseDeck = function (notif) {
-        var zone = this.zone["deck"][0][notif.args.age_to_junk];
-        var nextJunkPosition = notif.args.next_junk_position;
-        for (var i = zone.items.length - 1; i >= 0; i--) {
-            this.notif_transferedCard({
-                'args': {
-                    'age': notif.args.age_to_junk,
-                    'type': 0,
-                    'is_relic': 0,
-                    'owner_from': 0,
-                    'location_from': 'deck',
-                    'position_from': i,
-                    'owner_to': 0,
-                    'location_to': 'junk',
-                    'position_to': nextJunkPosition++,
-                },
-            });
-        }
-        if (!zone.counter.display_zero) {
-            dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
-        }
-        this.updateDeckOpacities();
-    };
     Innovation.prototype.notif_removedPlayer = function (notif) {
         var player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
@@ -4992,12 +4967,6 @@ var Innovation = /** @class */ (function (_super) {
         this.log_for_spectator(notif);
         // Call normal notif
         this.notif_removedTopCardsAndHands(notif);
-    };
-    Innovation.prototype.notif_junkedBaseDeck_spectator = function (notif) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-        // Call normal notif
-        this.notif_junkedBaseDeck(notif);
     };
     Innovation.prototype.notif_removedPlayer_spectator = function (notif) {
         // Put the message for the spectator in log

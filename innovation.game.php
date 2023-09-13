@@ -4472,12 +4472,12 @@ class Innovation extends Table
         return $number_of_cards > 0;
     }
 
-    function getCardsInLocationKeyedByAge($owner, $location) {
+    function getCardsInLocationKeyedByAge($owner, $location, $type=null) {
         /**
             Get all the cards in a particular location, keyed by age, then sorted by position.
         **/
         $column = $location === 'board' ? 'faceup_age' : 'age';
-        return self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location, $column);
+        return self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location, $column, $type);
     }
 
     function getCardsInLocationKeyedByColor($owner, $location) {
@@ -5941,50 +5941,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // TODO(FIGURES): Handle junking the age 0 deck
             return false;
         }
-        $cardCount = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', CardTypes::BASE)[$age];
-        if ($cardCount == 0) {
-            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, CardTypes::BASE)));
+        $cards = self::getCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', CardTypes::BASE)[$age];
+        if (empty($cards)) {
+            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, CardTypes::BASE)]);
             return false;
         }
 
-       $nextJunkPosition = 1 + self::getUniqueValueFromDB(self::format("
-            SELECT
-                COALESCE(MAX(position), -1)
-            FROM
-                card
-            WHERE
-                owner = 0
-                AND location = 'junk'
-                AND age = {age}
-                AND type = 0
-        ", ["age" => $age]));
-
-        self::DbQuery(
-            self::format("
-                UPDATE
-                    card
-                SET
-                    location = 'junk',
-                    position = {nextJunkPosition} + position
-                WHERE
-                    owner = 0
-                    AND location = 'deck'
-                    AND age = {age}
-                    AND type = 0
-            ", ["age" => $age, "nextJunkPosition" => $nextJunkPosition],
-            )
-        );
-        self::recordThatChangeOccurred();
-        self::notifyAll(
-            'junkedBaseDeck',
-            clienttranslate('The ${age} deck, which contained ${n} card(s), is junked.'),
-            [
-                'i18n' => ['n'],
-                'age' => self::getAgeSquareWithType($age, CardTypes::BASE),
-                'n' => self::renderNumber($cardCount),
-                'age_to_junk' => $age,
-                'next_junk_position' => $nextJunkPosition,
-            ]
+        foreach ($cards as $card) {
+            self::junkCard($card, /*bulk_transfer=*/ true);
+        }
+        self::notifyGeneralInfo(
+            clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
+            ['age' => self::getAgeSquareWithType($age, CardTypes::BASE), 'n' => self::renderNumber(count($cards))]
         );
         return true;
     }
