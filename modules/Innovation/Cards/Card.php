@@ -257,7 +257,7 @@ abstract class Card
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
   }
 
-  protected function transferToHand($card, int $playerId = null)
+  protected function transferToHand(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -265,7 +265,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
   }
 
-  protected function score($card, int $playerId = null)
+  protected function score(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -273,7 +273,7 @@ abstract class Card
     return $this->game->scoreCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function transferToScorePile($card, int $playerId = null)
+  protected function transferToScorePile(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -281,7 +281,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'score');
   }
 
-  protected function meld($card, int $playerId = null)
+  protected function meld(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -289,7 +289,7 @@ abstract class Card
     return $this->game->meldCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function transferToBoard($card, int $playerId = null)
+  protected function transferToBoard(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -297,7 +297,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'board');
   }
 
-  protected function tuck($card, int $playerId = null)
+  protected function tuck(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -305,7 +305,7 @@ abstract class Card
     return $this->game->tuckCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function reveal($card, int $playerId = null)
+  protected function reveal(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -313,7 +313,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
   }
 
-  protected function safeguard($card, int $playerId = null)
+  protected function safeguard(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -321,7 +321,7 @@ abstract class Card
     return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function putBackInSafe($card, int $playerId = null)
+  protected function putBackInSafe(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -329,7 +329,7 @@ abstract class Card
     return $this->game->putCardBackInSafe($card, self::coercePlayerId($playerId));
   }
 
-  protected function achieve($card, int $playerId = null)
+  protected function achieve(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -337,7 +337,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
   }
 
-  protected function achieveIfEligible($card, int $playerId = null)
+  protected function achieveIfEligible(?array $card, int $playerId = null)
   {
     if (self::isEligibleForAchieving($card, self::coercePlayerId($playerId))) {
       return self::achieve($card);
@@ -345,7 +345,7 @@ abstract class Card
     return $card;
   }
 
-  protected function isEligibleForAchieving($card, int $playerId = null): bool
+  protected function isEligibleForAchieving(?array $card, int $playerId = null): bool
   {
     if (!$card) {
       return false;
@@ -353,7 +353,7 @@ abstract class Card
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return($card): ?array
+  protected function return(?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -361,7 +361,7 @@ abstract class Card
     return $this->game->returnCard($card);
   }
 
-  protected function placeOnTopOfDeck($card): ?array
+  protected function placeOnTopOfDeck(?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -374,7 +374,7 @@ abstract class Card
     $this->game->junkCards($cards);
   }
 
-  protected function junk(array $card): ?array
+  protected function junk(?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -382,7 +382,7 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
-  protected function foreshadow($card, $callbackIfFull, int $playerId = null): ?array
+  protected function foreshadow(?array $card, $callbackIfFull, int $playerId = null): ?array
   {
     if (!$card) {
       return null;
@@ -543,7 +543,7 @@ abstract class Card
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location, 'MAX');
   }
 
-  protected function hasIcon($card, int $icon): bool
+  protected function hasIcon(?array $card, int $icon): bool
   {
     if (!$card) {
       return false;
@@ -556,42 +556,42 @@ abstract class Card
     return $this->game->getVisibleBonusesOnBoard(self::coercePlayerId($playerId));
   }
 
-  protected function isValuedCard($card): bool
+  protected function isValuedCard(?array $card): bool
   {
-    return $card['age'] !== null;
+    return $card && $card['age'] !== null;
   }
 
-  protected function isSpecialAchievement($card): bool
+  protected function isSpecialAchievement(?array $card): bool
   {
-    return $card['age'] === null && $card['id'] < 1000;
+    return $card && $card['age'] === null && $card['id'] < 1000;
   }
 
-  protected function isBlue($card): bool
+  protected function isBlue(?array $card): bool
   {
-    return $card['color'] == Colors::BLUE;
+    return $card && $card['color'] == Colors::BLUE;
   }
 
-  protected function isRed($card): bool
+  protected function isRed(?array $card): bool
   {
-    return $card['color'] == Colors::RED;
+    return $card && $card['color'] == Colors::RED;
   }
 
-  protected function isGreen($card): bool
+  protected function isGreen(?array $card): bool
   {
-    return $card['color'] == Colors::GREEN;
+    return $card && $card['color'] == Colors::GREEN;
   }
 
-  protected function isYellow($card): bool
+  protected function isYellow(?array $card): bool
   {
-    return $card['color'] == Colors::YELLOW;
+    return $card && $card['color'] == Colors::YELLOW;
   }
 
-  protected function isPurple($card): bool
+  protected function isPurple(?array $card): bool
   {
-    return $card['color'] == Colors::PURPLE;
+    return $card && $card['color'] == Colors::PURPLE;
   }
 
-  protected function getCard(int $cardId): array
+  protected function getCard(int $cardId): ?array
   {
     return $this->game->getCardInfo($cardId);
   }
@@ -664,7 +664,7 @@ abstract class Card
 
   // SELECTION HELPERS
 
-  protected function getLastSelectedCard()
+  protected function getLastSelectedCard(): ?array
   {
     return $this->game->getCardInfo(self::getLastSelectedId());
   }

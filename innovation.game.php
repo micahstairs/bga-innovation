@@ -4001,7 +4001,7 @@ class Innovation extends Table
     }
     
     /** Information about cards **/
-    function getCardInfo($id) {
+    function getCardInfo($id): ?array {
         /**
             Get all information from the database about the card indicated by its id, which includes:
                 -intrisic properties,
