@@ -5015,7 +5015,6 @@ class Innovation extends BgaGame {
 
         dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile");  // This kind of notification does not need any delay
 
-        dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
         dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
         dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
@@ -5036,7 +5035,6 @@ class Innovation extends BgaGame {
 
             dojo.subscribe('rearrangedPile_spectator', this, "notif_rearrangedPile_spectator"); // This kind of notification does not need any delay
 
-            dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
@@ -5340,29 +5338,6 @@ class Innovation extends BgaGame {
         this.refreshSpecialAchievementProgression();
     }
 
-    notif_removedTopCardsAndHands(notif: any) {
-        // Remove cards
-        for (let player_id in this.players) {
-            this.zone["hand"][player_id].removeAll();
-        }
-        for (let i = 0; i < notif.args.top_cards_to_remove.length; i++) {
-            let card = notif.args.top_cards_to_remove[i];
-            this.removeFromZone(this.zone["board"][card.owner][card.color], card.id, true, card.age, card.type, card.is_relic);
-        }
-
-        // Update counters
-        for (let player_id in this.players) {
-            this.zone["hand"][player_id].counter.setValue(0);
-            this.counter["max_age_on_board"][player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
-            for (let icon = 1; icon <= 7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
-            }
-        }
-
-        // Update special achievements overview with progression towards each achievement
-        this.refreshSpecialAchievementProgression();
-    }
-
     notif_removedPlayer(notif: any) {
         let player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
@@ -5479,14 +5454,6 @@ class Innovation extends BgaGame {
 
         // Call normal notif
         this.notif_rearrangedPile(notif);
-    }
-
-    notif_removedTopCardsAndHands_spectator(notif: any) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-
-        // Call normal notif
-        this.notif_removedTopCardsAndHands(notif);
     }
 
     notif_removedPlayer_spectator(notif: any) {

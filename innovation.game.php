@@ -6021,101 +6021,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'player_to_remove' => $player_id,
         ));
     }
-
-    function removeAllTopCardsAndHands() {
-        // Remove cards from all players' hands.
-        self::DbQuery("
-            UPDATE
-                card
-            SET
-                owner = 0,
-                location = 'removed',
-                position = NULL
-            WHERE
-                location = 'hand'
-        ");
-        if (self::DbAffectedRow() > 0) {
-            self::recordThatChangeOccurred();
-        }
-        
-        // Get list of the all top cards on the board.
-        $top_cards_to_remove = array();
-        $player_ids = self::getAllActivePlayerIds();
-        foreach ($player_ids as $player_id) {
-            $top_cards_to_remove = array_merge($top_cards_to_remove, self::getTopCardsOnBoard($player_id));
-        }
-
-        // Remove top cards from boards.
-        self::DbQuery("
-            UPDATE
-                card
-            LEFT JOIN
-                (SELECT
-                    owner, color, MAX(position) AS position
-                FROM
-                    card
-                WHERE
-                    location = 'board'
-                GROUP BY
-                    owner, color) AS b ON card.owner = b.owner AND card.color = b.color
-            SET
-                card.owner = 0,
-                card.location = 'removed',
-                card.position = NULL
-            WHERE
-                card.location = 'board' AND
-                card.owner = b.owner AND
-                card.color = b.color AND
-                card.position = b.position
-        ");
-        if (self::DbAffectedRow() > 0) {
-            self::recordThatChangeOccurred();
-        }
-
-        $new_resource_counts_by_player = array();
-        $new_max_age_on_board_by_player = array();
-        foreach ($player_ids as $player_id) {
-            $new_resource_counts_by_player[$player_id] = self::updatePlayerRessourceCounts($player_id);
-            $new_max_age_on_board = self::getMaxAgeOnBoardTopCards($player_id);
-            $new_max_age_on_board_by_player[$player_id] = $new_max_age_on_board;
-            self::setStat($new_max_age_on_board, 'max_age_on_board', $player_id);
-        }
-        self::notifyAll('removedTopCardsAndHands', clienttranslate('All top cards on all boards and all cards in all hands are removed from the game.'), array(
-            'new_resource_counts_by_player' => $new_resource_counts_by_player,
-            'new_max_age_on_board_by_player' => $new_max_age_on_board_by_player,
-            'top_cards_to_remove' => $top_cards_to_remove,
-        ));
-
-        // Unsplay all stacks which only have one card left in them.
-        foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
-            $number_of_cards_per_pile = self::countCardsInLocationKeyedByColor($player_id, 'board');
-            foreach (Colors::ALL as $color) {
-                if ($number_of_cards_per_pile[$color] == 1) {
-                    self::splay($player_id, $player_id, $color, Directions::UNSPLAYED);
-                }
-            }
-        }
-
-        $end_of_game = false;
-
-        self::removeOldFlagsAndFountains();
-        try {
-            self::addNewFlagsAndFountains();
-        } catch(EndOfGame $e) {
-            $end_of_game = true;
-        }
-
-        try {
-            self::checkForSpecialAchievements();
-        } catch(EndOfGame $e) {
-            $end_of_game = true;
-        }
-
-        if ($end_of_game) {
-            self::trace('EOG bubbled from self::removeAllTopCardsAndHands');
-            throw $e; // Re-throw exception to higher level
-        }
-    }
     
     function setSelectionRange($options) {
 
@@ -13129,8 +13034,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              // id 213, Artifacts age 10: DeLorean DMC-12
             case "213N1":
                 // "If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game"
-                if (self::isTopBoardCard(self::getCardInfo(213))) {
-                    self::removeAllTopCardsAndHands();
+                if (self::isTopBoardCard(self::getCardInfo(CardIds::DELOREAN_DMC_12))) {
+                    $cards = [];
+                    foreach (self::getAllActivePlayerIds() as $player_id) {
+                        $cards = array_merge($cards, self::getTopCardsOnBoard($player_id));
+                        $cards = array_merge($cards, self::getCardsInLocation($player_id, Locations::HAND));
+                    }
+                    self::removeCards($cards);
+                    self::notifyGeneralInfo(clienttranslate('All top cards on all boards and all cards in all hands are removed from the game.'));
                 }
                 break;
             
