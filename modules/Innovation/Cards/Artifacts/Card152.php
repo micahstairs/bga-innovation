@@ -48,8 +48,8 @@ class Card152 extends Card
       $color = self::getAuxiliaryValue2();
       $cards = self::getCardsKeyedByColor(Locations::HAND)[$color];
       $args = ['i18n' => ['color'], 'n' => count($cards), 'color' => Colors::render($color)];
-      self::notifyPlayer(clienttranslate('${You} revealed ${n} ${color} cards.'), array_merge($args, ['You' => 'You']));
-      self::notifyOthers(clienttranslate('${player_name} revealed ${n} ${color} cards.'), array_merge($args, ['player_name' => self::renderPlayerName()]));
+      self::notifyPlayer(clienttranslate('${You} revealed ${n} ${color} cards.'), $args);
+      self::notifyOthers(clienttranslate('${player_name} revealed ${n} ${color} cards.'), $args);
       if (count($cards) == $choice) {
         foreach ($cards as $card) {
           self::score($card);

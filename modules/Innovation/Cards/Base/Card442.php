@@ -27,8 +27,8 @@ class Card442 extends Card
       self::transferToHand($revealedCard);
     } else {
       if (self::countCards(Locations::HAND) >= 11) {
-        self::notifyPlayer(clienttranslate('${You} have 11 or more cards in your hand.'), ['You' => 'You']);
-        self::notifyOthers(clienttranslate('${player_name} has 11 or more cards in his hand.'), ['player_name' => self::renderPlayerName()]);
+        self::notifyPlayer(clienttranslate('${You} have 11 or more cards in your hand.'));
+        self::notifyOthers(clienttranslate('${player_name} has 11 or more cards in his hand.'));
         self::win();
       }
     }

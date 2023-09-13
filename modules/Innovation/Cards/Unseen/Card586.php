@@ -45,22 +45,12 @@ class Card586 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    self::notifyPlayer(
-      clienttranslate('${You} call ${side}.'),
-      ['You' => 'You', 'side' => $this->getPrintableCoinSide($choice)]
-    );
-    self::notifyOthers(
-      clienttranslate('${player_name} calls ${side}.'),
-      [
-        'player_name' => $this->notifications->renderPlayerName(self::getPlayerId()),
-        'side'        => $this->getPrintableCoinSide($choice),
-      ]
-    );
+    $args = ['side' => $this->getPrintableCoinSide($choice)];
+    self::notifyPlayer(clienttranslate('${You} call ${side}.'), $args);
+    self::notifyOthers(clienttranslate('${player_name} calls ${side}.'), $args);
+
     $coinFlip = bga_rand(1, 2);
-    $this->notifications->notifyGeneralInfo(
-      clienttranslate('The coin landed on ${side}.'),
-      ['side' => $coinFlip == 1 ? clienttranslate('heads') : clienttranslate('tails')]
-    );
+    self::notifyAll(clienttranslate('The coin landed on ${side}.'), ['side' => $this->getPrintableCoinSide($coinFlip)]);
 
     if ($choice != $coinFlip) {
       if (self::isDemand() || self::countCards('safe') == 0) {

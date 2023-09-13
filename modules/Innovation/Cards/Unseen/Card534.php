@@ -47,23 +47,11 @@ class Card534 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      self::notifyPlayer(
-          clienttranslate('${You} have chosen to splay a non-purple color left and self-execute the top card.'),
-          ['You' => 'You']
-        );
-      self::notifyOthers(
-          clienttranslate('${player_name} has chosen to splay a non-purple color left and self-execute the top card.'),
-          ['player_name' => self::renderPlayerName()]
-        );
+      self::notifyPlayer(clienttranslate('${You} have chosen to splay a non-purple color left and self-execute the top card.'));
+      self::notifyOthers(clienttranslate('${player_name} has chosen to splay a non-purple color left and self-execute the top card.'));
     } else {
-      self::notifyPlayer(
-          clienttranslate('${You} have chosen to meld a card from your hand and splay its color right.'),
-          ['You' => 'You']
-        );
-      self::notifyOthers(
-          clienttranslate('${player_name} has chosen to meld a card from his hand and splay its color right.'),
-          ['player_name' => self::renderPlayerName()]
-        );
+      self::notifyPlayer(clienttranslate('${You} have chosen to meld a card from your hand and splay its color right.'));
+      self::notifyOthers(clienttranslate('${player_name} has chosen to meld a card from his hand and splay its color right.'));
     }
     self::setAuxiliaryValue($choice);
     

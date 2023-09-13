@@ -33,8 +33,8 @@ class Card458 extends Card
       }
     }
     $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
-    self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), array_merge($args, ['You' => 'You']));
-    self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), array_merge($args, ['player_name' => self::renderPlayerName()]));
+    self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), $args);
+    self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), $args);
   }
 
 }

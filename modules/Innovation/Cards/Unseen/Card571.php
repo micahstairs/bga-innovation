@@ -92,8 +92,8 @@ class Card571 extends Card
       $playerMessage = clienttranslate('${You} wish to safeguard two available achievements.');
       $othersMessage = clienttranslate('${player_name} wishes to safeguard two available achievements.');
     }
-    self::notifyPlayer($playerMessage, array_merge($args, ['You' => 'You']));
-    self::notifyOthers($othersMessage, array_merge($args, ['player_name' => self::renderPlayerName()]));
+    self::notifyPlayer($playerMessage, $args);
+    self::notifyOthers($othersMessage, $args);
     self::setAuxiliaryValue($choice); // Tracks the wish that the player chose
   }
 

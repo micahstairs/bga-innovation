@@ -19,8 +19,8 @@ class Card453 extends Card
         self::junkAsPartOfBulkTransfer($card);
       }
     }
-    self::notifyPlayer(clienttranslate('${You} junked all cards on your board.'), ['You' => 'You']);
-    self::notifyOthers(clienttranslate('${player_name} junked all cards on his board.'), ['player_name' => self::renderPlayerName()]);
+    self::notifyPlayer(clienttranslate('${You} junked all cards on your board.'));
+    self::notifyOthers(clienttranslate('${player_name} junked all cards on his board.'));
     for ($i = 1; $i <= 11; $i++) {
       self::drawAndMeld($i);
     }

@@ -1133,12 +1133,15 @@ abstract class Card
 
   protected function notifyPlayer($log, array $args = [], int $playerId = null)
   {
-    $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, $args);
+    $defaultArgs = ['You' => 'You'];
+    $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, array_merge($defaultArgs, $args));
   }
 
   protected function notifyOthers($log, array $args = [], int $playerId = null)
   {
-    $this->game->notifyAllPlayersBut(self::coercePlayerId($playerId), 'log', $log, $args);
+    $playerId = self::coercePlayerId($playerId);
+    $defaultArgs = ['player_name' => self::renderPlayerName($playerId)];
+    $this->game->notifyAllPlayersBut($playerId, 'log', $log, array_merge($defaultArgs, $args));
   }
 
   public function renderValue(int $value): string

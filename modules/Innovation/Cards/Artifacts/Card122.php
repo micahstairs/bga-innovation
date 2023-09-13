@@ -56,23 +56,14 @@ class Card122 extends Card
     $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
     if ($playerRevealed && !$otherPlayerRevealed) {
       self::notifyPlayer(clienttranslate('No other player revealed a ${color} card.'), $args);
-      self::notifyOthers(
-        clienttranslate('No player other than ${player_name} revealed a ${color} card.'),
-        array_merge($args, ['player_name' => self::renderPlayerName()])
-      );
+      self::notifyOthers(clienttranslate('No player other than ${player_name} revealed a ${color} card.'), $args);
       self::setAuxiliaryValue($color); // Track color to return
       self::setMaxSteps(2);
     } else if ($playerRevealed && $otherPlayerRevealed) {
       self::notifyAll(clienttranslate('More than one player revealed a ${color} card.'), $args);
     } else {
-      self::notifyPlayer(
-        clienttranslate('${You} did not reveal a ${color} card.'),
-        array_merge($args, ['You' => 'You'])
-      );
-      self::notifyOthers(
-        clienttranslate('${player_name} did not reveal a ${color} card.'),
-        array_merge($args, ['player_name' => self::renderPlayerName()])
-      );
+      self::notifyPlayer(clienttranslate('${You} did not reveal a ${color} card.'), $args);
+      self::notifyOthers(clienttranslate('${player_name} did not reveal a ${color} card.'), $args);
     }
   }
 
