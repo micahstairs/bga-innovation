@@ -1341,8 +1341,26 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'forecast', ['foreshadow_keyword' => true]);
     }
 
-    function junkCard($card, array $properties = []): ?array {
+    function junkCard(array $card, array $properties = []): ?array {
         return self::transferCardFromTo($card, 0, 'junk', $properties);
+    }
+
+    function junkCards(array $cards) {
+        // NOTE: The caller is responsible for any relevant messages printed to the game log.
+        for ($i = 0; $i < count($cards); $i++) {
+            self::junkCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
+        }
+    }
+
+    function removeCard(array $card, array $properties = []): ?array {
+        return self::transferCardFromTo($card, 0, 'removed', $properties);
+    }
+
+    function removeCards(array $cards) {
+        // NOTE: The caller is responsible for any relevant messages printed to the game log.
+        for ($i = 0; $i < count($cards); $i++) {
+            self::removeCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
+        }
     }
 
     function safeguardCard($card, $owner_to): ?array {
@@ -1372,6 +1390,7 @@ class Innovation extends Table
         $foreshadow_keyword = array_key_exists('foreshadow_keyword', $properties) ? $properties['foreshadow_keyword'] : $location_to == 'forecast';
         $force = array_key_exists('force', $properties) ? $properties['force'] : false;
         $bulk_transfer = array_key_exists('bulk_transfer', $properties) ? $properties['bulk_transfer'] : false;
+        $last_card_of_bulk_transfer = array_key_exists('last_card_of_bulk_transfer', $properties) ? $properties['last_card_of_bulk_transfer'] : false;
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("  - Transferring ". self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
@@ -1583,6 +1602,7 @@ class Innovation extends Table
             'return_keyword' => $return_keyword,
             'foreshadow_keyword' => $foreshadow_keyword,
             'bulk_transfer' => $bulk_transfer,
+            'last_card_of_bulk_transfer' => $last_card_of_bulk_transfer,
         );
         
         // Update the current state of the card
@@ -5947,52 +5967,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, CardTypes::BASE)]);
             return false;
         }
-
-        for ($i = 0; $i < count($cards); $i++) {
-            self::junkCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
-        }
+        self::junkCards($cards);
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
             ['age' => self::getAgeSquareWithType($age, CardTypes::BASE), 'n' => self::renderNumber(count($cards))]
         );
         return true;
-    }
-    
-    function removeAllHandsBoardsAndScores() {
-        self::DbQuery("
-            UPDATE
-                card
-            SET
-                owner = 0,
-                location = 'removed',
-                position = NULL
-            WHERE
-                location IN ('hand', 'board', 'score', 'revealed')
-        ");
-        
-        // Set statistics back to zero
-        self::DbQuery("
-            UPDATE
-                player
-            SET
-                player_innovation_score = 0,
-                player_icon_count_1 = 0,
-                player_icon_count_2 = 0,
-                player_icon_count_3 = 0,
-                player_icon_count_4 = 0,
-                player_icon_count_5 = 0,
-                player_icon_count_6 = 0,
-                player_icon_count_7 = 0
-        ");
-        
-        // Stats
-        $players = self::loadPlayersBasicInfos();
-        foreach($players as $player_id => $player) {
-            self::setStat(0, 'score', $player_id);
-            self::setStat(0, 'max_age_on_board', $player_id);
-        }
-
-        self::removeOldFlagsAndFountains();
     }
 
     function removeAllCardsFromPlayer($player_id) {
@@ -11967,29 +11947,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, 10, 'revealed'); // "Draw a 10"
                 if ($card['color'] == Colors::RED) { // "If it is red"
                     self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
-                    // TODO(4E): These need to be junked instead.
-                    self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
-                    // TODO(4E): Create new bulk notification for 4th edition.
-                    self::notifyAll('removedHandsBoardsAndScores', clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'), array());
-
-                    if ($this->innovationGameState->usingFourthEditionRules()) {
-                        // "junk each player's non-achievement cards, and the dogma action is complete!"
-                        // The above action already removes the hands, boards, and score piles.
-                        // In fourth edition, safe (unseen, display (artifacts) and forecast (echoes) needs
-                        // to be removed as well.
-                        foreach (self::getAllPlayerIds() as $player) {
-                            foreach (self::getCardsInLocation($player, 'display') as $display_card) {
-                                self::junkCard($display_card);
-                            }
-                            foreach (self::getCardsInLocation($player, 'forecast') as $forecast_card) {
-                                self::junkCard($forecast_card);
-                            }
-                            foreach (self::getCardsInLocation($player, 'safe') as $forecast_card) {
-                                self::junkCard($forecast_card);
-                            }
+                    
+                    $cards = [];
+                    foreach (self::getAllPlayerIds() as $player) {
+                        $cards = array_merge($cards, self::getCardsInLocation($player, Locations::HAND));
+                        $cards = array_merge($cards, self::getCardsInLocation($player, Locations::BOARD));
+                        $cards = array_merge($cards, self::getCardsInLocation($player, Locations::SCORE));
+                        $cards = array_merge($cards, self::getCardsInLocation($player, Locations::REVEALED));
+                        if ($this->innovationGameState->usingFourthEditionRules()) {
+                            $cards = array_merge($cards, self::getCardsInLocation($player, Locations::DISPLAY));
+                            $cards = array_merge($cards, self::getCardsInLocation($player, Locations::FORECAST));
+                            $cards = array_merge($cards, self::getCardsInLocation($player, Locations::SAFE));
                         }
                     }
-                    
+
+                    if ($this->innovationGameState->usingFourthEditionRules()) {
+                        self::junkCards($cards);
+                        self::notifyGeneralInfo(clienttranslate('Each player\'s non-achievement cards are junked.'));
+                    } else {
+                        self::removeCards($cards);
+                        self::notifyGeneralInfo(clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'));
+                    }
+
                     // Stats
                     self::setStat(true, 'fission_triggered');
                     

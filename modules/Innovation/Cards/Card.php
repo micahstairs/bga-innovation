@@ -371,9 +371,7 @@ abstract class Card
 
   protected function junkCards(array $cards)
   {
-    for ($i = 0; $i < count($cards); $i++) {
-      $this->game->junkCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
-    }
+    $this->game->junkCards($cards);
   }
 
   protected function junk(array $card): ?array

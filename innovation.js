@@ -4494,7 +4494,6 @@ var Innovation = /** @class */ (function (_super) {
         dojo.subscribe('splayedPile', this, "notif_splayedPile");
         this.notifqueue.setSynchronous('splayedPile', reasonnable_delay); // Wait X milliseconds after executing the splayedPile handler
         dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile"); // This kind of notification does not need any delay
-        dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores"); // This kind of notification does not need any delay
         dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands"); // This kind of notification does not need any delay
         dojo.subscribe('removedPlayer', this, "notif_removedPlayer"); // This kind of notification does not need any delay
         dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay"); // This kind of notification does not need any delay
@@ -4509,7 +4508,6 @@ var Innovation = /** @class */ (function (_super) {
             dojo.subscribe('splayedPile_spectator', this, "notif_splayedPile_spectator");
             this.notifqueue.setSynchronous('splayedPile_spectator', reasonnable_delay); // Wait X milliseconds after executing the handler
             dojo.subscribe('rearrangedPile_spectator', this, "notif_rearrangedPile_spectator"); // This kind of notification does not need any delay
-            dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator"); // This kind of notification does not need any delay
@@ -4791,51 +4789,6 @@ var Innovation = /** @class */ (function (_super) {
         // Update special achievements overview with progression towards each achievement
         this.refreshSpecialAchievementProgression();
     };
-    Innovation.prototype.notif_removedHandsBoardsAndScores = function (notif) {
-        // NOTE: The button to look at the player's score pile is broken in archive mode.
-        if (!g_archive_mode) {
-            this.zone["my_score_verso"].removeAll();
-        }
-        for (var player_id in this.players) {
-            this.zone["revealed"][player_id].removeAll();
-            this.zone["hand"][player_id].removeAll();
-            this.zone["score"][player_id].removeAll();
-            for (var color = 0; color < 5; color++) {
-                this.zone["board"][player_id][color].removeAll();
-            }
-        }
-        // Reset counters
-        // Counters for score, number of cards in hand and max age
-        for (var player_id in this.players) {
-            this.counter["score"][player_id].setValue(0);
-            this.zone["hand"][player_id].counter.setValue(0);
-            this.counter["max_age_on_board"][player_id].setValue(0);
-        }
-        // Counters for ressources
-        for (var player_id in this.players) {
-            for (var icon = 1; icon <= 7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(0);
-            }
-        }
-        // Unsplay all stacks and update the splay indicator (show nothing bacause there are no more splayed stacks)
-        for (var player_id in this.players) {
-            for (var color = 0; color < 5; color++) {
-                this.refreshSplay(this.zone["board"][player_id][color], 0);
-                var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
-                dojo.addClass(splay_indicator, 'splay_0');
-                for (var direction = 1; direction <= 4; direction++) {
-                    dojo.removeClass(splay_indicator, 'splay_' + direction);
-                }
-                this.zone["board"][player_id][color].counter.setValue(0);
-                dojo.style(this.zone["board"][player_id][color].counter.span, 'visibility', 'hidden');
-            }
-        }
-        // Disable the button for splay mode
-        this.disableButtonForSplayMode();
-        this.number_of_splayed_piles = 0;
-        // Update special achievements overview with progression towards each achievement
-        this.refreshSpecialAchievementProgression();
-    };
     Innovation.prototype.notif_removedTopCardsAndHands = function (notif) {
         // Remove cards
         for (var player_id in this.players) {
@@ -4955,12 +4908,6 @@ var Innovation = /** @class */ (function (_super) {
         this.log_for_spectator(notif);
         // Call normal notif
         this.notif_rearrangedPile(notif);
-    };
-    Innovation.prototype.notif_removedHandsBoardsAndScores_spectator = function (notif) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-        // Call normal notif
-        this.notif_removedHandsBoardsAndScores(notif);
     };
     Innovation.prototype.notif_removedTopCardsAndHands_spectator = function (notif) {
         // Put the message for the spectator in log
