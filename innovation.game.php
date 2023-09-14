@@ -10563,7 +10563,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id == 442)
             || $card_id == 445
-            || $card_id == 447
+            || (447 <= $card_id && $card_id <= 448)
             || (450 <= $card_id && $card_id <= 459)
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13117,11 +13117,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "446N1":
-                $step_max = 1;
-                break;
-
-            // id 448, age 11: Escapism
-            case "448N1":
                 $step_max = 1;
                 break;
 
@@ -16926,35 +16921,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-            
-        // id 448, age 11: Escapism
-        case "448N1A":
-            // "Reveal and junk a card in your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed',
-            );
-            break;
-
-        case "448N1B":
-            // "Return from your hand all cards of value equal to the value of the junked card."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'age' => $this->innovationGameState->get('age_last_selected'),
-            );
-            break;
-            
         // id 449, age 11: Whataboutism
         case "449D1A":
             // "I demand you transfer all your top cards with a demand effect from your board to my board!"
@@ -18836,26 +18802,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::transferCardFromTo($card, $player_id, 'score');
                         self::selfExecute($card);
                     }
-                    break;
-
-                // id 448, age 11: Escapism
-                case "448N1A":
-                    // "junk a card in your hand"
-                    if ($n > 0) {
-                        $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::junkCard($card);
-                        self::setAuxiliaryValue($card['id']);
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "448N1B":
-                    // "Draw three cards of that value. Self-execute the junked card."
-                    $card = self::getCardInfo(self::getAuxiliaryValue());
-                    self::executeDraw($player_id, $card['age']);
-                    self::executeDraw($player_id, $card['age']);
-                    self::executeDraw($player_id, $card['age']);
-                    self::selfExecute($card);
                     break;
                     
                 // id 449, age 11: Whataboutism
