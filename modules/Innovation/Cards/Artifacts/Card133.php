@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardTypes;
+use Innovation\Enums\Locations;
 
 class Card133 extends Card
 {
@@ -32,8 +33,7 @@ class Card133 extends Card
       $values[] = self::getMaxValue(self::getTopCards($playerId));
     }
     return [
-      'location_from' => 'achievements',
-      'owner_from'    => 0,
+      'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
       'junk_keyword'  => true,
       'age'           => $values,
     ];

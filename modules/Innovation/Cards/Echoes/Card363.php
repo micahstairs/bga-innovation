@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -26,7 +27,7 @@ class Card363 extends Card
     if (self::isFirstOrThirdEdition()) {
       if (self::isEcho()) {
         self::draw(3);
-      } else if (self::getEffectNumber() === 1) {
+      } else if (self::isFirstNonDemand()) {
         self::draw(3);
         self::setMaxSteps(1);
       } else {
@@ -35,9 +36,9 @@ class Card363 extends Card
     } else {
       if (self::isEcho()) {
         self::setMaxSteps(1);
-      } else if (self::getEffectNumber() === 1) {
+      } else if (self::isFirstNonDemand()) {
         self::draw(3);
-      } else if (self::getEffectNumber() === 2) {
+      } else if (self::isSecondNonDemand()) {
         self::setMaxSteps(1);
       } else {
         self::claimSupremacyIfEligible();
@@ -81,7 +82,7 @@ class Card363 extends Card
         }
       }
       if ($numCards > 0 && $hasCommonIcon) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 439);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::SUPREMACY);
         return;
       }
     }

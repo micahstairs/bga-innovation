@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardTypes;
+use Innovation\Enums\Locations;
 
 class Card366 extends Card
 {
@@ -54,8 +55,7 @@ class Card366 extends Card
       }
       return [
         'n'                               => count($forecastCards),
-        'owner_from'                      => 0,
-        'location_from'                   => 'achievements',
+        'location_from'                   => Locations::AVAILABLE_ACHIEVEMENTS,
         'location_to'                     => 'forecast',
         'card_ids_are_in_auxiliary_array' => true,
       ];

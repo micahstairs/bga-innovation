@@ -41,7 +41,7 @@ class Card113 extends Card
   public function afterInteraction()
   {
     if (self::isCompel() && self::getNumChosen() === 0) {
-      self::junkBaseDeck($this->game->getMinAgeOnBoardTopCards(self::getPlayerId()));
+      self::junkBaseDeck(self::getMinValue(self::getTopCards()));
     }
   }
 

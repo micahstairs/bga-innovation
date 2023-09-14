@@ -92,7 +92,7 @@ class Card370 extends Card
         self::drawAndForeshadow(6);
       }
     } else if (self::isFirstNonDemand()) {
-      if (self::isFirstInteraction() && self::getNumChosen() === 3) {
+      if (self::isFirstInteraction() && self::getNumChosen() >= 3) {
         self::setMaxSteps(2);
       } else if (self::isSecondInteraction()) {
         self::drawAndForeshadow(6);

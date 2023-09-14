@@ -38,7 +38,7 @@ class Card547 extends Card
           'color'         => $this->game->getColorsOfRepeatedValueOfTopCardsOnBoard(self::getPlayerId()),
         ];
       } else {
-        $this->game->setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));
+        self::setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));
         return [
           'location_from'                   => 'safe',
           'score_keyword'                   => true,

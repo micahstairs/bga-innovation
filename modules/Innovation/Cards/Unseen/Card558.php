@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card558 extends Card
 {
@@ -25,10 +26,9 @@ class Card558 extends Card
         return ['choices' => [1, 2, 3]];
       } else {
         return [
-          'n'             => 'all',
-          'location_from' => 'achievements',
-          'owner_from'    => 0,
-          'location_to'   => 'safe',
+          'n'                 => 'all',
+          'location_from'     => Locations::AVAILABLE_ACHIEVEMENTS,
+          'safeguard_keyword' => true,
         ];
       }
     } else {
@@ -51,9 +51,10 @@ class Card558 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      self::setMaxSteps(2);;
+      self::setMaxSteps(2);
+      ;
     } else if ($choice === 2) {
-      foreach (self::getCards( 'safe') as $card) {
+      foreach (self::getCards('safe') as $card) {
         self::transferToHand($card);
       }
     } else if ($choice === 3) {

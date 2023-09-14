@@ -25,14 +25,14 @@ class Card565 extends Card
       ];
     } else {
       return [
-        'player_id'     => self::getAuxiliaryValue(),
-        'location_from' => 'board',
-        'location_to'   => 'none',
+        'player_id'   => self::getAuxiliaryValue(),
+        'choose_from' => 'board',
       ];
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::selfExecute($card);
   }
 

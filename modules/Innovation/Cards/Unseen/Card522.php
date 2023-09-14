@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card522 extends Card
 {
@@ -23,15 +24,14 @@ class Card522 extends Card
     if (self::isFirstInteraction()) {
       return [
         'location_from' => 'safe',
-        'owner_to'      => 0,
-        'location_to'   => 'achievements',
+        'location_to'   => Locations::AVAILABLE_ACHIEVEMENTS,
       ];
     } else {
+      $topRedCard = self::getTopCardOfColor(Colors::RED);
+      $value = $topRedCard ? $topRedCard['faceup_age'] : 0;
       return [
-        'owner_from'        => 0,
-        'location_from'     => 'achievements',
         'safeguard_keyword' => true,
-        'age'               => self::getTopCardOfColor(Colors::RED)['faceup_age'],
+        'age'               => $value,
       ];
     }
   }
@@ -39,13 +39,12 @@ class Card522 extends Card
   public function afterInteraction()
   {
     if (self::isFirstInteraction()) {
-      if (self::getNumChosen() > 0) {
-        self::draw(self::getLastSelectedAge() + 1);
-      } else {
-        self::draw(1);
-        if (self::getTopCardOfColor(Colors::RED)) {
-          self::setMaxSteps(2);
-        }
+      $valueToDraw = self::getNumChosen() === 1 ? self::getLastSelectedAge() + 1 : 1;
+      $card = self::draw($valueToDraw);
+      // "If you don't" happens whenever you either are unable to transfer a secret or you draw a
+      // card of a different value than one higher of the transferred secret.
+      if (self::getNumChosen() === 0 || $card['age'] != $valueToDraw) {
+        self::setMaxSteps(2);
       }
     }
   }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card124 extends Card
 {
@@ -33,8 +34,7 @@ class Card124 extends Card
       ];
     } else {
       return [
-        'location_from' => 'achievements',
-        'owner_from'    => 0,
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
         'age'           => self::getLastSelectedAge(),
       ];

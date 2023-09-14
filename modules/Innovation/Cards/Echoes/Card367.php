@@ -45,8 +45,7 @@ class Card367 extends Card
     if (self::isEcho()) {
       return [
         'owner_from'    => 'any player',
-        'location_from' => 'board',
-        'location_to'   => 'none',
+        'choose_from' => 'board',
       ];
     } else {
       return [
@@ -61,9 +60,9 @@ class Card367 extends Card
   public function handleCardChoice(array $card)
   {
     if (self::isEcho()) {
-      $this->game->splayLeft(self::getPlayerId(), $card['owner'], $card['color']);
+      self::splayLeft($card['color'], $card['owner'], self::getPlayerId());
     } else if (self::isDemand()) {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue();
     }
   }
 

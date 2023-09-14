@@ -23,7 +23,7 @@ class Card536 extends Card
         $card = self::drawAndReveal(7);
         $cardIds[] = $card['id'];
       }
-      $this->game->setAuxiliaryArray($cardIds);
+      self::setAuxiliaryArray($cardIds);
       self::setMaxSteps(2);
     }
   }

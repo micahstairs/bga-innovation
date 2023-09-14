@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card559 extends Card
 {
@@ -47,7 +48,7 @@ class Card559 extends Card
   {
     if (self::isFirstInteraction()) {
       if ($choice === 1) {
-        for ($color = 0; $color < 5; $color++) {
+        foreach (Colors::ALL as $color) {
           self::transferToHand(self::getBottomCardOfColor($color));
         }
       } else {

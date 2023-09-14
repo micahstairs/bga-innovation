@@ -47,14 +47,14 @@ class Card561 extends Card
   private function getColorsWithMostVisibleCards(): array
   {
     $mostVisibleCards = 0;
-    for ($color = 0; $color < 5; $color++) {
+    foreach (Colors::ALL as $color) {
       $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
       if ($numVisibleCards > $mostVisibleCards) {
         $mostVisibleCards = $numVisibleCards;
       }
     }
     $colors = [];
-    for ($color = 0; $color < 5; $color++) {
+    foreach (Colors::ALL as $color) {
       $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
       // TODO(LATER): Move this optimization to a more central place (if no color has more than
       // one card, then the unsplay is a no-op).

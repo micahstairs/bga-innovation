@@ -27,7 +27,7 @@ class Card343 extends Card
       if (self::isFirstOrThirdEdition()) {
         $card = self::drawAndReveal(1);
       } else {
-        $card = $this->game->executeDrawAndReveal(self::getPlayerId(), 1, CardTypes::ECHOES);
+        $card = self::drawAndRevealType(1, CardTypes::ECHOES);
       }
       self::transferToHand($card);
       if (self::hasBonusIcon($card)) {

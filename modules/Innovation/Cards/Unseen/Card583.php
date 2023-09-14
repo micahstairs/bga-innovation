@@ -47,11 +47,7 @@ class Card583 extends Card
         'age'             => $value,
       ];
     } else {
-      return [
-        'location_from'     => 'achievements',
-        'owner_from'        => 0,
-        'safeguard_keyword' => true,
-      ];
+      return ['safeguard_keyword' => true];
     }
   }
 
@@ -73,7 +69,7 @@ class Card583 extends Card
     if (self::isSecondInteraction()) {
       self::setAuxiliaryValue($card['age']);
     } else {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue();
     }
   }
 

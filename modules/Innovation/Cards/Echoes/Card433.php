@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card433 extends Card
 {
@@ -64,7 +65,7 @@ class Card433 extends Card
   private function allColorsHaveSameNumberOfVisibleCards(): bool
   {
     $counts = [];
-    for ($color = 0; $color < 5; $color++) {
+    foreach (Colors::ALL as $color) {
       $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
       if ($numVisibleCards > 0) {
         $counts[] = $numVisibleCards;

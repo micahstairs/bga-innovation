@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
 class Card430 extends Card
@@ -23,7 +24,7 @@ class Card430 extends Card
       if (self::isDemand()) {
         self::setActionScopedAuxiliaryArray(self::getBonuses()); // Track values left to remove from score pile
       } else if (self::wasForeseen()) {
-        for ($color = 0; $color < 5; $color++) {
+        foreach (Colors::ALL as $color) {
           self::splayUp($color);
         }
       }

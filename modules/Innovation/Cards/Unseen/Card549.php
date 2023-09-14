@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card549 extends Card
 {
@@ -30,8 +31,7 @@ class Card549 extends Card
     } else if (self::isSecondInteraction()) {
       return [
         'n'             => 2,
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'location_to'   => 'revealed',
       ];
     } else if (self::isThirdInteraction()) {

@@ -3,8 +3,10 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card373 extends Card
 {
@@ -48,7 +50,7 @@ class Card373 extends Card
       $counts = self::countCardsKeyedByColor('board');
       $maxCount = max($counts);
       $colors = [];
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         if ($counts[$color] == $maxCount) {
           $colors[] = $color;
         }
@@ -66,7 +68,7 @@ class Card373 extends Card
       ];
     } else if (self::isFirstInteraction()) {
       $values = [];
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         $count = $this->game->countVisibleCards(self::getPlayerId(), $color);
         if (1 <= $count && $count <= 11) {
           $values[] = $count;
@@ -79,8 +81,7 @@ class Card373 extends Card
       ];
     } else {
       return [
-        'location_from' => 'achievements',
-        'owner_from'    => 0,
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
         'age'           => self::getAuxiliaryValue(),
       ];

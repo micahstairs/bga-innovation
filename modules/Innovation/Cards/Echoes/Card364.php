@@ -19,7 +19,7 @@ class Card364 extends Card
   {
     if (self::isEcho()) {
       $colors = [];
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         if (self::getSplayDirection($color) > 0) {
           $colors[] = $color;
         }

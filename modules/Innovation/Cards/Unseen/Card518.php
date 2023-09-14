@@ -18,21 +18,21 @@ class Card518 extends Card
   {
     if (self::isDemand()) {
       $cardIds = [];
-      $maxAgeInHand = $this->game->getMaxAgeInHand(self::getPlayerId());
+      $maxValueInHand = self::getMaxValueInLocation('hand');
       foreach (self::getCards('hand') as $card) {
-        if ($card['age'] < $maxAgeInHand) {
+        if ($card['age'] < $maxValueInHand) {
           $cardIds[] = $card['id'];
         }
       }
-      $maxAgeInScore = $this->game->getMaxAgeInScore(self::getPlayerId());
+      $maxValueInScore = self::getMaxValueInLocation('score');
       foreach (self::getCards('score') as $card) {
-        if ($card['age'] < $maxAgeInScore) {
+        if ($card['age'] < $maxValueInScore) {
           $cardIds[] = $card['id'];
         }
       }
       if (count($cardIds) > 0) {
         self::setMaxSteps(2);
-        $this->game->setAuxiliaryArray($cardIds);
+        self::setAuxiliaryArray($cardIds);
       }
     } else {
       $topCard = self::getTopCardOfColor(Colors::RED);
@@ -64,14 +64,6 @@ class Card518 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     self::setAuxiliaryValue($choice);
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isDemand() && self::getNumChosen() > 0) {
-      // TODO(4E): This looks wrong.
-      self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
-    }
   }
 
 }

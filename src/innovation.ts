@@ -5006,6 +5006,7 @@ class Innovation extends BgaGame {
 
         dojo.subscribe('transferedCard', this, "notif_transferedCard");
         this.notifqueue.setSynchronous('transferedCard', reasonnable_delay);   // Wait X milliseconds after executing the transferedCard handler
+        dojo.subscribe('transferedCardNoDelay', this, "notif_transferedCard");
 
         dojo.subscribe('logWithCardTooltips', this, "notif_logWithCardTooltips");  // This kind of notification does not need any delay
 
@@ -5014,9 +5015,6 @@ class Innovation extends BgaGame {
 
         dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile");  // This kind of notification does not need any delay
 
-        dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
-        dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
-        dojo.subscribe('junkedBaseDeck', this, "notif_junkedBaseDeck");  // This kind of notification does not need any delay
         dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
         dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
@@ -5028,6 +5026,7 @@ class Innovation extends BgaGame {
         if (this.isSpectator) {
             dojo.subscribe('transferedCard_spectator', this, "notif_transferedCard_spectator");
             this.notifqueue.setSynchronous('transferedCard_spectator', reasonnable_delay);   // Wait X milliseconds after executing the handler
+            dojo.subscribe('transferedCardNoDelay_spectator', this, "notif_transferedCard_spectator");
 
             dojo.subscribe('logWithCardTooltips_spectator', this, "notif_logWithCardTooltips_spectator");  // This kind of notification does not need any delay
 
@@ -5036,9 +5035,6 @@ class Innovation extends BgaGame {
 
             dojo.subscribe('rearrangedPile_spectator', this, "notif_rearrangedPile_spectator"); // This kind of notification does not need any delay
 
-            dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
-            dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
-            dojo.subscribe('junkedBaseDeck_spectator', this, "notif_junkedBaseDeck_spectator");  // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
@@ -5342,104 +5338,6 @@ class Innovation extends BgaGame {
         this.refreshSpecialAchievementProgression();
     }
 
-    notif_removedHandsBoardsAndScores(notif: any) {
-        // NOTE: The button to look at the player's score pile is broken in archive mode.
-        if (!g_archive_mode) {
-            this.zone["my_score_verso"].removeAll();
-        }
-        for (let player_id in this.players) {
-            this.zone["revealed"][player_id].removeAll();
-            this.zone["hand"][player_id].removeAll();
-            this.zone["score"][player_id].removeAll();
-            for (let color = 0; color < 5; color++) {
-                this.zone["board"][player_id][color].removeAll();
-            }
-        }
-
-        // Reset counters
-        // Counters for score, number of cards in hand and max age
-        for (let player_id in this.players) {
-            this.counter["score"][player_id].setValue(0);
-            this.zone["hand"][player_id].counter.setValue(0);
-            this.counter["max_age_on_board"][player_id].setValue(0);
-        }
-
-        // Counters for ressources
-        for (let player_id in this.players) {
-            for (let icon = 1; icon <= 7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(0);
-            }
-        }
-
-        // Unsplay all stacks and update the splay indicator (show nothing bacause there are no more splayed stacks)
-        for (let player_id in this.players) {
-            for (let color = 0; color < 5; color++) {
-                this.refreshSplay(this.zone["board"][player_id][color], 0)
-                let splay_indicator = 'splay_indicator_' + player_id + '_' + color;
-                dojo.addClass(splay_indicator, 'splay_0');
-                for (let direction = 1; direction <= 4; direction++) {
-                    dojo.removeClass(splay_indicator, 'splay_' + direction);
-                }
-                this.zone["board"][player_id][color].counter.setValue(0);
-                dojo.style(this.zone["board"][player_id][color].counter.span, 'visibility', 'hidden');
-            }
-        }
-
-        // Disable the button for splay mode
-        this.disableButtonForSplayMode();
-        this.number_of_splayed_piles = 0;
-
-        // Update special achievements overview with progression towards each achievement
-        this.refreshSpecialAchievementProgression();
-    }
-
-    notif_removedTopCardsAndHands(notif: any) {
-        // Remove cards
-        for (let player_id in this.players) {
-            this.zone["hand"][player_id].removeAll();
-        }
-        for (let i = 0; i < notif.args.top_cards_to_remove.length; i++) {
-            let card = notif.args.top_cards_to_remove[i];
-            this.removeFromZone(this.zone["board"][card.owner][card.color], card.id, true, card.age, card.type, card.is_relic);
-        }
-
-        // Update counters
-        for (let player_id in this.players) {
-            this.zone["hand"][player_id].counter.setValue(0);
-            this.counter["max_age_on_board"][player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
-            for (let icon = 1; icon <= 7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
-            }
-        }
-
-        // Update special achievements overview with progression towards each achievement
-        this.refreshSpecialAchievementProgression();
-    }
-
-    notif_junkedBaseDeck(notif: any) {
-        let zone = this.zone["deck"][0][notif.args.age_to_junk];
-        let nextJunkPosition = notif.args.next_junk_position;
-        for (let i = zone.items.length - 1; i >= 0; i--) {
-            this.notif_transferedCard({
-                'args': {
-                    'age': notif.args.age_to_junk,
-                    'type': 0,
-                    'is_relic': 0,
-                    'owner_from': 0,
-                    'location_from': 'deck',
-                    'position_from': i,
-                    'owner_to': 0,
-                    'location_to': 'junk',
-                    'position_to': nextJunkPosition++,
-                },
-            });
-        }
-        if (!zone.counter.display_zero) {
-            dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
-        }
-        this.updateDeckOpacities();
-    }
-
     notif_removedPlayer(notif: any) {
         let player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
@@ -5556,30 +5454,6 @@ class Innovation extends BgaGame {
 
         // Call normal notif
         this.notif_rearrangedPile(notif);
-    }
-
-    notif_removedHandsBoardsAndScores_spectator(notif: any) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-
-        // Call normal notif
-        this.notif_removedHandsBoardsAndScores(notif);
-    }
-
-    notif_removedTopCardsAndHands_spectator(notif: any) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-
-        // Call normal notif
-        this.notif_removedTopCardsAndHands(notif);
-    }
-
-    notif_junkedBaseDeck_spectator(notif: any) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-
-        // Call normal notif
-        this.notif_junkedBaseDeck(notif);
     }
 
     notif_removedPlayer_spectator(notif: any) {

@@ -18,7 +18,7 @@ class Card541 extends Card
       self::setMaxSteps(2);
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
-    } else if (self::isThirdNonDemand() === 3) {
+    } else if (self::isThirdNonDemand()) {
       if (self::countCards('score') >= 1) {
         self::setMaxSteps(1);
       } else {
@@ -60,13 +60,6 @@ class Card541 extends Card
     }
   }
 
-  public function afterInteraction()
-  {
-    if (self::isThirdNonDemand() === 3) {
-      self::drawAndScore(self::getAuxiliaryValue());
-    }
-  }
-
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
@@ -77,7 +70,11 @@ class Card541 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    self::setAuxiliaryValue($choice);
+    if (self::isFirstNonDemand()) {
+      self::setAuxiliaryValue($choice);
+    } else {
+      self::drawAndScore($choice);
+    }
   }
 
 }

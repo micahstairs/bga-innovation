@@ -23,7 +23,7 @@ class Card400 extends Card
     if (self::isFirstNonDemand() || self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     } else if (self::wasForeseen()) {
-      for ($color = 0; $color < 5; $color++) {
+      foreach (Colors::ALL as $color) {
         if (self::isSplayed($color)) {
           self::splayUp($color);
         }

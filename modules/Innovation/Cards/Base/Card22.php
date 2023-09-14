@@ -25,34 +25,19 @@ class Card22 extends Card
       $numToDraw = 0;
       if (self::isFirstOrThirdEdition()) {
         $iconCount = self::getStandardIconCount(Icons::HEALTH);
-        self::notifyPlayer(
-          clienttranslate('${You} have ${n} visible ${icon} on your board.'),
-          ['You' => 'You', 'n' => $iconCount, 'icon' => $renderedIcon]
-        );
-        self::notifyOthers(
-          clienttranslate('${player_name} has visible ${n} ${icon} on his board.'),
-          ['player_name' => self::renderPlayerName(), 'n' => $iconCount, 'icon' => $renderedIcon]
-        );
+        $args = ['n' => $iconCount, 'icon' => $renderedIcon];
+        self::notifyPlayer(clienttranslate('${You} have ${n} visible ${icon} on your board.'), $args);
+        self::notifyOthers(clienttranslate('${player_name} has visible ${n} ${icon} on his board.'), $args);
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
-        for ($color = 0; $color < 5; $color++) {
+        foreach (Colors::ALL as $color) {
           if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, Icons::HEALTH)) {
             $numToDraw++;
           }
         }
-        self::notifyPlayer(
-          clienttranslate('${You} have ${n} color(s) with one or more visible ${icon}.'),
-          ['i18n' => ['n'], 'You' => 'You', 'n' => self::renderNumber($numToDraw), 'icon' => $renderedIcon]
-        );
-        self::notifyOthers(
-          clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'),
-          [
-            'i18n'        => ['n'],
-            'player_name' => self::renderPlayerName(),
-            'n'           => self::renderNumber($numToDraw),
-            'icon'        => $renderedIcon,
-          ]
-        );
+        $args = ['i18n' => ['n'], 'n' => self::renderNumber($numToDraw), 'icon' => $renderedIcon];
+        self::notifyPlayer(clienttranslate('${You} have ${n} color(s) with one or more visible ${icon}.'), $args);
+        self::notifyOthers(clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'), $args);
       }
       for ($i = 0; $i < $numToDraw; $i++) {
         self::draw(2);

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
 class Card471 extends Card
@@ -17,7 +18,7 @@ class Card471 extends Card
   {
     $numColorsSplayed = 0;
     $countsByColor = self::countCardsKeyedByColor('board');
-    for ($color = 0; $color < 5; $color++) {
+    foreach (Colors::ALL as $color) {
       switch ($countsByColor[$color]) {
         case 0:
         case 1:

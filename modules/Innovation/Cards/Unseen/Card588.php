@@ -25,9 +25,8 @@ class Card588 extends Card
   {
     if (self::getEffectNumber() === 1) {
       return [
-        'owner_from'    => 'any player',
-        'location_from' => 'board',
-        'location_to'   => 'none',
+        'owner_from'  => 'any player',
+        'choose_from' => 'board',
       ];
     } else {
       if (self::isFirstInteraction()) {
@@ -35,8 +34,6 @@ class Card588 extends Card
       } else if (self::getAuxiliaryValue() === 1) {
         return [
           'can_pass'          => true,
-          'owner_from'        => 0,
-          'location_from'     => 'achievements',
           'safeguard_keyword' => true,
           'n_min'             => 1,
           'n_max'             => 'all',

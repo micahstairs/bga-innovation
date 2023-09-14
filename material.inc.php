@@ -910,13 +910,16 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 3 */
 
     135 => array(
-        'name'                => clienttranslate('Dunhuang Star Chart'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw a card of value equal to the number of cards returned.'),
+        'name'                                => clienttranslate('Dunhuang Star Chart'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. Draw a card of value equal to the number of cards returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand. Draw a card of value equal to the number of cards you return.'),
     ),
 
     136 => array(
-        'name'                => clienttranslate('Charter of Liberties'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player\'s board. Execute all of that color\'s top card\'s non-demand effects, without sharing.'),
+        'name_first_and_third'                => clienttranslate('Charter of Liberties'),
+        'name_fourth'                         => clienttranslate('Yata No Kagami'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player\'s board. Execute all of that color\'s top card\'s non-demand effects, without sharing.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. If you do, splay left its color on your board, then choose a top card other than Yata No Kagami of that color on any board and self-execute it.'),
     ),
 
     137 => array(
@@ -925,23 +928,28 @@ $this->textual_card_infos = array(
     ),
 
     138 => array(
-        'name'            => clienttranslate('Mjolnir Amulet'),
-        'i_compel_effect' => clienttranslate('${I compel} you to choose a top card on your board! Transfer all cards of that card\'s color from your board to my score pile!'),
+        'name_first_and_third' => clienttranslate('Mjolnir Amulet'),
+        'name_fourth'          => clienttranslate('Mjölnir Amulet'),
+        'i_compel_effect'      => clienttranslate('${I compel} you to choose a top card on your board! Transfer all cards of that card\'s color from your board to my score pile!'),
     ),
 
     139 => array(
-        'name'                => clienttranslate('Philosopher\'s Stone'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Score a number of cards from your hand equal to the value of the card returned.'),
+        'name'                                => clienttranslate('Philosopher\'s Stone'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Score a number of cards from your hand equal to the value of the card returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Score a number of cards from your hand equal to the value of the card you return. Junk all cards in the deck of value equal to the total value of the cards you score.'),
     ),
 
     140 => array(
-        'name'                => clienttranslate('Beauvais Cathedral Clock'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_4}. Splay right the color matching the drawn card.'),
+        'name_first_and_third'                => clienttranslate('Beauvais Cathedral Clock'),
+        'name_fourth'                         => clienttranslate('Ife Head'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_4}. Splay right the color matching the drawn card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Splay right an unsplayed color on your board. Junk an available achievement of value equal to the number of cards of that color on your board. If you don\'t, draw a card of that value.'),
     ),
 
     141 => array(
-        'name'            => clienttranslate('Moylough Belt Shrine'),
-        'i_compel_effect' => clienttranslate('${I compel} you to reveal all cards in your hand and transfer the card of my choice to my board!'),
+        'name'                            => clienttranslate('Moylough Belt Shrine'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to reveal all cards in your hand and transfer the card of my choice to my board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to reveal all cards in your hand and transfer the card of my choice to my board! If you do, junk all cards in the deck of the chosen card\'s value!'),
     ),
 
     142 => array(
@@ -955,47 +963,58 @@ $this->textual_card_infos = array(
     ),
 
     144 => array(
-        'name'                => clienttranslate('Shroud of Turin'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. If you do, return a top card from your board and a card from your score pile of the returned card\'s color. If you did all three, claim an achievement ignoring eligibility.'),
+        'name'                                => clienttranslate('Shroud of Turin'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. If you do, return a top card from your board and a card from your score pile of the returned card\'s color. If you did all three, claim an achievement ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. If you do, return a top card of the same color from your board and a card of the same color from your score pile. If you do all three, claim an achievement ignoring eligibility.'),
     ),
 
     /* Artifacts - Age 4 */
 
     145 => array(
-        'name'            => clienttranslate('Petition of Right'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each top card with a ${icon_4} on your board!'),
+        'name'                            => clienttranslate('Petition of Right'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each top card with a ${icon_4} on your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each color with a ${icon_4} on your board!'),
+        'non_demand_effect_1_fourth'      => clienttranslate('Junk an available achievement of value equal to the number of ${icon_4} on your board.'),
     ),
 
     146 => array(
-        'name'                => clienttranslate('Delft Pocket Telescope'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your score pile. If you do, draw a ${age_5} and a ${age_6}, then reveal one of the drawn cards that has a symbol in common with the returned card. If you cannot, return the drawn cards and repeat this effect.'),
+        'name'                                => clienttranslate('Delft Pocket Telescope'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your score pile. If you do, draw a ${age_5} and a ${age_6}, then reveal one of the drawn cards that has a symbol in common with the returned card. If you cannot, return the drawn cards and repeat this effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your score pile. If you do, draw a ${age_5} and a ${age_6}, then reveal one of the drawn cards that has an icon in common with the returned card. If you cannot, return the drawn cards and repeat this effect.'),
     ),
 
     147 => array(
-        'name'                => clienttranslate('East India Company Charter'),
-        'non_demand_effect_1' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
+        'name'                                => clienttranslate('East India Company Charter'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each score pile from which cards are returned, draw and score a ${age_5}. If you do, junk all cards in the deck of the chosen value.'),
     ),
 
     148 => array(
-        'name'            => clienttranslate('Tortugas Galleon'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer all the highest cards from your score pile to my score pile! If you transfered any, transfer a top card on your board of that value to my board!'),
+        'name_first_and_third'            => clienttranslate('Tortugas Galleon'),
+        'name_fourth'                     => clienttranslate('Galleon Nuestra Señora De Atocha'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer all the highest cards from your score pile to my score pile! If you transfered any, transfer a top card on your board of that value to my board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer all the highest cards from your score pile to my score pile! If you transfer any, transfer a top card on your board of that value to my board!'),
     ),
 
     149 => array(
-        'name'                => clienttranslate('Molasses Reef Caravel'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw three ${age_4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.'),
+        'name'                                => clienttranslate('Molasses Reef Caravel'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. Draw three ${age_4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw three ${age_4}. Meld a green card from your hand. Junk all cards in the deck of value equal to your top green card.'),
     ),
 
     150 => array(
-        'name'                => clienttranslate('Hunt-Lenox Globe'),
-        'non_demand_effect_1' => clienttranslate('If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
+        'name'                                => clienttranslate('Hunt-Lenox Globe'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have fewer than four cards in your hand, return your top card of each non-green color. Draw a ${age_5} for each card you return.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Meld a card from your hand.'),
     ),
 
     151 => array(
-        'name'                => clienttranslate('Moses'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
-        // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
-        'non_demand_effect_1' => clienttranslate('Score a top card on your board with a ${icon_1}.'),
+        'name'                            => clienttranslate('Moses'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer a top card with a ${icon_1} of each color from your board to my score pile!'),
+        'non_demand_effect_1'             => clienttranslate('Score a top card on your board with a ${icon_1}.'),
     ),
 
     152 => array(
@@ -1027,8 +1046,9 @@ $this->textual_card_infos = array(
     ),
 
     157 => array(
-        'name'            => clienttranslate('Bill of Rights'),
-        'i_compel_effect' => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
+        'name_first_and_third' => clienttranslate('Bill of Rights'),
+        'name_fourth'          => clienttranslate('Galley Whydah'),
+        'i_compel_effect'      => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
     ),
 
     158 => array(
@@ -1047,8 +1067,9 @@ $this->textual_card_infos = array(
     ),
 
     161 => array(
-        'name'                => clienttranslate('Gujin Tushu Jinsheng'),
-        'non_demand_effect_1' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
+        'name_first_and_third' => clienttranslate('Gujin Tushu Jinsheng'),
+        'name_fourth'          => clienttranslate('Gujin Tushu Jicheng'),
+        'non_demand_effect_1'  => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
     ),
 
     162 => array(
@@ -2419,7 +2440,59 @@ $this->textual_card_infos = array(
         'i_demand_effect' => clienttranslate('${I demand} you transfer a top card with a demand effect of each color from your board to my board! If you transfer any cards, exchange all cards in your score pile with all cards in my score pile!'),
     ),
 
-    /* 450-459 are reserved for Artifacts - Age 11 */
+    /* Artifacts - Age 11 */
+
+    450 => array(
+        'name'                => clienttranslate('Great Barrier Reef'),
+        'non_demand_effect_1' => clienttranslate('Junk all cards on your board other than the top three of each color.'),
+        'non_demand_effect_2' => clienttranslate('Splay each color on your board aslant.'),
+    ),
+
+    451 => array(
+        'name'                => clienttranslate('Martian Internet'),
+        'non_demand_effect_1' => clienttranslate('Start a new game, each player drawing a ${age_9} to begin, without shuffling any cards, ignoring all players\' current cards. The winner of that game transfers their cards to this game. Junk each player\'s cards from that game.'),
+    ),
+
+    452 => array(
+        'name'                => clienttranslate('Psyche'),
+        'non_demand_effect_1' => clienttranslate('Choose a value different from any top card on your board. Score all cards in the deck of that value. Score all junked cards of that value.'),
+    ),
+
+    453 => array(
+        'name'            => clienttranslate('Pizza Pacaya'),
+        'i_compel_effect' => clienttranslate('${I compel} you to junk all cards from your board! Draw and meld a card of each value in ascending order!'),
+    ),
+
+    454 => array(
+        'name'                => clienttranslate('Greenland'),
+        'i_compel_effect'     => clienttranslate('${I compel} you to return all of your top cards with a ${icon_6}!'),
+        'non_demand_effect_1' => clienttranslate('Return all your top cards with a ${icon_1}.'),
+    ),
+
+    455 => array(
+        'name'                => clienttranslate('Sanskrit'),
+        'non_demand_effect_1' => clienttranslate('Junk all cards in all score piles. If you don\'t, for each player, choose the highest top card on their board, then for each other different color, transfer the top card of that color from their board to their score pile.'),
+    ),
+
+    456 => array(
+        'name'                => clienttranslate('What Does The Fox Say'),
+        'non_demand_effect_1' => clienttranslate('If it is your turn, draw and meld an ${age_11}. Fully execute the melded card. If any player is eligible to share an effect of the dogma, repeat this effect.'),
+    ),
+
+    457 => array(
+        'name'                => clienttranslate('Tasmanian Tiger'),
+        'non_demand_effect_1' => clienttranslate('Choose a card in your score pile. Choose a top card of the same color on any player\'s board. Exchange the two cards, maintaining any splay. You may return two cards from your hand. If you do, repeat this effect.'),
+    ),
+
+    458 => array(
+        'name'                => clienttranslate('Jumbo Kingdom'),
+        'non_demand_effect_1' => clienttranslate('Choose a color on your board. Junk all cards of that color from all boards.'),
+    ),
+
+    459 => array(
+        'name'            => clienttranslate('Oculus Quest'),
+        'i_compel_effect' => clienttranslate('${I compel} you to transfer all cards on your board to your hand!'),
+    ),
 
     /* Cities - Age 11 */
 

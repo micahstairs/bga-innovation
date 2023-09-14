@@ -35,7 +35,7 @@ class Card445 extends Card
           $hasHighestScore = false;
         }
       }
-    } while ($hasHighestScore);
+    } while (!$hasHighestScore);
   }
 
 }

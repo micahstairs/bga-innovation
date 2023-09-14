@@ -32,7 +32,7 @@ class Card533 extends Card
     } else {
       return [
         'choose_color' => true,
-        'color'        => $this->game->getAuxiliaryArray(),
+        'color'        => self::getAuxiliaryArray(),
       ];
     }
   }
@@ -55,7 +55,7 @@ class Card533 extends Card
     while (($card = self::getTopCardOfColor($choice)) !== null) {
       self::score($card);
     }
-    $colors = $this->game->getAuxiliaryArray();
+    $colors = self::getAuxiliaryArray();
     $remainingColor = $colors[0] == $choice ? $colors[1] : $colors[0];
     self::splayRight($remainingColor);
   }

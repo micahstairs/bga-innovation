@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 
 class Card350 extends Card
@@ -44,8 +45,7 @@ class Card350 extends Card
     } else if (self::isFirstInteraction() || self::isThirdInteraction()) {
       return [
         'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'none',
+        'choose_from' => 'hand',
       ];
     } else {
       return [
@@ -88,14 +88,14 @@ class Card350 extends Card
 
   private function putPaperInScorePileIfTopCard()
   {
-    $paper = self::getCard(30);
-    if ($this->game->isTopBoardCard($paper)) {
+    $card = self::getCard(CardIds::PAPER);
+    if ($this->game->isTopBoardCard($card)) {
       if (self::isFirstOrThirdEdition()) {
-        self::transferToScorePile($paper);
+        self::transferToScorePile($card);
       } else {
-        self::score($paper);
+        self::score($card);
       }
-      self::transferToScorePile($paper);
+      self::transferToScorePile($card);
     }
   }
 

@@ -55,6 +55,8 @@ abstract class Card
         return static::getPromptForTypeChoice();
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
+      case 11: // choose_non_negative_integer
+        return static::getPromptForNumberChoice();
       case 12: // choose_icon_type
         return static::getPromptForIconChoice();
       default:
@@ -255,7 +257,7 @@ abstract class Card
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
   }
 
-  protected function transferToHand($card, int $playerId = null)
+  protected function transferToHand(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -263,7 +265,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
   }
 
-  protected function score($card, int $playerId = null)
+  protected function score(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -271,7 +273,7 @@ abstract class Card
     return $this->game->scoreCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function transferToScorePile($card, int $playerId = null)
+  protected function transferToScorePile(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -279,7 +281,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'score');
   }
 
-  protected function meld($card, int $playerId = null)
+  protected function meld(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -287,7 +289,7 @@ abstract class Card
     return $this->game->meldCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function transferToBoard($card, int $playerId = null)
+  protected function transferToBoard(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -295,7 +297,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'board');
   }
 
-  protected function tuck($card, int $playerId = null)
+  protected function tuck(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -303,7 +305,7 @@ abstract class Card
     return $this->game->tuckCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function reveal($card, int $playerId = null)
+  protected function reveal(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -311,7 +313,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
   }
 
-  protected function safeguard($card, int $playerId = null)
+  protected function safeguard(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -319,7 +321,7 @@ abstract class Card
     return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function putBackInSafe($card, int $playerId = null)
+  protected function putBackInSafe(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -327,7 +329,7 @@ abstract class Card
     return $this->game->putCardBackInSafe($card, self::coercePlayerId($playerId));
   }
 
-  protected function achieve($card, int $playerId = null)
+  protected function achieve(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -335,7 +337,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
   }
 
-  protected function achieveIfEligible($card, int $playerId = null)
+  protected function achieveIfEligible(?array $card, int $playerId = null)
   {
     if (self::isEligibleForAchieving($card, self::coercePlayerId($playerId))) {
       return self::achieve($card);
@@ -343,7 +345,7 @@ abstract class Card
     return $card;
   }
 
-  protected function isEligibleForAchieving($card, int $playerId = null): bool
+  protected function isEligibleForAchieving(?array $card, int $playerId = null): bool
   {
     if (!$card) {
       return false;
@@ -351,7 +353,7 @@ abstract class Card
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return($card): ?array
+  protected function return(?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -359,7 +361,7 @@ abstract class Card
     return $this->game->returnCard($card);
   }
 
-  protected function placeOnTopOfDeck($card): ?array
+  protected function placeOnTopOfDeck(?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -367,7 +369,12 @@ abstract class Card
     return $this->game->transferCardFromTo($card, 0, 'deck', ['bottom_to' => false]);
   }
 
-  protected function junk($card): ?array
+  protected function junkCards(array $cards)
+  {
+    $this->game->junkCards($cards);
+  }
+
+  protected function junk(?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -375,7 +382,7 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
-  protected function foreshadow($card, $callbackIfFull, int $playerId = null): ?array
+  protected function foreshadow(?array $card, $callbackIfFull, int $playerId = null): ?array
   {
     if (!$card) {
       return null;
@@ -430,6 +437,11 @@ abstract class Card
   protected function drawAndReveal(int $age, int $playerId = null): ?array
   {
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age);
+  }
+
+  protected function drawAndRevealType(int $age, int $type, int $playerId = null)
+  {
+    return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age, $type);
   }
 
   protected function getTopCardOfColor(int $color, int $playerId = null): ?array
@@ -531,7 +543,7 @@ abstract class Card
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location, 'MAX');
   }
 
-  protected function hasIcon($card, int $icon): bool
+  protected function hasIcon(?array $card, int $icon): bool
   {
     if (!$card) {
       return false;
@@ -544,42 +556,42 @@ abstract class Card
     return $this->game->getVisibleBonusesOnBoard(self::coercePlayerId($playerId));
   }
 
-  protected function isValuedCard($card): bool
+  protected function isValuedCard(?array $card): bool
   {
-    return $card['age'] !== null;
+    return $card && $card['age'] !== null;
   }
 
-  protected function isSpecialAchievement($card): bool
+  protected function isSpecialAchievement(?array $card): bool
   {
-    return $card['age'] === null && $card['id'] < 1000;
+    return $card && $card['age'] === null && $card['id'] < 1000;
   }
 
-  protected function isBlue($card): bool
+  protected function isBlue(?array $card): bool
   {
-    return $card['color'] == Colors::BLUE;
+    return $card && $card['color'] == Colors::BLUE;
   }
 
-  protected function isRed($card): bool
+  protected function isRed(?array $card): bool
   {
-    return $card['color'] == Colors::RED;
+    return $card && $card['color'] == Colors::RED;
   }
 
-  protected function isGreen($card): bool
+  protected function isGreen(?array $card): bool
   {
-    return $card['color'] == Colors::GREEN;
+    return $card && $card['color'] == Colors::GREEN;
   }
 
-  protected function isYellow($card): bool
+  protected function isYellow(?array $card): bool
   {
-    return $card['color'] == Colors::YELLOW;
+    return $card && $card['color'] == Colors::YELLOW;
   }
 
-  protected function isPurple($card): bool
+  protected function isPurple(?array $card): bool
   {
-    return $card['color'] == Colors::PURPLE;
+    return $card && $card['color'] == Colors::PURPLE;
   }
 
-  protected function getCard(int $cardId)
+  protected function getCard(int $cardId): ?array
   {
     return $this->game->getCardInfo($cardId);
   }
@@ -595,37 +607,49 @@ abstract class Card
     $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
   }
 
-  protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null)
+  protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
     $targetPlayerId = self::coercePlayerId($targetPlayerId);
     if ($triggeringPlayerId === null) {
       $triggeringPlayerId = $targetPlayerId;
     }
-    $this->game->unsplay($triggeringPlayerId, $targetPlayerId, $color);
+    return $this->game->unsplay($triggeringPlayerId, $targetPlayerId, $color);
   }
 
-  protected function splayLeft(int $color, int $playerId = null)
+  protected function splayLeft(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
-    $playerId = self::coercePlayerId($playerId);
-    $this->game->splayLeft($playerId, $playerId, $color);
+    $targetPlayerId = self::coercePlayerId($targetPlayerId);
+    if ($triggeringPlayerId === null) {
+      $triggeringPlayerId = $targetPlayerId;
+    }
+    return $this->game->splayLeft($triggeringPlayerId, $targetPlayerId, $color);
   }
 
-  protected function splayRight(int $color, int $playerId = null)
+  protected function splayRight(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
-    $playerId = self::coercePlayerId($playerId);
-    $this->game->splayRight($playerId, $playerId, $color);
+    $targetPlayerId = self::coercePlayerId($targetPlayerId);
+    if ($triggeringPlayerId === null) {
+      $triggeringPlayerId = $targetPlayerId;
+    }
+    return $this->game->splayRight($triggeringPlayerId, $targetPlayerId, $color);
   }
 
-  protected function splayUp(int $color, int $playerId = null)
+  protected function splayUp(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
-    $playerId = self::coercePlayerId($playerId);
-    $this->game->splayUp($playerId, $playerId, $color);
+    $targetPlayerId = self::coercePlayerId($targetPlayerId);
+    if ($triggeringPlayerId === null) {
+      $triggeringPlayerId = $targetPlayerId;
+    }
+    return $this->game->splayUp($triggeringPlayerId, $targetPlayerId, $color);
   }
 
-  protected function splayAslant(int $color, int $playerId = null)
+  protected function splayAslant(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
-    $playerId = self::coercePlayerId($playerId);
-    $this->game->splayAslant($playerId, $playerId, $color);
+    $targetPlayerId = self::coercePlayerId($targetPlayerId);
+    if ($triggeringPlayerId === null) {
+      $triggeringPlayerId = $targetPlayerId;
+    }
+    return $this->game->splayAslant($triggeringPlayerId, $targetPlayerId, $color);
   }
 
   protected function getSplayDirection(int $color, int $playerId = null): int
@@ -640,7 +664,7 @@ abstract class Card
 
   // SELECTION HELPERS
 
-  protected function getLastSelectedCard()
+  protected function getLastSelectedCard(): ?array
   {
     return $this->game->getCardInfo(self::getLastSelectedId());
   }
@@ -653,6 +677,11 @@ abstract class Card
   protected function getLastSelectedAge(): int
   {
     return $this->game->innovationGameState->get('age_last_selected');
+  }
+
+  protected function getLastSelectedFaceUpAge(): int
+  {
+    return self::getLastSelectedCard()['faceup_age'];
   }
 
   protected function getLastSelectedColor(): int
@@ -763,8 +792,8 @@ abstract class Card
   {
     if (self::canPass()) {
       return [
-        "message_for_player" => clienttranslate('Choose a value'),
-        "message_for_others" => clienttranslate('${player_name} may choose a value'),
+        "message_for_player" => clienttranslate('Choose a icon'),
+        "message_for_others" => clienttranslate('${player_name} may choose a icon'),
       ];
     } else {
       return [
@@ -785,6 +814,21 @@ abstract class Card
       return [
         "message_for_player" => clienttranslate('Choose a value'),
         "message_for_others" => clienttranslate('${player_name} must choose a value'),
+      ];
+    }
+  }
+
+  protected function getPromptForNumberChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a number'),
+        "message_for_others" => clienttranslate('${player_name} may choose a number'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose an number'),
+        "message_for_others" => clienttranslate('${player_name} must choose an number'),
       ];
     }
   }
@@ -960,7 +1004,7 @@ abstract class Card
   {
     $colors = [];
     $counts = self::countCardsKeyedByColor($location, $playerId);
-    for ($color = 0; $color < 5; $color++) {
+    foreach (Colors::ALL as $color) {
       if ($counts[$color] > 0) {
         $colors[] = $color;
       }
@@ -1089,12 +1133,15 @@ abstract class Card
 
   protected function notifyPlayer($log, array $args = [], int $playerId = null)
   {
-    $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, $args);
+    $defaultArgs = ['You' => 'You'];
+    $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, array_merge($defaultArgs, $args));
   }
 
   protected function notifyOthers($log, array $args = [], int $playerId = null)
   {
-    $this->game->notifyAllPlayersBut(self::coercePlayerId($playerId), 'log', $log, $args);
+    $playerId = self::coercePlayerId($playerId);
+    $defaultArgs = ['player_name' => self::renderPlayerName($playerId)];
+    $this->game->notifyAllPlayersBut($playerId, 'log', $log, array_merge($defaultArgs, $args));
   }
 
   public function renderValue(int $value): string

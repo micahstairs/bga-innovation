@@ -13,7 +13,8 @@ class Card357 extends Card
 
   public function initialExecution()
   {
-    $maxBonus = $this->game->getMaxBonusIconOnBoard(self::getPlayerId());
+    $bonuses = self::getBonuses();
+    $maxBonus = $bonuses ? max($bonuses) : 0;
     $card = self::drawAndReveal($maxBonus);
     // TODO(4E): There shouldn't be a forecast keyword here.
     self::foreshadow($card, [$this, 'transferToHand'], self::getLauncherId());

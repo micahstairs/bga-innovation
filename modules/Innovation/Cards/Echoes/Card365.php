@@ -18,8 +18,8 @@ class Card365 extends Card
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else {
-      $value = $this->game->getMinAgeOnBoardTopCards(self::getPlayerId());
-      for ($color = 0; $color < 5; $color++) {
+      $value = self::getMinValue(self::getTopCards());
+      foreach (Colors::ALL as $color) {
         if (self::isSplayed($color)) {
           $value++;
         }

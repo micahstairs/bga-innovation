@@ -28,8 +28,6 @@ class Card485 extends Card
       ];
     } else {
       return [
-        'location_from'     => 'achievements',
-        'owner_from'        => 0,
         'safeguard_keyword' => true,
         'age'               => self::getAuxiliaryValue(),
       ];
@@ -43,7 +41,7 @@ class Card485 extends Card
         self::setMaxSteps(2);
       }
     } else {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue();
       self::setNextStep(1);
       self::setMaxSteps(1);
     }

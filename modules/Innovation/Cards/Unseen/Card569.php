@@ -31,11 +31,7 @@ class Card569 extends Card
       if (self::isFirstInteraction()) {
         return ['choices' => [1, 2]];
       } else {
-        return [
-          'owner_from'        => 0,
-          'location_from'     => 'achievements',
-          'safeguard_keyword' => true,
-        ];
+        return ['safeguard_keyword' => true];
       }
     } else {
       return [
