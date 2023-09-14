@@ -31,10 +31,13 @@ class Card458 extends Card
     foreach (self::getPlayerIds() as $playerId) {
       $cards = array_merge($cards, self::getStack($color, $playerId));
     }
-    self::junkCards($cards);
     $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
-    self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), $args);
-    self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), $args);
+    if (self::junkCards($cards)) {
+      self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), $args);
+      self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), $args);
+    } else {
+      self::notifyAll(clienttranslate('None of the boards had any ${color} cards to junk.'), $args);
+    }
   }
 
 }

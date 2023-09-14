@@ -370,9 +370,9 @@ abstract class Card
     return $this->game->transferCardFromTo($card, 0, 'deck', ['bottom_to' => false]);
   }
 
-  protected function junkCards(array $cards)
+  protected function junkCards(array $cards): bool
   {
-    $this->game->junkCards($cards);
+    return $this->game->junkCards($cards);
   }
 
   protected function junk(?array $card): ?array

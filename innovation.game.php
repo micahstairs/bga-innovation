@@ -1345,11 +1345,15 @@ class Innovation extends Table
         return self::transferCardFromTo($card, 0, 'junk', $properties);
     }
 
-    function junkCards(array $cards) {
+    function junkCards(array $cards): bool {
+        if (count($cards) === 0) {
+            return false;
+        }
         // NOTE: The caller is responsible for any relevant messages printed to the game log.
         for ($i = 0; $i < count($cards); $i++) {
             self::junkCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
         }
+        return true;
     }
 
     function removeCard(array $card, array $properties = []): ?array {
