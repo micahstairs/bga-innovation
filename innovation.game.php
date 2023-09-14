@@ -10563,6 +10563,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id == 442)
             || $card_id == 445
+            || $card_id == 447
             || (450 <= $card_id && $card_id <= 459)
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13117,35 +13118,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "446N1":
                 $step_max = 1;
-                break;
-
-            // id 447, age 11: Reclamation
-            case "447N1":
-                // "Return your three bottom red cards."
-                $color = 1; // start with red
-                
-                $keep_going = true;
-                do {
-                    $card_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                    if ($card_counts[$color] >= 3) {
-                        // "If you returned three cards, repeat this dogma effect using the color of the melded card."
-                        $return_card_count = 3;
-                    } else {
-                        $return_card_count = $card_counts[$color];
-                        $keep_going  = false; // stop the loop.  not enough cards returned
-                    }
-                    
-                    $total_age_value = 0;
-                    for ($i = 0; $i < $return_card_count; $i++) {
-                        $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                        self::returnCard($bottom_card);
-                        
-                        $total_age_value += $bottom_card['faceup_age'];
-                    }
-                    // "Draw and meld a card of value equal to half the total sum value of the returned cards, rounded up."
-                    $melded_card = self::executeDrawAndMeld($player_id, ceil($total_age_value / 2));
-                    $color = $melded_card['color']; // assign a new color for the next loop (if necessary)
-                } while ($keep_going);
                 break;
 
             // id 448, age 11: Escapism

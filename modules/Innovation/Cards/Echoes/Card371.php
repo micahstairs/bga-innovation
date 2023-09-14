@@ -39,7 +39,7 @@ class Card371 extends Card
         self::drawAndForeshadow(2);
       }
     } else if (self::hasCards('forecast')) {
-      $destinyCard = self::getCard(436);
+      $destinyCard = self::getCard(CardIds::DESTINY);
       $destinyIsAvailable = $destinyCard['owner'] == 0 && $destinyCard['location'] == 'achievements';
       self::setAuxiliaryValue($destinyIsAvailable ? 1 : 0); // Track whether to prompt to reveal a blue card
       self::setAuxiliaryValue2(0); // Tracks whether a blue card was returned

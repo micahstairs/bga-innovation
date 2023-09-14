@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardTypes;
+use Innovation\Enums\Locations;
 
 class Card339 extends Card
 {
@@ -38,9 +39,9 @@ class Card339 extends Card
       ];
     } else {
       return [
-        'location_from'       => 'junk',
+        'location_from'       => Locations::JUNK,
         'achieve_if_eligible' => true,
-        'age'                 => self::getMaxValueInLocation('junk'),
+        'age'                 => self::getMaxValueInLocation(Locations::JUNK),
       ];
     }
   }
@@ -67,7 +68,7 @@ class Card339 extends Card
     if (self::isEcho()) {
       self::drawAndForeshadow(1);
     } else if (self::isFirstOrThirdEdition()) {
-      $this->game->executeDraw(0, /*age=*/1, 'achievements', /*bottom_to=*/false, /*type=*/0, /*bottom_from=*/true);
+      $this->game->executeDraw(0, /*age=*/1, Locations::ACHIEVEMENTS, /*bottom_to=*/false, /*type=*/0, /*bottom_from=*/true);
     } else {
       self::junkBaseDeck(1);
       self::setMaxSteps(2);
