@@ -52,7 +52,7 @@ class Card503 extends Card
         // Prove that there were no cards of that color in hand
         self::revealHand();
       } else {
-        $stack = self::getCardsKeyedByColor('board')[self::getAuxiliaryValue()];
+        $stack = self::getStack(self::getAuxiliaryValue());
         if (count($stack) >= 2) {
           self::transferToBoard($stack[count($stack) - 2], self::getLauncherId());
         }

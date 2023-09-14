@@ -7,6 +7,7 @@ use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
@@ -1015,6 +1016,12 @@ abstract class Card
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
   {
     return $this->game->getCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+  }
+
+  protected function getStack(int $color, int $playerId = null): array
+  {
+    $playerId = self::coercePlayerIdUsingLocation($playerId, Locations::BOARD);
+    return self::getCardsKeyedByColor(Locations::BOARD, $playerId)[$color];
   }
 
   protected function countCardsKeyedByColor(string $location, int $playerId = null): array

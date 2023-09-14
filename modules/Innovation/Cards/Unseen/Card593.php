@@ -35,10 +35,10 @@ class Card593 extends Card
 
   public function handleSpecialChoice(int $color)
   {
-    $cards = self::getCardsKeyedByColor('board')[$color];
+    $stack = self::getStack($color);
     $scoredCard = false;
-    for ($i = 0; $i < count($cards) - 4; $i++) {
-      self::score($cards[$i]);
+    for ($i = 0; $i < count($stack) - 4; $i++) {
+      self::score($stack[$i]);
       $scoredCard = true;
     }
 

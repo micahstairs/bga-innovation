@@ -14,8 +14,9 @@ class Card459 extends Card
 
   public function initialExecution()
   {
+    // TODO(4E): Use bulk transfer.
     foreach (Colors::ALL as $color) {
-      foreach (self::getCardsKeyedByColor(Locations::BOARD)[$color] as $card) {
+      foreach (self::getStack($color) as $card) {
         self::transferToHand($card);
       }
     }

@@ -43,7 +43,7 @@ class Card123 extends Card
         }
       }
       if (!$hasTopArtifact) {
-        foreach (array_reverse(self::getCardsKeyedByColor('board')[$color]) as $card) {
+        foreach (array_reverse(self::getStack($color)) as $card) {
           if (self::isFirstOrThirdEdition()) {
             self::transferToScorePile($card);
           } else {

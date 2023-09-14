@@ -13,10 +13,9 @@ class Card589 extends Card
 
   public function initialExecution()
   {
-    $greenCards = self::getCardsKeyedByColor('board')[Colors::GREEN];
     $topGreenCard = self::getTopCardOfColor(Colors::GREEN);
     $numScored = 0;
-    foreach ($greenCards as $card) {
+    foreach (self::getStack(Colors::GREEN) as $card) {
       if ($card['id'] != $topGreenCard['id']) {
         self::score($card);
         $numScored++;

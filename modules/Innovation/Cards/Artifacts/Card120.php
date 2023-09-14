@@ -29,8 +29,7 @@ class Card120 extends Card
   }
 
   public function handleCardChoice(array $meldedCard) {
-    $cards = self::getCardsKeyedByColor('board')[$meldedCard['color']];
-    foreach (array_reverse($cards) as $card) {
+    foreach (array_reverse(self::getStack($meldedCard['color'])) as $card) {
       if ($card['id'] != $meldedCard['id']) {
         self::score($card);
         self::setNextStep(1);

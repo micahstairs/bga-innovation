@@ -40,7 +40,7 @@ class Card130 extends Card
   {
     if (self::isFirstInteraction()) {
       if (self::isFirstOrThirdEdition()) {
-        $stack = self::getCardsKeyedByColor('board')[$card['color']];
+        $stack = self::getStack($card['color']);
         if (count($stack) >= 2) {
           $coveredCard = $stack[count($stack) - 2];
           if ($coveredCard['type'] != $card['type']) {

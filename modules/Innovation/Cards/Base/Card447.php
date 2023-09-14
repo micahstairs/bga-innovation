@@ -23,11 +23,12 @@ class Card447 extends Card
   public function getInteractionOptions(): array
   {
     $color = self::getAuxiliaryValue();
-    $stack = self::getCardsKeyedByColor(Locations::BOARD)[$color];
 
     $cardIds = [];
-    for ($i = 0; $i < min(3, count($stack)); $i++) {
-      $cardIds[] = $stack[$i]['id'];
+    foreach (self::getStack($color) as $card) {
+      if ($card['position'] < 3) {
+        $cardIds[] = $card['id'];
+      }
     }
     self::setAuxiliaryArray($cardIds);
 

@@ -27,11 +27,11 @@ class Card458 extends Card
 
   public function handleSpecialChoice(int $color)
   {
+    $cards = [];
     foreach (self::getPlayerIds() as $playerId) {
-      foreach (self::getCardsKeyedByColor(Locations::BOARD, $playerId)[$color] as $card) {
-        self::junkAsPartOfBulkTransfer($card);
-      }
+      $cards = array_merge($cards, self::getStack($color, $playerId));
     }
+    self::junkCards($cards);
     $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
     self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), $args);
     self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), $args);
