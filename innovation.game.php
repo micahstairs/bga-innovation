@@ -10563,7 +10563,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id == 442)
             || $card_id == 445
-            || (447 <= $card_id && $card_id <= 448)
+            || (447 <= $card_id && $card_id <= 449)
             || (450 <= $card_id && $card_id <= 459)
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13117,11 +13117,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "446N1":
-                $step_max = 1;
-                break;
-
-            // id 449, age 11: Whataboutism
-            case "449D1":
                 $step_max = 1;
                 break;
 
@@ -16921,21 +16916,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 449, age 11: Whataboutism
-        case "449D1A":
-            // "I demand you transfer all your top cards with a demand effect from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-
-                'has_demand_effect' => true,
-            );
-            break;
-            
         // id 487, Unseen age 1: Rumor
         case "487N1A":
             // "Return a card from your score pile."
@@ -18804,21 +18784,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
-                // id 449, age 11: Whataboutism
-                case "449D1A":
-                    if ($n > 0) { // "if you do"
-                        // "exchange all cards in your score pile with all cards in my score pile!"
-                        $launcher_score_cards = self::getCardsInScorePile($launcher_id);
-                        $player_score_cards = self::getCardsInScorePile($player_id);
-                        foreach ($launcher_score_cards as $card) {
-                            self::transferCardFromTo($card, $player_id, 'score');
-                        }
-                        foreach ($player_score_cards as $card) {
-                            self::transferCardFromTo($card, $launcher_id, 'score');
-                        }
-                    }
-                    break;
-
                 // id 487, Unseen age 1: Rumor
                 case "487N1A":
                     if ($n > 0) { // "if you do"
