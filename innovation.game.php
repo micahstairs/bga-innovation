@@ -9136,9 +9136,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 32: // Medicine
                 if ($this->innovationGameState->usingFourthEditionRules()) {
-                    // The non-demand has no effect if both the age 3 and age 4 base decks are empty.
-                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
-                    return $base_decks[3] == 0 && $base_decks[4] == 0;
+                    // The non-demand has no effect if there are no 3's or 4's in the available achievements.
+                    $available_achievements = self::countCardsInLocationKeyedByAge(0, Locations::ACHIEVEMENTS);
+                    return $available_achievements[3] == 0 && $available_achievements[4] == 0;
                 }
                 return true;
 
