@@ -34,7 +34,7 @@ class Card529 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $value)
+  public function handleValueChoice(int $value)
   {
     $count = 0;
     foreach ($this->game->getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $playerId) {

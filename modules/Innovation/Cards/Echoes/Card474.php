@@ -21,7 +21,7 @@ class Card474 extends Card
     return ['choose_icon_type' => true];
   }
 
-  public function handleSpecialChoice(int $icon)
+  public function handleIconChoice(int $icon)
   {
     $maxIconCount = 0;
     $maxIconPlayerId = null;

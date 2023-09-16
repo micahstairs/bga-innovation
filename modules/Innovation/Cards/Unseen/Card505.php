@@ -30,7 +30,7 @@ class Card505 extends Card
     ];
   }
 
-  public function handleSpecialChoice(int $value)
+  public function handleValueChoice(int $value)
   {
     self::setAuxiliaryValue($value);
   }

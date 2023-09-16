@@ -80,11 +80,14 @@ class Card351 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleValueChoice(int $value)
   {
-    if (self::isEcho()) {
-      self::setAuxiliaryValue($choice);
-    } else if (self::isFirstOrThirdEdition()) {
+    self::setAuxiliaryValue($value);
+  }
+
+  public function handleListChoice(int $choice)
+  {
+    if (self::isFirstOrThirdEdition()) {
       $this->game->executeDraw(0, /*age=*/2, 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
     } else {
       self::junkBaseDeck(2);

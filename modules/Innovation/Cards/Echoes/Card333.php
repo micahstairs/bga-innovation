@@ -67,7 +67,7 @@ class Card333 extends Card
     ]);
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleListChoice($choice)
   {
     if ($choice === 1) {
       self::drawAndForeshadow(2);

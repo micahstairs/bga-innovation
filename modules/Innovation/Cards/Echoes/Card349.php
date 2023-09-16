@@ -62,7 +62,7 @@ class Card349 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $value)
+  public function handleListChoice(int $value)
   {
     self::junkBaseDeck($value);
   }

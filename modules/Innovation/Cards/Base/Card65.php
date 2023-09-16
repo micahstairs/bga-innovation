@@ -39,7 +39,7 @@ class Card65 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if ($choice === 0) {
       self::draw(self::getMaxValueInLocation('score') + 1);

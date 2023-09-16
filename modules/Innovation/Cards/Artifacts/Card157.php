@@ -30,11 +30,12 @@ class Card157 extends Card
     }
     return [
       'choose_color' => true,
-      'color' => $colors,
+      'color'        => $colors,
     ];
   }
 
-  public function handleSpecialChoice(int $color) {
+  public function handleColorChoice(int $color)
+  {
     if (self::isFourthEdition()) {
       while ($card = self::getBottomCardOfColor($color, self::getLauncherId())) {
         self::transferToScorePile($card, self::getLauncherId());

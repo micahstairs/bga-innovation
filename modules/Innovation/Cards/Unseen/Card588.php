@@ -65,7 +65,7 @@ class Card588 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleListChoice(int $choice)
   {
     self::setAuxiliaryValue($choice);
   }

@@ -71,7 +71,7 @@ class Card547 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     self::setAuxiliaryValue($choice);
   }

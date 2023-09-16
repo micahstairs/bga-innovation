@@ -56,7 +56,7 @@ class Card406 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $value)
+  public function handleValueChoice(int $value)
   {
     if (self::isFirstOrThirdEdition()) {
       self::drawAndForeshadow($value);

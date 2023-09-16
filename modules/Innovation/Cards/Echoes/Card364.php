@@ -82,7 +82,7 @@ class Card364 extends Card
     return self::buildPromptFromList($choiceMap);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleListChoice(int $choice)
   {
     if ($choice <= 4) {
       self::splay(Colors::PURPLE, $choice);

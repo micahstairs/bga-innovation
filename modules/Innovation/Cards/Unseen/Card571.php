@@ -77,7 +77,7 @@ class Card571 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     $args = [];
     if ($choice === 1) {

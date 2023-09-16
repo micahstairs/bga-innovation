@@ -37,7 +37,7 @@ class Card434 extends Card
     }
   }
 
-  public function handleSpecialChoice($value) {
+  public function handleValueChoice($value) {
     $card = self::drawAndMeld($value);
     if (count(array_unique(self::getBonuses())) >= 9) {
       self::win();

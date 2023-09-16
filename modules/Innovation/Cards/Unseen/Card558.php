@@ -48,11 +48,10 @@ class Card558 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if ($choice === 1) {
       self::setMaxSteps(2);
-      ;
     } else if ($choice === 2) {
       foreach (self::getCards('safe') as $card) {
         self::transferToHand($card);

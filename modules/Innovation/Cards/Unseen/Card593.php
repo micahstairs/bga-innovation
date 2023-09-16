@@ -33,7 +33,7 @@ class Card593 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleListChoice(int $color)
   {
     $stack = self::getStack($color);
     $scoredCard = false;

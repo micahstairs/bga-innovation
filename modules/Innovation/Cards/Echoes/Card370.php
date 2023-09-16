@@ -76,7 +76,7 @@ class Card370 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
     self::setAuxiliaryValue($color); // Track color being returned
     self::setMaxSteps(2);

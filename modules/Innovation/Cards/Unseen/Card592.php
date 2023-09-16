@@ -60,7 +60,7 @@ class Card592 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleListChoice(int $color)
   {
     $stack = self::getStack($color);
     $scoredCard = false;

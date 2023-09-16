@@ -67,14 +67,18 @@ class Card380 extends Card
     }
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleValueChoice($value)
   {
-    if (self::isFirstInteraction()) {
-      if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE) > 0) {
-        self::setAuxiliaryValue2($choice); // Track which deck was chosen
-        self::setMaxSteps(2);
-      }
-    } else if (self::isFirstOrThirdEdition()) {
+    if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE) > 0) {
+      self::setAuxiliaryValue2($value); // Track which deck was chosen
+      self::setMaxSteps(2);
+    }
+
+  }
+
+  public function handleListChoice(int $choice)
+  {
+    if (self::isFirstOrThirdEdition()) {
       // TODO(LATER): This shouldn't really be a draw.
       $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
     } else {

@@ -88,7 +88,7 @@ class Card373 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $value)
+  public function handleValueChoice(int $value)
   {
     self::transferHandAndScorePileToLauncher($value);
     self::setAuxiliaryValue($value); // Track value to junk

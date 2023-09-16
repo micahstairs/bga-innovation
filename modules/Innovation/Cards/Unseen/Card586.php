@@ -43,7 +43,7 @@ class Card586 extends Card
     ];
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleListChoice($choice)
   {
     $args = ['side' => $this->getPrintableCoinSide($choice)];
     self::notifyPlayer(clienttranslate('${You} call ${side}.'), $args);

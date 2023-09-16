@@ -95,13 +95,14 @@ class Card371 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleValueChoice(int $value)
   {
-    if (self::isFirstNonDemand()) {
-      self::drawAndForeshadow($choice);
-    } else {
-      self::setMaxSteps(3);
-    }
+    self::drawAndForeshadow($value);
+  }
+
+  public function handleListChoice(int $choice)
+  {
+    self::setMaxSteps(3);
   }
 
   public function afterInteraction()

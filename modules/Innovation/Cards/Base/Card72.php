@@ -77,7 +77,7 @@ class Card72 extends Card
     ]);
   }
 
-  public function handleSpecialChoice($value)
+  public function handleListChoice($value)
   {
     self::junkBaseDeck($value);
   }

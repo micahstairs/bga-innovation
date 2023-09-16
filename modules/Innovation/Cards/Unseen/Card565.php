@@ -36,10 +36,10 @@ class Card565 extends Card
     self::selfExecute($card);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handlePlayerChoice(int $playerId): void
   {
-    $this->notifications->notifyPlayerChoice($choice, self::getPlayerId());
-    self::setAuxiliaryValue($choice);
+    $this->notifications->notifyPlayerChoice($playerId, self::getPlayerId());
+    self::setAuxiliaryValue($playerId);
     self::drawAndMeld(10);
     self::drawAndMeld(10);
   }

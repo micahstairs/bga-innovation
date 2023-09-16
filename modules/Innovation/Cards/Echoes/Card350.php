@@ -44,7 +44,7 @@ class Card350 extends Card
       ];
     } else if (self::isFirstInteraction() || self::isThirdInteraction()) {
       return [
-        'can_pass'      => true,
+        'can_pass'    => true,
         'choose_from' => 'hand',
       ];
     } else {
@@ -73,7 +73,7 @@ class Card350 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleListChoice(int $choice)
   {
     $card = self::getCard(self::getAuxiliaryValue2());
     if ($choice === 1) {

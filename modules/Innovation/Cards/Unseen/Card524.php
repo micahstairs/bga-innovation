@@ -36,7 +36,7 @@ class Card524 extends Card
     ];
   }
 
-  public function handleSpecialChoice(int $color): void
+  public function handleColorChoice(int $color): void
   {
     self::setAuxiliaryValue($color);
     self::selfExecuteTopCard($color);

@@ -47,10 +47,10 @@ class Card512 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleColorChoice(int $color)
   {
     self::setMaxSteps(2);
-    self::setAuxiliaryValue($choice);
+    self::setAuxiliaryValue($color);
   }
 
   public function afterInteraction()

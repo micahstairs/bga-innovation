@@ -61,9 +61,9 @@ class Card440 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $chosenIcon): void
+  public function handleIconChoice(int $icon): void
   {
-    $this->notifications->notifyIconChoice($chosenIcon, self::getPlayerId());
-    self::setAuxiliaryValue($chosenIcon);
+    $this->notifications->notifyIconChoice($icon, self::getPlayerId());
+    self::setAuxiliaryValue($icon);
   }
 }

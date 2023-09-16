@@ -91,7 +91,71 @@ abstract class Card
 
   public function handleSpecialChoice(int $choice)
   {
-    // Subclasses are expected to override this function if any of the interactions use a special choice.
+    $choiceType = $this->game->innovationGameState->get('special_type_of_choice');
+    switch ($choiceType) {
+      // TODO:(LATER): Remove choose_yes_or_no.
+      case 1: // choose_from_list
+      case 7: // choose_yes_or_no
+        return static::handleListChoice($choice);
+      case 3: // choose_value
+        return static::handleValueChoice($choice);
+      case 4: // choose_color
+        return static::handleColorChoice($choice);
+      case 8; // choose_type
+        return static::handleTypeChoice($choice);
+      case 10: // choose_player
+        return static::handlePlayerChoice($choice);
+      case 11: // choose_non_negative_integer
+        return static::handleNumberChoice($choice);
+      case 12: // choose_icon_type
+        return static::handleIconChoice($choice);
+      default:
+        throw new \RuntimeException("handleSpecialChoice was not overridden");
+    }
+    // Subclasses are expected to either override this function or the relevant helper functions if
+    // any of the interactions use a special choice.
+  }
+
+  protected function handleListChoice(int $choice):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_from_list' interactions.
+    throw new \RuntimeException("Unimplemented handleListChoice");
+  }
+  
+  protected function handleValueChoice(int $value):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_value' interactions.
+    throw new \RuntimeException("Unimplemented handleValueChoice");
+  }
+  
+  protected function handleColorChoice(int $color):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_color' interactions.
+    throw new \RuntimeException("Unimplemented handleColorChoice");
+  }
+
+  protected function handleTypeChoice(int $type):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_type' interactions.
+    throw new \RuntimeException("Unimplemented handleTypeChoice");
+  }
+
+  protected function handlePlayerChoice(int $playerId):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_player' interactions.
+    throw new \RuntimeException("Unimplemented handlePlayerChoice");
+  }
+
+  protected function handleNumberChoice(int $number):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_non_negative_integer' interactions.
+    throw new \RuntimeException("Unimplemented handleNumberChoice");
+  }
+
+  protected function handleIconChoice(int $icon):  array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_icon_type' interactions.
+    throw new \RuntimeException("Unimplemented handleIconChoice");
   }
 
   public function afterInteraction()

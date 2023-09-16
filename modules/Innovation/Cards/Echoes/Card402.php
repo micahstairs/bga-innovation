@@ -48,7 +48,7 @@ class Card402 extends Card
     }
   }
 
-  public function handleSpecialChoice($value) {
+  public function handleValueChoice($value) {
     self::drawAndForeshadow($value);
   }
   

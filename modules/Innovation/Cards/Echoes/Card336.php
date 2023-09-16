@@ -42,7 +42,7 @@ class Card336 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
     $this->notifications->notifyColorChoice($color, self::getPlayerId());
     $revealedCards = [];

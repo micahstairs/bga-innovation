@@ -66,7 +66,7 @@ class Card515 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if ($choice === 0) {
       self::draw(4);

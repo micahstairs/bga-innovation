@@ -25,7 +25,7 @@ class Card458 extends Card
     ];
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
     $cards = [];
     foreach (self::getPlayerIds() as $playerId) {

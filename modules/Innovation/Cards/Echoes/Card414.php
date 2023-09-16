@@ -49,13 +49,14 @@ class Card414 extends Card
     }
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleValueChoice($value)
   {
-    if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($choice); // Track value chosen
-    } else if (self::isSecondInteraction()) {
-      self::setAuxiliaryValue2($choice); // Track opponent chosen
-    }
+    self::setAuxiliaryValue($value); // Track value chosen
+  }
+
+  public function handlePlayerChoice($playerId)
+  {
+    self::setAuxiliaryValue2($playerId); // Track opponent chosen
   }
 
   public function afterInteraction()

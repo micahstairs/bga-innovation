@@ -52,7 +52,7 @@ class Card348 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleListChoice(int $choice)
   {
     if ($choice === 1) {
       self::drawAndForeshadow(2);
