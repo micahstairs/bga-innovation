@@ -13,6 +13,7 @@ class CardIds
   const HOLY_GRAIL = 131;
   const TERRACOTTA_ARMY = 132;
   const YATA_NO_KAGAMI = 136;
+  const GUJIN_TUSHU_JICHENG = 161;
   const DELOREAN_DMC_12 = 213;
   const BELL = 342;
   const FLUTE = 343;
@@ -30,7 +31,6 @@ class CardIds
   const CONFIDENCE = 595;
   const ZEN = 596;
   const ANONYMITY = 597;
-
   const FOLKLORE = 598;
   const MYSTERY = 599;
 }

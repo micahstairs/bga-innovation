@@ -12349,15 +12349,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 161, Artifacts age 5: Gujin Tushu Jinsheng
-            case "161N1":
-                // "If Gujin Tushu Jinsheng is on your board"
-                $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                if ($top_yellow_card !== null && $top_yellow_card['id'] == 161) {
-                    $step_max = 1;
-                }
-                break;
-
             // id 162, Artifacts age 5: The Daily Courant
             case "162N1":
                 $step_max = 3;
@@ -15611,19 +15602,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-            
-        // id 161, Artifacts age 5: Gujin Tushu Jinsheng
-        case "161N1A":
-            // "Choose any other top card on any other board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 'any other player',
-                'location_from' => 'board',
-                'location_to' => 'none'               
-            );
-            break;
         
         // id 162, age 5: The Daily Courant
         case "162N1A":
@@ -17980,14 +17958,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
-                    }
-                    break;
-
-                // id 161, Artifacts age 5: Gujin Tushu Jinsheng
-                case "161N1A":
-                    // "Execute the effects on the chosen card as if they were on this card. Do not share them"
-                    if ($n > 0) {
-                        self::fullyExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
                     }
                     break;
 

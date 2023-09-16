@@ -1072,9 +1072,10 @@ $this->textual_card_infos = array(
     ),
 
     161 => array(
-        'name_first_and_third' => clienttranslate('Gujin Tushu Jinsheng'),
-        'name_fourth'          => clienttranslate('Gujin Tushu Jicheng'),
-        'non_demand_effect_1'  => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
+        'name_first_and_third'                => clienttranslate('Gujin Tushu Jinsheng'),
+        'name_fourth'                         => clienttranslate('Gujin Tushu Jicheng'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and fully execute it. '),
     ),
 
     162 => array(
