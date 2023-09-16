@@ -1035,9 +1035,10 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 5 */
 
     155 => array(
-        'name_first_and_third' => clienttranslate('Boerhavve Silver Microscope'),
-        'name_fourth'          => clienttranslate('Boerhaave Microscope'),
-        'non_demand_effect_1'  => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
+        'name_first_and_third'                => clienttranslate('Boerhavve Silver Microscope'),
+        'name_fourth'                         => clienttranslate('Boerhaave Microscope'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards you return.'),
     ),
 
     156 => array(

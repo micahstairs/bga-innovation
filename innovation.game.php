@@ -12361,11 +12361,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 155, Artifacts age 5: Boerhavve Silver Microscope
-            case "155N1":
-                $step_max = 2;
-                break;
-
             // id 156, Artifacts age 5: Principia
             case "156N1":
                 $step_max = 1;
@@ -15678,37 +15673,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-            
-        // id 155, Artifacts age 5: Boerhavve Silver Microscope
-        case "155N1A":
-            // "Return the lowest card in your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'age' => self::getMinAgeInHand($player_id)
-            );
-            break;
-
-        case "155N1B":
-            // "and the lowest top card on your board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'age' => self::getMinAgeOnBoardTopCards($player_id),
-            );
-            break;
 
         // id 156, Artifacts age 5: Principia
         case "156N1A":
@@ -18164,29 +18128,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
                     }
-                    break;
-
-                // id 155, Artifacts age 5: Boerhavve Silver Microscope
-                case "155N1A":
-                    if ($n > 0) {
-                        self::setAuxiliaryValue($this->innovationGameState->get('age_last_selected'));
-                    } else {
-                        self::setAuxiliaryValue(0);
-                    }
-                    break;
-
-                case "155N1B":
-                    $first_age = self::getAuxiliaryValue();
-                    if ($n > 0) {
-                        $second_age = self::getFaceupAgeLastSelected();
-                    } else {
-                        $second_age = 0;
-                    }
-                    
-                    // "Draw and score a card of value equal to the sum of the values of the cards returned"
-                    $sum = $first_age + $second_age;
-                    self::notifyGeneralInfo(clienttranslate('The values sum to ${number}'), array('number' => $sum));
-                    self::executeDraw($player_id, $sum, 'score');
                     break;
                     
                 // id 156, Artifacts age 5: Principia
