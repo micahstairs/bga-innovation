@@ -1066,8 +1066,9 @@ $this->textual_card_infos = array(
     ),
 
     160 => array(
-        'name'                => clienttranslate('Hudson\'s Bay Company Archives'),
-        'non_demand_effect_1' => clienttranslate('Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card.'),
+        'name'                                => clienttranslate('Hudson\'s Bay Company Archives'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card. Junk all cards in the deck of value equal to the melded card.'),
     ),
 
     161 => array(

@@ -12349,18 +12349,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 160, Artifacts age 5: Hudson's Bay Company Archives
-            case "160N1":
-                // "Score the bottom card of every color on your board"
-                foreach (Colors::ALL as $color) {
-                    $card = self::getBottomCardOnBoard($player_id, $color);
-                    if ($card !== null) {
-                        self::scoreCard($card, $player_id);
-                    }
-                }
-                $step_max = 1;
-                break;
-
             // id 161, Artifacts age 5: Gujin Tushu Jinsheng
             case "161N1":
                 // "If Gujin Tushu Jinsheng is on your board"
@@ -15624,22 +15612,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 160, Artifacts age 5: Hudson's Bay Company Archives
-        case "160N1A":    
-            // "Meld a card from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-            
         // id 161, Artifacts age 5: Gujin Tushu Jinsheng
         case "161N1A":
             // "Choose any other top card on any other board"
@@ -18008,14 +17980,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
-                    }
-                    break;
-
-                // id 160, Artifacts age 5: Hudson's Bay Company Archives
-                case "160N1A":
-                    if ($n > 0) {
-                        // "Splay right the color of the melded card"
-                        self::splayRight($player_id, $player_id, $this->innovationGameState->get('color_last_selected'));
                     }
                     break;
 
