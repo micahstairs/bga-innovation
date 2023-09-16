@@ -110,10 +110,8 @@ abstract class Card
       case 12: // choose_icon_type
         return static::handleIconChoice($choice);
       default:
-        throw new \RuntimeException("handleSpecialChoice was not overridden");
+      throw new \RuntimeException("Unhandled value in handleSpecialChoice: " . $choiceType);
     }
-    // Subclasses are expected to either override this function or the relevant helper functions if
-    // any of the interactions use a special choice.
   }
 
   protected function handleListChoice(int $choice):  array

@@ -1055,8 +1055,9 @@ $this->textual_card_infos = array(
     ),
 
     158 => array(
-        'name'                => clienttranslate('Ship of the Line Sussex'),
-        'non_demand_effect_1' => clienttranslate('If you have no cards in your score pile, choose a color and score all cards of that color from your board. Otherwise, return all cards from your score pile.'),
+        'name'                                => clienttranslate('Ship of the Line Sussex'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have no cards in your score pile, choose a color and score all cards of that color from your board. Otherwise, return all cards from your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have no cards in your score pile, choose a color and score all cards of that color on your board. Otherwise, return all cards from your score pile.'),
     ),
 
     159 => array(

@@ -9651,12 +9651,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 158, Artifacts age 5: Ship of the Line Sussex
-            case "158N1B":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-
             // id 162, Artifacts age 5: The Daily Courant
             case "162N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -12352,19 +12346,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                }
-                break;
-
-            // id 158, Artifacts age 5: Ship of the Line Sussex
-            case "158N1":
-                $number_of_cards_in_score_pile = self::countCardsInLocation($player_id, 'score');
-                if ($number_of_cards_in_score_pile == 0) {
-                    // Only do interaction B
-                    $step = 2;
-                    $step_max = 2;
-                } else {
-                    // Only do interaction A
-                    $step_max = 1;
                 }
                 break;
  
@@ -15649,28 +15630,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-        
-        // id 158, Artifacts age 5: Ship of the Line Sussex
-        case "158N1A":
-            // "Return all cards from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-        
-        case "158N1B":
-            // "Choose a color"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_color' => true
-            );
-            break;
             
         // id 160, Artifacts age 5: Hudson's Bay Company Archives
         case "160N1A":    
@@ -18059,16 +18018,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 158, Artifacts age 5: Ship of the Line Sussex
-                case "158N1B":
-                    // "Score all cards of that color from your board"
-                    $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                    $pile = $board[self::getAuxiliaryValue()];
-                    for ($i = count($pile) - 1; $i >= 0; $i--) {
-                        self::scoreCard($pile[$i], $player_id);
-                    }
-                    break;
-
                 // id 160, Artifacts age 5: Hudson's Bay Company Archives
                 case "160N1A":
                     if ($n > 0) {
@@ -19431,13 +19380,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-            
-            // id 158, Artifacts age 5: Ship of the Line Sussex
-            case "158N1B":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
             
             // id 162, Artifacts age 5: The Daily Courant
