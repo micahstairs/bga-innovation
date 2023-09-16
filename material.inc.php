@@ -1086,8 +1086,9 @@ $this->textual_card_infos = array(
     ),
 
     163 => array(
-        'name'                => clienttranslate('Sandham Room Cricket Bat'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_6}. If it is red, claim an achievement, ignoring eligibility.'),
+        'name'                                => clienttranslate('Sandham Room Cricket Bat'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_6}. If it is red, claim an achievement, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal a ${age_6}. If it is red, claim an achievement, ignoring eligibility. Otherwise, junk an available standard achievement.'),
     ),
 
     164 => array(

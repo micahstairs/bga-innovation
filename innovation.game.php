@@ -12343,17 +12343,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 163, Artifacts age 5: Sandham Room Cricket Bat
-            case "163N1":
-                // "Draw and reveal a 6"
-                $card = self::executeDraw($player_id, 6, 'revealed');
-                if ($card['color'] == 1) { // "If it is red"
-                    $step_max = 1;
-                }
-                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
-                self::transferCardFromTo($card, $player_id, 'hand');
-                break;
  
             // id 164, Artifacts age 5: Almira, Queen of the Castle
             case "164N1":
@@ -15590,22 +15579,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-            
-        // id 163, Artifacts age 5: Sandham Room Cricket Bat
-        case "163N1A":
-            // "Claim an achievement ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
             );
             break;
 
