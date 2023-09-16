@@ -69,7 +69,7 @@ class Card373 extends Card
     } else if (self::isFirstInteraction()) {
       $values = [];
       foreach (Colors::ALL as $color) {
-        $count = $this->game->countVisibleCards(self::getPlayerId(), $color);
+        $count = self::countVisibleCardsInStack($color);
         if (1 <= $count && $count <= 11) {
           $values[] = $count;
         }

@@ -66,7 +66,7 @@ class Card433 extends Card
   {
     $counts = [];
     foreach (Colors::ALL as $color) {
-      $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
+      $numVisibleCards = self::countVisibleCardsInStack($color);
       if ($numVisibleCards > 0) {
         $counts[] = $numVisibleCards;
       }
