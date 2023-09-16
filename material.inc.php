@@ -1048,9 +1048,10 @@ $this->textual_card_infos = array(
     ),
 
     157 => array(
-        'name_first_and_third' => clienttranslate('Bill of Rights'),
-        'name_fourth'          => clienttranslate('Galley Whydah'),
-        'i_compel_effect'      => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
+        'name_first_and_third'            => clienttranslate('Bill of Rights'),
+        'name_fourth'                     => clienttranslate('Galley Whydah'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to choose a color of which there are more visible cards on your board than on my board! From the bottom up, transfer all cards of that color from my board to my score pile, then from your board to my board!'),
     ),
 
     158 => array(

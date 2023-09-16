@@ -9651,12 +9651,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 157, Artifacts age 5: Bill of Rights
-            case "157C1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-
             // id 158, Artifacts age 5: Ship of the Line Sussex
             case "158N1B":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -12359,19 +12353,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 157, Artifacts age 5: Bill of Rights
-            case "157C1":
-                // "A color where you have more visible cards than I do"
-                $colors_with_more_visible_cards = array();
-                foreach (Colors::ALL as $color){
-                    if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color)) {
-                        $colors_with_more_visible_cards[] = $color;
-                        $step_max = 1;
-                    }
-                }
-                $this->innovationGameState->setFromArray('color_array', $colors_with_more_visible_cards);
                 break;
 
             // id 158, Artifacts age 5: Ship of the Line Sussex
@@ -15668,16 +15649,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-
-        // id 157, Artifacts age 5: Bill of Rights
-        case "157C1A":
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_color' => true,
-                'color' => $this->innovationGameState->getAsArray('color_array')
-            );            
-            break;
         
         // id 158, Artifacts age 5: Ship of the Line Sussex
         case "158N1A":
@@ -18066,18 +18037,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 157, Artifacts age 5: Bill of Rights
-                case "157C1A":
-                    $color = self::getAuxiliaryValue();
-                    do {
-                        // "Transfer all cards of that color from your board to my board, from the bottom up!"
-                        $card = self::getBottomCardOnBoard($player_id, $color);
-                        if ($card != null) {
-                            self::transferCardFromTo($card, $launcher_id, 'board');
-                        }
-                    } while ($card != null);
-                    break;
-
                 // id 167, Artifacts age 6: Frigate Constitution
                 case "167C1A":
                     if ($n > 0) { // "If you do"
@@ -19472,13 +19431,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 157, Artifacts age 5: Bill of Rights
-            case "157C1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
             
             // id 158, Artifacts age 5: Ship of the Line Sussex

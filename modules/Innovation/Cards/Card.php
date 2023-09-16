@@ -445,6 +445,11 @@ abstract class Card
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age, $type);
   }
 
+  protected function countVisibleCardsInStack(int $color, int $playerId = null): int
+  {
+    return $this->game->countVisibleCards(self::coercePlayerId($playerId), $color);
+  }
+
   protected function getTopCardOfColor(int $color, int $playerId = null): ?array
   {
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
