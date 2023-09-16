@@ -1042,8 +1042,9 @@ $this->textual_card_infos = array(
     ),
 
     156 => array(
-        'name'                => clienttranslate('Principia'),
-        'non_demand_effect_1' => clienttranslate('Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
+        'name'                                => clienttranslate('Principia'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return your top card of each non-blue color. For each card you return, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
     ),
 
     157 => array(

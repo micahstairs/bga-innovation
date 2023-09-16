@@ -12361,11 +12361,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 156, Artifacts age 5: Principia
-            case "156N1":
-                $step_max = 1;
-                break;
-            
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1":
                 // "A color where you have more visible cards than I do"
@@ -15674,31 +15669,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 156, Artifacts age 5: Principia
-        case "156N1A":
-            // Record the values of all non-blue top cards.
-            $ages_on_top = array();
-            for ($color = 1; $color < 5; $color++) { // non-blue
-                $top_card = self::getTopCardOnBoard($player_id, $color);
-                if ($top_card !== null) {
-                    $ages_on_top[] = $top_card['faceup_age'];
-                }
-            }
-            self::setAuxiliaryValue(Arrays::getValueFromBase16Array($ages_on_top));
-
-            // "Return all non-blue top cards from your board"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'color' => array(1, 2, 3, 4), // non-blue
-            );
-            break;
-
         // id 157, Artifacts age 5: Bill of Rights
         case "157C1A":
             $options = array(
@@ -18127,16 +18097,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
-                    }
-                    break;
-                    
-                // id 156, Artifacts age 5: Principia
-                case "156N1A":
-                    $ages_on_top = Arrays::getBase16ArrayFromValue(self::getAuxiliaryValue());
-                    sort($ages_on_top);
-                    // "For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order"
-                    foreach ($ages_on_top as $card_age) {
-                        self::executeDrawAndMeld($player_id, $card_age + 1);
                     }
                     break;
 
