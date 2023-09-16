@@ -12344,11 +12344,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
  
-            // id 164, Artifacts age 5: Almira, Queen of the Castle
-            case "164N1":
-                $step_max = 1;
-                break;
-
             // id 165, Artifacts age 6: Kilogram of the Archives
             case "165N1":
                 $step_max = 2;
@@ -15582,38 +15577,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 164, Artifacts age 5: Almira, Queen of the Castle
-        case "164N1A":
-            // "Meld a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "164N1B":
-            // "Claim an achievement of matching value, ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'age' => self::getFaceupAgeLastSelected(),
-                'require_achievement_eligibility' => false
-            );
-            break;
-
         // id 165, Artifacts age 6: Kilogram of the Archives
         case "165N1A":
             // "Return a card from your hand"
@@ -17875,13 +17838,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
-                    }
-                    break;
-
-                // id 164, Artifacts age 5: Almira, Queen of the Castle
-                case "164N1A":
-                    if ($n > 0) { // If no card is melded, then the value cannot match an achievement
-                        self::incrementStepMax(1);
                     }
                     break;
 
