@@ -12348,13 +12348,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
- 
-            // id 159, Artifacts age 5: Barque-Longue La Belle
-            case "159N1":
-                do {
-                    $card = self::executeDrawAndMeld($player_id, 5); // "Draw and meld a 5"
-                } while ($card['color'] != 2); // // "If the drawn card is not green, repeat this effect"
-                break;
 
             // id 160, Artifacts age 5: Hudson's Bay Company Archives
             case "160N1":
