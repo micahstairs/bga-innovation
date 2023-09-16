@@ -1079,8 +1079,10 @@ $this->textual_card_infos = array(
     ),
 
     162 => array(
-        'name'                => clienttranslate('The Daily Courant'),
-        'non_demand_effect_1' => clienttranslate('Draw a card of any value, then place it on top of the draw pile of its age. You may execute the effects of one of your other top cards as if they were on this card. Do not share them.'),
+        'name'                                => clienttranslate('The Daily Courant'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw a card of any value, then place it on top of the draw pile of its age. You may execute the effects of one of your other top cards as if they were on this card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw, reveal, and return a ${age_6}. Draw and meld a card of value equal to the value of your top card of the same color as the returned card. Self-execute the melded card.'),
+        'separate_4E_implementation'          => true,
     ),
 
     163 => array(

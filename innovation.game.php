@@ -9651,12 +9651,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 162, Artifacts age 5: The Daily Courant
-            case "162N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-                
             // id 170, Artifacts age 6: Buttonwood Agreement
             case "170N1A":
                 $message_for_player = clienttranslate('${You} must choose three colors');
@@ -10576,8 +10570,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         } else if ($card['type'] == 5) {
             $set = "Unseen";
         }
-        require_once("modules/Innovation/Cards/${set}/Card${card_id}.php");
-        $classname = "Innovation\Cards\\${set}\Card${card_id}";
+        $suffix = self::getEditionSuffix($card_id);
+        require_once("modules/Innovation/Cards/${set}/Card${card_id}${suffix}.php");
+        $classname = "Innovation\Cards\\${set}\Card${card_id}${suffix}";
         return new $classname($this, $execution_state);
     }
     
@@ -12347,11 +12342,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 162, Artifacts age 5: The Daily Courant
-            case "162N1":
-                $step_max = 3;
                 break;
 
             // id 163, Artifacts age 5: Sandham Room Cricket Bat
@@ -15602,52 +15592,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-        
-        // id 162, age 5: The Daily Courant
-        case "162N1A":
-            // Choose value to draw
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true
-            );       
-            break;
-
-        case "162N1B":
-            // Return the card to top of deck
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'enable_autoselection' => false, // Give the player the chance to read the card
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'bottom_to' => false, // Topdeck
-                
-                'card_id_1' => $this->innovationGameState->get('card_id_1')
-            );       
-            break;
-            
-        case "162N1C":
-            // "You may execute the effects of one of your other top cards as if they were on this card. Do not share them."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-                
-                // Exclude the card currently being executed (it's possible for the effects of The Daily Courant to be executed as if it were on another card)
-                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
-            );       
-            break;      
             
         // id 163, Artifacts age 5: Sandham Room Cricket Bat
         case "163N1A":
@@ -17961,20 +17905,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 162, Artifacts age 5: The Daily Courant
-                case "162N1A":
-                    // "Draw a card of any value"
-                    $card = self::executeDraw($player_id, self::getAuxiliaryValue());
-                    $this->innovationGameState->set('card_id_1', $card['id']);
-                    break;
-
-                case "162N1C":
-                    // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
-                    if ($n > 0) {
-                        self::fullyExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
-                    }
-                    break;
-
                 // id 164, Artifacts age 5: Almira, Queen of the Castle
                 case "164N1A":
                     if ($n > 0) { // If no card is melded, then the value cannot match an achievement
@@ -19307,13 +19237,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-            
-            // id 162, Artifacts age 5: The Daily Courant
-            case "162N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
             
             // id 170, Artifacts age 6: Buttonwood Agreement
