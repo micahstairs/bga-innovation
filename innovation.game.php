@@ -12344,11 +12344,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
  
-            // id 167, Artifacts age 6: Frigate Constitution
-            case "167C1":
-                $step_max = 1;
-                break;
-
             // id 168, Artifacts age 6: U.S. Declaration of Independence
             case "168C1":
                 $step_max = 3;
@@ -15567,38 +15562,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 167, Artifacts age 6: Frigate Constitution
-        case "167C1A":
-            // "I compel you to reveal a card in your hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed'
-            );
-            break;
-
-        case "167C1B":
-            // "Return it"
-            $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-            self::returnCard($revealed_card);
-
-            // "And all cards of its color from your board"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'pile',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'color' => array($this->innovationGameState->get('color_last_selected')),
-            );
-            break;
-
         // id 168, Artifacts age 6: U.S. Declaration of Independence
         case "168C1A":
             // "Transfer the highest card in your hand to my hand"
@@ -17765,28 +17728,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
                         $step = $step + 1;
                         self::incrementStep(1);
-                    }
-                    break;
-
-                // id 167, Artifacts age 6: Frigate Constitution
-                case "167C1A":
-                    if ($n > 0) { // "If you do"
-                        // "and its value is equal to the value of any of my top cards"
-                        $value_to_match = $this->innovationGameState->get('age_last_selected');
-                        $found_match = false;
-                        $top_cards = self::getTopCardsOnBoard($launcher_id);
-                        foreach ($top_cards as $top_card) {
-                            if ($top_card['faceup_age'] == $value_to_match) {
-                                self::incrementStepMax(1);
-                                $found_match = true;
-                                break;
-                            }
-                        }
-                        // Otherwise keep the card
-                        if (!$found_match) {
-                            $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                            self::transferCardFromTo($card, $player_id, 'hand');
-                        }
                     }
                     break;
                     

@@ -27,6 +27,7 @@ abstract class BaseIntegrationTest extends BaseTest
    */
   protected function setUp(): void
   {
+    error_log("*** SETTING UP NEW GAME ***");
     $this->tableInstance = $this->createGameTableInstanceBuilder()
       ->build()
       ->createDatabase()

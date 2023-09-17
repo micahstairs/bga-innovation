@@ -537,6 +537,16 @@ abstract class Card
     });
   }
 
+  protected function getValues(array $cards) {
+    return array_map(function ($card) {
+      if ($card['location'] === 'board' || $card['location'] === 'display') {
+        return $card['faceup_age'];
+      } else {
+        return $card['age'];
+      }
+    }, $cards);
+  }
+
   protected function getMinValue(array $cards) {
     if (empty($cards)) {
       return 0;
