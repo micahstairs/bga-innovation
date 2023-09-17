@@ -12344,11 +12344,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
  
-            // id 168, Artifacts age 6: U.S. Declaration of Independence
-            case "168C1":
-                $step_max = 3;
-                break;
-
             // id 169, Artifacts age 6: The Wealth of Nations
             case "169N1":
                 // "Draw and score a 1"
@@ -15559,53 +15554,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 168, Artifacts age 6: U.S. Declaration of Independence
-        case "168C1A":
-            // "Transfer the highest card in your hand to my hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-
-                'age' => self::getMaxAgeInHand($player_id)
-            );
-            break;
-
-        case "168C1B":
-            // "Transfer the highest card in your score pile to my score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'age' => self::getMaxAgeInScore($player_id)
-            );
-            break;
-            
-        case "168C1C":
-            // "Transfer the highest top card with a factory from your board to my board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-
-                'age' => self::getMaxAgeOnBoardTopCardsWithIcon($player_id, 5),
-                'with_icon' => 5
             );
             break;
 
