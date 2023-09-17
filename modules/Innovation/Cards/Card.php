@@ -114,43 +114,43 @@ abstract class Card
     }
   }
 
-  protected function handleListChoice(int $choice):  array
+  protected function handleListChoice(int $choice)
   {
     // Subclasses are expected to override this method if the card has any 'choose_from_list' interactions.
     throw new \RuntimeException("Unimplemented handleListChoice");
   }
   
-  protected function handleValueChoice(int $value):  array
+  protected function handleValueChoice(int $value)
   {
     // Subclasses are expected to override this method if the card has any 'choose_value' interactions.
     throw new \RuntimeException("Unimplemented handleValueChoice");
   }
   
-  protected function handleColorChoice(int $color):  array
+  protected function handleColorChoice(int $color)
   {
     // Subclasses are expected to override this method if the card has any 'choose_color' interactions.
     throw new \RuntimeException("Unimplemented handleColorChoice");
   }
 
-  protected function handleTypeChoice(int $type):  array
+  protected function handleTypeChoice(int $type)
   {
     // Subclasses are expected to override this method if the card has any 'choose_type' interactions.
     throw new \RuntimeException("Unimplemented handleTypeChoice");
   }
 
-  protected function handlePlayerChoice(int $playerId):  array
+  protected function handlePlayerChoice(int $playerId)
   {
     // Subclasses are expected to override this method if the card has any 'choose_player' interactions.
     throw new \RuntimeException("Unimplemented handlePlayerChoice");
   }
 
-  protected function handleNumberChoice(int $number):  array
+  protected function handleNumberChoice(int $number)
   {
     // Subclasses are expected to override this method if the card has any 'choose_non_negative_integer' interactions.
     throw new \RuntimeException("Unimplemented handleNumberChoice");
   }
 
-  protected function handleIconChoice(int $icon):  array
+  protected function handleIconChoice(int $icon)
   {
     // Subclasses are expected to override this method if the card has any 'choose_icon_type' interactions.
     throw new \RuntimeException("Unimplemented handleIconChoice");
