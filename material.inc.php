@@ -1100,8 +1100,9 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 6 */
 
     165 => array(
-        'name'                => clienttranslate('Kilogram of the Archives'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a ${age_10}.'),
+        'name'                                => clienttranslate('Kilogram of the Archives'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a ${age_10}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Return a top card from your board. If you return two cards and their values sum to ten, draw and score a ${age_10}. Otherwise, junk all cards in the deck of value equal to the sum.'),
     ),
 
     166 => array(

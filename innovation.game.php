@@ -12344,11 +12344,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
  
-            // id 165, Artifacts age 6: Kilogram of the Archives
-            case "165N1":
-                $step_max = 2;
-                break;
-
             // id 166, Artifacts age 6: Puffing Billy
             case "166N1":
                 $step_max = 1;
@@ -15577,33 +15572,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 165, Artifacts age 6: Kilogram of the Archives
-        case "165N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-
-        case "165N1B":
-            // "Return a top card from your board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-
         // id 166, Artifacts age 6: Puffing Billy
         case "166N1A":
             // "Return a card from your hand"
@@ -17838,33 +17806,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
-                    }
-                    break;
-
-                // id 165, Artifacts age 6: Kilogram of the Archives
-                case "165N1A":
-                    if ($n > 0) {
-                        // Log the value of the first returned card
-                        self::setAuxiliaryValue($this->innovationGameState->get('age_last_selected'));
-                    } else {
-                        // No card was returned
-                        self::setAuxiliaryValue(0);
-                    }
-                    
-                    break;
-
-                case "165N1B":
-                    // "If you returned two cards and their values sum to ten, draw and score a 10"
-                    $first_value = self::getAuxiliaryValue();
-                    if ($n > 0) {
-                        $second_value = self::getFaceupAgeLastSelected();
-                    } else {
-                        $second_value = 0;
-                    }
-                    $sum = $first_value + $second_value;
-                    self::notifyGeneralInfo(clienttranslate('The values sum to ${number}'), array('number' => $sum));
-                    if ($sum == 10) {
-                        self::executeDraw($player_id, 10, 'score');
                     }
                     break;
 
