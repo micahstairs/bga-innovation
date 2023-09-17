@@ -42,7 +42,7 @@ class Card166 extends Card
     }
 
     $countsByIcon = self::getAllIconCountsInStack($card['color']);
-    $maxCount = max(array_values($counts));
+    $maxCount = max(array_values($countsByIcon));
     self::draw($maxCount);
 
     if (self::isFirstOrThirdEdition()) {
