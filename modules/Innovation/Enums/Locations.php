@@ -15,6 +15,9 @@ class Locations
   const SAFE = 'safe';
   const SCORE = 'score';
 
+  // Special values which are used to reveal cards on their way to another location
+  const REVEALED_THEN_DECK = 'revealed,deck';
+
   // Special values which are used for interaction options but cannot be encoded/decoded
   const AVAILABLE_ACHIEVEMENTS = 'available achievements';
 }

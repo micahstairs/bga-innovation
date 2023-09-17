@@ -1106,8 +1106,9 @@ $this->textual_card_infos = array(
     ),
 
     166 => array(
-        'name'                => clienttranslate('Puffing Billy'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.'),
+        'name'                                => clienttranslate('Puffing Billy'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Tuck a card from your hand. Splay right its color on your board. Draw a card of value equal to the highest number of icons of the same type visible in that color on your board.'),
     ),
 
     167 => array(

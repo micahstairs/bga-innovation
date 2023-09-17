@@ -1138,7 +1138,26 @@ abstract class Card
         }
       }
     }
-    // convert array of icons to array of counts
+    // Convert array of icons to array of counts
+    return array_count_values($icons);
+  }
+
+  protected function getAllIconCountsInStack(int $color, int $playerId = null): array
+  {
+    $icons = [];
+    $stack = self::getStack($color, $playerId);
+    if (count($stack) > 1) {
+      $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));
+    }
+    foreach ($stack as $card) {
+      if ($card['position'] == count($stack) - 1) {
+        // All icons are visible on the top card in the stack
+        $icons = array_merge($icons, self::getIcons($card));
+      } else {
+        $icons = array_merge($icons, self::getIcons($card, $spots));
+      }
+    }
+    // Convert array of icons to array of counts
     return array_count_values($icons);
   }
 

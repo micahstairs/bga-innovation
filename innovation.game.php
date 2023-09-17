@@ -12344,11 +12344,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
  
-            // id 166, Artifacts age 6: Puffing Billy
-            case "166N1":
-                $step_max = 1;
-                break;
-
             // id 167, Artifacts age 6: Frigate Constitution
             case "167C1":
                 $step_max = 1;
@@ -15572,20 +15567,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 166, Artifacts age 6: Puffing Billy
-        case "166N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck'
-            );
-            break;
-
         // id 167, Artifacts age 6: Frigate Constitution
         case "167C1A":
             // "I compel you to reveal a card in your hand!"
@@ -17806,25 +17787,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
-                    }
-                    break;
-
-                // id 166, Artifacts age 6: Puffing Billy
-                case "166N1A":
-                    if ($n > 0) {
-                        // "Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board"
-                        $color = $this->innovationGameState->get('color_last_selected');
-                        $max_symbols = 0;
-                        for ($icon = 1; $icon <= 7; $icon++) {
-                            $icon_count = self::countVisibleIconsInPile($player_id, $icon, $color);
-                            if ($icon_count > $max_symbols){
-                                $max_symbols = $icon_count;
-                            }
-                        }
-                        self::executeDraw($player_id, $max_symbols);
-
-                        // "Splay right that color"
-                        self::splayRight($player_id, $player_id, $color);
                     }
                     break;
                     
