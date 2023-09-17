@@ -12343,16 +12343,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
- 
-            // id 169, Artifacts age 6: The Wealth of Nations
-            case "169N1":
-                // "Draw and score a 1"
-                self::executeDraw($player_id, 1, 'score');
-                // "Add up the values of all the cards in your score pile, divide by five, and round up"
-                $age_to_score = ceil(self::getPlayerScore($player_id) / 5);
-                // "Draw and score a card of value equal to the result"
-                self::executeDraw($player_id, $age_to_score, 'score');
-                break;
                 
             // id 170, Artifacts age 6: Buttonwood Agreement
             case "170N1":

@@ -1122,8 +1122,9 @@ $this->textual_card_infos = array(
     ),
 
     169 => array(
-        'name'                => clienttranslate('The Wealth of Nations'),
-        'non_demand_effect_1' => clienttranslate('Draw and score a ${age_1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.'),
+        'name'                                => clienttranslate('The Wealth of Nations'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score a ${age_1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score a ${age_1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result. Junk all cards in the deck of that value.'),
     ),
 
     170 => array(
