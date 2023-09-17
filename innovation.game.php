@@ -9651,12 +9651,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 170, Artifacts age 6: Buttonwood Agreement
-            case "170N1A":
-                $message_for_player = clienttranslate('${You} must choose three colors');
-                $message_for_others = clienttranslate('${player_name} must choose three colors');
-                break;
-
             // id 173, Artifacts age 6: Moonlight Sonata
             case "173N1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -12344,11 +12338,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
                 
-            // id 170, Artifacts age 6: Buttonwood Agreement
-            case "170N1":
-                $step_max = 1;
-                break;
-
             // id 171, Artifacts age 6: Stamp Act
             case "171C1":
                 $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
@@ -15547,32 +15536,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 170, Artifacts age 6: Buttonwood Agreement
-        case "170N1A":
-            // "Choose three colors"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_three_colors' => true
-            );
-            break;
-
-        case "170N1B":
-            // Reveal score pile to prove to other players that they are returning the correct cards.
-            self::revealScorePile($player_id);
-            // "Return all cards of the drawn card's color from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'color' => array(self::getAuxiliaryValue()),
-            );
-            break;
-
         // id 171, Artifacts age 6: Stamp Act
         case "171C1A":
             // "Transfer a card of value equal to the top yellow card on your board from your score pile to mine"
@@ -17668,13 +17631,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStep(1);
                     }
                     break;
-                    
-                // id 170, Artifacts age 6: Buttonwood Agreement
-                case "170N1B":
-                    // "Unsplay that color"
-                    self::unsplay($player_id, $player_id, self::getAuxiliaryValue());
-                    break;
-                    
+                        
                 // id 171, Artifacts age 6: Stamp Act
                 case "171C1A":
                     if ($n > 0) { // "If you do"
@@ -18948,41 +18905,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-            
-            // id 170, Artifacts age 6: Buttonwood Agreement
-            case "170N1A":
-                $colors = Arrays::getValueAsArray($choice);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1}, ${color_2}, and ${color_3}.'), array(
-                    'i18n' => array('color_1', 'color_2', 'color_3'),
-                    'You' => 'You',
-                    'color_1' => Colors::render($colors[0]),
-                    'color_2' => Colors::render($colors[1]),
-                    'color_3' => Colors::render($colors[2]))
-                );
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array(
-                    'i18n' => array('color_1', 'color_2', 'color_3'),
-                    'player_name' => self::renderPlayerName($player_id),
-                    'color_1' => Colors::render($colors[0]),
-                    'color_2' => Colors::render($colors[1]),
-                    'color_3' => Colors::render($colors[2]))
-                );
-                
-                // "Draw and reveal a 8"
-                $card = self::executeDraw($player_id, 8, 'revealed');
-                // "If the drawn card is one of the chosen colors, score it and splay up that color"
-                if ($card['color'] == $colors[0] || $card['color'] == $colors[1] || $card['color'] == $colors[2]) {
-                    self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
-                    self::scoreCard($card, $player_id);
-                    self::splayUp($player_id, $player_id, $card['color']);
-
-                // "Otherwise"
-                } else {
-                    self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                    self::setAuxiliaryValue($card['color']);
-                    self::incrementStepMax(1);
-                }
                 break;
 
             // id 173, Artifacts age 6: Moonlight Sonata

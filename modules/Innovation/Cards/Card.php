@@ -52,8 +52,12 @@ abstract class Card
         return static::getPromptForValueChoice();
       case 4: // choose_color
         return static::getPromptForColorChoice();
+      case 5: // choose_two_colors
+        return static::getPromptForTwoColorChoice();
       case 8; // choose_type
         return static::getPromptForTypeChoice();
+      case 9: // choose_three_colors
+        return static::getPromptForThreeColorChoice();
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
       case 11: // choose_non_negative_integer
@@ -101,8 +105,14 @@ abstract class Card
         return static::handleValueChoice($choice);
       case 4: // choose_color
         return static::handleColorChoice($choice);
+      case 5: // choose_two_colors
+        $colors = Arrays::getValueAsArray($choice);
+        return static::handleTwoColorChoice($colors[0], $colors[1]);
       case 8; // choose_type
         return static::handleTypeChoice($choice);
+      case 9: // choose_two_colors
+        $colors = Arrays::getValueAsArray($choice);
+        return static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
       case 10: // choose_player
         return static::handlePlayerChoice($choice);
       case 11: // choose_non_negative_integer
@@ -130,6 +140,18 @@ abstract class Card
   {
     // Subclasses are expected to override this method if the card has any 'choose_color' interactions.
     throw new \RuntimeException("Unimplemented handleColorChoice");
+  }
+
+  protected function handleTwoColorChoice(int $color1, int $color2)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_two_colors' interactions.
+    throw new \RuntimeException("Unimplemented handleTwoColorChoice");
+  }
+
+  protected function handleThreeColorChoice(int $color1, int $color2, int $color3)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_three_colors' interactions.
+    throw new \RuntimeException("Unimplemented handleThreeColorChoice");
   }
 
   protected function handleTypeChoice(int $type)
@@ -862,6 +884,36 @@ abstract class Card
       return [
         "message_for_player" => clienttranslate('Choose a color'),
         "message_for_others" => clienttranslate('${player_name} must choose a color'),
+      ];
+    }
+  }
+
+  protected function getPromptForTwoColorChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose two colors'),
+        "message_for_others" => clienttranslate('${player_name} may choose two colors'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose two colors'),
+        "message_for_others" => clienttranslate('${player_name} must choose two colors'),
+      ];
+    }
+  }
+
+  protected function getPromptForThreeColorChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose three colors'),
+        "message_for_others" => clienttranslate('${player_name} may choose three colors'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose three colors'),
+        "message_for_others" => clienttranslate('${player_name} must choose three colors'),
       ];
     }
   }
