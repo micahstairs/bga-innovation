@@ -12337,15 +12337,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-                
-            // id 171, Artifacts age 6: Stamp Act
-            case "171C1":
-                $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                if ($top_yellow_card !== null) {
-                    self::setAuxiliaryValue($top_yellow_card['age']);
-                    $step_max = 1;
-                }
-                break;
 
             // id 172, Artifacts age 6: Pride and Prejudice
             case "172N1":
@@ -15536,37 +15527,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 171, Artifacts age 6: Stamp Act
-        case "171C1A":
-            // "Transfer a card of value equal to the top yellow card on your board from your score pile to mine"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'age' => self::getAuxiliaryValue()
-            );
-            break;
-
-        case "171C1B":
-            // "Return a card from your score pile of value equal to the top green card on your board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'age' => self::getAuxiliaryValue()
-            );
-            break;
-
         // id 173, Artifacts age 6: Moonlight Sonata
         case "173N1A":
             // "Choose a color on your board having the highest top card"
@@ -17629,17 +17589,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
                         $step = $step + 1;
                         self::incrementStep(1);
-                    }
-                    break;
-                        
-                // id 171, Artifacts age 6: Stamp Act
-                case "171C1A":
-                    if ($n > 0) { // "If you do"
-                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card != null) {
-                            self::setAuxiliaryValue($top_green_card['age']);
-                            self::incrementStepMax(1);
-                        }
                     }
                     break;
  

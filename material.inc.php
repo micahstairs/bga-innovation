@@ -1133,8 +1133,11 @@ $this->textual_card_infos = array(
     ),
 
     171 => array(
-        'name'            => clienttranslate('Stamp Act'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a card of value equal to the top yellow card on your board from your score pile to mine! If you do, return a card from your score pile of value equal to the top green card on your board!'),
+        'name_first_and_third'            => clienttranslate('Stamp Act'),
+        'name_fourth'                     => clienttranslate('Qianlong\'s Dragon Robe'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer a card of value equal to the top yellow card on your board from your score pile to mine! If you do, return a card from your score pile of value equal to the top green card on your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer your top red card to my score pile! Transfer your top green card to my board! Transfer a yellow card from your score pile to mine! Transfer a purple card from your score pile to my hand!'),
+        'separate_4E_implementation'      => true,
     ),
 
     172 => array(
