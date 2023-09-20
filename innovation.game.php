@@ -12331,13 +12331,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-                
-            // id 174, Artifacts age 6: Marcha Real
-            case "174N1":
-                self::setAuxiliaryValue(-1);
-                self::setAuxiliaryValue2(-1);
-                $step_max = 1;
-                break;
 
             // id 175, Artifacts age 7: Periodic Table
             case "175N1":
@@ -15496,35 +15489,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-            
-        // id 174, Artifacts age 6: Marcha Real
-        case "174N1A":
-            // "Reveal and return two cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck'
-            );
-            break;
-    
-        case "174N1B":
-            // "Claim an achievement ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
-            );
-            break;
 
         // id 175, Artifacts age 7: Periodic Table
         case "175N1A":
@@ -17525,33 +17489,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStep(1);
                     }
                     break;
-            
-                // id 174, Artifacts age 6: Marcha Real
-                case "174N1A":
-                    $card_id_1 = self::getAuxiliaryValue();
-                    $card_1 = $card_id_1 < 0 ? null : self::getCardInfo($card_id_1);
-                    $card_id_2 = self::getAuxiliaryValue2();
-                    $card_2 = $card_id_2 < 0 ? null : self::getCardInfo($card_id_2);
-
-                    if ($card_1 != null && $card_2 != null) {
-                        // "If they have the same value, draw a card of value one higher"
-                        if ($card_1['age'] == $card_2['age']) {
-                            self::notifyGeneralInfo(clienttranslate('They both have the same value.'));
-                            self::executeDraw($player_id, $card_1['age'] + 1);
-                        } else {
-                            self::notifyGeneralInfo(clienttranslate('They do not have the same value.'));
-                        }
-                        // "If they have the same color, claim an achievement, ignoring eligibility"
-                        if ($card_1['color'] == $card_2['color']) {
-                            self::notifyGeneralInfo(clienttranslate('They both have the same color.'));
-                            self::incrementStepMax(1);
-                        } else {
-                            self::notifyGeneralInfo(clienttranslate('They do not have the same color.'));
-                        }
-                    } else if ($card_1 == null && $card_2 == null) { // If none are returned, they are still considered to have the same value (0)
-                        self::executeDraw($player_id, 1);
-                    }
-                    break;
 
                 // id 175, Artifacts age 7: Periodic Table
                 case "175N1A":
@@ -18781,17 +18718,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 174, Artifacts age 6: Marcha Real
-            case "174N1A":
-                if (self::getAuxiliaryValue() < 0) {
-                    self::setAuxiliaryValue($card['id']);
-                } else {
-                    self::setAuxiliaryValue2($card['id']);
-                }
-                $card = self::transferCardFromTo($card, $owner_to, 'revealed');
-                self::returnCard($card);
                 break;
                 
             // id 179, Artifacts age 7: International Prototype Metre Bar
