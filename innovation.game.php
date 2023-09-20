@@ -4188,27 +4188,6 @@ class Innovation extends Table
         $name2 = $this->getCardName($card2['id']);
         return Strings::doesStringComeBefore($name1, $name2);
     }
-    
-    function getColorsOfRepeatedValueOfTopCardsOnBoard($player_id) {
-        /**
-            Returns an array of all colors whose top card's value matches the value of another top card on that player's board .
-        **/
-
-        $colors = array();
-        $top_cards = self::getTopCardsOnBoard($player_id);
-            
-        foreach ($top_cards as $card_1) {
-            $top_age = $card_1['faceup_age'];
-            foreach ($top_cards as $card_2) {
-                if ($card_1['id'] != $card_2['id'] && $card_2['faceup_age'] == $top_age) {
-                    $colors[] = $card_1['color'];
-                    continue 2;
-                }
-            }
-        }
-        
-        return $colors;
-    }
 
     function getDeckTopCard($age, $type) {
         /**
@@ -9223,10 +9202,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::UP);
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::BLUE,  $up_splayable_colors) && !in_array(Colors::YELLOW,  $up_splayable_colors);
 
-            case 175: // Periodic Table
-                // The non-demand effect has no effect if the player has top cards with unique values.
-                return count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($executing_player_id)) == 0;
-            
             // All other cards with non-demand effects are assumed to have an effect.
             default:
                 return false;

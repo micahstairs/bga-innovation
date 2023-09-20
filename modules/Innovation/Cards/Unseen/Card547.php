@@ -32,10 +32,17 @@ class Card547 extends Card
       return ['choices' => [0, 1]];
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === 1) {
+        $colors = [];
+        $repeatedValues = self::getRepeatedValues(self::getTopCards());
+        foreach (self::getTopCards() as $card) {
+          if (in_array($card['faceup_age'], $repeatedValues)) {
+            $colors[] = $card['color'];
+          }
+        }
         return [
           'location_from' => 'board',
           'location_to'   => 'junk,safe',
-          'color'         => $this->game->getColorsOfRepeatedValueOfTopCardsOnBoard(self::getPlayerId()),
+          'color'         => $colors,
         ];
       } else {
         self::setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));

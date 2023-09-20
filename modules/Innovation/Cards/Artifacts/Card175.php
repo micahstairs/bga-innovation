@@ -46,7 +46,7 @@ class Card175 extends Card
   {
     $cardArgs = $this->game->getNotificationArgsForCardList([$card]);
     self::notifyPlayer(clienttranslate('${You} choose ${card}.'), ['card' => $cardArgs]);
-    self::notifyOthers(clienttranslate('${player_name} chose ${card}', ['card' => $cardArgs]));
+    self::notifyOthers(clienttranslate('${player_name} chose ${card}'), ['card' => $cardArgs]);
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue($card['color']);
     } else {
