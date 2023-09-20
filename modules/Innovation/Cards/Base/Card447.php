@@ -37,7 +37,7 @@ class Card447 extends Card
     return [
       'n'                               => count($cardIds),
       'location_from'                   => Locations::PILE,
-      'color'                           => $color,
+      'color'                           => [$color],
       'return_keyword'                  => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
