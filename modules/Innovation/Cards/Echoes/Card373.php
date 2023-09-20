@@ -63,13 +63,13 @@ class Card373 extends Card
     } else if (self::isFirstOrThirdEdition()) {
       return [
         'n'              => 'all',
-        'location_from'  => 'revealed',
+        'location_from'  => Locations::REVEALED,
         'return_keyword' => true,
       ];
     } else if (self::isFirstInteraction()) {
       $values = [];
       foreach (Colors::ALL as $color) {
-        $count = self::countVisibleCardsInStack($color);
+        $count = self::countVisibleCardsInStack($color, self::getLauncherId());
         if (1 <= $count && $count <= 11) {
           $values[] = $count;
         }

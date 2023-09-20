@@ -19,7 +19,7 @@ class Card562 extends Card
       if (self::hasIcon($card, Icons::INDUSTRY)) {
         self::score($card);
         break;
-      } else if (self::drawAndMeld(8)['age'] != 8) {
+      } else if (self::drawAndMeld(8)['faceup_age'] != 8) {
         break;
       }
     }
