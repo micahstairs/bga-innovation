@@ -69,7 +69,7 @@ abstract class Card
     }
   }
 
-  protected function getPromptForListChoice():  array
+  protected function getPromptForListChoice(): array
   {
     // Subclasses are expected to override this method if the card has any interactions which use the 'choices' option.
     throw new \RuntimeException("Unimplemented getPromptForListChoice");
@@ -120,7 +120,7 @@ abstract class Card
       case 12: // choose_icon_type
         return static::handleIconChoice($choice);
       default:
-      throw new \RuntimeException("Unhandled value in handleSpecialChoice: " . $choiceType);
+        throw new \RuntimeException("Unhandled value in handleSpecialChoice: " . $choiceType);
     }
   }
 
@@ -129,13 +129,13 @@ abstract class Card
     // Subclasses are expected to override this method if the card has any 'choose_from_list' interactions.
     throw new \RuntimeException("Unimplemented handleListChoice");
   }
-  
+
   protected function handleValueChoice(int $value)
   {
     // Subclasses are expected to override this method if the card has any 'choose_value' interactions.
     throw new \RuntimeException("Unimplemented handleValueChoice");
   }
-  
+
   protected function handleColorChoice(int $color)
   {
     // Subclasses are expected to override this method if the card has any 'choose_color' interactions.
@@ -438,7 +438,7 @@ abstract class Card
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return(?array $card): ?array
+  protected function return (?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -553,13 +553,15 @@ abstract class Card
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function filterByColor(array $cards, array $colors) {
+  protected function filterByColor(array $cards, array $colors): array
+  {
     return array_filter($cards, function ($card) use ($colors) {
       return in_array($card['color'], $colors);
     });
   }
 
-  protected function getValues(array $cards) {
+  protected function getValues(array $cards): array
+  {
     return array_map(function ($card) {
       if ($card['location'] === 'board' || $card['location'] === 'display') {
         return $card['faceup_age'];
@@ -569,7 +571,14 @@ abstract class Card
     }, $cards);
   }
 
-  protected function getMinValue(array $cards) {
+  public function getRepeatedValues(array $cards): array
+  {
+    $values = self::getValues($cards);
+    return Arrays::getRepeatedValues($values);
+  }
+
+  protected function getMinValue(array $cards)
+  {
     if (empty($cards)) {
       return 0;
     }
@@ -582,7 +591,8 @@ abstract class Card
     }, $cards));
   }
 
-  protected function getMaxValue(array $cards) {
+  protected function getMaxValue(array $cards)
+  {
     if (empty($cards)) {
       return 0;
     }
@@ -1229,7 +1239,8 @@ abstract class Card
     return count(array_intersect(self::getIcons($card1), self::getIcons($card2))) > 0;
   }
 
-  private function getVisibleSpotsOnBuriedCard(int $splayDirection): array {
+  private function getVisibleSpotsOnBuriedCard(int $splayDirection): array
+  {
     switch ($splayDirection) {
       case Directions::LEFT:
         return [4, 5];

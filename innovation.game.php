@@ -12332,18 +12332,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 175, Artifacts age 7: Periodic Table
-            case "175N1":
-                // Determine if there are any top cards which have the same value as another top card on their board
-                $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
-                if (count($colors) >= 2) {
-                    self::setAuxiliaryValueFromArray($colors);
-                    $step_max = 2;
-                } else {
-                    self::notifyGeneralInfo(clienttranslate("No two top cards have the same value."));
-                }
-                break;
-
             // id 176, Artifacts age 7: Corvette Challenger
             case "176N1":
                 // "Draw and tuck an 8"
@@ -15490,39 +15478,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 175, Artifacts age 7: Periodic Table
-        case "175N1A":
-            // "Choose two top cards on your board of the same value"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-
-                'color' => self::getAuxiliaryValueAsArray(),
-            );
-
-            break;
-
-        case "175N1B":
-            // "Choose two top cards on your board of the same value"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-
-                'not_id' => $this->innovationGameState->get('id_last_selected'),
-                'age' => $this->innovationGameState->get('age_last_selected'),
-            );
-            break;
-
         // id 177, Artifacts age 7: Submarine H. L. Hunley
         case "177C1A":
             // "Return all cards of its color from your board"
@@ -17487,35 +17442,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
                         $step = $step + 1;
                         self::incrementStep(1);
-                    }
-                    break;
-
-                // id 175, Artifacts age 7: Periodic Table
-                case "175N1A":
-                    self::setAuxiliaryValue($this->innovationGameState->get('color_last_selected'));
-                    break;
-
-                case "175N1B":
-                    $color_1 = self::getAuxiliaryValue();
-                    $color_2 = $this->innovationGameState->get('color_last_selected');
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose your top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => Colors::render($color_1), 'color_2' => Colors::render($color_2)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses his top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => Colors::render($color_1), 'color_2' => Colors::render($color_2)));
-
-                    // "Draw a card of value one higher and meld it"
-                    $age_selected = self::getFaceupAgeLastSelected();
-                    $card = self::executeDrawAndMeld($player_id, $age_selected + 1);
-                    
-                    // "If it melded over one of the chosen cards, repeat this effect"
-                    if ($card['color'] == $color_1 || $card['color'] == $color_2) {
-                        // Determine if there are still any top cards which have the same value as another top card on their board
-                        $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
-                        if (count($colors) >= 2) {
-                            self::setAuxiliaryValueFromArray($colors);
-                            $step = $step - 2;
-                            self::incrementStep(-2);
-                        } else {
-                            self::notifyGeneralInfo(clienttranslate("No two top cards have the same value."));
-                        }
                     }
                     break;
 
