@@ -82,7 +82,7 @@ class Card366 extends Card
   private function getAvailableStandardAchievementIds(): array
   {
     $cardIds = [];
-    foreach (self::getCards('achievements', 0) as $card) {
+    foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
       if (self::isValuedCard($card)) {
         $cardIds[] = $card['id'];
       }

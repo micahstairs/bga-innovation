@@ -40,7 +40,7 @@ class Card164 extends Card
       if (self::getNumChosen() === 1) {
         self::setMaxSteps(2);
       } else if (self::isFourthEdition()) {
-        $achievementsByValue = self::getCardsKeyedByValue(Locations::ACHIEVEMENTS, 0);
+        $achievementsByValue = self::getCardsKeyedByValue(Locations::ACHIEVEMENTS);
         foreach ($achievementsByValue as $achievements) {
           if ($achievements) {
             self::junkBaseDeck($achievements[0]['age']);

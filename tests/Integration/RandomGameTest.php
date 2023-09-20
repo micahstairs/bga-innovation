@@ -2,6 +2,7 @@
 
 namespace Integration\Cards\Base;
 
+use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 use Integration\BaseIntegrationTest;
 
@@ -201,12 +202,12 @@ class RandomGameTest extends BaseIntegrationTest
         break;
       case 'choose_special_achievement':
         $cardIds = [];
-        foreach (self::getCards('achievements', 0) as $card) {
+        foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
           if ($card['age'] === null && $card['id'] < 1000) {
             $cardIds[] = $card['id'];
           }
         }
-        foreach (self::getCards('junk', 0) as $card) {
+        foreach (self::getCards(Locations::JUNK) as $card) {
           if ($card['age'] === null && $card['id'] < 1000) {
             $cardIds[] = $card['id'];
           }

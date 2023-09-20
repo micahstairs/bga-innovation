@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card418 extends Card
 {
@@ -77,7 +78,7 @@ class Card418 extends Card
   {
     if (self::isFourthEdition() && self::isDemand()) {
       foreach (self::getActionScopedAuxiliaryArray(self::getPlayerId()) as $value) {
-        foreach (self::getCardsKeyedByValue('achievements', 0)[$value] as $card) {
+        foreach (self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS)[$value] as $card) {
           self::junk($card);
         }
       }

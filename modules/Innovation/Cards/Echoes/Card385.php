@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card385 extends Card
 {
@@ -103,7 +104,7 @@ class Card385 extends Card
   private function getNumberOfAvailableSpecialAchievements(): int
   {
     $count = 0;
-    foreach (self::getCards('achievements', 0) as $achievement) {
+    foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $achievement) {
       if (self::isSpecialAchievement($achievement)) {
         $count++;
       }

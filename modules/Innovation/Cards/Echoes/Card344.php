@@ -25,7 +25,7 @@ class Card344 extends Card
   {
     $values = self::getUniqueValues('score');
     $cardIds = [];
-    foreach (self::getCards('achievements', 0) as $card)  {
+    foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card)  {
       if (self::isValuedCard($card) && in_array(intval($card['age']), $values)) {
         $cardIds[] = $card['id'];
       }

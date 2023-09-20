@@ -1355,7 +1355,7 @@ abstract class Card
 
   private function coercePlayerIdUsingLocation(?int $playerId, string $location): int
   {
-    if ($location === 'deck' || $location === 'junk' || $location === 'relics') {
+    if (in_array($location, [Locations::DECK, Locations::JUNK, Locations::RELICS, Locations::AVAILABLE_ACHIEVEMENTS])) {
       return 0;
     }
     return self::coercePlayerId($playerId);
