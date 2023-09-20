@@ -12338,23 +12338,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 172, Artifacts age 6: Pride and Prejudice
-            case "172N1":
-                do {
-                    // "Draw and meld a 6"
-                    $card = self::executeDrawAndMeld($player_id, 6);
-                    // "If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board"
-                    $num_visible_cards_of_drawn_color = self::countVisibleCards($player_id, $card['color']);
-                    foreach (Colors::ALL as $color) {
-                        if ($num_visible_cards_of_drawn_color > self::countVisibleCards($player_id, $color)) {
-                            break 2; // Exit do-while loop
-                        }
-                    }
-                    // "Score the melded card"
-                    self::scoreCard($card, $player_id);
-                } while (true); // "Repeat this effect"
-                break;
-
             // id 173, Artifacts age 6: Moonlight Sonata
             case "173N1":
                 if (self::getMaxAgeOnBoardTopCards($player_id) > 0) {
