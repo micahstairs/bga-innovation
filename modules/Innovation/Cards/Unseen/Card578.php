@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Locations;
 
 class Card578 extends Card
 {
@@ -15,7 +16,7 @@ class Card578 extends Card
   {
     if (self::isDemand()) {
       self::setMaxSteps(1);
-    } else {
+    } else if (self::isFirstNonDemand()) {
       self::drawAndScore(10);
       self::drawAndScore(10);
       self::drawAndScore(10);
@@ -26,9 +27,9 @@ class Card578 extends Card
   {
     return [
       'owner_from'    => self::getLauncherId(),
-      'location_from' => 'score',
+      'location_from' => Locations::SCORE,
       'owner_to'      => self::getPlayerId(),
-      'location_to'   => 'board',
+      'meld_keyword'  => true,
     ];
   }
 

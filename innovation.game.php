@@ -5889,7 +5889,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         try {
-            $card = self::transferCardFromTo($card, $player_id, $location_to, ['bottom_to' => $bottom_to, 'score_keyword' => $location_to == 'score', 'bottom_from' => $bottom_from]);
+            $card = self::transferCardFromTo($card, $player_id, $location_to, [
+                'bottom_to' => $bottom_to,
+                'score_keyword' => $location_to === 'score',
+                'meld_keyword' => $meld_keyword,
+                'bottom_from' => $bottom_from,
+            ]);
         }
         catch (EndOfGame $e) {
             self::trace('EOG bubbled from self::executeDraw');
