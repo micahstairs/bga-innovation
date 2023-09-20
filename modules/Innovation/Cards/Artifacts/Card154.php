@@ -17,7 +17,7 @@ class Card154 extends Card
     foreach (self::getTopCards() as $card) {
       $values[] = $card['faceup_age'];
     }
-    asort($values);
+    sort($values);
     foreach (array_count_values($values) as $value => $count) {
       if ($count === 1) {
         self::drawAndScore($value);

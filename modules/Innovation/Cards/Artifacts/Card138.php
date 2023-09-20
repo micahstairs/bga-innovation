@@ -22,8 +22,7 @@ class Card138 extends Card
   }
 
   public function handleCardChoice(array $card) {
-    $stack = self::getCardsKeyedByColor('board')[$card['color']];
-    foreach (array_reverse($stack) as $card) {
+    foreach (array_reverse(self::getStack($card['color'])) as $card) {
       self::transferToScorePile($card);
     }
   }

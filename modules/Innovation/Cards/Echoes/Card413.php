@@ -51,7 +51,7 @@ class Card413 extends Card
     }
   }
 
-  public function handleSpecialChoice($value)
+  public function handleValueChoice($value)
   {
     $card = self::draw($value);
     self::setActionScopedAuxiliaryArray(array_merge(self::getActionScopedAuxiliaryArray(), [$card['id']]));

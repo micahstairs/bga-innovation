@@ -49,7 +49,7 @@ class Card486 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $playerId)
+  public function handlePlayerChoice(int $playerId)
   {
     self::setAuxiliaryValue($playerId);
   }

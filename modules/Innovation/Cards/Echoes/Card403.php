@@ -86,18 +86,19 @@ class Card403 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleValueChoice(int $value)
+  {
+    if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[$value] > 0) {
+      self::setAuxiliaryValue2($value); // Track chosen deck
+      self::setMaxSteps(2);
+    }
+  }
+
+  public function handleListChoice(int $choice)
   {
     if (self::isFirstOrThirdEdition()) {
-      if (self::isFirstInteraction()) {
-        if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[$choice] > 0) {
-          self::setAuxiliaryValue2($choice); // Track chosen deck
-          self::setMaxSteps(2);
-        }
-      } else {
-        // TODO(LATER): This shouldn't really be a draw.
-        $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
-      }
+      // TODO(LATER): This shouldn't really be a draw.
+      $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
     } else if (self::junkBaseDeck($choice)) {
       self::setMaxSteps(2);
     }

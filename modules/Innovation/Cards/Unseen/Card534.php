@@ -44,7 +44,7 @@ class Card534 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if ($choice === 1) {
       self::notifyPlayer(clienttranslate('${You} have chosen to splay a non-purple color left and self-execute the top card.'));

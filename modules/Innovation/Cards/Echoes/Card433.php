@@ -26,6 +26,7 @@ class Card433 extends Card
     } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
       self::setAuxiliaryValue(0); // Track number of cards scored
+      self::setAuxiliaryArray(Colors::ALL); // Track colors to choose from
     } else {
       self::drawAndMeld(10);
     }
@@ -44,6 +45,7 @@ class Card433 extends Card
         'location_from' => 'board',
         'bottom_from'   => true,
         'score_keyword' => true,
+        'color'         => self::getAuxiliaryArray(),
       ];
     }
   }
@@ -58,6 +60,7 @@ class Card433 extends Card
       } else if (self::getNumChosen() === 1) {
         self::setNextStep(1);
         self::setAuxiliaryValue(1);
+        self::setAuxiliaryArray([self::getLastSelectedColor()]); // Make sure the second scored card is the same color
       }
     }
   }
@@ -66,7 +69,7 @@ class Card433 extends Card
   {
     $counts = [];
     foreach (Colors::ALL as $color) {
-      $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
+      $numVisibleCards = self::countVisibleCardsInStack($color);
       if ($numVisibleCards > 0) {
         $counts[] = $numVisibleCards;
       }

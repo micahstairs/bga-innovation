@@ -48,7 +48,7 @@ class Card114 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $type)
+  public function handleTypeChoice(int $type)
   {
     $card = $this->game->executeDraw(self::getPlayerId(), self::getAuxiliaryValue(), 'revealed', /*bottom_to=*/false, $type);
     if (self::isPurple($card)) {

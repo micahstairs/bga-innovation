@@ -48,7 +48,7 @@ class Card426 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $value)
+  public function handleValueChoice(int $value)
   {
     self::drawAndScore($value);
   }

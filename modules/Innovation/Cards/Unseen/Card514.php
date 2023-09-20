@@ -41,9 +41,9 @@ class Card514 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
-    foreach (self::getCardsKeyedByColor('board')[$color] as $card) {
+    foreach (self::getStack($color) as $card) {
       self::transferToHand($card);
     }
   }

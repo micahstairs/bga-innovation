@@ -34,15 +34,16 @@ class Card126 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleTypeChoice(int $type)
   {
-    if (self::isFirstInteraction()) {
-      $card1 = self::drawType(2, $choice);
-      $card2 = self::drawType(2, $choice);
-      self::setAuxiliaryArray([$card1['id'], $card2['id']]);
-    } else {
-      self::transferToBoard(self::getCard(self::getAuxiliaryArray()[0]), $choice);
-    }
+    $card1 = self::drawType(2, $type);
+    $card2 = self::drawType(2, $type);
+    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+  }
+
+  public function handlePlayerChoice(int $playerId)
+  {
+    self::transferToBoard(self::getCard(self::getAuxiliaryArray()[0]), $playerId);
   }
 
   public function handleCardChoice(array $card)

@@ -63,7 +63,7 @@ class Card339 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if (self::isEcho()) {
       self::drawAndForeshadow(1);

@@ -65,7 +65,7 @@ class Card355 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $playerId)
+  public function handlePlayerChoice(int $playerId)
   {
     self::setAuxiliaryValue($playerId);
   }

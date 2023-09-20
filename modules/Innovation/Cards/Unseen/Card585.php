@@ -30,7 +30,7 @@ class Card585 extends Card
   {
     $color = $card['color'];
     self::splayAslant($color);
-    foreach (self::getCardsKeyedByColor('board')[$color] as $card) {
+    foreach (self::getStack($color) as $card) {
       if (!self::hasIcon($card, Icons::HEALTH)) {
         self::score($card);
       }

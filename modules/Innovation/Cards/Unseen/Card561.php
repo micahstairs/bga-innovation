@@ -48,14 +48,14 @@ class Card561 extends Card
   {
     $mostVisibleCards = 0;
     foreach (Colors::ALL as $color) {
-      $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
+      $numVisibleCards = self::countVisibleCardsInStack($color);
       if ($numVisibleCards > $mostVisibleCards) {
         $mostVisibleCards = $numVisibleCards;
       }
     }
     $colors = [];
     foreach (Colors::ALL as $color) {
-      $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
+      $numVisibleCards = self::countVisibleCardsInStack($color);
       // TODO(LATER): Move this optimization to a more central place (if no color has more than
       // one card, then the unsplay is a no-op).
       if ($numVisibleCards > 1 && $numVisibleCards === $mostVisibleCards) {

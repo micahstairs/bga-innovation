@@ -78,7 +78,7 @@ class Card423 extends Card
       }
       return [
         'achieve_keyword' => true,
-        'age' => $value,
+        'age'             => $value,
       ];
     }
   }
@@ -96,22 +96,24 @@ class Card423 extends Card
     return self::buildPromptFromList($choices);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleValueChoice(int $value)
   {
-    if (self::isEcho()) {
-      $card = self::drawAndMeld($choice);
-      if (self::isFirstOrThirdEdition()) {
-        self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
-      } else {
-        self::setActionScopedAuxiliaryArray([$card['id']], self::getPlayerId());
-      }
+    $card = self::drawAndMeld($value);
+    if (self::isFirstOrThirdEdition()) {
+      self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
     } else {
-      $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-      self::selfExecute(self::getCard($cardIds[$choice]));
+      self::setActionScopedAuxiliaryArray([$card['id']], self::getPlayerId());
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleListChoice(int $choice)
+  {
+    $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
+    self::selfExecute(self::getCard($cardIds[$choice]));
+  }
+
+  public function handleCardChoice(array $card)
+  {
     if (self::isFourthEdition() && self::isSecondNonDemand()) {
       // NOTE: A loop is used for convenience but the array will have at most one element in it.
       foreach (self::getActionScopedAuxiliaryArray(self::getPlayerId()) as $cardId) {

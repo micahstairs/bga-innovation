@@ -25,16 +25,19 @@ class Card458 extends Card
     ];
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
+    $cards = [];
     foreach (self::getPlayerIds() as $playerId) {
-      foreach (self::getCardsKeyedByColor(Locations::BOARD, $playerId)[$color] as $card) {
-        self::junkAsPartOfBulkTransfer($card);
-      }
+      $cards = array_merge($cards, self::getStack($color, $playerId));
     }
     $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
-    self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), $args);
-    self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), $args);
+    if (self::junkCards($cards)) {
+      self::notifyPlayer(clienttranslate('${You} junked all ${color} cards from all boards.'), $args);
+      self::notifyOthers(clienttranslate('${player_name} junked all ${color} cards from all boards.'), $args);
+    } else {
+      self::notifyAll(clienttranslate('None of the boards had any ${color} cards to junk.'), $args);
+    }
   }
 
 }

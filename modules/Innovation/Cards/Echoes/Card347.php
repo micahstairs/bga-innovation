@@ -54,7 +54,7 @@ class Card347 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $otherPlayerId)
+  public function handlePlayerChoice(int $otherPlayerId)
   {
     self::setAuxiliaryValue($otherPlayerId);
   }

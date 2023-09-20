@@ -38,7 +38,7 @@ class Card122 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
     $playerRevealed = false;
     $otherPlayerRevealed = false;

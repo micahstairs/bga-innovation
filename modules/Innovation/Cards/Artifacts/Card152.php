@@ -34,30 +34,31 @@ class Card152 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleColorChoice(int $color)
   {
-    if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue2($choice); // Track the chosen color
-      // Help the UI pick a reasonable default for the integer selection
-      self::setAuxiliaryValue(self::countCardsKeyedByColor(Locations::HAND)[$choice]);
+    self::setAuxiliaryValue2($color); // Track the chosen color
+    // Help the UI pick a reasonable default for the integer selection
+    self::setAuxiliaryValue(self::countCardsKeyedByColor(Locations::HAND)[$color]);
+  }
+
+  public function handleNumberChoice(int $number)
+  {
+    for ($i = 0; $i < 5; $i++) {
+      self::draw(4);
+    }
+    self::revealHand();
+    $color = self::getAuxiliaryValue2();
+    $cards = self::getCardsKeyedByColor(Locations::HAND)[$color];
+    $args = ['i18n' => ['color'], 'n' => count($cards), 'color' => Colors::render($color)];
+    self::notifyPlayer(clienttranslate('${You} revealed ${n} ${color} cards.'), $args);
+    self::notifyOthers(clienttranslate('${player_name} revealed ${n} ${color} cards.'), $args);
+    if (count($cards) == $number) {
+      foreach ($cards as $card) {
+        self::score($card);
+      }
+      self::splayRight($color);
     } else {
-      for ($i = 0; $i < 5; $i++) {
-        self::draw(4);
-      }
-      self::revealHand();
-      $color = self::getAuxiliaryValue2();
-      $cards = self::getCardsKeyedByColor(Locations::HAND)[$color];
-      $args = ['i18n' => ['color'], 'n' => count($cards), 'color' => Colors::render($color)];
-      self::notifyPlayer(clienttranslate('${You} revealed ${n} ${color} cards.'), $args);
-      self::notifyOthers(clienttranslate('${player_name} revealed ${n} ${color} cards.'), $args);
-      if (count($cards) == $choice) {
-        foreach ($cards as $card) {
-          self::score($card);
-        }
-        self::splayRight($color);
-      } else {
-        self::setMaxSteps(3);
-      }
+      self::setMaxSteps(3);
     }
   }
 

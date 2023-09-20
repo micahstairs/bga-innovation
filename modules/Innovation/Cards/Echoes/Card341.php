@@ -44,7 +44,7 @@ class Card341 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleColorChoice(int $color)
   {
     self::setAuxiliaryValue($color);
   }

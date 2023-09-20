@@ -7,6 +7,7 @@ use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
@@ -51,8 +52,12 @@ abstract class Card
         return static::getPromptForValueChoice();
       case 4: // choose_color
         return static::getPromptForColorChoice();
+      case 5: // choose_two_colors
+        return static::getPromptForTwoColorChoice();
       case 8; // choose_type
         return static::getPromptForTypeChoice();
+      case 9: // choose_three_colors
+        return static::getPromptForThreeColorChoice();
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
       case 11: // choose_non_negative_integer
@@ -64,7 +69,7 @@ abstract class Card
     }
   }
 
-  protected function getPromptForListChoice():  array
+  protected function getPromptForListChoice(): array
   {
     // Subclasses are expected to override this method if the card has any interactions which use the 'choices' option.
     throw new \RuntimeException("Unimplemented getPromptForListChoice");
@@ -90,7 +95,87 @@ abstract class Card
 
   public function handleSpecialChoice(int $choice)
   {
-    // Subclasses are expected to override this function if any of the interactions use a special choice.
+    $choiceType = $this->game->innovationGameState->get('special_type_of_choice');
+    switch ($choiceType) {
+      // TODO:(LATER): Remove choose_yes_or_no.
+      case 1: // choose_from_list
+      case 7: // choose_yes_or_no
+        return static::handleListChoice($choice);
+      case 3: // choose_value
+        return static::handleValueChoice($choice);
+      case 4: // choose_color
+        return static::handleColorChoice($choice);
+      case 5: // choose_two_colors
+        $colors = Arrays::getValueAsArray($choice);
+        return static::handleTwoColorChoice($colors[0], $colors[1]);
+      case 8; // choose_type
+        return static::handleTypeChoice($choice);
+      case 9: // choose_two_colors
+        $colors = Arrays::getValueAsArray($choice);
+        return static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
+      case 10: // choose_player
+        return static::handlePlayerChoice($choice);
+      case 11: // choose_non_negative_integer
+        return static::handleNumberChoice($choice);
+      case 12: // choose_icon_type
+        return static::handleIconChoice($choice);
+      default:
+        throw new \RuntimeException("Unhandled value in handleSpecialChoice: " . $choiceType);
+    }
+  }
+
+  protected function handleListChoice(int $choice)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_from_list' interactions.
+    throw new \RuntimeException("Unimplemented handleListChoice");
+  }
+
+  protected function handleValueChoice(int $value)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_value' interactions.
+    throw new \RuntimeException("Unimplemented handleValueChoice");
+  }
+
+  protected function handleColorChoice(int $color)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_color' interactions.
+    throw new \RuntimeException("Unimplemented handleColorChoice");
+  }
+
+  protected function handleTwoColorChoice(int $color1, int $color2)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_two_colors' interactions.
+    throw new \RuntimeException("Unimplemented handleTwoColorChoice");
+  }
+
+  protected function handleThreeColorChoice(int $color1, int $color2, int $color3)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_three_colors' interactions.
+    throw new \RuntimeException("Unimplemented handleThreeColorChoice");
+  }
+
+  protected function handleTypeChoice(int $type)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_type' interactions.
+    throw new \RuntimeException("Unimplemented handleTypeChoice");
+  }
+
+  protected function handlePlayerChoice(int $playerId)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_player' interactions.
+    throw new \RuntimeException("Unimplemented handlePlayerChoice");
+  }
+
+  protected function handleNumberChoice(int $number)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_non_negative_integer' interactions.
+    throw new \RuntimeException("Unimplemented handleNumberChoice");
+  }
+
+  protected function handleIconChoice(int $icon)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_icon_type' interactions.
+    throw new \RuntimeException("Unimplemented handleIconChoice");
   }
 
   public function afterInteraction()
@@ -353,7 +438,7 @@ abstract class Card
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return(?array $card): ?array
+  protected function return (?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -369,9 +454,9 @@ abstract class Card
     return $this->game->transferCardFromTo($card, 0, 'deck', ['bottom_to' => false]);
   }
 
-  protected function junkCards(array $cards)
+  protected function junkCards(array $cards): bool
   {
-    $this->game->junkCards($cards);
+    return $this->game->junkCards($cards);
   }
 
   protected function junk(?array $card): ?array
@@ -444,6 +529,11 @@ abstract class Card
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age, $type);
   }
 
+  protected function countVisibleCardsInStack(int $color, int $playerId = null): int
+  {
+    return $this->game->countVisibleCards(self::coercePlayerId($playerId), $color);
+  }
+
   protected function getTopCardOfColor(int $color, int $playerId = null): ?array
   {
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
@@ -463,13 +553,32 @@ abstract class Card
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function filterByColor(array $cards, array $colors) {
+  protected function filterByColor(array $cards, array $colors): array
+  {
     return array_filter($cards, function ($card) use ($colors) {
       return in_array($card['color'], $colors);
     });
   }
 
-  protected function getMinValue(array $cards) {
+  protected function getValues(array $cards): array
+  {
+    return array_map(function ($card) {
+      if ($card['location'] === 'board' || $card['location'] === 'display') {
+        return $card['faceup_age'];
+      } else {
+        return $card['age'];
+      }
+    }, $cards);
+  }
+
+  public function getRepeatedValues(array $cards): array
+  {
+    $values = self::getValues($cards);
+    return Arrays::getRepeatedValues($values);
+  }
+
+  protected function getMinValue(array $cards)
+  {
     if (empty($cards)) {
       return 0;
     }
@@ -482,7 +591,8 @@ abstract class Card
     }, $cards));
   }
 
-  protected function getMaxValue(array $cards) {
+  protected function getMaxValue(array $cards)
+  {
     if (empty($cards)) {
       return 0;
     }
@@ -788,6 +898,36 @@ abstract class Card
     }
   }
 
+  protected function getPromptForTwoColorChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose two colors'),
+        "message_for_others" => clienttranslate('${player_name} may choose two colors'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose two colors'),
+        "message_for_others" => clienttranslate('${player_name} must choose two colors'),
+      ];
+    }
+  }
+
+  protected function getPromptForThreeColorChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose three colors'),
+        "message_for_others" => clienttranslate('${player_name} may choose three colors'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose three colors'),
+        "message_for_others" => clienttranslate('${player_name} must choose three colors'),
+      ];
+    }
+  }
+
   protected function getPromptForIconChoice(): array
   {
     if (self::canPass()) {
@@ -1017,6 +1157,12 @@ abstract class Card
     return $this->game->getCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
+  protected function getStack(int $color, int $playerId = null): array
+  {
+    $playerId = self::coercePlayerIdUsingLocation($playerId, Locations::BOARD);
+    return self::getCardsKeyedByColor(Locations::BOARD, $playerId)[$color];
+  }
+
   protected function countCardsKeyedByColor(string $location, int $playerId = null): array
   {
     // TODO(LATER): Make this return an array of ints.
@@ -1064,7 +1210,26 @@ abstract class Card
         }
       }
     }
-    // convert array of icons to array of counts
+    // Convert array of icons to array of counts
+    return array_count_values($icons);
+  }
+
+  protected function getAllIconCountsInStack(int $color, int $playerId = null): array
+  {
+    $icons = [];
+    $stack = self::getStack($color, $playerId);
+    if (count($stack) > 1) {
+      $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));
+    }
+    foreach ($stack as $card) {
+      if ($card['position'] == count($stack) - 1) {
+        // All icons are visible on the top card in the stack
+        $icons = array_merge($icons, self::getIcons($card));
+      } else {
+        $icons = array_merge($icons, self::getIcons($card, $spots));
+      }
+    }
+    // Convert array of icons to array of counts
     return array_count_values($icons);
   }
 
@@ -1074,7 +1239,8 @@ abstract class Card
     return count(array_intersect(self::getIcons($card1), self::getIcons($card2))) > 0;
   }
 
-  private function getVisibleSpotsOnBuriedCard(int $splayDirection): array {
+  private function getVisibleSpotsOnBuriedCard(int $splayDirection): array
+  {
     switch ($splayDirection) {
       case Directions::LEFT:
         return [4, 5];

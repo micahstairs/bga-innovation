@@ -42,9 +42,9 @@ class Card475 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $player)
+  public function handlePlayerChoice(int $playerId)
   {
-    self::setAuxiliaryValue($player); // Track opponent chosen
+    self::setAuxiliaryValue($playerId); // Track opponent chosen
   }
 
   public function handleCardChoice(array $card) {

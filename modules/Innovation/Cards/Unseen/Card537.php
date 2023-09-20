@@ -41,7 +41,7 @@ class Card537 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if ($choice === 1) {
       self::splayLeft(Colors::RED);

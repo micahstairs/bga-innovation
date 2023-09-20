@@ -103,17 +103,18 @@ class Card399 extends Card
     ]);
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleValueChoice($value)
   {
-    if (self::isFirstNonDemand()) {
-      if (self::isFirstInteraction()) {
-        self::setAuxiliaryValue($choice);
-      } else {
-        self::setAuxiliaryValue2($choice);
-      }
+    if (self::isFirstInteraction()) {
+      self::setAuxiliaryValue($value);
     } else {
-      self::junkBaseDeck($choice);
+      self::setAuxiliaryValue2($value);
     }
+  }
+
+  public function handleListChoice(int $choice)
+  {
+    self::junkBaseDeck($choice);
   }
 
 }

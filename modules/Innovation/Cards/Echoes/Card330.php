@@ -52,7 +52,7 @@ class Card330 extends Card
    ]; 
   }
 
-  public function handleSpecialChoice(int $opponentId) {
+  public function handlePlayerChoice(int $opponentId) {
     self::transferToHand(self::getCard(self::getAuxiliaryValue2()), $opponentId);
   }
 

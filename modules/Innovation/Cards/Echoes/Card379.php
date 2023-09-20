@@ -50,7 +50,7 @@ class Card379 extends Card
     }
   }
 
-  public function handleSpecialChoice($value)
+  public function handleValueChoice($value)
   {
     self::drawAndScore($value);
   }

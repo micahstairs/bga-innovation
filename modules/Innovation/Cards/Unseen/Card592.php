@@ -60,12 +60,12 @@ class Card592 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $color)
+  public function handleListChoice(int $color)
   {
-    $cards = self::getCardsKeyedByColor('board')[$color];
+    $stack = self::getStack($color);
     $scoredCard = false;
-    for ($i = 0; $i < count($cards) - 3; $i++) {
-      self::score($cards[$i]);
+    for ($i = 0; $i < count($stack) - 3; $i++) {
+      self::score($stack[$i]);
       $scoredCard = true;
     }
     if ($scoredCard) {

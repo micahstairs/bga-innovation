@@ -57,20 +57,22 @@ class Card346 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleListChoice(int $choice)
   {
-    if (self::isEcho()) {
-      if ($choice === 1) {
-        self::draw(3);
-      } else {
-        self::drawAndForeshadow(4);
-      }
+    if ($choice === 1) {
+      self::draw(3);
     } else {
-      self::draw($choice);
-      if (self::wasForeseen()) {
-        self::setAuxiliaryValue($choice); // Track the value of the achievements which needs to be junked
-        self::setMaxSteps(2);
-      }
+      self::drawAndForeshadow(4);
+    }
+
+  }
+
+  public function handleValueChoice(int $value)
+  {
+    self::draw($value);
+    if (self::wasForeseen()) {
+      self::setAuxiliaryValue($value); // Track the value of the achievements which needs to be junked
+      self::setMaxSteps(2);
     }
   }
 

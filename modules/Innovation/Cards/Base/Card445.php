@@ -17,7 +17,7 @@ class Card445 extends Card
     do {
       $card = self::drawAndTuck(11);
       $color = $card['color'];
-      $stack = self::getCardsKeyedByColor('board')[$color];
+      $stack = self::getStack($color);
       
       if (count($stack) >= 2 && $stack[1]['faceup_age'] == 11) {
         self::lose();

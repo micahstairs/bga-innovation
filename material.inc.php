@@ -773,7 +773,7 @@ $this->textual_card_infos = array(
     113 => array(
         'name'                            => clienttranslate('Holmegaard Bows'),
         'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand!'),
-        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand! I COMPEL you to transfer the highest top card with a [AUTHORITY] on your board to my hand!  If you don\'t, junk all cards in the deck of value equal to the value of the lowest top card on your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand! If you don\'t, junk all cards in the deck of value equal to the value of the lowest top card on your board!'),
         'non_demand_effect_1'             => clienttranslate('Draw a ${age_2}.'),
     ),
 
@@ -1035,25 +1035,29 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 5 */
 
     155 => array(
-        'name_first_and_third' => clienttranslate('Boerhavve Silver Microscope'),
-        'name_fourth'          => clienttranslate('Boerhaave Microscope'),
-        'non_demand_effect_1'  => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
+        'name_first_and_third'                => clienttranslate('Boerhavve Silver Microscope'),
+        'name_fourth'                         => clienttranslate('Boerhaave Microscope'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards you return.'),
     ),
 
     156 => array(
-        'name'                => clienttranslate('Principia'),
-        'non_demand_effect_1' => clienttranslate('Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
+        'name'                                => clienttranslate('Principia'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return your top card of each non-blue color. For each card you return, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
     ),
 
     157 => array(
-        'name_first_and_third' => clienttranslate('Bill of Rights'),
-        'name_fourth'          => clienttranslate('Galley Whydah'),
-        'i_compel_effect'      => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
+        'name_first_and_third'            => clienttranslate('Bill of Rights'),
+        'name_fourth'                     => clienttranslate('Galley Whydah'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to choose a color where you have more visible cards than I do! Transfer all cards of that color from your board to my board, from the bottom up!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to choose a color of which there are more visible cards on your board than on my board! From the bottom up, transfer all cards of that color from my board to my score pile, then from your board to my board!'),
     ),
 
     158 => array(
-        'name'                => clienttranslate('Ship of the Line Sussex'),
-        'non_demand_effect_1' => clienttranslate('If you have no cards in your score pile, choose a color and score all cards of that color from your board. Otherwise, return all cards from your score pile.'),
+        'name'                                => clienttranslate('Ship of the Line Sussex'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have no cards in your score pile, choose a color and score all cards of that color from your board. Otherwise, return all cards from your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have no cards in your score pile, choose a color and score all cards of that color on your board. Otherwise, return all cards from your score pile.'),
     ),
 
     159 => array(
@@ -1062,41 +1066,49 @@ $this->textual_card_infos = array(
     ),
 
     160 => array(
-        'name'                => clienttranslate('Hudson\'s Bay Company Archives'),
-        'non_demand_effect_1' => clienttranslate('Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card.'),
+        'name'                                => clienttranslate('Hudson\'s Bay Company Archives'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score the bottom card of every color on your board. Meld a card from your score pile. Splay right the color of the melded card. Junk all cards in the deck of value equal to the melded card.'),
     ),
 
     161 => array(
-        'name_first_and_third' => clienttranslate('Gujin Tushu Jinsheng'),
-        'name_fourth'          => clienttranslate('Gujin Tushu Jicheng'),
-        'non_demand_effect_1'  => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
+        'name_first_and_third'                => clienttranslate('Gujin Tushu Jinsheng'),
+        'name_fourth'                         => clienttranslate('Gujin Tushu Jicheng'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and fully execute it. '),
     ),
 
     162 => array(
-        'name'                => clienttranslate('The Daily Courant'),
-        'non_demand_effect_1' => clienttranslate('Draw a card of any value, then place it on top of the draw pile of its age. You may execute the effects of one of your other top cards as if they were on this card. Do not share them.'),
+        'name'                                => clienttranslate('The Daily Courant'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw a card of any value, then place it on top of the draw pile of its age. You may execute the effects of one of your other top cards as if they were on this card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw, reveal, and return a ${age_6}. Draw and meld a card of value equal to the value of your top card of the same color as the returned card. Self-execute the melded card.'),
+        'separate_4E_implementation'          => true,
     ),
 
     163 => array(
-        'name'                => clienttranslate('Sandham Room Cricket Bat'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_6}. If it is red, claim an achievement, ignoring eligibility.'),
+        'name'                                => clienttranslate('Sandham Room Cricket Bat'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_6}. If it is red, claim an achievement, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal a ${age_6}. If it is red, claim an achievement, ignoring eligibility. Otherwise, junk an available standard achievement.'),
     ),
 
     164 => array(
-        'name'                => clienttranslate('Almira, Queen of the Castle'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.'),
+        'name'                                => clienttranslate('Almira, Queen of the Castle'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. If you do, claim an achievement of matching value, ignoring eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available achievement, if there is one.'),
     ),
 
     /* Artifacts - Age 6 */
 
     165 => array(
-        'name'                => clienttranslate('Kilogram of the Archives'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a ${age_10}.'),
+        'name'                                => clienttranslate('Kilogram of the Archives'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Return a top card from your board. If you returned two cards and their values sum to ten, draw and score a ${age_10}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Return a top card from your board. If you return two cards and their values sum to ten, draw and score a ${age_10}. Otherwise, junk all cards in the deck of value equal to the sum.'),
     ),
 
     166 => array(
-        'name'                => clienttranslate('Puffing Billy'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.'),
+        'name'                                => clienttranslate('Puffing Billy'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Tuck a card from your hand. Splay right its color on your board. Draw a card of value equal to the highest number of icons of the same type visible in that color on your board.'),
     ),
 
     167 => array(
@@ -1110,8 +1122,9 @@ $this->textual_card_infos = array(
     ),
 
     169 => array(
-        'name'                => clienttranslate('The Wealth of Nations'),
-        'non_demand_effect_1' => clienttranslate('Draw and score a ${age_1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.'),
+        'name'                                => clienttranslate('The Wealth of Nations'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score a ${age_1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score a ${age_1}. Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result. Junk all cards in the deck of that value.'),
     ),
 
     170 => array(
@@ -1120,8 +1133,11 @@ $this->textual_card_infos = array(
     ),
 
     171 => array(
-        'name'            => clienttranslate('Stamp Act'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a card of value equal to the top yellow card on your board from your score pile to mine! If you do, return a card from your score pile of value equal to the top green card on your board!'),
+        'name_first_and_third'            => clienttranslate('Stamp Act'),
+        'name_fourth'                     => clienttranslate('Qianlong\'s Dragon Robe'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer a card of value equal to the top yellow card on your board from your score pile to mine! If you do, return a card from your score pile of value equal to the top green card on your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer your top red card to my score pile! Transfer your top green card to my board! Transfer a yellow card from your score pile to mine! Transfer a purple card from your score pile to my hand!'),
+        'separate_4E_implementation'      => true,
     ),
 
     172 => array(
@@ -1130,8 +1146,10 @@ $this->textual_card_infos = array(
     ),
 
     173 => array(
-        'name'                => clienttranslate('Moonlight Sonata'),
-        'non_demand_effect_1' => clienttranslate('Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.'),
+        'name'                                => clienttranslate('Moonlight Sonata'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color on your board having the highest top card. Meld your bottom card of that color.  '),
+        'non_demand_effect_2_fourth'          => clienttranslate('Claim a standard achievement, ignoring eligibility. Junk an available standard achievement.'),
     ),
 
     174 => array(

@@ -41,7 +41,7 @@ class Card563 extends Card
     return self::buildPromptFromList([1 => clienttranslate('Score all the highest cards in your hand')]);
   }
 
-  public function handleSpecialChoice(int $choice) {
+  public function handleListChoice(int $choice) {
     if ($choice === 1) {
       foreach ($this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), 'hand') as $cardId) {
         self::score(self::getCard($cardId));

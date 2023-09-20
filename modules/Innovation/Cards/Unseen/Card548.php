@@ -32,7 +32,7 @@ class Card548 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
     if ($choice === 1) {
       self::junk(self::draw(7));

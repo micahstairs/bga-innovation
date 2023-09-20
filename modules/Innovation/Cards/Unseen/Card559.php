@@ -44,22 +44,23 @@ class Card559 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice): void
   {
-    if (self::isFirstInteraction()) {
-      if ($choice === 1) {
-        foreach (Colors::ALL as $color) {
-          self::transferToHand(self::getBottomCardOfColor($color));
-        }
-      } else {
-        self::setAuxiliaryValue($choice);
-        self::setMaxSteps(2);
+    if ($choice === 1) {
+      foreach (Colors::ALL as $color) {
+        self::transferToHand(self::getBottomCardOfColor($color));
       }
     } else {
-      $this->notifications->notifyValueChoice($choice, self::getPlayerId());
-      foreach (self::getCardsKeyedByValue('hand')[$choice] as $card) {
-        self::score($card);
-      };
+      self::setAuxiliaryValue($choice);
+      self::setMaxSteps(2);
+    }
+  }
+
+  public function handleValueChoice(int $value)
+  {
+    $this->notifications->notifyValueChoice($value, self::getPlayerId());
+    foreach (self::getCardsKeyedByValue('hand')[$value] as $card) {
+      self::score($card);
     }
   }
 

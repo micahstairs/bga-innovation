@@ -66,7 +66,7 @@ class Card428 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $icon)
+  public function handleIconChoice(int $icon)
   {
     $this->notifications->notifyIconChoice($icon, self::getPlayerId());
     self::setAuxiliaryValue($icon); // Track exempted icon

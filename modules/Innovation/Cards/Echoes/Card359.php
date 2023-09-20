@@ -87,7 +87,7 @@ class Card359 extends Card
   }
 
 
-  public function handleSpecialChoice($choice)
+  public function handleListChoice($choice)
   {
     if (self::isEcho()) {
       $card = self::draw($choice);

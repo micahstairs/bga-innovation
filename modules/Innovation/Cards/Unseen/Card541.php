@@ -68,13 +68,14 @@ class Card541 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleListChoice(int $choice)
   {
-    if (self::isFirstNonDemand()) {
-      self::setAuxiliaryValue($choice);
-    } else {
-      self::drawAndScore($choice);
-    }
+    self::setAuxiliaryValue($choice);
+  }
+
+  public function handleValueChoice(int $value)
+  {
+    self::drawAndScore($value);
   }
 
 }

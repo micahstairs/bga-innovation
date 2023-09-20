@@ -50,14 +50,13 @@ class Card533 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleColorChoice(int $color): void
   {
-    while (($card = self::getTopCardOfColor($choice)) !== null) {
+    foreach (array_reverse(self::getStack($color)) as $card) {
       self::score($card);
     }
-    $colors = self::getAuxiliaryArray();
-    $remainingColor = $colors[0] == $choice ? $colors[1] : $colors[0];
-    self::splayRight($remainingColor);
+    self::removeFromAuxiliaryArray($color);
+    self::splayRight(self::getAuxiliaryArray()[0]);
   }
 
 }

@@ -33,7 +33,7 @@ class Card472 extends Card
       self::splayAslant($color);
     } else {
       foreach (self::getPlayerIds() as $playerId) {
-        foreach (self::getCardsKeyedByColor('board', $playerId)[$color] as $card) {
+        foreach (self::getStack($color, $playerId) as $card) {
           if ($card['position'] < 4) {
             self::return($card);
             self::setNextStep(1);

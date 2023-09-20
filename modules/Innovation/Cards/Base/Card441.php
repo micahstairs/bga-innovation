@@ -17,7 +17,7 @@ class Card441 extends Card
   {
     $card = self::drawAndMeld(11);
     $color = $card['color'];
-    $stack = self::getCardsKeyedByColor('board')[$color];
+    $stack = self::getStack($color);
     if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];
       for ($i = 0; $i < count($stack) - 2; $i++) {
@@ -45,7 +45,7 @@ class Card441 extends Card
   {
     $color = self::getAuxiliaryValue();
     self::splayAslant($color);
-    if (count(self::getCardsKeyedByColor('board')[$color]) >= 4) {
+    if (count(self::getStack($color)) >= 4) {
       self::win();
     }
   }

@@ -57,10 +57,10 @@ class Card519 extends Card
     return self::buildPromptFromList($choices);
   }
 
-  public function handleSpecialChoice(int $index)
+  public function handleListChoice(int $choice)
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    $cardId = self::getAuxiliaryArray()[$index];
+    $cardId = self::getAuxiliaryArray()[$choice];
     $this->game->selfExecute(self::getCard($cardId), /*replace_may_with_must=*/true);
   }
 

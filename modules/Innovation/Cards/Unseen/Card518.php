@@ -61,9 +61,4 @@ class Card518 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $choice): void
-  {
-    self::setAuxiliaryValue($choice);
-  }
-
 }

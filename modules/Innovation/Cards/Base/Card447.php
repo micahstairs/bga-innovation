@@ -23,35 +23,39 @@ class Card447 extends Card
   public function getInteractionOptions(): array
   {
     $color = self::getAuxiliaryValue();
-    $stack = self::getCardsKeyedByColor(Locations::BOARD)[$color];
 
     $cardIds = [];
-    for ($i = 0; $i < min(3, count($stack)); $i++) {
-      $cardIds[] = $stack[$i]['id'];
+    foreach (self::getStack($color) as $card) {
+      if ($card['position'] < 3) {
+        $cardIds[] = $card['id'];
+      }
     }
     self::setAuxiliaryArray($cardIds);
 
     self::setAuxiliaryValue2(0); // Track the sum of the values of the cards being returned
 
     return [
-      'n' => count($cardIds),
-      'location_from' => Locations::PILE,
-      'color' => $color,
-      'return_keyword' => true,
+      'n'                               => count($cardIds),
+      'location_from'                   => Locations::PILE,
+      'color'                           => [$color],
+      'return_keyword'                  => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
   }
 
-  public function handleAbortedInteraction() {
+  public function handleAbortedInteraction()
+  {
     // If no cards are returned, we still need to draw and meld a card
     self::drawAndMeld(0);
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::incrementAuxiliaryValue($card['faceup_age']);
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     $card = self::drawAndMeld(ceil(self::getAuxiliaryValue2() / 2));
     if (self::getNumChosen() === 3) {
       self::setNextStep(1);

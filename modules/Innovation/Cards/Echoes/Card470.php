@@ -42,7 +42,7 @@ class Card470 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleListChoice(int $choice)
   {
     $card = self::getCard(self::getAuxiliaryValue());
     if ($choice === 2) {

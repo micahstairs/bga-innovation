@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card407 extends Card
 {
@@ -25,8 +26,8 @@ class Card407 extends Card
       self::setMaxSteps(1);
     } else if (self::isFirstOrThirdEdition()) {
       self::setMaxSteps(2);
-      $scorePileCounts = self::countCardsKeyedByValue('score');
-      $handCounts = self::countCardsKeyedByValue('hand');
+      $scorePileCounts = self::countCardsKeyedByValue(Locations::SCORE);
+      $handCounts = self::countCardsKeyedByValue(Locations::HAND);
       for ($i = 11; $i >= 1; $i--) {
         if ($scorePileCounts[$i] > 0 && $handCounts[$i] == 0) {
           self::setAuxiliaryValue($i); // Track value to return
@@ -51,13 +52,13 @@ class Card407 extends Card
     } else if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
         return [
-          'location_from'  => 'score',
+          'location_from'  => Locations::SCORE,
           'return_keyword' => true,
           'age'            => self::getAuxiliaryValue(),
         ];
       } else {
         return [
-          'location_from'  => 'board',
+          'location_from'  => Locations::BOARD,
           'return_keyword' => true,
           'with_icon'      => Icons::EFFICIENCY,
         ];
@@ -66,21 +67,21 @@ class Card407 extends Card
       if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
         return [
-          'location_from'  => 'score',
+          'location_from'  => Locations::SCORE,
           'return_keyword' => true,
           'with_icon'      => Icons::EFFICIENCY,
         ];
       } else if (self::isSecondInteraction()) {
         return [
-          'location_from'  => 'board',
+          'location_from'  => Locations::BOARD,
           'return_keyword' => true,
           'with_icon'      => Icons::EFFICIENCY,
         ];
       } else {
         // TODO(4E): Also allow player to junk special achievements.
         return [
-          'n'             => self::countCards('achievements'),
-          'location_from' => 'achievements',
+          'n'             => self::countCards(Locations::ACHIEVEMENTS),
+          'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
           'junk_keyword'  => true,
         ];
       }

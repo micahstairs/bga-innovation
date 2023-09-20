@@ -44,7 +44,7 @@ class Card381 extends Card
     }
   }
 
-  public function handleSpecialChoice($value)
+  public function handleValueChoice($value)
   {
     $remainingValues = Arrays::removeElement(self::getAuxiliaryArray(), $value);
     self::setAuxiliaryArray($remainingValues);

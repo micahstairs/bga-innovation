@@ -20,17 +20,14 @@ class Card538 extends Card
   public function getInteractionOptions(): array
   {
     $colors = $this->game->getSplayableColorsOnBoard(self::getPlayerId(), Directions::UNSPLAYED);
-    if (empty($colors)) {
-      return [];
-    }
     return [
       'player_id'    => self::getLauncherId(),
       'choose_color' => true,
-      'color' => $colors,
+      'color'        => $colors,
     ];
   }
 
-  public function handleSpecialChoice(int $color): void
+  public function handleColorChoice(int $color): void
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     self::unsplay($color);

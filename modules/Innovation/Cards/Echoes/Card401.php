@@ -66,27 +66,28 @@ class Card401 extends Card
     }
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleValueChoice($value)
   {
-    if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($choice); // Track the value which will be taken from hands or score piles
-      self::setMaxSteps(2);
-    } else {
-      $value = self::getAuxiliaryValue();
-      $sourceLocation = $choice === 1 ? 'hand' : 'score';
-      $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
-      foreach ($playerIds as $playerId) {
-        foreach (self::getCardsKeyedByValue($sourceLocation, $playerId)[$value] as $card) {
-          if (self::isFirstOrThirdEdition()) {
-            self::transferToScorePile($card);
-          } else {
-            self::score($card);
-          }
+    self::setAuxiliaryValue($value); // Track the value which will be taken from hands or score piles
+    self::setMaxSteps(2);
+  }
+
+  public function handleListChoice(int $choice)
+  {
+    $value = self::getAuxiliaryValue();
+    $sourceLocation = $choice === 1 ? 'hand' : 'score';
+    $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
+    foreach ($playerIds as $playerId) {
+      foreach (self::getCardsKeyedByValue($sourceLocation, $playerId)[$value] as $card) {
+        if (self::isFirstOrThirdEdition()) {
+          self::transferToScorePile($card);
+        } else {
+          self::score($card);
         }
       }
-      if (self::isFourthEdition()) {
-        self::drawAndForeshadow($value);
-      }
+    }
+    if (self::isFourthEdition()) {
+      self::drawAndForeshadow($value);
     }
   }
 

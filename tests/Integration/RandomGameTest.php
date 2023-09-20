@@ -19,6 +19,7 @@ class RandomGameTest extends BaseIntegrationTest
 
   private function executeGame()
   {
+    error_log("*** STARTING GAME ***");
     while (self::getCurrentStateName() !== 'gameEnd') {
       $actions = [
         [$this, 'draw'],

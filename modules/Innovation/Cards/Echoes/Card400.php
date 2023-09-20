@@ -56,17 +56,17 @@ class Card400 extends Card
   }
 
 
-  public function handleSpecialChoice(int $choice)
+  public function handlePlayerChoice(int $playerId)
   {
-    if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($choice); // Track chosen player
-      self::setMaxSteps(2);
-    } else {
-      $player = self::getAuxiliaryValue();
-      $color = $choice;
-      $direction = self::getSplayDirection($color, $player);
-      $this->game->splay(self::getPlayerId(), self::getPlayerId(), $color, $direction, /*force_unsplay=*/$direction === 0);
-    }
+    self::setAuxiliaryValue($playerId); // Track chosen player
+    self::setMaxSteps(2);
+  }
+
+  public function handleColorChoice(int $color)
+  {
+    $playerId = self::getAuxiliaryValue();
+    $direction = self::getSplayDirection($color, $playerId);
+    $this->game->splay(self::getPlayerId(), self::getPlayerId(), $color, $direction, /*force_unsplay=*/$direction === 0);
   }
 
 }

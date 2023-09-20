@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card408 extends Card
 {
@@ -24,11 +25,13 @@ class Card408 extends Card
         }
       }
     } else if (self::wasForeseen()) {
-      // TODO(4E): We need a better bulk junking mechanism here.
+      $cards = [];
       foreach (self::getPlayerIds() as $playerId) {
-        foreach (self::getCards('board', $playerId) as $card) {
-          self::junk($card);
-        }
+        $cards = array_merge($cards, self::getCards(Locations::BOARD, $playerId));
+      }
+      if (self::junkCards($cards)) {
+        self::notifyPlayer(clienttranslate('${You} junked all cards from all boards.'));
+        self::notifyOthers(clienttranslate('${player_name} junked all cards from all boards.'));
       }
     }
   }

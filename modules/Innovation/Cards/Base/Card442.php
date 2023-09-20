@@ -19,7 +19,7 @@ class Card442 extends Card
       $revealedCard = self::drawAndReveal(11);
       $color = $revealedCard['color'];
       if (self::splayAslant($color)) {
-        $stack = self::getCardsKeyedByColor(Locations::BOARD)[$color];
+        $stack = self::getStack($color);
         for ($i = 0; $i < count($stack) - 2; $i++) {
           self::transferToHand($stack[$i]);
         }
