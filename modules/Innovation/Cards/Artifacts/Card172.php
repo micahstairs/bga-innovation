@@ -13,16 +13,16 @@ class Card172 extends Card
 
   public function initialExecution()
   {
-      do {
-          $card = self::drawAndMeld(6);
-          $numCards = self::countVisibleCardsInStack($card['color']);
-          foreach (Colors::ALL as $color) {
-              if ($numCards > self::countVisibleCardsInStack($color)) {
-                  return;
-              }
-          }
-          self::score($card);
-      } while (true);
+    do {
+      $card = self::drawAndMeld(6);
+      $numCards = self::countVisibleCardsInStack($card['color']);
+      foreach (Colors::ALL as $color) {
+        if ($numCards > self::countVisibleCardsInStack($color)) {
+          return;
+        }
+      }
+      self::score($card);
+    } while (true);
   }
 
 }

@@ -1146,8 +1146,10 @@ $this->textual_card_infos = array(
     ),
 
     173 => array(
-        'name'                => clienttranslate('Moonlight Sonata'),
-        'non_demand_effect_1' => clienttranslate('Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.'),
+        'name'                                => clienttranslate('Moonlight Sonata'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color on your board having the highest top card. Meld your bottom card of that color.  '),
+        'non_demand_effect_2_fourth'          => clienttranslate('Claim a standard achievement, ignoring eligibility. Junk an available standard achievement.'),
     ),
 
     174 => array(

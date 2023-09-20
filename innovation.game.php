@@ -9651,12 +9651,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 173, Artifacts age 6: Moonlight Sonata
-            case "173N1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-                
             // id 179, Artifacts age 7: International Prototype Metre Bar
             case "179N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -12335,13 +12329,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                }
-                break;
-
-            // id 173, Artifacts age 6: Moonlight Sonata
-            case "173N1":
-                if (self::getMaxAgeOnBoardTopCards($player_id) > 0) {
-                    $step_max = 2;
                 }
                 break;
                 
@@ -15509,42 +15496,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-
-        // id 173, Artifacts age 6: Moonlight Sonata
-        case "173N1A":
-            // "Choose a color on your board having the highest top card"
-            $max_age = self::getMaxAgeOnBoardTopCards($player_id);
-            $color_array = array();
-            foreach (Colors::ALL as $color) {
-                $top_card = self::getTopCardOnBoard($player_id, $color);
-                if ($top_card !== null && $top_card['age'] == $max_age) {
-                    $color_array[] = $color;
-                }
-            }
-            
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_color' => true,
-                'color' =>  $color_array
-            );
-            break;
-            
-        case "173N1B":
-            // "Claim an achievement ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
-            );
-            break;
             
         // id 174, Artifacts age 6: Marcha Real
         case "174N1A":
@@ -17574,13 +17525,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStep(1);
                     }
                     break;
- 
-                // id 173, Artifacts age 6: Moonlight Sonata
-                case "173N1A":
-                    // "Meld the bottom card on your board of that color"
-                    $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                    self::meldCard($bottom_card, $player_id);
-                    break;
             
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
@@ -18837,13 +18781,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 173, Artifacts age 6: Moonlight Sonata
-            case "173N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
 
             // id 174, Artifacts age 6: Marcha Real
