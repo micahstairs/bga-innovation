@@ -1203,8 +1203,9 @@ $this->textual_card_infos = array(
     ),
 
     182 => array(
-        'name'                => clienttranslate('Singer Model 27'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color.'),
+        'name'                                => clienttranslate('Singer Model 27'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color. If you do, junk an available standard achievement.'),
     ),
 
     183 => array(

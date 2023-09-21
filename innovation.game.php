@@ -12328,11 +12328,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
                 
-            // id 182, Artifacts age 7: Singer Model 27
-            case "182N1":
-                $step_max = 1;
-                break;
-
             // id 183, Artifacts age 7: Roundhay Garden Scene
             case "183N1":
                 $step_max = 1;
@@ -15350,36 +15345,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;                   
 
-        // id 182, Artifacts age 7: Singer Model 27
-        case "182N1A":
-            // "Tuck a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                'bottom_to' => true
-            );
-            break;            
-
-        case "182N1B":
-            // "Tuck all cards from your score pile of that color"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                'bottom_to' => true,
-
-                'color' => array($this->innovationGameState->get('color_last_selected'))
-            );
-            break;
-
         // id 183, Artifacts age 7: Roundhay Garden Scene
         case "183N1A":
             // "Meld the highest card from your score pile"
@@ -17238,20 +17203,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
                     }
-                    break;
-                             
-                // id 182, Artifacts age 7: Singer Model 27
-                case "182N1A":
-                    if ($n > 0) { // "If you do"
-                        // "Splay up its color"
-                        self::splayUp($player_id, $player_id, $this->innovationGameState->get('color_last_selected'));
-                        self::incrementStepMax(1);
-                    }
-                    break;
-                
-                case "182N1B":
-                    // Reveal remaining score pile to prove that no more cards can be tucked
-                    self::revealScorePile($player_id);
                     break;
 
                 // id 183, Artifacts age 7: Roundhay Garden Scene
