@@ -2,17 +2,19 @@
 
 namespace Integration\Cards\Base;
 
+use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
 {
-  public function test_randomGame_thirdEdition_cities_echoes()
+
+  public function test_randomGame_thirdEdition_artifacts_cities_echoes()
   {
     self::executeGame();
   }
 
-  public function test_randomGame_fourthEdition_cities_echoes_unseen()
+  public function test_randomGame_fourthEdition_artifacts_cities_echoes_unseen()
   {
     self::executeGame();
   }
@@ -21,6 +23,17 @@ class RandomGameTest extends BaseIntegrationTest
   {
     error_log("*** STARTING GAME ***");
     while (self::getCurrentStateName() !== 'gameEnd') {
+
+      // Handle free action at start of turn
+      if (self::getCurrentStateName() === 'artifactPlayerTurn') {
+        $actions = [
+          [$this, 'dogmaArtifact'],
+          [$this, 'returnArtifact'],
+          [$this, 'passArtifact'],
+        ];
+        $actions[array_rand($actions)]();
+      }
+
       $actions = [
         [$this, 'draw'],
       ];
@@ -46,6 +59,35 @@ class RandomGameTest extends BaseIntegrationTest
     error_log("Player #1 achievements: " . $this->tableInstance->getTable()->countCardsInLocation(12345, 'achievements'));
     error_log("Player #2 score: " . $this->tableInstance->getTable()->getPlayerScore(67890));
     error_log("Player #2 achievements: " . $this->tableInstance->getTable()->countCardsInLocation(67890, 'achievements'));
+  }
+
+  private function dogmaArtifact()
+  {
+    error_log("* DOGMA ARTIFACT");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->dogmaArtifactOnDisplay();
+    $this->tableInstance->advanceGame();
+
+    self::excecuteInteractions();
+  }
+
+  private function returnArtifact()
+  {
+    error_log("* RETURN ARTIFACT");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->returnArtifactOnDisplay();
+    $this->tableInstance->advanceGame();
+  }
+
+  private function passArtifact()
+  {
+    error_log("* PASS ARTIFACT");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->passArtifactOnDisplay();
+    $this->tableInstance->advanceGame();
   }
 
   private function draw()
@@ -138,9 +180,7 @@ class RandomGameTest extends BaseIntegrationTest
         $choices[] = [$this, 'pass'];
       }
 
-      $specialChoice = self::getGlobalVariable('special_type_of_choice');
-      // NOTE: I've decided it's not worth to add integration test coverage for the 3rd edition of Publications, which is the only user of 'choose_rearrange'.
-      if ($specialChoice > 0 && $this->tableInstance->getTable()->decodeSpecialTypeOfChoice($specialChoice) !== 'choose_rearrange') {
+      if (self::canDoSpecialChoice()) {
         $choices[] = [$this, 'selectSpecialChoice'];
       }
 
@@ -154,8 +194,52 @@ class RandomGameTest extends BaseIntegrationTest
     }
 
     $state = self::getCurrentStateName();
-    if ($state !== 'playerTurn' && $state !== 'gameEnd') {
+    if ($state !== 'playerTurn' && $state !== 'gameEnd' && $state !== 'artifactPlayerTurn') {
       error_log("ERROR: Unexpected state after doing interactions: $state");
+    }
+  }
+
+  private function canDoSpecialChoice()
+  {
+    $choiceType = self::getGlobalVariable('special_type_of_choice');
+
+    if ($choiceType <= 0) {
+      return false;
+    }
+
+    $decodedChoiceType = $this->tableInstance->getTable()->decodeSpecialTypeOfChoice($choiceType);
+    switch ($decodedChoiceType) {
+      case 'choose_rearrange':
+        // I've decided it's not worth to add integration test coverage for the 3rd edition of
+        // Publications, which is the only user of 'choose_rearrange'.
+        return false;
+      case 'choose_yes_or_no':
+      case 'choose_non_negative_integer':
+        return true;
+      case 'choose_from_list':
+      case 'choose_value':
+      case 'choose_color':
+      case 'choose_two_colors':
+      case 'choose_three_colors':
+      case 'choose_player':
+      case 'choose_type':
+      case 'choose_icon_type':
+        return count(self::getGlobalVariableAsArray('choice_array')) > 0;
+      case 'choose_special_achievement':
+        foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
+          if ($card['age'] === null && $card['id'] < 1000) {
+            return true;
+          }
+        }
+        foreach (self::getCards(Locations::JUNK) as $card) {
+          if ($card['age'] === null && $card['id'] < 1000) {
+            return true;
+          }
+        }
+        return false;
+      default:
+        error_log("WARNING: Unknown special type of choice: $decodedChoiceType");
+        return false;
     }
   }
 
@@ -201,12 +285,12 @@ class RandomGameTest extends BaseIntegrationTest
         break;
       case 'choose_special_achievement':
         $cardIds = [];
-        foreach (self::getCards('achievements', 0) as $card) {
+        foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
           if ($card['age'] === null && $card['id'] < 1000) {
             $cardIds[] = $card['id'];
           }
         }
-        foreach (self::getCards('junk', 0) as $card) {
+        foreach (self::getCards(Locations::JUNK) as $card) {
           if ($card['age'] === null && $card['id'] < 1000) {
             $cardIds[] = $card['id'];
           }

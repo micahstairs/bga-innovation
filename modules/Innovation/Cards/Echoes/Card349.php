@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
-class Card349 extends Card
+class Card349 extends AbstractCard
 {
 
   // Glassblowing
@@ -45,6 +45,7 @@ class Card349 extends Card
       ];
       if (self::isFirstOrThirdEdition()) {
         $options['with_bonus'] = true;
+        $options['reveal_if_unable'] = true;
       } else {
         $options['type'] = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
       }
@@ -65,14 +66,6 @@ class Card349 extends Card
   public function handleListChoice(int $value)
   {
     self::junkBaseDeck($value);
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isEcho() && self::isFirstOrThirdEdition() && self::getNumChosen() === 0) {
-      // Prove that the player has no cards with bonuses in hand.
-      self::revealHand();
-    }
   }
 
 }

@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card171_4E extends Card
+class Card171_4E extends AbstractCard
 {
   // Qianlong's Dragon Robe (4th edition):
   //   - I COMPEL you to transfer your top red card to my score pile! Transfer your top green card

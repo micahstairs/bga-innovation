@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card396 extends Card
+class Card396 extends AbstractCard
 {
 
   // Typewriter

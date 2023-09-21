@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card427 extends Card
+class Card427 extends AbstractCard
 {
 
   // Camcorder

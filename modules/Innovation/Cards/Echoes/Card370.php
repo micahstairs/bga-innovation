@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 
-class Card370 extends Card
+class Card370 extends AbstractCard
 {
 
   // Globe

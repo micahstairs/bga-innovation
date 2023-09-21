@@ -2,13 +2,13 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Utils\Arrays;
 
-class Card379 extends Card
+class Card379 extends AbstractCard
 {
 
   // Palampore

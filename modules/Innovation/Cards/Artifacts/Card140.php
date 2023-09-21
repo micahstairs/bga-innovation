@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
-class Card140 extends Card
+class Card140 extends AbstractCard
 {
 
   // Beauvais Cathedral Clock (3rd edition)

@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card168 extends Card
+class Card168 extends AbstractCard
 {
   // U.S. Declaration of Independence
   //   - I COMPEL you to transfer the highest card in your hand to my hand, the highest card in

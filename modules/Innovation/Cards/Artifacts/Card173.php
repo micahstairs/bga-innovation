@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card173 extends Card
+class Card173 extends AbstractCard
 {
   // Moonlight Sonata
   // - 3rd edition:

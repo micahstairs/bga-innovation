@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card345 extends Card
+class Card345 extends AbstractCard
 {
 
   // Lever

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card111 extends Card
+class Card111 extends AbstractCard
 {
 
   // Sibidu Needle

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card375 extends Card
+class Card375 extends AbstractCard
 {
 
   // Lightning Rod

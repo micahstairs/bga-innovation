@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card336 extends Card
+class Card336 extends AbstractCard
 {
 
   // Comb

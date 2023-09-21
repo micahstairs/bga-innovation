@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 
-class Card424 extends Card
+class Card424 extends AbstractCard
 {
 
   // Rock

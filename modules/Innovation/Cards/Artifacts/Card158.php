@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card158 extends Card
+class Card158 extends AbstractCard
 {
   // Ship of the Line Sussex
   // - 3rd edition:

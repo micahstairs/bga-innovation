@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card116 extends Card
+class Card116 extends AbstractCard
 {
 
   // Priest-King

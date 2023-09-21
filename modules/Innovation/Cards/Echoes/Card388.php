@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card388 extends Card
+class Card388 extends AbstractCard
 {
 
   // Shrapnel

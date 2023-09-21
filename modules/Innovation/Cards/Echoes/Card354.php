@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card354 extends Card
+class Card354 extends AbstractCard
 {
 
   // Chaturanga
@@ -29,9 +29,10 @@ class Card354 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'location_from' => 'hand',
-      'meld_keyword'  => true,
-      'with_bonus'    => self::isFirstOrThirdEdition(),
+      'location_from'    => 'hand',
+      'meld_keyword'     => true,
+      'with_bonus'       => self::isFirstOrThirdEdition(),
+      'reveal_if_unable' => self::isFirstOrThirdEdition(),
     ];
   }
 
@@ -47,8 +48,6 @@ class Card354 extends Card
   public function afterInteraction()
   {
     if (self::isFirstOrThirdEdition() && self::getNumChosen() === 0) {
-      // Prove that there are no bonuses in hand
-      self::revealHand();
       self::drawAndForeshadow(count(self::getTopCards()));
     } else if (self::isFourthEdition()) {
       self::drawAndForeshadow(self::getLowestValuesNotOnBoard());

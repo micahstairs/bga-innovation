@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card410 extends Card
+class Card410 extends AbstractCard
 {
 
   // Sliced Bread

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card582 extends Card
+class Card582 extends AbstractCard
 {
 
   // Whatchamacallit:

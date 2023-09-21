@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card156 extends Card
+class Card156 extends AbstractCard
 {
   // Principia
   // - 3rd edition:

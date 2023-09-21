@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card165 extends Card
+class Card165 extends AbstractCard
 {
   // Kilogram of the Archives
   // - 3rd edition:

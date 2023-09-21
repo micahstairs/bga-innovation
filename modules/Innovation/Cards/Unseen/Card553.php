@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
-class Card553 extends Card
+class Card553 extends AbstractCard
 {
 
   // Fortune Cookie

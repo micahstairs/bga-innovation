@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 
-class Card361 extends Card
+class Card361 extends AbstractCard
 {
 
   // Deodorant

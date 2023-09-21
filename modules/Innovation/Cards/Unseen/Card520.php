@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card520 extends Card
+class Card520 extends AbstractCard
 {
 
   // El Dorado:

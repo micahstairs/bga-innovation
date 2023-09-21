@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card390 extends Card
+class Card390 extends AbstractCard
 {
 
   // Steamboat

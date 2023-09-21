@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card591 extends Card
+class Card591 extends AbstractCard
 {
 
   // Escape Room:
@@ -28,9 +28,10 @@ class Card591 extends Card
   {
     if (self::isDemand()) {
       return [
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'color'         => [self::getAuxiliaryValue()],
+        'location_from'    => 'hand',
+        'score_keyword'    => true,
+        'color'            => [self::getAuxiliaryValue()],
+        'reveal_if_unable' => true,
       ];
     } else {
       return [
@@ -45,11 +46,8 @@ class Card591 extends Card
 
   public function afterInteraction()
   {
-    if (self::isDemand()) {
-      if (self::getNumChosen() === 0) {
-        self::revealHand();
-        self::lose();
-      }
+    if (self::isDemand() && self::getNumChosen() === 0) {
+      self::lose();
     }
   }
 

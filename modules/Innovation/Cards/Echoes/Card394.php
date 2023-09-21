@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card394 extends Card
+class Card394 extends AbstractCard
 {
 
   // Kaleidoscope
@@ -57,7 +57,7 @@ class Card394 extends Card
 
   public function junkAchievementsOfLowerValue($value)
   {
-    foreach (self::getCards('achievements', 0) as $card) {
+    foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
       if (self::isValuedCard($card) && $card['age'] < $value) {
         self::junk($card);
       }

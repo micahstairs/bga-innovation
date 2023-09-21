@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card155 extends Card
+class Card155 extends AbstractCard
 {
   // Boerhavve Silver Microscope (3rd edition)
   //   - Return the lowest card in your hand and the lowest top card on your board. Draw and score

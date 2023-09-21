@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card537 extends Card
+class Card537 extends AbstractCard
 {
 
   // Red Herring:

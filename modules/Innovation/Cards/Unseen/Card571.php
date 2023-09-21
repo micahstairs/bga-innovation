@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 
-class Card571 extends Card
+class Card571 extends AbstractCard
 {
 
   // Magic 8-Ball:

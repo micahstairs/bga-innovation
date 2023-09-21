@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card2 extends Card {
+class Card2 extends AbstractCard {
 
   // Writing:
   //   - Draw a [2].

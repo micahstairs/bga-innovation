@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card151 extends Card
+class Card151 extends AbstractCard
 {
 
   // Moses

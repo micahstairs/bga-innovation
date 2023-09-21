@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Utils\Arrays;
 
-class Card413 extends Card
+class Card413 extends AbstractCard
 {
 
   // Crossword

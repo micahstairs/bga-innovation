@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card578 extends Card
+class Card578 extends AbstractCard
 {
 
   // Secret Santa:

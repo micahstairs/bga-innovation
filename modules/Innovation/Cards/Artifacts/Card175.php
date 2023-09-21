@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card175 extends Card
+class Card175 extends AbstractCard
 {
   // Periodic Table
   //   - Choose two top cards on your board of the same value. If you do, draw a card of value one

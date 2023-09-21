@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card592 extends Card
+class Card592 extends AbstractCard
 {
 
   // Fashion Mask:

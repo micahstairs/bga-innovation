@@ -2,10 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
-class Card122 extends Card
+class Card122 extends AbstractCard
 {
 
   // Mask of Warka
@@ -76,7 +77,7 @@ class Card122 extends Card
   {
     if (self::isSecondInteraction()) {
       $values = array_unique(self::getAuxiliaryArray());
-      $achievementsByValue = self::getCardsKeyedByValue('achievements', 0);
+      $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
       $achievementWasClaimed = false;
       foreach ($values as $value) {
         foreach ($achievementsByValue[$value] as $achievement) {

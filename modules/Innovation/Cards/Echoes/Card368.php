@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
-class Card368 extends Card
+class Card368 extends AbstractCard
 {
 
   // Shuriken

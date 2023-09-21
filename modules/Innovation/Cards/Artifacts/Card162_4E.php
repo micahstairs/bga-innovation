@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card162_4E extends Card
+class Card162_4E extends AbstractCard
 {
   // The Daily Courant (4th edition):
   //   - Draw, reveal, and return a [6]. Draw and meld a card of value equal to the value of your

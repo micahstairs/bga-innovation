@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card137 extends Card
+class Card137 extends AbstractCard
 {
 
   // Excalibur

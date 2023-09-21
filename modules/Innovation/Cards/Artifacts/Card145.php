@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card145 extends Card
+class Card145 extends AbstractCard
 {
 
   // Petition of Right

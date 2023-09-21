@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card125 extends Card
+class Card125 extends AbstractCard
 {
 
   // Seikilos Epitaph

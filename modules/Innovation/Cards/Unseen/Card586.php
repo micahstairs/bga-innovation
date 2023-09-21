@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card586 extends Card
+class Card586 extends AbstractCard
 {
 
   // Quantum Computers:

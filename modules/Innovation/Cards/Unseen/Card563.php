@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card563 extends Card
+class Card563 extends AbstractCard
 {
 
   // Joy Buzzer:

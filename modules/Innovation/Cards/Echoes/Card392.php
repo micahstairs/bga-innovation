@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
-class Card392 extends Card
+class Card392 extends AbstractCard
 {
 
   // Morphine

@@ -2,9 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
-class Card482 extends Card
+class Card482 extends AbstractCard
 {
 
   // Proverb:
@@ -18,8 +19,8 @@ class Card482 extends Card
     self::return($card);
     if (self::isYellow($card) || self::isPurple($card)) {
       $cardIds = [];
-      $countsByValue = self::countCardsKeyedByValue('hand');
-      foreach (self::getCards('achievements', 0) as $card) {
+      $countsByValue = self::countCardsKeyedByValue(Locations::HAND);
+      foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
         if (self::isValuedCard($card)) {
           if ($countsByValue[$card['age']] > 0) {
             $cardIds[] = $card['id'];
@@ -44,7 +45,7 @@ class Card482 extends Card
     } else {
       return [
         'n'              => 'all',
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     }

@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card483 extends Card
+class Card483 extends AbstractCard
 {
 
   // Assassination:

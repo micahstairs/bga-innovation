@@ -2,11 +2,12 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
-class Card518 extends Card
+class Card518 extends AbstractCard
 {
 
   // Spanish Inquisition:
@@ -47,7 +48,7 @@ class Card518 extends Card
     if (self::isDemand()) {
       return [
         'n'                               => 'all',
-        'location_from'                   => 'hand,score',
+        'location_from'                   => Locations::HAND_OR_SCORE,
         'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];

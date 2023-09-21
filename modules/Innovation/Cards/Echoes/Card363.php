@@ -2,13 +2,13 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
-class Card363 extends Card
+class Card363 extends AbstractCard
 {
 
   // Novel

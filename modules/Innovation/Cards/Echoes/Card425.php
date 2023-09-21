@@ -2,9 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
-class Card425 extends Card
+class Card425 extends AbstractCard
 {
 
   // Artificial Heart
@@ -23,7 +24,7 @@ class Card425 extends Card
   public function getInteractionOptions(): array
   {
     $cardIds = [];
-    $achievementsByValue = self::getCardsKeyedByValue('achievements', 0);
+    $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
     foreach ($this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId(), 2) as $value) {
       foreach ($achievementsByValue[$value] as $card) {
         $cardIds[] = $card['id'];

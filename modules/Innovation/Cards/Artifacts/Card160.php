@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card160 extends Card
+class Card160 extends AbstractCard
 {
   // Hudson's Bay Company Archives
   // - 3rd edition:

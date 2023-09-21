@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card172 extends Card
+class Card172 extends AbstractCard
 {
   // Pride and Prejudice
   //   - Draw and meld a [6]. If the drawn card's color is the color with the fewest (or tied)

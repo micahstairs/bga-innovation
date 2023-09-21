@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card131 extends Card
+class Card131 extends AbstractCard
 {
 
   // Holy Grail

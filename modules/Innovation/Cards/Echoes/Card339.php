@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
-class Card339 extends Card
+class Card339 extends AbstractCard
 {
 
   // Chopsticks

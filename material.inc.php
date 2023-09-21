@@ -1165,23 +1165,30 @@ $this->textual_card_infos = array(
     ),
 
     176 => array(
-        'name'                => clienttranslate('Corvette Challenger'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.'),
+        'name'                                => clienttranslate('Corvette Challenger'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and tuck an ${age_8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and tuck an ${age_8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color on your board. Junk all cards in the deck of that value.'),
     ),
 
     177 => array(
-        'name'            => clienttranslate('Submarine H. L. Hunley'),
-        'i_compel_effect' => clienttranslate('${I compel} you to draw and meld a ${age_7}! Reveal the bottom card on your board of the melded card\'s color! If the revealed card is a ${age_1}, return all cards of its color from your board!'),
+        'name'                            => clienttranslate('Submarine H. L. Hunley'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to draw and meld a ${age_7}! Reveal the bottom card on your board of the melded card\'s color! If the revealed card is a ${age_1}, return all cards of its color from your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to draw and meld a ${age_7}! Reveal the bottom card on your board of the melded card\'s color! If the revealed card is even-valued, return all cards of its color from your board!'),
     ),
 
     178 => array(
-        'name'                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
-        'non_demand_effect_1' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
+        'name'                                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score an ${age_8}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld an ${age_8}. If you do, choose a value, and junk all cards in the deck of that value.'),
+        'separate_4E_implementation'          => true,
     ),
 
     179 => array(
-        'name'                => clienttranslate('International Prototype Metre Bar'),
-        'non_demand_effect_1' => clienttranslate('Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card\'s value, you win. Otherwise, return the melded card.'),
+        'name'                                => clienttranslate('International Prototype Metre Bar'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card\'s value, you win. Otherwise, return the melded card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value. Draw and reveal three cards of that value. Splay up the colors of the cards. If the number of cards of each of those colors on your board is equal to that value, you win. Otherwise, return the drawn cards.'),
+        'separate_4E_implementation'          => true,
     ),
 
     180 => array(
@@ -1196,8 +1203,9 @@ $this->textual_card_infos = array(
     ),
 
     182 => array(
-        'name'                => clienttranslate('Singer Model 27'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color.'),
+        'name'                                => clienttranslate('Singer Model 27'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color. If you do, junk an available standard achievement.'),
     ),
 
     183 => array(

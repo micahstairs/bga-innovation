@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card512 extends Card
+class Card512 extends AbstractCard
 {
 
   // Secret Police:

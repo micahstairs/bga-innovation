@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 
-class Card334 extends Card
+class Card334 extends AbstractCard
 {
 
   // Candles
@@ -41,11 +41,12 @@ class Card334 extends Card
   {
     if (self::isFirstOrThirdEdition()) {
       return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'hand',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'hand',
-        'with_icon'     => Icons::AUTHORITY,
+        'owner_from'       => self::getPlayerId(),
+        'location_from'    => 'hand',
+        'owner_to'         => self::getLauncherId(),
+        'location_to'      => 'hand',
+        'with_icon'        => Icons::AUTHORITY,
+        'reveal_if_unable' => true,
       ];
     } else {
       self::setAuxiliaryArray(self::getCardIdsInHandWithAuthorityOrConceptIcon());
@@ -57,6 +58,7 @@ class Card334 extends Card
         'with_icon'                       => Icons::AUTHORITY,
         'card_ids_are_in_auxiliary_array' => true,
         'enable_autoselection'            => false,
+        'reveal_if_unable'                => true,
       ];
     }
   }
@@ -64,13 +66,6 @@ class Card334 extends Card
   public function handleCardChoice(array $card)
   {
     self::draw(1);
-  }
-
-  public function afterInteraction()
-  {
-    if (self::getNumChosen() === 0) {
-      self::revealHand();
-    }
   }
 
   private function getCardIdsInHandWithAuthorityOrConceptIcon(): array

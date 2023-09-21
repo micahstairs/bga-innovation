@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 
-class Card332 extends Card
+class Card332 extends AbstractCard
 {
 
   // Ruler

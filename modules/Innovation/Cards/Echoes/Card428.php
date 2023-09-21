@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card428 extends Card
+class Card428 extends AbstractCard
 {
 
   // Social Networking

@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card459 extends Card
+class Card459 extends AbstractCard
 {
 
   // Oculus Quest

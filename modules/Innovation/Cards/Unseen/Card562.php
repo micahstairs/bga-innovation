@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 
-class Card562 extends Card
+class Card562 extends AbstractCard
 {
 
   // Shangri-La:
@@ -19,7 +19,7 @@ class Card562 extends Card
       if (self::hasIcon($card, Icons::INDUSTRY)) {
         self::score($card);
         break;
-      } else if (self::drawAndMeld(8)['age'] != 8) {
+      } else if (self::drawAndMeld(8)['faceup_age'] != 8) {
         break;
       }
     }

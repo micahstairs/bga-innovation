@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
-class Card561 extends Card
+class Card561 extends AbstractCard
 {
 
   // Jackalope:

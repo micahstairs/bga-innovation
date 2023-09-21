@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card376 extends Card
+class Card376 extends AbstractCard
 {
 
   // Thermometer

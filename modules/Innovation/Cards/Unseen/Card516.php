@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card516 extends Card
+class Card516 extends AbstractCard
 {
 
   // The Prophecies:

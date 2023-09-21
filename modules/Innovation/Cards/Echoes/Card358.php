@@ -2,10 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
-class Card358 extends Card
+class Card358 extends AbstractCard
 {
 
   // Katana
@@ -63,7 +64,7 @@ class Card358 extends Card
         }
       } else {
         if ($auxiliaryValue === 1 && self::wasForeseen()) {
-          foreach (self::getCards('achievements', 0) as $card) {
+          foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
             if (self::isValuedCard($card)) {
               self::junk($card);
             }

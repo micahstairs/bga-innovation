@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card522 extends Card
+class Card522 extends AbstractCard
 {
 
   // Heirloom:

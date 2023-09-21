@@ -7,6 +7,7 @@ use BGAWorkbench\Test\TableInstance;
 use BGAWorkbench\Test\TableInstanceBuilder;
 use BGAWorkbench\Test\TestHelp;
 use Doctrine\DBAL\Connection;
+use Innovation\Enums\Locations;
 
 abstract class BaseIntegrationTest extends BaseTest
 {
@@ -152,7 +153,9 @@ abstract class BaseIntegrationTest extends BaseTest
 
   protected function getCards(string $location, int $playerId = null): array
   {
-    if ($playerId === null) {
+    if (in_array($location, [Locations::DECK, Locations::JUNK, Locations::RELICS, Locations::AVAILABLE_ACHIEVEMENTS])) {
+      $playerId = 0;
+    } else if ($playerId === null) {
       $playerId = self::getActivePlayerId();
     }
     return $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);

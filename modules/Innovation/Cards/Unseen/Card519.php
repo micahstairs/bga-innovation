@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card519 extends Card
+class Card519 extends AbstractCard
 {
 
   // Blackmail:

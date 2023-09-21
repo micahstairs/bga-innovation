@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card115 extends Card
+class Card115 extends AbstractCard
 {
 
   // Pavlovian Tusk

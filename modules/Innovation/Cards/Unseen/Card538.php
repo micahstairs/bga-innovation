@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 
-class Card538 extends Card
+class Card538 extends AbstractCard
 {
 
   // Sniping:

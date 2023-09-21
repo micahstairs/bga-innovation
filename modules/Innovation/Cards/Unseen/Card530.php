@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
-class Card530 extends Card
+class Card530 extends AbstractCard
 {
 
   // Secret History:

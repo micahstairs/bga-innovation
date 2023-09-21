@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card543 extends Card
+class Card543 extends AbstractCard
 {
 
   // Illuminati:

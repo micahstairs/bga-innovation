@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card171_3E extends Card
+class Card171_3E extends AbstractCard
 {
   // Stamp Act (3rd edition):
   //   - I COMPEL you to transfer a card of value equal to the top yellow card on your board from

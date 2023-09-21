@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card387 extends Card
+class Card387 extends AbstractCard
 {
 
   // Loom

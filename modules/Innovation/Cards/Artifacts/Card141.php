@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card141 extends Card
+class Card141 extends AbstractCard
 {
 
   // Moylough Belt Shrine

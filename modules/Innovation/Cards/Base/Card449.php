@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card449 extends Card
+class Card449 extends AbstractCard
 {
 
   // Whataboutism:

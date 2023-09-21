@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card576 extends Card
+class Card576 extends AbstractCard
 {
 
   // Inhomogeneous Cosmology:

@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 
-class Card132 extends Card
+class Card132 extends AbstractCard
 {
 
   // Terracotta Army
@@ -33,24 +33,21 @@ class Card132 extends Card
       ];
     } else {
       return [
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'without_icon'  => Icons::AUTHORITY,
+        'location_from'    => 'hand',
+        'score_keyword'    => true,
+        'without_icon'     => Icons::AUTHORITY,
+        'reveal_if_unable' => true,
       ];
     }
   }
 
-  public function afterInteraction() {
-    if (self::isFirstNonDemand()) {
+  public function afterInteraction()
+  {
+    if (self::isFourthEdition() && self::isFirstNonDemand()) {
       if (self::getNumChosen() > 0) {
-        if (self::isFourthEdition()) {
-          self::junkBaseDeck(self::getLastSelectedAge());
-        }
+        self::junkBaseDeck(self::getLastSelectedAge());
       } else {
-        self::revealHand(); // Prove that no card could be scored
-        if (self::isFourthEdition()) {
-          self::tuck(self::getCard(CardIds::TERRACOTTA_ARMY));
-        }
+        self::tuck(self::getCard(CardIds::TERRACOTTA_ARMY));
       }
     }
   }

@@ -12,7 +12,7 @@ use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
 /* Abstract class of all card implementations */
-abstract class Card
+abstract class AbstractCard
 {
 
   protected \Innovation $game;
@@ -833,6 +833,13 @@ abstract class Card
     return $this->game->setAuxiliaryValue2($value);
   }
 
+  protected function incrementAuxiliaryValue2(int $value = 1): int
+  {
+    $newValue = self::getAuxiliaryValue2() + $value;
+    self::setAuxiliaryValue2($newValue);
+    return $newValue;
+  }
+
   protected function setAuxiliaryArray(array $array)
   {
     return $this->game->setAuxiliaryArray($array);
@@ -1355,7 +1362,7 @@ abstract class Card
 
   private function coercePlayerIdUsingLocation(?int $playerId, string $location): int
   {
-    if ($location === 'deck' || $location === 'junk' || $location === 'relics') {
+    if (in_array($location, [Locations::DECK, Locations::JUNK, Locations::RELICS, Locations::AVAILABLE_ACHIEVEMENTS])) {
       return 0;
     }
     return self::coercePlayerId($playerId);
