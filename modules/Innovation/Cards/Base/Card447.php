@@ -51,7 +51,7 @@ class Card447 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::incrementAuxiliaryValue($card['faceup_age']);
+    self::incrementAuxiliaryValue2($card['faceup_age']);
   }
 
   public function afterInteraction()

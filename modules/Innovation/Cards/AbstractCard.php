@@ -833,6 +833,13 @@ abstract class AbstractCard
     return $this->game->setAuxiliaryValue2($value);
   }
 
+  protected function incrementAuxiliaryValue2(int $value = 1): int
+  {
+    $newValue = self::getAuxiliaryValue2() + $value;
+    self::setAuxiliaryValue2($newValue);
+    return $newValue;
+  }
+
   protected function setAuxiliaryArray(array $array)
   {
     return $this->game->setAuxiliaryArray($array);
