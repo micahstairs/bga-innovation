@@ -12312,15 +12312,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
-            case "178N1":
-                // "Draw and score an 8"
-                $card = self::executeDraw($player_id, 8, 'score');
-                // "Draw and meld an 8"
-                $card = self::executeDrawAndMeld($player_id, 8);
-                $step_max = 1;
-                break;
-
             // id 179, Artifacts age 7: International Prototype Metre Bar
             case "179N1":
                 $step_max = 1;
@@ -15414,24 +15405,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
             );
-            break;
-            
-        // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
-        case "178N1A":
-            // "Claim an achievement of value 8 if it is available, ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'age' => 8,
-                'require_achievement_eligibility' => false
-            );
-            break;            
+            break;         
 
         // id 179, Artifacts age 7: International Prototype Metre Bar
         case "179N1A":

@@ -1177,8 +1177,11 @@ $this->textual_card_infos = array(
     ),
 
     178 => array(
-        'name'                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
-        'non_demand_effect_1' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
+        'name'                                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score an ${age_8}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld an ${age_8}. If you do, choose a value, and junk all cards in the deck of that value.'),
+        'separate_4E_implementation'          => true,
     ),
 
     179 => array(
