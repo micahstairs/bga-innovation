@@ -219,14 +219,19 @@ class RandomGameTest extends BaseIntegrationTest
       case 'choose_non_negative_integer':
         return true;
       case 'choose_from_list':
+        return count(self::getGlobalVariableAsArray('choice_array')) > 0;
       case 'choose_value':
+        return count(self::getGlobalVariableAsArray('age_array')) > 0;
       case 'choose_color':
       case 'choose_two_colors':
       case 'choose_three_colors':
+        return count(self::getGlobalVariableAsArray('color_array')) > 0;
       case 'choose_player':
+        return count(self::getGlobalVariableAsArray('player_array')) > 0;
       case 'choose_type':
+        return count(self::getGlobalVariableAsArray('type_array')) > 0;
       case 'choose_icon_type':
-        return count(self::getGlobalVariableAsArray('choice_array')) > 0;
+        return count(self::getGlobalVariableAsArray('icon_array')) > 0;
       case 'choose_special_achievement':
         foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
           if ($card['age'] === null && $card['id'] < 1000) {
