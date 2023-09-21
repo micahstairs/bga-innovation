@@ -15,8 +15,12 @@ class Card484 extends AbstractCard
   public function initialExecution()
   {
     $colorCounts = [0, 0, 0, 0, 0];
-    foreach (self::getCards('hand', self::getLauncherId()) as $card) {
+    $cards = self::getCards('hand', self::getLauncherId());
+    foreach ($cards as $card) {
       $colorCounts[$card['color']]++;
+    }
+    if ($cards) {
+      self::revealHand(self::getLauncherId());
     }
     self::setActionScopedAuxiliaryArray($colorCounts);
     self::setAuxiliaryValue(0); // Used to track whether the player has scored a card yet
@@ -34,10 +38,11 @@ class Card484 extends AbstractCard
     }
     self::setAuxiliaryArray($cardIds);
     return [
-      'location_from' => 'hand',
-      'score_keyword' => true,
+      'location_from'                   => 'hand',
+      'score_keyword'                   => true,
       'card_ids_are_in_auxiliary_array' => true,
-      'enable_autoselection' => false, // Automating this can sometimes reveal hidden info
+      'reveal_if_unable'                => true,
+      'enable_autoselection'            => false, // Automating this can sometimes reveal hidden info
     ];
   }
 
@@ -65,7 +70,8 @@ class Card484 extends AbstractCard
     }
   }
 
-  private function getSelectableCardIds($playerId) {
+  private function getSelectableCardIds($playerId)
+  {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
     foreach (self::getCards('hand', $playerId) as $card) {
