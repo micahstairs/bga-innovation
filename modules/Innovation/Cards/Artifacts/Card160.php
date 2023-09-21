@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Colors;
 
 class Card160 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card160 extends AbstractCard
   public function initialExecution()
   {
     foreach (Colors::ALL as $color) {
-      self::scoreCard(self::getBottomCardOfColor($color));
+      self::score(self::getBottomCardOfColor($color));
     }
     self::setMaxSteps(1);
   }
