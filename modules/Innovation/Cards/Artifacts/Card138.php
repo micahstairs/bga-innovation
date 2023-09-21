@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card138 extends Card
+class Card138 extends AbstractCard
 {
 
   // Mjölnir Amulet

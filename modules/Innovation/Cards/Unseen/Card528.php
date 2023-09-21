@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card528 extends Card
+class Card528 extends AbstractCard
 {
 
   // Witch Trial:

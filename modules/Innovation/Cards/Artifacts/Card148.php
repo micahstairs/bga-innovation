@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card148 extends Card
+class Card148 extends AbstractCard
 {
 
   // Tortugas Galleon (3rd edition)

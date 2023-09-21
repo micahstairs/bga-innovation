@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Utils\Arrays;
 
-class Card572 extends Card
+class Card572 extends AbstractCard
 {
 
   // Surveillance:

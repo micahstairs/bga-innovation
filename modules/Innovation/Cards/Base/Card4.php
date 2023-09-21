@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 
-class Card4 extends Card
+class Card4 extends AbstractCard
 {
 
   // Metalworking:

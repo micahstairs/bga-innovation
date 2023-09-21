@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card447 extends Card
+class Card447 extends AbstractCard
 {
 
   // Reclamation:

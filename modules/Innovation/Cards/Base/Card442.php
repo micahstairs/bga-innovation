@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card442 extends Card
+class Card442 extends AbstractCard
 {
 
   // Astrogeology:

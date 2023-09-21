@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
-class Card558 extends Card
+class Card558 extends AbstractCard
 {
 
   // Enigma Machine:

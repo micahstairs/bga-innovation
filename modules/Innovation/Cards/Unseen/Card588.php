@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card588 extends Card
+class Card588 extends AbstractCard
 {
 
   // Dark Web:

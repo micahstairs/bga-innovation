@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card159 extends Card
+class Card159 extends AbstractCard
 {
   // Barque-Longue La Belle
   //   - Draw and meld a [5]. If the drawn card is not green, repeat this effect.

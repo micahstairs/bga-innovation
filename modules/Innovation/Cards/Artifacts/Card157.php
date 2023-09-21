@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card157 extends Card
+class Card157 extends AbstractCard
 {
   // - Bill of Rights (3rd edition):
   //   - I COMPEL you to choose a color where you have more visible cards than I do! Transfer all

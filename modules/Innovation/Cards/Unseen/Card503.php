@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card503 extends Card
+class Card503 extends AbstractCard
 {
 
   // Propaganda:

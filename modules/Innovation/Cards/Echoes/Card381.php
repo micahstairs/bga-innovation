@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 
-class Card381 extends Card
+class Card381 extends AbstractCard
 {
 
   // Pressure Cooker

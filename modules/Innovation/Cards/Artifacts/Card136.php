@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Directions;
 
-class Card136 extends Card
+class Card136 extends AbstractCard
 {
 
   // Charter of Liberties (3rd edition)

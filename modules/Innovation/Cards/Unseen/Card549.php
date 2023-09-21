@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card549 extends Card
+class Card549 extends AbstractCard
 {
 
   // Black Market

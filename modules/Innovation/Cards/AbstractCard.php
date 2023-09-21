@@ -12,7 +12,7 @@ use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
 /* Abstract class of all card implementations */
-abstract class Card
+abstract class AbstractCard
 {
 
   protected \Innovation $game;

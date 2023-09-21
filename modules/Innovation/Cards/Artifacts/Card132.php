@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 
-class Card132 extends Card
+class Card132 extends AbstractCard
 {
 
   // Terracotta Army

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card506 extends Card
+class Card506 extends AbstractCard
 {
 
   // Secret Secretorum:

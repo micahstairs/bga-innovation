@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card124 extends Card
+class Card124 extends AbstractCard
 {
 
   // Tale of the Shipwrecked Sailor

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card144 extends Card
+class Card144 extends AbstractCard
 {
 
   // Shroud of Turin

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card142 extends Card
+class Card142 extends AbstractCard
 {
 
   // Along the River during the Qingming Festival

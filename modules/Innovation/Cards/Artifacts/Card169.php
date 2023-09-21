@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card169 extends Card
+class Card169 extends AbstractCard
 {
   // The Wealth of Nations
   // - 3rd edition:

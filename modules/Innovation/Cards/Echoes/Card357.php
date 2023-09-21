@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card357 extends Card
+class Card357 extends AbstractCard
 {
 
   // Liquid Fire

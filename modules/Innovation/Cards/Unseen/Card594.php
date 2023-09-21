@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card594 extends Card
+class Card594 extends AbstractCard
 {
 
   // Metaverse:

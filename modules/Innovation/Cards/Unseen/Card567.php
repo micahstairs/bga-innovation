@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card567 extends Card
+class Card567 extends AbstractCard
 {
 
   // Iron Curtain:

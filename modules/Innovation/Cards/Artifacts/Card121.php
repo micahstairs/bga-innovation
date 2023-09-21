@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card121 extends Card
+class Card121 extends AbstractCard
 {
 
   // Xianrendong Shards

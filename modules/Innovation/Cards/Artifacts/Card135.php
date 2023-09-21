@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card135 extends Card
+class Card135 extends AbstractCard
 {
 
   // Dunhuang Star Chart

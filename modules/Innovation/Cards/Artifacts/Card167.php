@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card167 extends Card
+class Card167 extends AbstractCard
 {
   // Frigate Constitution
   //   - I COMPEL you to reveal a card in your hand! If you do, and its value is equal to the value

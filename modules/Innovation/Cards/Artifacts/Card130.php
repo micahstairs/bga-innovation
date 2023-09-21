@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card130 extends Card
+class Card130 extends AbstractCard
 {
 
   // Baghdad Battery

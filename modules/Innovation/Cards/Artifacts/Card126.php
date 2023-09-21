@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card126 extends Card
+class Card126 extends AbstractCard
 {
 
   // Rosetta Stone

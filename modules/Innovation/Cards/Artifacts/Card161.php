@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card161 extends Card
+class Card161 extends AbstractCard
 {
   // Gujin Tushu Jinsheng (3rd edition):
   //   - If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board.

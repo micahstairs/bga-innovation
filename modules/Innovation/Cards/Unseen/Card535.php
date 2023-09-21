@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card535 extends Card
+class Card535 extends AbstractCard
 {
 
   // Placebo:

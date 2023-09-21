@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card393 extends Card
+class Card393 extends AbstractCard
 {
 
   // Indian Clubs

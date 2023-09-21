@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card146 extends Card
+class Card146 extends AbstractCard
 {
 
   // Delft Pocket Telescope

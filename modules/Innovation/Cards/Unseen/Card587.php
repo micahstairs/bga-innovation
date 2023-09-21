@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card587 extends Card
+class Card587 extends AbstractCard
 {
 
   // Cloaking:

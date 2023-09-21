@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 
-class Card123 extends Card
+class Card123 extends AbstractCard
 {
 
   // Ark of the Covenant

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card476 extends Card
+class Card476 extends AbstractCard
 {
 
   // Digital Pet

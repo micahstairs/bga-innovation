@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card508 extends Card
+class Card508 extends AbstractCard
 {
 
   // Red Envelope:

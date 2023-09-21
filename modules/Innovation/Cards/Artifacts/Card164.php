@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card164 extends Card
+class Card164 extends AbstractCard
 {
   // Almira, Queen of the Castle
   // - 3rd edition:

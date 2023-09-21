@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card411 extends Card
+class Card411 extends AbstractCard
 {
 
   // Air Conditioner

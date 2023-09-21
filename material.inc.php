@@ -1171,8 +1171,9 @@ $this->textual_card_infos = array(
     ),
 
     177 => array(
-        'name'            => clienttranslate('Submarine H. L. Hunley'),
-        'i_compel_effect' => clienttranslate('${I compel} you to draw and meld a ${age_7}! Reveal the bottom card on your board of the melded card\'s color! If the revealed card is a ${age_1}, return all cards of its color from your board!'),
+        'name'                            => clienttranslate('Submarine H. L. Hunley'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to draw and meld a ${age_7}! Reveal the bottom card on your board of the melded card\'s color! If the revealed card is a ${age_1}, return all cards of its color from your board!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to draw and meld a ${age_7}! Reveal the bottom card on your board of the melded card\'s color! If the revealed card is even-valued, return all cards of its color from your board!'),
     ),
 
     178 => array(

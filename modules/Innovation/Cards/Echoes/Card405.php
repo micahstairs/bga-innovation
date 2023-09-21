@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 use Innovation\Utils\Arrays;
 
-class Card405 extends Card
+class Card405 extends AbstractCard
 {
 
   // Radio Telescope

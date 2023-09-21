@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 
-class Card555 extends Card
+class Card555 extends AbstractCard
 {
 
   // Blacklight:

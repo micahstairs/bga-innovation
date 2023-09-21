@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card565 extends Card
+class Card565 extends AbstractCard
 {
 
   // Consulting:

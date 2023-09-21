@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card448 extends Card
+class Card448 extends AbstractCard
 {
 
   // Escapism:

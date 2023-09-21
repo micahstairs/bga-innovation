@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card162_3E extends Card
+class Card162_3E extends AbstractCard
 {
   // The Daily Courant (3rd edition):
   //   - Draw a card of any value, then place it on top of the draw pile of its age. You may

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card154 extends Card
+class Card154 extends AbstractCard
 {
 
   // Abell Gallery Harpsichord

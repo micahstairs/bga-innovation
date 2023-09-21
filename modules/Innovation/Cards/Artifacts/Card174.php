@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card174 extends Card
+class Card174 extends AbstractCard
 {
   // Marcha Real
   //   - Reveal and return two cards from your hand. If they have the same value, draw a card of

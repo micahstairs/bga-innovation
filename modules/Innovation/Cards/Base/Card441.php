@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 
-class Card441 extends Card
+class Card441 extends AbstractCard
 {
 
   // Solar Sailing:

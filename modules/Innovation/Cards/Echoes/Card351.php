@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Directions;
 
-class Card351 extends Card
+class Card351 extends AbstractCard
 {
 
   // Toothbrush

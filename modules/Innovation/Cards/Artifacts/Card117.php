@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card117 extends Card
+class Card117 extends AbstractCard
 {
 
   // Electrum Stater of Efesos

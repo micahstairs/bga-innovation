@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 
-class Card380 extends Card
+class Card380 extends AbstractCard
 {
 
   // Seed Drill

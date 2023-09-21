@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card548 extends Card
+class Card548 extends AbstractCard
 {
 
   // Safe Deposit Box:

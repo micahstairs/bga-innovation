@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card473 extends Card
+class Card473 extends AbstractCard
 {
 
   // Exoskeleton

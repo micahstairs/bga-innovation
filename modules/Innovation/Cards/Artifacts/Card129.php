@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
-class Card129 extends Card
+class Card129 extends AbstractCard
 {
 
   // Holy Lance

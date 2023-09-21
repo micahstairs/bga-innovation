@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card0 extends Card
+class Card0 extends AbstractCard
 {
 
   // Pottery:

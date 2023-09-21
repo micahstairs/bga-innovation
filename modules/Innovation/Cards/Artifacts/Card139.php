@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card139 extends Card
+class Card139 extends AbstractCard
 {
 
   // Philosopher's Stone

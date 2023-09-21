@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 
-class Card72 extends Card
+class Card72 extends AbstractCard
 {
 
   // Sanitation:

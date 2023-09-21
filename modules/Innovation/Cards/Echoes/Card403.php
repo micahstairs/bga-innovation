@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
-class Card403 extends Card
+class Card403 extends AbstractCard
 {
 
   // Ice Cream

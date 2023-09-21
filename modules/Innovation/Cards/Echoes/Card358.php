@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card358 extends Card
+class Card358 extends AbstractCard
 {
 
   // Katana

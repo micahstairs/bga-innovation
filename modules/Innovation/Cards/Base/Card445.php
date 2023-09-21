@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card445 extends Card
+class Card445 extends AbstractCard
 {
 
   // Space Traffic:

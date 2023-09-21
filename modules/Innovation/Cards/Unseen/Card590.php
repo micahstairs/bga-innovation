@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card590 extends Card
+class Card590 extends AbstractCard
 {
 
   // Mystery Box:

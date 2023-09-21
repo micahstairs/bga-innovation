@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card481 extends Card
+class Card481 extends AbstractCard
 {
 
   // Palmistry:

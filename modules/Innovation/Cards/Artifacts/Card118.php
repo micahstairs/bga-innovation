@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card118 extends Card
+class Card118 extends AbstractCard
 {
 
   // Jiskairumoko Necklace

@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card384 extends Card
+class Card384 extends AbstractCard
 {
 
   // Tuning Fork

@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Base;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card22 extends Card
+class Card22 extends AbstractCard
 {
 
   // Fermenting:

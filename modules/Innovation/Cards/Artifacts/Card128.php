@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
-class Card128 extends Card
+class Card128 extends AbstractCard
 {
 
   // Babylonian Chronicles

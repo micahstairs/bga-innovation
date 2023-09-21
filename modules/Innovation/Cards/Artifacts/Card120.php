@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card120 extends Card
+class Card120 extends AbstractCard
 {
 
   // Lurgan Canoe

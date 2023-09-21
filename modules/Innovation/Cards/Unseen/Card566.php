@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 
-class Card566 extends Card
+class Card566 extends AbstractCard
 {
 
   // Fermi Paradox:

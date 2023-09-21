@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 
-class Card119 extends Card
+class Card119 extends AbstractCard
 {
 
   // Dancing Girl

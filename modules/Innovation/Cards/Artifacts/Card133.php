@@ -2,11 +2,11 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
-class Card133 extends Card
+class Card133 extends AbstractCard
 {
 
   // Dead Sea Scrolls

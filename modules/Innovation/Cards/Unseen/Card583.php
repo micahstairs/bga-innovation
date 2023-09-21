@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card583 extends Card
+class Card583 extends AbstractCard
 {
 
   // 3D Printing:

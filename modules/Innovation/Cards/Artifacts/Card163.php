@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card163 extends Card
+class Card163 extends AbstractCard
 {
   // Sandham Room Cricket Bat
   // - 3rd edition:

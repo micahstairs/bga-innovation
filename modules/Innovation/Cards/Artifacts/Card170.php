@@ -2,10 +2,10 @@
 
 namespace Innovation\Cards\Artifacts;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 
-class Card170 extends Card
+class Card170 extends AbstractCard
 {
   // Buttonwood Agreement
   //   - Choose three colors. Draw and reveal an [8]. If the drawn card is one of the chosen

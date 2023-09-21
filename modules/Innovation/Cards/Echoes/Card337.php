@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card337 extends Card
+class Card337 extends AbstractCard
 {
 
   // Ice Skates

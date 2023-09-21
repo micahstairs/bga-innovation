@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card402 extends Card
+class Card402 extends AbstractCard
 {
 
   // Fertilizer

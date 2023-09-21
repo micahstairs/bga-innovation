@@ -17,7 +17,7 @@
   */
 
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
-require_once('modules/Innovation/Cards/Card.php');
+require_once('modules/Innovation/Cards/AbstractCard.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
 require_once('modules/Innovation/GameState.php');
 require_once('modules/Innovation/Enums/CardIds.php');
@@ -12312,25 +12312,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 177, Artifacts age 7: Submarine H. L. Hunley
-            case "177C1":
-                // "I compel you to draw and meld a 7" 
-                $card = self::executeDrawAndMeld($player_id, 7);
-
-                // "Reveal the bottom card on your board of the melded card's color"
-                $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
-                self::transferCardFromTo($bottom_card, $player_id, 'revealed');
-
-                // "If the revealed card is a 1"
-                if ($bottom_card['faceup_age'] == 1) {
-                    $step_max = 1;
-                    self::setAuxiliaryValue($bottom_card['color']);
-                }
-                // Put the revealed card back on the bottom
-                $revealed_card = self::getCardInfo($bottom_card['id']);
-                self::tuckCard($revealed_card, $player_id);
-                break;
-
             // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
             case "178N1":
                 // "Draw and score an 8"
@@ -15433,21 +15414,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
             );
-            break;
-
-        // id 177, Artifacts age 7: Submarine H. L. Hunley
-        case "177C1A":
-            // "Return all cards of its color from your board"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'pile',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'color' => array(self::getAuxiliaryValue()),
-             );
             break;
             
         // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor

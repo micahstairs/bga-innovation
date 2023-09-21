@@ -2,9 +2,9 @@
 
 namespace Innovation\Cards\Unseen;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 
-class Card540 extends Card
+class Card540 extends AbstractCard
 {
 
   // Swiss Bank Account:

@@ -2,12 +2,12 @@
 
 namespace Innovation\Cards\Echoes;
 
-use Innovation\Cards\Card;
+use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card394 extends Card
+class Card394 extends AbstractCard
 {
 
   // Kaleidoscope
