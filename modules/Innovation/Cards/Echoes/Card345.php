@@ -56,7 +56,7 @@ class Card345 extends AbstractCard
     self::setAuxiliaryArray($returnedValues);
   }
 
-  public function handlValueChoice(int $value)
+  public function handleValueChoice(int $value)
   {
     $valuesLeftToDraw = self::getAuxiliaryArray();
     $valuesLeftToDraw[$value - 1]--;
