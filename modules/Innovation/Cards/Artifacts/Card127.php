@@ -44,8 +44,8 @@ class Card127 extends AbstractCard
   {
     $minIcons = null;
     foreach ($iconCountsByPlayer as $player => $iconCounts) {
-      if ($minIcons === null || $iconCounts[$player][$icon] < $minIcons) {
-        $minIcons = $iconCounts[$player][$icon];
+      if ($minIcons === null || $iconCounts[$icon] < $minIcons) {
+        $minIcons = $iconCounts[$icon];
       }
     }
     return $iconCountsByPlayer[self::getPlayerId()][$icon] === $minIcons;

@@ -8,12 +8,13 @@ use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
 {
-  public function test_randomGame_thirdEdition_cities_echoes()
+
+  public function test_randomGame_thirdEdition_artifacts_cities_echoes()
   {
     self::executeGame();
   }
 
-  public function test_randomGame_fourthEdition_cities_echoes_unseen()
+  public function test_randomGame_fourthEdition_artifacts_cities_echoes_unseen()
   {
     self::executeGame();
   }
@@ -22,6 +23,17 @@ class RandomGameTest extends BaseIntegrationTest
   {
     error_log("*** STARTING GAME ***");
     while (self::getCurrentStateName() !== 'gameEnd') {
+
+      // Handle free action at start of turn
+      if (self::getCurrentStateName() === 'artifactPlayerTurn') {
+        $actions = [
+          [$this, 'dogmaArtifact'],
+          [$this, 'returnArtifact'],
+          [$this, 'passArtifact'],
+        ];
+        $actions[array_rand($actions)]();
+      }
+
       $actions = [
         [$this, 'draw'],
       ];
@@ -47,6 +59,35 @@ class RandomGameTest extends BaseIntegrationTest
     error_log("Player #1 achievements: " . $this->tableInstance->getTable()->countCardsInLocation(12345, 'achievements'));
     error_log("Player #2 score: " . $this->tableInstance->getTable()->getPlayerScore(67890));
     error_log("Player #2 achievements: " . $this->tableInstance->getTable()->countCardsInLocation(67890, 'achievements'));
+  }
+
+  private function dogmaArtifact()
+  {
+    error_log("* DOGMA ARTIFACT");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->dogmaArtifactOnDisplay();
+    $this->tableInstance->advanceGame();
+
+    self::excecuteInteractions();
+  }
+
+  private function returnArtifact()
+  {
+    error_log("* RETURN ARTIFACT");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->returnArtifactOnDisplay();
+    $this->tableInstance->advanceGame();
+  }
+
+  private function passArtifact()
+  {
+    error_log("* PASS ARTIFACT");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->passArtifactOnDisplay();
+    $this->tableInstance->advanceGame();
   }
 
   private function draw()
@@ -153,7 +194,7 @@ class RandomGameTest extends BaseIntegrationTest
     }
 
     $state = self::getCurrentStateName();
-    if ($state !== 'playerTurn' && $state !== 'gameEnd') {
+    if ($state !== 'playerTurn' && $state !== 'gameEnd' && $state !== 'artifactPlayerTurn') {
       error_log("ERROR: Unexpected state after doing interactions: $state");
     }
   }
