@@ -5,6 +5,7 @@ namespace Innovation\Cards\Unseen;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card521 extends AbstractCard
 {
@@ -29,7 +30,7 @@ class Card521 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return [
         'n'             => 'all',
-        'location_from' => 'hand,score',
+        'location_from' => Locations::HAND_OR_SCORE,
         'owner_to'      => $this->game->getActivePlayerIdOnRightOfActingPlayer(),
         'location_to'   => 'board',
         'age'           => self::getAuxiliaryValue(),

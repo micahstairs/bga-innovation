@@ -2630,7 +2630,7 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from the available achievements');
                 $from_somewhere_for_others = clienttranslate(' from the available achievements');
             }
-        } else if ($location_from === 'hand,score') {
+        } else if ($location_from === Locations::HAND_OR_SCORE) {
             $from_somewhere_for_player = clienttranslate(' from your hand and score pile');
             $from_somewhere_for_others = clienttranslate(' from his hand and score pile');
         } else if ($location_from === 'revealed,hand') {
@@ -6382,7 +6382,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == 'revealed,score') {
             $condition_for_location = "location IN ('revealed', 'score')";
-        } else if ($location_from == 'hand,score') {
+        } else if ($location_from == Locations::HAND_OR_SCORE) {
             $condition_for_location = "location IN ('hand', 'score')";
         } else if ($location_from == 'pile') {
             $condition_for_location = "location = 'board'";
@@ -6679,7 +6679,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 13;
         case 'forecast':
             return 14;
-        case 'hand,score':
+        case Locations::HAND_OR_SCORE:
             return 15;
         case 'junk':
             return 16;
@@ -6728,7 +6728,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case 14:
             return 'forecast';
         case 15:
-            return 'hand,score';
+            return Locations::HAND_OR_SCORE;
         case 16:
             return 'junk';
         case 17:
@@ -12327,36 +12327,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 181, Artifacts age 7: Colt Paterson Revolver
-            case "181C1":
-                // "I compel you to reveal your hand"
-                self::revealHand($player_id);
-
-                // Store list of colors in hand before the new card is drawn.
-                $cards = self::getCardsInHand($player_id);
-                $colors_in_hand = array(0, 0, 0, 0, 0);
-                foreach ($cards as $card) {
-                    $colors_in_hand[$card['color']] = 1;
-                }
-
-                // "Draw a 7"
-                if (count($cards) > 0) {
-                    // If the player has other cards in hand, we need to reveal the card first in order to prove to other players
-                    // whether the card matched the color of another card in hand.
-                    $new_card = self::transferCardFromTo(self::executeDraw($player_id, 7, 'revealed'), $player_id, 'hand');
-                } else {
-                    $new_card = self::executeDraw($player_id, 7);
-                }
-                
-                // "If the color of the drawn card matches the color of any other cards in your hand"
-                if ($colors_in_hand[$new_card['color']] == 1) {
-                    self::notifyGeneralInfo(clienttranslate("The drawn card's color matches the color of another card in hand."));
-                    $step_max = 2;
-                } else {
-                    self::notifyGeneralInfo(clienttranslate("The drawn card's color does not match the color of another card in hand."));
-                }
-                break;
                 
             // id 182, Artifacts age 7: Singer Model 27
             case "182N1":
@@ -15378,32 +15348,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
             );
-            break;         
-
-        // id 181, Artifacts age 7: Colt Paterson Revolver
-        case "181C1A":
-            // "Return all cards in your hand"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;            
-
-        case "181C1B":
-            // "Return all cards in your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;            
+            break;                   
 
         // id 182, Artifacts age 7: Singer Model 27
         case "182N1A":
@@ -16026,7 +15971,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,                
 
                 'owner_from' => $player_id,
-                'location_from' => 'hand,score',
+                'location_from' => Locations::HAND_OR_SCORE,
                 'owner_to' => 0,
                 'location_to' => 'deck',
 

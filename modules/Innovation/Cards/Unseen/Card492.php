@@ -17,16 +17,16 @@ class Card492 extends AbstractCard
     $cardIds = [];
     $counts = self::countCardsKeyedByColor('hand');
     foreach (self::getCards('hand') as $card) {
-        if ($counts[$card['color']] >= 2) {
-            $cardIds[] = $card['id'];
-        }
+      if ($counts[$card['color']] >= 2) {
+        $cardIds[] = $card['id'];
+      }
     }
     if (count($cardIds) >= 2) {
-        self::setMaxSteps(2);
-        self::setAuxiliaryArray($cardIds);
+      self::setMaxSteps(2);
+      self::setAuxiliaryArray($cardIds);
     } else if (self::countCards('hand') >= 2) {
-        // Reveal that no matching colors exist
-        self::revealHand();
+      // Reveal that no matching colors exist
+      self::revealHand();
     }
   }
 
@@ -34,30 +34,31 @@ class Card492 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'hand',
-        'tuck_keyword' => true,
+        'location_from'                   => 'hand',
+        'tuck_keyword'                    => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
         'location_from' => 'hand',
-        'tuck_keyword' => true,
-        'color' => [self::getLastSelectedColor()],
+        'tuck_keyword'  => true,
+        'color'         => [self::getLastSelectedColor()],
       ];
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isSecondInteraction()) {
       $color = self::getLastSelectedColor();
       $bottomCard = self::getBottomCardOfColor($color);
       $valueToDraw = 0;
       if ($bottomCard) {
-          self::splayLeft($color);
-          $valueToDraw = $bottomCard['age'];
+        self::splayLeft($color);
+        $valueToDraw = $bottomCard['age'];
       }
       self::drawAndSafeguard($valueToDraw);
     }
   }
-  
+
 }

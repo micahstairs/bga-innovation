@@ -17,6 +17,9 @@ class Locations
   const SAFE = 'safe';
   const SCORE = 'score';
 
+  // Special values which represent multiple locations
+  const HAND_OR_SCORE = 'hand,score';
+
   // Special values which are used to reveal cards on their way to another location
   const REVEALED_THEN_DECK = 'revealed,deck';
 

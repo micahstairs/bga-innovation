@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card506 extends AbstractCard
 {
@@ -22,7 +23,7 @@ class Card506 extends AbstractCard
     if (self::isFirstInteraction()) {
       $this->game->setAuxiliaryValueFromArray([]);
       return [
-        'location_from' => 'hand,score',
+        'location_from' => Locations::HAND_OR_SCORE,
         'location_to'   => 'revealed,deck',
         'n'             => 5,
       ];
