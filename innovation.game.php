@@ -12312,29 +12312,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 176, Artifacts age 7: Corvette Challenger
-            case "176N1":
-                // "Draw and tuck an 8"
-                $card = self::executeDrawAndTuck($player_id, 8);
-                // "Splay up the color of the tucked card"
-                self::splayUp($player_id, $player_id, $card['color']);
-                //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
-                $visible_card_count = self::countVisibleCards($player_id, $card['color']);
-                self::notifyPlayer($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${your} board.'), array(
-                    'i18n' => array('color'),
-                    'number' => $visible_card_count,
-                    'color' => Colors::render($card['color']),
-                    'your' => 'your')
-                );
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${player_name}\'s board.'), array(
-                    'i18n' => array('color'),
-                    'number' => $visible_card_count,
-                    'color' => Colors::render($card['color']),
-                    'player_name' => self::renderPlayerName($player_id))
-                );
-                self::executeDraw($player_id, $visible_card_count, 'score');
-                break;
-
             // id 177, Artifacts age 7: Submarine H. L. Hunley
             case "177C1":
                 // "I compel you to draw and meld a 7" 

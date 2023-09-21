@@ -1165,8 +1165,9 @@ $this->textual_card_infos = array(
     ),
 
     176 => array(
-        'name'                => clienttranslate('Corvette Challenger'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.'),
+        'name'                                => clienttranslate('Corvette Challenger'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and tuck an ${age_8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color visible on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and tuck an ${age_8}. Splay up the color of the tucked card. Draw and score a card of value equal to the number of cards of that color on your board. Junk all cards in the deck of that value.'),
     ),
 
     177 => array(
