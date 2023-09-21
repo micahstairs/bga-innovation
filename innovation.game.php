@@ -73,7 +73,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 59-67, 90-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 59-67, 91-92
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -142,6 +142,7 @@ class Innovation extends Table
             'with_bonus' => 87,
             'without_bonus' => 88,
             'card_ids_are_in_auxiliary_array' => 89,
+            'reveal_if_unable' => 90, // 1 if the zone should be revealed if the player is unable to perform the interaction, else 0
             
             'foreseen_card_id' => 93, // ID of the card which was foreseen
             'melded_card_id' => 94, // ID of the card which was melded
@@ -190,6 +191,14 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'replace_may_with_must'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `replace_may_with_must` BOOLEAN DEFAULT FALSE;");
+        }
+
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2309210143) {
+            self::initGameStateLabels([
+                'reveal_if_unable' => 90,
+            ]);
+            $this->innovationGameState->set('reveal_if_unable', -1);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -501,6 +510,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         $this->innovationGameState->setInitial('has_splay_direction', -1); // List of splay directions encoded in a single value
         $this->innovationGameState->setInitial('limit_shrunk_selection_size', -1); // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
+        $this->innovationGameState->setInitial('reveal_if_unable', -1); // 1 if the zone should be revealed if the player is unable to perform the interaction, else 0
         
         // Flags specific to the meld action
         $this->innovationGameState->setInitial('relic_id', -1);
@@ -2081,21 +2091,28 @@ class Innovation extends Table
         }
     }
 
-    function revealLocation($player_id, $location) {
+    function revealLocation(int $player_id, string $location, bool $forProvingPurposes = false) {
         $cards = self::getCardsInLocation($player_id, $location);
         $args = ['i18n' => ['location'], 'location' => self::renderLocation($location)];
         if (count($cards) == 0) {
-            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty ${location}.'),
-                array_merge($args, ['You' => 'You']));
-            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty ${location}.'),
-                array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+            if (!$forProvingPurposes) {
+                $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty ${location}.'),
+                    array_merge($args, ['You' => 'You']));
+                $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty ${location}.'),
+                    array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+            }
             return;
         }
         $args = array_merge($args, ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)]);
-        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your ${location}: ${card_list}.'),
-            array_merge($args, ['You' => 'You']));
-        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his ${location}: ${card_list}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+        $playerArgs = array_merge($args, ['You' => 'You']);
+        $otherArgs = array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]);
+        if ($forProvingPurposes) {
+            $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your ${location} to prove that no card could be selected: ${card_list}.'), $playerArgs);
+            $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his ${location} to prove that no card could be selected: ${card_list}.'), $otherArgs);
+        } else {
+            $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your ${location}: ${card_list}.'), $playerArgs);
+            $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his ${location}: ${card_list}.'), $otherArgs);
+        }
     }
 
     function revealHand($player_id) {
@@ -6209,6 +6226,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('require_achievement_eligibility', $rewritten_options)) {
             $rewritten_options['require_achievement_eligibility'] = false;
         }
+        if (!array_key_exists('reveal_if_unable', $rewritten_options)) {
+            $rewritten_options['reveal_if_unable'] = false;
+        }
         if (!array_key_exists('has_demand_effect', $rewritten_options)) {
             $rewritten_options['has_demand_effect'] = false;
         }
@@ -6257,6 +6277,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'return_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
+            case 'reveal_if_unable':
             case 'has_demand_effect':
             case 'bottom_from':
             case 'bottom_to':
@@ -10480,6 +10501,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('foreshadow_keyword', -1);
             $this->innovationGameState->set('require_achievement_eligibility', -1);
             $this->innovationGameState->set('has_demand_effect', -1);
+            $this->innovationGameState->set('reveal_if_unable', -1);
             $this->innovationGameState->set('has_splay_direction', -1);
             $this->innovationGameState->set('foreseen_card_id', -1);
 
@@ -12304,44 +12326,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 180, Artifacts age 7: Hansen Writing Ball
-            case "180C1":
-                // "I compel you to draw four 7s"
-                self::executeDraw($player_id, 7);
-                self::executeDraw($player_id, 7);
-                self::executeDraw($player_id, 7);
-                self::executeDraw($player_id, 7);
-
-                $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[Colors::BLUE];
-                if ($number_of_blue_cards == 0) {
-                    self::revealHand($player_id);
-                    $color_in_clear = Colors::render(Colors::BLUE);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
-
-                    // "Transfer all cards in your hand to my hand"
-                    foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
-                        self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                    }
-                } else {
-                    $step_max = 1;
-                }
-                break;
-
-            case "180N1":
-                do {
-                    // "Draw and reveal a 7"
-                    $card = self::executeDraw($player_id, 7, 'revealed');
-                    if (self::hasRessource($card, 6)) {
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                        break;
-                    } else {
-                        // "If it has no clocks, tuck it"
-                        self::tuckCard($card, $player_id);
-                    }
-                } while (true); // "Repeat this effect"
                 break;
 
             // id 181, Artifacts age 7: Colt Paterson Revolver
@@ -15396,24 +15380,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;         
 
-        // id 180, Artifacts age 7: Hansen Writing Ball
-        case "180C1A":
-            // "Meld a blue card"
-            $options = array(
-                'player_id' => $player_id,  
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'color' => array(0),
-
-                'meld_keyword' => true,
-            );
-            break;
-
         // id 181, Artifacts age 7: Colt Paterson Revolver
         case "181C1A":
             // "Return all cards in your hand"
@@ -17950,7 +17916,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 // The player passes or stops automatically
-                self::notifyNoSelectableCards();
+                if ($this->innovationGameState->get('reveal_if_unable')) {
+                    self::revealLocation($owner_from, $location_from, /*forProvingPurposes*/ true);
+                } else {
+                    self::notifyNoSelectableCards();
+                }
                 self::trace('preSelectionMove->interInteractionStep (no card)');
                 $this->gamestate->nextState('interInteractionStep');
                 return;
