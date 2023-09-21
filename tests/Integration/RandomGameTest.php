@@ -63,7 +63,9 @@ class RandomGameTest extends BaseIntegrationTest
 
   private function dogmaArtifact()
   {
-    error_log("* DOGMA ARTIFACT");
+    $cardId = self::getRandomCardId(self::getCards('display'));
+    $cardName = $this->tableInstance->getTable()->getCardName($cardId);
+    error_log("* DOGMA ARTIFACT $cardName");
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
       ->dogmaArtifactOnDisplay();
