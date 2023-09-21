@@ -36,9 +36,10 @@ class Card333 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       return [
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'color'         => [Colors::RED],
+        'location_from'    => 'hand',
+        'tuck_keyword'     => true,
+        'color'            => [Colors::RED],
+        'reveal_if_unable' => true,
       ];
     } else {
       if (self::isEcho()) {
@@ -73,13 +74,6 @@ class Card333 extends AbstractCard
       self::drawAndForeshadow(2);
     } else {
       self::setMaxSteps(2);
-    }
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isFirstOrThirdEdition() && self::isEcho() && self::getNumChosen() === 0) {
-      self::revealHand();
     }
   }
 

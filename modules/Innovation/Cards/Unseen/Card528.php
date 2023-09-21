@@ -24,10 +24,11 @@ class Card528 extends AbstractCard
       $returnedCard = self::return(self::getTopCardOfColor($card['color']));
       self::setAuxiliaryValue($returnedCard ? 1 : 0); // Track how many cards were returned
       return [
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-        'not_id'         => $card['id'],
-        'color'          => [$card['color']],
+        'location_from'    => 'hand',
+        'return_keyword'   => true,
+        'not_id'           => $card['id'],
+        'color'            => [$card['color']],
+        'reveal_if_unable' => true,
       ];
     } else {
       return [
@@ -44,9 +45,7 @@ class Card528 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstInteraction() && self::getNumChosen() === 0) {
-      self::revealHand();
-    } else if (self::isSecondInteraction()) {
+    if (self::isSecondInteraction()) {
       if (self::getNumChosen() === 0) {
         self::revealScorePile();
       }

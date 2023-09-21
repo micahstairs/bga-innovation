@@ -23,7 +23,7 @@ class Card343 extends AbstractCard
   {
     if (self::isEcho() || self::isDemand()) {
       self::setMaxSteps(1);
-    } else {
+    } else if (self::isNonDemand()) {
       if (self::isFirstOrThirdEdition()) {
         $card = self::drawAndReveal(1);
       } else {
@@ -45,9 +45,10 @@ class Card343 extends AbstractCard
       ];
     } else if (self::isFirstOrThirdEdition()) {
       return [
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-        'with_bonus'     => true,
+        'location_from'    => 'hand',
+        'return_keyword'   => true,
+        'with_bonus'       => true,
+        'reveal_if_unable' => true,
       ];
     } else {
       return [
@@ -55,14 +56,6 @@ class Card343 extends AbstractCard
         'return_keyword' => true,
         'type'           => CardTypes::getAllTypesOtherThan(CardTypes::BASE),
       ];
-    }
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isDemand() && self::getNumChosen() === 0 && self::isFirstOrThirdEdition()) {
-      // Prove that the player has no bonuses in their hand
-      self::revealHand();
     }
   }
 

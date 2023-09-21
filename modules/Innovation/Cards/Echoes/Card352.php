@@ -28,9 +28,10 @@ class Card352 extends AbstractCard
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
         return [
-          'location_from' => 'hand',
-          'tuck_keyword'  => true,
-          'with_bonus'    => true,
+          'location_from'    => 'hand',
+          'tuck_keyword'     => true,
+          'with_bonus'       => true,
+          'reveal_if_unable' => true,
         ];
       } else {
         return [
@@ -74,14 +75,6 @@ class Card352 extends AbstractCard
   public function handleValueChoice(int $value)
   {
     self::draw($value);
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isFirstOrThirdEdition() && self::isFirstInteraction()) {
-      // Reveal hand to prove that there are no bonuses
-      self::revealHand();
-    }
   }
 
 }

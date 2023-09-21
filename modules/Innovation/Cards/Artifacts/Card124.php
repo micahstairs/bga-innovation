@@ -28,9 +28,10 @@ class Card124 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       self::draw(1);
       return [
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-        'color'         => [self::getAuxiliaryValue()],
+        'location_from'    => 'hand',
+        'meld_keyword'     => true,
+        'color'            => [self::getAuxiliaryValue()],
+        'reveal_if_unable' => true,
       ];
     } else {
       return [
@@ -46,16 +47,11 @@ class Card124 extends AbstractCard
     self::setAuxiliaryValue($color); // Track color to meld
   }
 
-  public function afterInteraction()
-  {
+  public function handleCardChoice(array $card) {
     if (self::isSecondInteraction()) {
-      if (self::getNumChosen() > 0) {
-        self::splayLeft(self::getLastSelectedColor());
-        if (self::isFourthEdition()) {
-          self::setMaxSteps(3);
-        }
-      } else {
-        self::revealHand(); // Prove that no cards of the chosen color were in hand
+      self::splayLeft($card['color']);
+      if (self::isFourthEdition()) {
+        self::setMaxSteps(3);
       }
     }
   }

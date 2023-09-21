@@ -27,9 +27,10 @@ class Card503 extends AbstractCard
         ];
       } else {
         return [
-          'location_from' => 'hand',
-          'meld_keyword'  => true,
-          'color'         => [self::getAuxiliaryValue()],
+          'location_from'    => 'hand',
+          'meld_keyword'     => true,
+          'color'            => [self::getAuxiliaryValue()],
+          'reveal_if_unable' => true,
         ];
       }
     } else {
@@ -48,10 +49,7 @@ class Card503 extends AbstractCard
   public function afterInteraction()
   {
     if (self::isDemand() && self::isSecondInteraction()) {
-      if (self::getNumChosen() === 0) {
-        // Prove that there were no cards of that color in hand
-        self::revealHand();
-      } else {
+      if (self::getNumChosen() > 0) {
         $stack = self::getStack(self::getAuxiliaryValue());
         if (count($stack) >= 2) {
           self::transferToBoard($stack[count($stack) - 2], self::getLauncherId());

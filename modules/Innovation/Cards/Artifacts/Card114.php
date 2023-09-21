@@ -26,9 +26,10 @@ class Card114 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'hand',
-        'location_to'   => 'revealed,deck',
-        'color'         => [Colors::PURPLE],
+        'location_from'    => 'hand',
+        'location_to'      => 'revealed,deck',
+        'color'            => [Colors::PURPLE],
+        'reveal_if_unable' => true,
       ];
     } else {
       return ['choose_type' => true];
@@ -39,13 +40,6 @@ class Card114 extends AbstractCard
   {
     self::setMaxSteps(2);
     self::setAuxiliaryValue($card['age'] + 2); // Track value to draw
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isFirstInteraction() && self::getNumChosen() === 0) {
-      self::revealHand(); // Prove that there were no purple cards in hand
-    }
   }
 
   public function handleTypeChoice(int $type)

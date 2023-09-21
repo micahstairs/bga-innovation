@@ -28,9 +28,10 @@ class Card591 extends AbstractCard
   {
     if (self::isDemand()) {
       return [
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'color'         => [self::getAuxiliaryValue()],
+        'location_from'    => 'hand',
+        'score_keyword'    => true,
+        'color'            => [self::getAuxiliaryValue()],
+        'reveal_if_unable' => true,
       ];
     } else {
       return [
@@ -45,11 +46,8 @@ class Card591 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isDemand()) {
-      if (self::getNumChosen() === 0) {
-        self::revealHand();
-        self::lose();
-      }
+    if (self::isDemand() && self::getNumChosen() === 0) {
+      self::lose();
     }
   }
 

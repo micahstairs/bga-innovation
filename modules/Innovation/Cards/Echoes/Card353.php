@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 
+// TODO: Split this implementation into separate files for 3rd and 4th edition.
 class Card353 extends AbstractCard
 {
 
@@ -49,6 +50,7 @@ class Card353 extends AbstractCard
     if (self::getNumChosen() === 0) {
       if (self::isFirstOrThirdEdition()) {
         // Reveal hand to prove that there were no matching cards of the drawn card's color.
+        // TODO: Use reveal_if_unable instead.
         self::revealHand();
         self::foreshadow($drawnCard, [$this, 'transferToHand']);
       }
