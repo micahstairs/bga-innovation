@@ -9631,12 +9631,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 179, Artifacts age 7: International Prototype Metre Bar
-            case "179N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1A":
                 $message_for_player = clienttranslate('Choose a player to transfer a card to');
@@ -12310,11 +12304,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 179, Artifacts age 7: International Prototype Metre Bar
-            case "179N1":
-                $step_max = 1;
                 break;
 
             // id 180, Artifacts age 7: Hansen Writing Ball
@@ -15407,16 +15396,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;         
 
-        // id 179, Artifacts age 7: International Prototype Metre Bar
-        case "179N1A":
-            // "Choose a value"
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_value' => true
-            );
-            break;
-
         // id 180, Artifacts age 7: Hansen Writing Ball
         case "180C1A":
             // "Meld a blue card"
@@ -17341,30 +17320,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStep(1);
                     }
                     break;
-
-                // id 179, Artifacts age 7: International Prototype Metre Bar   
-                case "179N1A":
-                    $age_value = self::getAuxiliaryValue();
-                    
-                    // "Draw and meld a card of that value"
-                    $card = self::executeDrawAndMeld($player_id, $age_value);
-
-                    // "Splay up the color of the melded card"
-                    self::splayUp($player_id, $player_id, $card['color']);
-                    
-                    // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
-                    if ($card['faceup_age'] == self::countVisibleCards($player_id, $card['color'])) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card whose value is equal to the number of visible cards in your ${color} stack.'), array('You' => 'You', 'color'=> Colors::render($card['color'])));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card whose value is equal to the number of visible cards in his ${color} stack.'), array('player_name' => self::renderPlayerName($player_id), 'color'=> Colors::render($card['color'])));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep International Prototype Metre Bar');
-                        throw new EndOfGame();
-                    
-                    // "Otherwise, return the melded card"
-                    } else {
-                        self::returnCard($card);
-                    }
-                    break;
                 
                 // id 180, Artifacts age 7: Hansen Writing Ball
                 case "180C1A":
@@ -18541,13 +18496,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-                
-            // id 179, Artifacts age 7: International Prototype Metre Bar
-            case "179N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
 
             // id 184, Artifacts age 7: The Communist Manifesto

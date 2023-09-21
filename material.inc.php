@@ -1185,8 +1185,10 @@ $this->textual_card_infos = array(
     ),
 
     179 => array(
-        'name'                => clienttranslate('International Prototype Metre Bar'),
-        'non_demand_effect_1' => clienttranslate('Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card\'s value, you win. Otherwise, return the melded card.'),
+        'name'                                => clienttranslate('International Prototype Metre Bar'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value. Draw and meld a card of that value. Splay up the color of the melded card. If the number of cards of that color visible on your board is exactly equal to the card\'s value, you win. Otherwise, return the melded card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value. Draw and reveal three cards of that value. Splay up the colors of the cards. If the number of cards of each of those colors on your board is equal to that value, you win. Otherwise, return the drawn cards.'),
+        'separate_4E_implementation'          => true,
     ),
 
     180 => array(
