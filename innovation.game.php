@@ -12317,11 +12317,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
                 
-            // id 183, Artifacts age 7: Roundhay Garden Scene
-            case "183N1":
-                $step_max = 1;
-                break;
-
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1":
                 // "For each player in the game, draw and reveal a 7"
@@ -15333,24 +15328,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;                   
-
-        // id 183, Artifacts age 7: Roundhay Garden Scene
-        case "183N1A":
-            // "Meld the highest card from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'age' => self::getMaxAgeInScore($player_id),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
             
         // id 184, Artifacts age 7: The Communist Manifesto
         case "184N1A":
@@ -17191,22 +17168,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards in your hand to my hand"
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                    }
-                    break;
-
-                // id 183, Artifacts age 7: Roundhay Garden Scene
-                case "183N1A":
-                     if ($n > 0) {
-                        // "Draw and score two cards of value equal to the melded card"
-                        $melded_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
-                        self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
-                        
-                        // "Execute the effects of the melded card as if they were on this card. Do not share them."
-                        self::fullyExecute($melded_card);
-                    } else { // If no card is melded, the absence is treated like a 0 and cards are still scored.
-                        self::executeDraw($player_id, 0, 'score');
-                        self::executeDraw($player_id, 0, 'score');
                     }
                     break;
                     

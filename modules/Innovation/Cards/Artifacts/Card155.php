@@ -48,7 +48,7 @@ class Card155 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       $firstValue = self::getAuxiliaryValue();
-      $secondValue = self::getNumChosen() === 1 ? self::getFaceupAgeLastSelected() : 0;
+      $secondValue = self::getNumChosen() === 1 ? self::getLastSelectedFaceUpAge() : 0;
       self::drawAndScore($firstValue + $secondValue);
     }
   }

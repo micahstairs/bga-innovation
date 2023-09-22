@@ -1209,8 +1209,9 @@ $this->textual_card_infos = array(
     ),
 
     183 => array(
-        'name'                => clienttranslate('Roundhay Garden Scene'),
-        'non_demand_effect_1' => clienttranslate('Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Execute the effects of the melded card as if they were on this card. Do not share them.'),
+        'name'                                => clienttranslate('Roundhay Garden Scene'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Execute the effects of the melded card as if they were on this card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld the highest card from your score pile. Draw and score two cards of value equal to the melded card. Self-execute the melded card.'),
     ),
 
     184 => array(
