@@ -1158,17 +1158,6 @@ class Innovation extends Table
         return self::decodeGameType($this->innovationGameState->get('game_type')) == 'team';
     }
     
-    /** log for debugging **/
-    function log() {
-        $args = func_get_args();
-        $line = Array();
-        foreach ($args as $arg) {
-            $line[] = is_string($arg) ? $arg : var_export($arg, true);
-        }
-        self::DbQuery("INSERT INTO logs (line) VALUE ('".mysql_escape_string(implode("\n\n", $line))."')");
-    }
-    
-    
     /** Formatting **/
     // TODO(LATER): Remove this once we are using the function in Strings.php instead.
     static function format($msg, $vars)

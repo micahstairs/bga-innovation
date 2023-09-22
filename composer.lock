@@ -77,12 +77,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "5d55089cbe7339f72405560a254153e21c24e9c5"
+                "reference": "256cc585b6157546d6934b5c33e018fa8b97af5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/5d55089cbe7339f72405560a254153e21c24e9c5",
-                "reference": "5d55089cbe7339f72405560a254153e21c24e9c5",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/256cc585b6157546d6934b5c33e018fa8b97af5d",
+                "reference": "256cc585b6157546d6934b5c33e018fa8b97af5d",
                 "shasum": ""
             },
             "require": {
@@ -163,7 +163,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-18T18:44:28+00:00"
+            "time": "2023-08-23T14:55:02+00:00"
         },
         {
             "name": "doctrine/dbal",
@@ -1109,12 +1109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "0882f9c6453ed2082abb0b2fbd1b6175b7b6bb18"
+                "reference": "6d95235df42779d622671fe19e55bd335258622a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/0882f9c6453ed2082abb0b2fbd1b6175b7b6bb18",
-                "reference": "0882f9c6453ed2082abb0b2fbd1b6175b7b6bb18",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/6d95235df42779d622671fe19e55bd335258622a",
+                "reference": "6d95235df42779d622671fe19e55bd335258622a",
                 "shasum": ""
             },
             "require": {
@@ -1177,7 +1177,7 @@
             "support": {
                 "source": "https://github.com/micahstairs/bga-workbench/tree/master"
             },
-            "time": "2023-08-06T23:48:18+00:00"
+            "time": "2023-09-22T02:06:36+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1518,12 +1518,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "a4175c62652f2300c8017fb7e640f9ccb11648d2"
+                "reference": "3b648e7b3b52dd95bcef16e8f978cd63e0fb2839"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/a4175c62652f2300c8017fb7e640f9ccb11648d2",
-                "reference": "a4175c62652f2300c8017fb7e640f9ccb11648d2",
+                "url": "https://api.github.com/repos/nette/utils/zipball/3b648e7b3b52dd95bcef16e8f978cd63e0fb2839",
+                "reference": "3b648e7b3b52dd95bcef16e8f978cd63e0fb2839",
                 "shasum": ""
             },
             "require": {
@@ -1596,7 +1596,7 @@
                 "issues": "https://github.com/nette/utils/issues",
                 "source": "https://github.com/nette/utils/tree/v3.2"
             },
-            "time": "2023-07-30T15:38:18+00:00"
+            "time": "2023-08-29T22:00:30+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -1854,12 +1854,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "04036131c95773b3af4fd5b321275d397b0ece03"
+                "reference": "adc378bb69e23185e1b03e34a1235ade6a857b98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/04036131c95773b3af4fd5b321275d397b0ece03",
-                "reference": "04036131c95773b3af4fd5b321275d397b0ece03",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/adc378bb69e23185e1b03e34a1235ade6a857b98",
+                "reference": "adc378bb69e23185e1b03e34a1235ade6a857b98",
                 "shasum": ""
             },
             "require": {
@@ -1956,7 +1956,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-09T15:35:14+00:00"
+            "time": "2023-09-21T20:16:25+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2262,12 +2262,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "73031f284ace4d1cbc61aa14a22546e64e74d731"
+                "reference": "622d0186707f39a4ae71df3bcf42d759bb868854"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/73031f284ace4d1cbc61aa14a22546e64e74d731",
-                "reference": "73031f284ace4d1cbc61aa14a22546e64e74d731",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/622d0186707f39a4ae71df3bcf42d759bb868854",
+                "reference": "622d0186707f39a4ae71df3bcf42d759bb868854",
                 "shasum": ""
             },
             "require": {
@@ -2336,7 +2336,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.34"
             },
             "funding": [
                 {
@@ -2352,7 +2352,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-21T05:55:25+00:00"
+            "time": "2023-09-19T05:20:51+00:00"
         },
         {
             "name": "psr/container",
@@ -3238,12 +3238,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "a813c38729aef0034ff7b0f5f0ac54e94ea76804"
+                "reference": "7566b4d89de1d08d2a8ad85910507d6633a35d28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/a813c38729aef0034ff7b0f5f0ac54e94ea76804",
-                "reference": "a813c38729aef0034ff7b0f5f0ac54e94ea76804",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/7566b4d89de1d08d2a8ad85910507d6633a35d28",
+                "reference": "7566b4d89de1d08d2a8ad85910507d6633a35d28",
                 "shasum": ""
             },
             "require": {
@@ -3288,7 +3288,7 @@
                 "source": "https://github.com/squizlabs/PHP_CodeSniffer",
                 "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
             },
-            "time": "2023-08-06T23:03:57+00:00"
+            "time": "2023-09-11T11:08:03+00:00"
         },
         {
             "name": "symfony/config",
@@ -3709,7 +3709,7 @@
                 "portable"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-ctype/tree/1.x"
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.28.0"
             },
             "funding": [
                 {
@@ -3793,7 +3793,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/1.x"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.28.0"
             },
             "funding": [
                 {
@@ -3877,7 +3877,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/1.x"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.28.0"
             },
             "funding": [
                 {
