@@ -1223,8 +1223,9 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 8 */
 
     185 => array(
-        'name'                => clienttranslate('Parnell Pitch Drop'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a card of value one higher than the highest top card on your board. If the melded card has three ${icon_6}, you win.'),
+        'name'                                => clienttranslate('Parnell Pitch Drop'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a card of value one higher than the highest top card on your board. If the melded card has three ${icon_6}, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a card of value one higher than the highest top card on your board. Junk an available standard achievement. If you don\'t, and the melded card has three ${icon_6}, you win.'),
     ),
 
     186 => array(

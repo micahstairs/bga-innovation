@@ -5140,7 +5140,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /* Count the number of a particular icon on the specified card */
-    function countIconsOnCard($card, $icon) {
+    function countIconsOnCard($card, $icon): int {
         $icon_count = 0;
         if ($card['spot_1'] !== null && $card['spot_1'] == $icon) {
             $icon_count++;
@@ -12308,20 +12308,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                }
-                break;
-
-            // id 185, Artifacts age 8: Parnell Pitch Drop
-            case "185N1":
-                // "Draw and meld a card of value one higher than the highest top card on your board"
-                $card = self::executeDrawAndMeld($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1);
-                if (self::countIconsOnCard($card, 6) == 3) {
-                    // "If the melded card has three clocks, you win"
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 ${clocks}.'), array('You' => 'You', 'clocks' => $clock));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'clocks' => $clock));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Parnell Pitch Drop');
-                    throw new EndOfGame();
                 }
                 break;
 

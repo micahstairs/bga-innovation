@@ -619,6 +619,14 @@ abstract class AbstractCard
     return $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
+  protected function getAvailableStandardAchievements(): array
+  {
+    $achievements = $this->game->getCardsInLocation(0, Locations::ACHIEVEMENTS);
+    return array_filter($achievements, function ($card) {
+      return self::isValuedCard($card);
+    });
+  }
+
   // BULK CARD HELPERS
 
   protected function junkBaseDeck(int $age): bool
