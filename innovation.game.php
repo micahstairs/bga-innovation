@@ -6384,7 +6384,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Condition for age
         $age_min = $this->innovationGameState->get('age_min');
         $age_max = $this->innovationGameState->get('age_max');
-        $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
+        if ($location_from === 'board' || $location_from === 'display') {
+            $condition_for_age = self::format("faceup_age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
+        } else {
+            $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
+        }
         // TODO(LATER): Take 'age_array' into account if there are any cards which need to rely on this mechanism.
 
         // Condition for age because of achievement eligibility
@@ -12311,13 +12315,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
-            case "186N1":
-                self::setAuxiliaryValue(0);
-                $this->innovationGameState->set('age_last_selected', 9);
-                $step_max = 1;
-                break;
-
             // id 187, Artifacts age 8: Battleship Bismarck
             case "187C1":
                 // "Draw and reveal an 8"
@@ -14005,8 +14002,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age' => self::getAuxiliaryValue(),
-                // TODO(LATER): We could just use faceup age instead of this unecessary hack.
-                'not_id' => 188, // Battleship Yamato should not be returned even if an 8 is returned from the score pile
             );
             break;
             
@@ -15298,38 +15293,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;                   
-            
-        // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
-        case "186N1A":
-            // "For each value below nine, return a top card of that value from your board, in descending order"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'age' => $this->innovationGameState->get('age_last_selected') - 1,
-                'not_id' => 188 // Battleship Yamato's face-up age is 11 (not 8), so it's never a valid selection
-            );
-            break;
-
-        case "186N1B":
-            // "Otherwise, claim an achievement, ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
-            );
-            break;
         
         // id 187, Artifacts age 8: Battleship Bismarck
         case "187C1A":
@@ -15366,7 +15329,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $selectable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
             // The value 11 should only be an option when Battleship Yamato is a top card on the player's board or if
             // 4th edition is in use.
-            $battleship_yamato = self::getCardInfo(188);
+            $battleship_yamato = self::getCardInfo(CardIds::BATTLESHIP_YAMATO);
             if ($this->innovationGameState->usingFourthEditionRules() || (self::isTopBoardCard($battleship_yamato) && $battleship_yamato['owner'] === $player_id)) {
                 $selectable_ages[] = 11;
             }
@@ -17112,35 +17075,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards in your hand to my hand"
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                    }
-                    break;
-                    
-                // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
-                case "186N1A":
-                    if ($n > 0) {
-                        self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
-                    } else {
-                        $this->innovationGameState->increment('age_last_selected', -1);
-                    }
-
-                    // There are no more values to return
-                    if ($this->innovationGameState->get('age_last_selected') == 0) {
-                        // "If you return eight cards, you win"
-                        if (self::getAuxiliaryValue() == 8) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned 8 cards.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned 8 cards.'), array('player_name' => self::renderPlayerName($player_id)));
-                            $this->innovationGameState->set('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Earharts Lockheed Electra 10E');
-                            throw new EndOfGame();
-
-                        // "Otherwise"
-                        } else {
-                            self::incrementStepMax(1);
-                        }
-                    
-                    // Repeat interaction with a lower value than last time
-                    } else {
-                        $step--; self::incrementStep(-1);
                     }
                     break;
                     

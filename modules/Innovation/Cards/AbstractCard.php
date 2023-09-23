@@ -831,6 +831,11 @@ abstract class AbstractCard
     return $newValue;
   }
 
+  protected function decrementAuxiliaryValue(int $value = 1): int
+  {
+    return self::incrementAuxiliaryValue(-$value);
+  }
+
   protected function getAuxiliaryValue2(): int
   {
     return $this->game->getAuxiliaryValue2();
@@ -846,6 +851,11 @@ abstract class AbstractCard
     $newValue = self::getAuxiliaryValue2() + $value;
     self::setAuxiliaryValue2($newValue);
     return $newValue;
+  }
+
+  protected function decrementAuxiliaryValue2(int $value = 1): int
+  {
+    return self::incrementAuxiliaryValue2(-$value);
   }
 
   protected function setAuxiliaryArray(array $array)
