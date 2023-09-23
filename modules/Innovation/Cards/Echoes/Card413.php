@@ -59,7 +59,7 @@ class Card413 extends AbstractCard
     if (count($remainingValues) > 0) {
       self::setAuxiliaryArray($remainingValues);
       self::setNextStep(1);
-    } else if (self::isFourthEdition()) {
+    } else if (self::wasForeseen()) {
       foreach (self::getActionScopedAuxiliaryArray() as $cardId) {
         $this->game->transferCardFromTo(self::getCard($cardId), 0, 'achievements');
       }
