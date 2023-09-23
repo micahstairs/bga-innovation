@@ -9641,12 +9641,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 184, Artifacts age 7: The Communist Manifesto
-            case "184N1A":
-                $message_for_player = clienttranslate('Choose a player to transfer a card to');
-                $message_for_others = clienttranslate('${player_name} must choose a player to transfer a card to');
-                break;
-
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -12315,16 +12309,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-                
-            // id 184, Artifacts age 7: The Communist Manifesto
-            case "184N1":
-                // "For each player in the game, draw and reveal a 7"
-                foreach (self::getAllActivePlayerIds() as $any_player_id) {
-                    self::executeDraw($player_id, 7, 'revealed');
-                }
-                $this->innovationGameState->setFromArray('player_array', self::getAllActivePlayers());
-                $step_max = 2;
                 break;
 
             // id 185, Artifacts age 8: Parnell Pitch Drop
@@ -15329,32 +15313,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;                   
             
-        // id 184, Artifacts age 7: The Communist Manifesto
-        case "184N1A":
-            // Choose a player
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_player' => true,
-                'players' => $this->innovationGameState->getAsArray('player_array')
-            );
-            break;
-
-        case "184N1B":
-            // "Transfer one of the drawn cards to each player's board"
-            $player_choice = self::getAuxiliaryValue();            
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => $player_choice,
-                'location_to' => 'board'
-            );
-            break;
-            
         // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
         case "186N1A":
             // "For each value below nine, return a top card of that value from your board, in descending order"
@@ -17171,29 +17129,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
-                // id 184, Artifacts age 7: The Communist Manifesto
-                case "184N1B":
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    if (self::getAuxiliaryValue() == $player_id) {
-                        // Track which card was melded by the launcher so it can be executed later.
-                        self::setAuxiliaryValue2($this->innovationGameState->get('id_last_selected'));
-                    }
-                    if (count($revealed_cards) > 0) {
-                        // Remove the chosen player from the list of options.
-                        $selectable_players = $this->innovationGameState->getAsArray('player_array');
-                        $selected_player = self::getAuxiliaryValue();
-                        $selectable_players = array_diff($selectable_players, array(self::playerIdToPlayerIndex($selected_player)));
-                        $this->innovationGameState->setFromArray('player_array', $selectable_players);
-                        
-                        // Repeat for next player
-                        $step = $step - 2;
-                        self::incrementStep(-2);
-                    } else {
-                        // "Execute the non-demand effects of your card. Do not share them"
-                        self::selfExecute(self::getCardInfo(self::getAuxiliaryValue2()));
-                    }
-                    break;
-                    
                 // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
                 case "186N1A":
                     if ($n > 0) {
@@ -18312,13 +18247,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 184, Artifacts age 7: The Communist Manifesto
-            case "184N1A":
-                // NOTE: It doesn't add any value if we log which player was chosen, since it will be obvious which player
-                // is chosen when the card is transferred to them.
-                self::setAuxiliaryValue($choice);
                 break;
                 
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear

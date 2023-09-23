@@ -1215,8 +1215,9 @@ $this->textual_card_infos = array(
     ),
 
     184 => array(
-        'name'                => clienttranslate('The Communist Manifesto'),
-        'non_demand_effect_1' => clienttranslate('For each player in the game, draw and reveal a ${age_7}. Transfer one of the drawn cards to each player\'s board. Execute the non-demand effects of your card. Do not share them.'),
+        'name'                                => clienttranslate('The Communist Manifesto'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('For each player in the game, draw and reveal a ${age_7}. Transfer one of the drawn cards to each player\'s board. Execute the non-demand effects of your card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('For each player, draw and reveal a ${age_7}. Transfer one of the drawn cards to each other player\'s board. Meld the last, and self-execute it.'),
     ),
 
     /* Artifacts - Age 8 */
