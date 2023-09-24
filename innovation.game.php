@@ -9645,12 +9645,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 191, Artifacts age 8: Plush Beweglich Rod Bear
-            case "191N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-
             // id 211, Artifacts age 10: Dolly the Sheep
             case "211N1A":
                 $message_for_player = clienttranslate('Do ${you} want to score your bottom yellow card?');
@@ -12313,11 +12307,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 191, Artifacts age 8: Plush Beweglich Rod Bear
-            case "191N1":
-                $step_max = 2;
                 break;
 
            // id 192, Artifacts age 8: Time
@@ -15269,39 +15258,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;                   
 
-        // id 191, Artifacts age 8: Plush Beweglich Rod Bear
-        case "191N1A":
-            // "Choose a value"
-            $selectable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-            // The value 11 should only be an option when Battleship Yamato is a top card on the player's board or if
-            // 4th edition is in use.
-            $battleship_yamato = self::getCardInfo(CardIds::BATTLESHIP_YAMATO);
-            if ($this->innovationGameState->usingFourthEditionRules() || (self::isTopBoardCard($battleship_yamato) && $battleship_yamato['owner'] === $player_id)) {
-                $selectable_ages[] = 11;
-            }
-            
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_value' => true,
-                'age' => $selectable_ages
-            );
-            break;
-
-        case "191N1B":
-            // "Return all cards of that value from all score piles"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'age' => self::getAuxiliaryValue()
-            );
-            break;
-
         // id 192, Artifacts age 8: Time
         case "192C1A":
             // "Transfer a non-yellow top card with a clock from your board to my board"
@@ -17024,18 +16980,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 191, Artifacts age 8: Plush Beweglich Rod Bear
-                case "191N1A":
-                    // "Splay up each color with a top card of the chosen value"
-                    $age_value = self::getAuxiliaryValue();
-                    $top_cards = self::getTopCardsOnBoard($player_id);
-                    foreach ($top_cards as $top_card) {
-                        if ($top_card['faceup_age'] == $age_value) {
-                            self::splayUp($player_id, $player_id, $top_card['color']);
-                        }
-                    }
-                    break;
-
                 // id 192, Artifacts age 8: Time
                 case "192C1A":
                     // "If you do, repeat this effect"
@@ -18100,13 +18044,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-                
-            // id 191, Artifacts age 8: Plush Beweglich Rod Bear
-            case "191N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
 
             // id 211, Artifacts age 10: Dolly the Sheep

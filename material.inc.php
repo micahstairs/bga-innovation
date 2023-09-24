@@ -1256,8 +1256,9 @@ $this->textual_card_infos = array(
     ),
 
     191 => array(
-        'name'                => clienttranslate('Plush Beweglich Rod Bear'),
-        'non_demand_effect_1' => clienttranslate('Choose a value. Splay up each color with a top card of the chosen value. Return all cards of the chosen value from all score piles.'),
+        'name_first_and_third' => clienttranslate('Plush Beweglich Rod Bear'),
+        'name_fourth'          => clienttranslate('Plüsch Beweglich Rod Bear'),
+        'non_demand_effect_1'  => clienttranslate('Choose a value. Splay up each color with a top card of the chosen value. Return all cards of the chosen value from all score piles.'),
     ),
 
     192 => array(
