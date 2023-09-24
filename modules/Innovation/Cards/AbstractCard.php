@@ -1129,7 +1129,7 @@ abstract class AbstractCard
 
   protected function getBaseDeckCount(int $age): int
   {
-    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE)[$age];
+    return self::getBaseDecks()[$age];
   }
 
   protected function countCards(string $location, int $playerId = null): int
@@ -1163,6 +1163,11 @@ abstract class AbstractCard
   {
     // TODO(LATER): Make this return an array of ints.
     return $this->game->countCardsInLocationKeyedByAge(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+  }
+
+  protected function getBaseDecks(): array
+  {
+    return $this->game->countCardsInLocationKeyedByAge(/*owner=*/0, 'deck', CardTypes::BASE);
   }
 
   protected function getUniqueColors(string $location, int $playerId = null): array

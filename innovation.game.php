@@ -4380,7 +4380,7 @@ class Innovation extends Table
         }
 
         if ($key == 'age' || $key == 'faceup_age') {
-            $num_min = 1;
+            $num_min = 0;
             $num_max = 11;
         } else if ($key == 'color') {
             $num_min = 0;
@@ -12312,17 +12312,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                }
-                break;
-
-            // id 189, Artifacts age 8: Ocean Liner Titanic
-            case "189N1":
-                // "Score all bottom cards from your board"
-                foreach (Colors::ALL as $color) {
-                    $card = self::getBottomCardOnBoard($player_id, $color);
-                    if ($card !== null) {
-                        $card = self::scoreCard($card, $player_id);
-                    }
                 }
                 break;
 

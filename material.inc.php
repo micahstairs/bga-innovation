@@ -1243,8 +1243,10 @@ $this->textual_card_infos = array(
     ),
 
     189 => array(
-        'name'                => clienttranslate('Ocean Liner Titanic'),
-        'non_demand_effect_1' => clienttranslate('Score all bottom cards from your board.'),
+        'name'                                => clienttranslate('Ocean Liner Titanic'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score all bottom cards from your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score a bottom card of each color from your board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Junk all cards from the deck of lowest value with a card.'),
     ),
 
     190 => array(
