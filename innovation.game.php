@@ -12315,11 +12315,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
-            case "190N1":
-                $step_max = 1;
-                break;
-
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1":
                 $step_max = 2;
@@ -15273,20 +15268,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;                   
-            
-        // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
-        case "190N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
 
         // id 191, Artifacts age 8: Plush Beweglich Rod Bear
         case "191N1A":
@@ -17041,19 +17022,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
                     }
-                    break;
-                    
-                // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
-                case "190N1A":
-                    // "Draw and score three cards of the returned card's value"
-                    if ($n > 0) {
-                        $age_to_score = $this->innovationGameState->get('age_last_selected');
-                    } else {
-                        $age_to_score = 0;
-                    }
-                    self::executeDraw($player_id, $age_to_score, 'score');
-                    self::executeDraw($player_id, $age_to_score, 'score');
-                    self::executeDraw($player_id, $age_to_score, 'score');
                     break;
 
                 // id 191, Artifacts age 8: Plush Beweglich Rod Bear

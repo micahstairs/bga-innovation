@@ -1250,8 +1250,9 @@ $this->textual_card_infos = array(
     ),
 
     190 => array(
-        'name'                => clienttranslate('Meiji-Mura Stamp Vending Machine'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Draw and score three cards of the returned card\'s value.'),
+        'name'                                => clienttranslate('Meiji-Mura Stamp Vending Machine'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Draw and score three cards of the returned card\'s value.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Draw and score three cards of the returned card\'s value. If you don\'t, junk all cards in the deck of value equal to the highest scored card.'),
     ),
 
     191 => array(
