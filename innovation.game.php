@@ -12315,15 +12315,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 187, Artifacts age 8: Battleship Bismarck
-            case "187C1":
-                // "Draw and reveal an 8"
-                $card = self::executeDraw($player_id, 8, 'revealed');
-                self::transferCardFromTo($card, $player_id, 'hand');
-                self::setAuxiliaryValue($card['color']);
-                $step_max = 1;
-                break;
-
             // id 189, Artifacts age 8: Ocean Liner Titanic
             case "189N1":
                 // "Score all bottom cards from your board"
@@ -15293,21 +15284,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;                   
-        
-        // id 187, Artifacts age 8: Battleship Bismarck
-        case "187C1A":
-            // "Return all cards of the drawn color from your board"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'pile',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'color' => array(self::getAuxiliaryValue()),
-            );
-            break;
             
         // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
         case "190N1A":
