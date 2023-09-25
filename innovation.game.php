@@ -12309,11 +12309,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-           // id 193, Artifacts age 8: Garland's Ruby Slippers
-            case "193N1":
-                $step_max = 1;
-                break;
-                
             // id 194, Artifacts age 8: '30 World Cup Final Ball
             case "194C1":
                 $step_max = 1;
@@ -15253,24 +15248,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;                   
 
-       // id 193, Artifacts age 8: Garland's Ruby Slippers
-        case "193N1A":
-            // "Meld an 8 from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'age' => 8,
-
-                'meld_keyword' => true,
-            );
-            break;
-
         // id 194, Artifacts age 8: 30 World Cup Final Ball
         case "194C1A":
             // "I compel you to return one of your achievements"
@@ -16955,26 +16932,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards in your hand to my hand"
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                    }
-                    break;
-
-                // id 193, Artifacts age 8: Garland's Ruby Slippers
-                case "193N1A":
-                    // If a card was melded
-                    if ($n > 0) {
-                        $melded_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        
-                        // "If the melded card has no effects, you win"
-                        if ($melded_card['dogma_icon'] == null || $melded_card['type'] == 2) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with no effects.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::renderPlayerName($player_id)));
-                            $this->innovationGameState->set('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Garlands Ruby Slippers');
-                            throw new EndOfGame();
-                        } else {
-                            // "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
-                            self::fullyExecute($melded_card);
-                        }
                     }
                     break;
                     

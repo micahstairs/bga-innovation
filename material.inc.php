@@ -1271,8 +1271,9 @@ $this->textual_card_infos = array(
     ),
 
     193 => array(
-        'name'                => clienttranslate('Garland\'s Ruby Slippers'),
-        'non_demand_effect_1' => clienttranslate('Meld an ${age_8} from your hand. If the melded card has no effects, you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.'),
+        'name'                                => clienttranslate('Garland\'s Ruby Slippers'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld an ${age_8} from your hand. If the melded card has no effects, you win. Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld an ${age_8} from your hand. If the melded card has no effects, you win. Otherwise, self-execute it.'),
     ),
 
     194 => array(
