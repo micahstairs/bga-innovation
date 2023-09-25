@@ -12309,11 +12309,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-           // id 192, Artifacts age 8: Time
-            case "192C1":
-                $step_max = 1;
-                break;
-
            // id 193, Artifacts age 8: Garland's Ruby Slippers
             case "193N1":
                 $step_max = 1;
@@ -15258,23 +15253,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;                   
 
-        // id 192, Artifacts age 8: Time
-        case "192C1A":
-            // "Transfer a non-yellow top card with a clock from your board to my board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'with_icon' => 6,
-                'color' => array(0, 1, 2, 4)
-            );
-            break;
-
        // id 193, Artifacts age 8: Garland's Ruby Slippers
         case "193N1A":
             // "Meld an 8 from your hand"
@@ -16977,15 +16955,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards in your hand to my hand"
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                    }
-                    break;
-
-                // id 192, Artifacts age 8: Time
-                case "192C1A":
-                    // "If you do, repeat this effect"
-                    if ($n > 0) {
-                        $step--;
-                        self::incrementStep(-1);
                     }
                     break;
 

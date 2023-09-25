@@ -15,6 +15,7 @@ class CardIds
   const YATA_NO_KAGAMI = 136;
   const GUJIN_TUSHU_JICHENG = 161;
   const BATTLESHIP_YAMATO = 188;
+  const ACTION_COMICS = 192;
   const DELOREAN_DMC_12 = 213;
   const BELL = 342;
   const FLUTE = 343;

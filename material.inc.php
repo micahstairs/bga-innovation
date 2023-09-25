@@ -1256,14 +1256,18 @@ $this->textual_card_infos = array(
     ),
 
     191 => array(
-        'name_first_and_third' => clienttranslate('Plush Beweglich Rod Bear'),
-        'name_fourth'          => clienttranslate('Plüsch Beweglich Rod Bear'),
-        'non_demand_effect_1'  => clienttranslate('Choose a value. Splay up each color with a top card of the chosen value. Return all cards of the chosen value from all score piles.'),
+        'name_first_and_third'                => clienttranslate('Plush Beweglich Rod Bear'),
+        'name_fourth'                         => clienttranslate('Plüsch Beweglich Rod Bear'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value. Splay up each color with a top card of the chosen value. Return all cards of the chosen value from all score piles.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value. Splay up each color on your board with a top card of the chosen value. Return all cards of the chosen value from all score piles.'),
     ),
 
     192 => array(
-        'name'            => clienttranslate('Time'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a non-yellow top card with a ${icon_6} from your board to my board! If you do, repeat this effect!'),
+        'name_first_and_third'             => clienttranslate('Time'),
+        'name_first_and_fourth'            => clienttranslate('Action Comics #1'),
+        'i_compel_effect_first_and_third'  => clienttranslate('${I compel} you to transfer a non-yellow top card with a ${icon_6} from your board to my board! If you do, repeat this effect!'),
+        'i_compel_effect_fourth'           => clienttranslate('${I compel} you to draw an ${age_8}! If it is green, achieve Action Comics #1 if it is a top card! Otherwise, if it has a ${icon_6}, return it, and if your top card of its color has a ${icon_6}, transfer it to my achievements, and repeat this effect!'),
+        'separate_4E_implementation'       => true,
     ),
 
     193 => array(

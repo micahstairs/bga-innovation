@@ -419,7 +419,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements", ["achieve_keyword" => true]);
   }
 
   protected function achieveIfEligible(?array $card, int $playerId = null)
@@ -438,7 +438,15 @@ abstract class AbstractCard
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return (?array $card): ?array
+  protected function transferToAchievements(?array $card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
+  }
+
+  protected function return(?array $card): ?array
   {
     if (!$card) {
       return null;
