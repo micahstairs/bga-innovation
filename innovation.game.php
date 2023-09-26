@@ -5952,7 +5952,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function junkBaseDeck($age): bool {
-        if ($age == 0) {
+        if ($age == 0 || $age >= 12) {
             // TODO(FIGURES): Handle junking the age 0 deck
             return false;
         }
