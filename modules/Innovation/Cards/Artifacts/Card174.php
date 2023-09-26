@@ -13,7 +13,7 @@ class Card174 extends AbstractCard
 
   public function initialExecution()
   {
-    self::setAuxiliaryValue([]);
+    self::setAuxiliaryArray([]);
     self::setMaxSteps(1);
   }
 
