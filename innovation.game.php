@@ -1071,10 +1071,11 @@ class Innovation extends Table
         $player_nos = self::getObjectListFromDB("SELECT player_no FROM player ORDER BY player_no", true);
         $index = 0;
         foreach ($player_nos as $player_no) {
-            self::DbQuery(self::format(
-                "UPDATE player SET player_index = {player_index} WHERE player_no = {player_no}",
-                array('player_index' => $index++, 'player_no' => $player_no)
-            )
+            self::DbQuery(
+                self::format(
+                    "UPDATE player SET player_index = {player_index} WHERE player_no = {player_no}",
+                    array('player_index' => $index++, 'player_no' => $player_no)
+                )
             );
         }
     }
@@ -1592,7 +1593,8 @@ class Innovation extends Table
         // Get the position of destination and update some other card positions if needed
         if ($bottom_to) { // The card must go to bottom of the location: update the position of the other cards accordingly
             // Execution of the query
-            self::DbQuery(self::format("
+            self::DbQuery(
+                self::format("
                 UPDATE
                     card
                 SET
@@ -1600,13 +1602,14 @@ class Innovation extends Table
                 WHERE
                     {filter_to}
             ",
-                array('filter_to' => $filter_to)
-            )
+                    array('filter_to' => $filter_to)
+                )
             );
             $position_to = 0;
         } else { // $bottom_to is false
             // new_position = number of cards in the location
-            $position_to = self::getUniqueValueFromDB(self::format("
+            $position_to = self::getUniqueValueFromDB(
+                self::format("
             SELECT
                 COUNT(position)
             FROM
@@ -1614,13 +1617,14 @@ class Innovation extends Table
             WHERE
                 {filter_to}
             ",
-                array('filter_to' => $filter_to)
-            )
+                    array('filter_to' => $filter_to)
+                )
             );
         }
 
         // Execute the transfer
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 card
             SET
@@ -1632,12 +1636,13 @@ class Innovation extends Table
             WHERE
                 id = {id}
         ",
-            array('owner_to' => $owner_to, 'location_to' => $location_to, 'position_to' => $position_to, 'id' => $id, 'splay_direction_to' => $splay_direction_to)
-        )
+                array('owner_to' => $owner_to, 'location_to' => $location_to, 'position_to' => $position_to, 'id' => $id, 'splay_direction_to' => $splay_direction_to)
+            )
         );
 
         // Update the position of the cards of the location the transferred card came from to fill the gap
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 card
             SET
@@ -1646,8 +1651,8 @@ class Innovation extends Table
                 {filter_from} AND
                 position > {position_from}
         ",
-            array('filter_from' => $filter_from, 'position_from' => $position_from)
-        )
+                array('filter_from' => $filter_from, 'position_from' => $position_from)
+            )
         );
 
         if ($location_to == 'forecast') {
@@ -1720,7 +1725,8 @@ class Innovation extends Table
             } finally {
                 // Determine if the loss of the card from its location of depart breaks a splay. If it's the case, change the splay_direction of the remaining card to unsplay (a notification being sent).
                 if ($location_from == 'board' && $splay_direction_from > 0) {
-                    $number_of_cards_in_pile = self::getUniqueValueFromDB(self::format("
+                    $number_of_cards_in_pile = self::getUniqueValueFromDB(
+                        self::format("
                         SELECT
                             COUNT(*)
                         FROM
@@ -1730,8 +1736,8 @@ class Innovation extends Table
                             location='board' AND
                             color={color}
                     ",
-                        array('owner_from' => $owner_from, 'color' => $color)
-                    )
+                            array('owner_from' => $owner_from, 'color' => $color)
+                        )
                     );
 
                     if ($number_of_cards_in_pile <= 1) {
@@ -1783,7 +1789,8 @@ class Innovation extends Table
             return false;
         }
 
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 card
             SET
@@ -1793,8 +1800,8 @@ class Innovation extends Table
                 location = 'board' AND
                 color = {color}
          ",
-            array('owner' => $target_player_id, 'color' => $color, 'splay_direction' => $splay_direction)
-        )
+                array('owner' => $target_player_id, 'color' => $color, 'splay_direction' => $splay_direction)
+            )
         );
 
         self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
@@ -1848,7 +1855,8 @@ class Innovation extends Table
             $data['player_id'] = $player_id;
             $data['color'] = $color;
             $data['position_plus_delta'] = $data['position'] + $data['delta'];
-            self::DbQuery(self::format("
+            self::DbQuery(
+                self::format("
                 UPDATE
                     card
                 SET
@@ -1862,8 +1870,8 @@ class Innovation extends Table
                     color = {color} AND
                     position IN ({position}, {position_plus_delta})
             ",
-                $data
-            )
+                    $data
+                )
             );
         }
 
@@ -1885,7 +1893,8 @@ class Innovation extends Table
         /**
         Mark one card via its id.
         **/
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 card
             SET
@@ -1893,8 +1902,8 @@ class Innovation extends Table
             WHERE
                 id = {card_id}
         ",
-            array('card_id' => $card_id)
-        )
+                array('card_id' => $card_id)
+            )
         );
     }
 
@@ -1903,7 +1912,8 @@ class Innovation extends Table
         /**
         Mark one card via its id.
         **/
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 card
             SET
@@ -1911,8 +1921,8 @@ class Innovation extends Table
             WHERE
                 id = {card_id}
         ",
-            array('card_id' => $card_id)
-        )
+                array('card_id' => $card_id)
+            )
         );
     }
 
@@ -1935,7 +1945,8 @@ class Innovation extends Table
 
     function getVisibleSelectedCards($player_id)
     {
-        return self::getObjectListFromDB(self::format("
+        return self::getObjectListFromDB(
+            self::format("
             SELECT
                 *
             FROM
@@ -1945,15 +1956,16 @@ class Innovation extends Table
                 (location = 'board' OR owner = {player_id} AND location != 'achievements')
                 
         ",
-            // A player can see the versos of all cards on all boards and all the cards in his hand and his score
-            array('player_id' => $player_id)
-        )
+                // A player can see the versos of all cards on all boards and all the cards in his hand and his score
+                array('player_id' => $player_id)
+            )
         );
     }
 
     function getSelectableRectos($player_id)
     {
-        return self::getObjectListFromDB(self::format("
+        return self::getObjectListFromDB(
+            self::format("
             SELECT
                 owner, location, age, type, is_relic, position
             FROM
@@ -1963,8 +1975,8 @@ class Innovation extends Table
                 location != 'board' AND
                 (owner != {player_id} OR location = 'score' OR location = 'forecast' OR location = 'achievements' OR location = 'safe')
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -3652,32 +3664,36 @@ class Innovation extends Table
                     }
                 }
                 $desired_flag_achievements = $opponent_has_more_visible_cards ? 0 : $num_visible_flags;
-                $current_flag_achievements = self::getUniqueValueFromDB(self::format("
+                $current_flag_achievements = self::getUniqueValueFromDB(
+                    self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
-                    array('owner' => $player_id, 'color' => $color)
-                )
-                );
-                for ($i = $desired_flag_achievements; $i < $current_flag_achievements; $i++) {
-                    $flag_id = self::getUniqueValueFromDB(self::format("
-                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
                         array('owner' => $player_id, 'color' => $color)
                     )
+                );
+                for ($i = $desired_flag_achievements; $i < $current_flag_achievements; $i++) {
+                    $flag_id = self::getUniqueValueFromDB(
+                        self::format("
+                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
+                            array('owner' => $player_id, 'color' => $color)
+                        )
                     );
                     self::transferCardFromTo(self::getCardInfo($flag_id), 0, 'flags');
                 }
 
                 // Fountains
                 $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */, $color);
-                $current_fountain_achievements = self::getUniqueValueFromDB(self::format("
+                $current_fountain_achievements = self::getUniqueValueFromDB(
+                    self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
-                    array('owner' => $player_id, 'color' => $color)
-                )
-                );
-                for ($i = $desired_fountain_achievements; $i < $current_fountain_achievements; $i++) {
-                    $fountain_id = self::getUniqueValueFromDB(self::format("
-                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
                         array('owner' => $player_id, 'color' => $color)
                     )
+                );
+                for ($i = $desired_fountain_achievements; $i < $current_fountain_achievements; $i++) {
+                    $fountain_id = self::getUniqueValueFromDB(
+                        self::format("
+                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
+                            array('owner' => $player_id, 'color' => $color)
+                        )
                     );
                     self::transferCardFromTo(self::getCardInfo($fountain_id), 0, 'fountains');
                 }
@@ -3707,16 +3723,18 @@ class Innovation extends Table
                     }
                 }
                 $desired_flag_achievements = $opponent_has_more_visible_cards ? 0 : $num_visible_flags;
-                $current_flag_achievements = self::getUniqueValueFromDB(self::format("
+                $current_flag_achievements = self::getUniqueValueFromDB(
+                    self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
-                    array('owner' => $player_id, 'color' => $color)
-                )
+                        array('owner' => $player_id, 'color' => $color)
+                    )
                 );
                 for ($i = $current_flag_achievements; $i < $desired_flag_achievements; $i++) {
-                    $flag_id = self::getUniqueValueFromDB(self::format("
+                    $flag_id = self::getUniqueValueFromDB(
+                        self::format("
                         SELECT MIN(id) FROM card WHERE owner = 0 AND location = 'flags' AND color = {color} AND 1000 <= id AND id <= 1099",
-                        array('color' => $color)
-                    )
+                            array('color' => $color)
+                        )
                     );
                     try {
                         self::transferCardFromTo(self::getCardInfo($flag_id), $player_id, 'achievements');
@@ -3727,16 +3745,18 @@ class Innovation extends Table
 
                 // Fountains
                 $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */, $color);
-                $current_fountain_achievements = self::getUniqueValueFromDB(self::format("
+                $current_fountain_achievements = self::getUniqueValueFromDB(
+                    self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
-                    array('owner' => $player_id, 'color' => $color)
-                )
+                        array('owner' => $player_id, 'color' => $color)
+                    )
                 );
                 for ($i = $current_fountain_achievements; $i < $desired_fountain_achievements; $i++) {
-                    $fountain_id = self::getUniqueValueFromDB(self::format("
+                    $fountain_id = self::getUniqueValueFromDB(
+                        self::format("
                         SELECT MIN(id) FROM card WHERE owner = 0 AND location = 'fountains' AND color = {color} AND id >= 1100",
-                        array('color' => $color)
-                    )
+                            array('color' => $color)
+                        )
                     );
                     try {
                         self::transferCardFromTo(self::getCardInfo($fountain_id), $player_id, 'achievements');
@@ -3756,7 +3776,8 @@ class Innovation extends Table
     /** Database management for Monument special achievement **/
     function incrementFlagForMonument($player_id, $column_name)
     { // The player tucked or scored a card. Update database accordingly
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 player
             SET
@@ -3764,8 +3785,8 @@ class Innovation extends Table
             WHERE
                 player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'column_name' => $column_name)
-        )
+                array('player_id' => $player_id, 'column_name' => $column_name)
+            )
         );
     }
 
@@ -3783,7 +3804,8 @@ class Innovation extends Table
 
     function getFlagsForMonument($player_id)
     { // Query the number of cards the player tucked or scored so far during the turn of the current player
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
             SELECT
                 number_of_tucked_cards, number_of_scored_cards
             FROM
@@ -3791,8 +3813,8 @@ class Innovation extends Table
             WHERE
                 player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -3808,26 +3830,34 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
             }
 
-            self::notifyPlayer($target_player_id, 'splayedPile', clienttranslate('${Your} ${colored} stack is reduced to one card so it loses its splay.'), array(
-                'i18n'            => array('colored'),
-                'Your'            => 'Your',
-                'colored'         => $color_in_clear,
-                'player_id'       => $target_player_id,
-                'color'           => $color,
-                'splay_direction' => $splay_direction,
-                'new_score'       => $new_score,
-            )
+            self::notifyPlayer(
+                $target_player_id,
+                'splayedPile',
+                clienttranslate('${Your} ${colored} stack is reduced to one card so it loses its splay.'),
+                array(
+                    'i18n'            => array('colored'),
+                    'Your'            => 'Your',
+                    'colored'         => $color_in_clear,
+                    'player_id'       => $target_player_id,
+                    'color'           => $color,
+                    'splay_direction' => $splay_direction,
+                    'new_score'       => $new_score,
+                )
             );
 
-            self::notifyAllPlayersBut($target_player_id, 'splayedPile', clienttranslate('${player_name}\'s ${colored} stack is reduced to one card so it loses its splay.'), array(
-                'i18n'            => array('colored'),
-                'player_name'     => self::getPlayerNameFromId($target_player_id),
-                'colored'         => $color_in_clear,
-                'player_id'       => $target_player_id,
-                'color'           => $color,
-                'splay_direction' => $splay_direction,
-                'new_score'       => $new_score,
-            )
+            self::notifyAllPlayersBut(
+                $target_player_id,
+                'splayedPile',
+                clienttranslate('${player_name}\'s ${colored} stack is reduced to one card so it loses its splay.'),
+                array(
+                    'i18n'            => array('colored'),
+                    'player_name'     => self::getPlayerNameFromId($target_player_id),
+                    'colored'         => $color_in_clear,
+                    'player_id'       => $target_player_id,
+                    'color'           => $color,
+                    'splay_direction' => $splay_direction,
+                    'new_score'       => $new_score,
+                )
             );
             return;
         }
@@ -3840,78 +3870,98 @@ class Innovation extends Table
 
         if ($player_id == $target_player_id) {
 
-            self::notifyPlayer($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${You} unsplay your ${colored_cards}.') : clienttranslate('${You} splay your ${colored_cards} ${splay_direction_in_clear}.'), array(
-                'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
-                'player_id'                => $player_id,
-                'You'                      => 'You',
-                'color'                    => $color,
-                'colored_cards'            => $colored_cards,
-                'splay_direction'          => $splay_direction,
-                'splay_direction_in_clear' => $splay_direction_in_clear,
-                'new_ressource_counts'     => $new_ressource_counts,
-                'forced_unsplay'           => $force_unsplay,
-                'new_score'                => $new_score,
-            )
+            self::notifyPlayer(
+                $player_id,
+                'splayedPile',
+                $force_unsplay ? clienttranslate('${You} unsplay your ${colored_cards}.') : clienttranslate('${You} splay your ${colored_cards} ${splay_direction_in_clear}.'),
+                array(
+                    'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
+                    'player_id'                => $player_id,
+                    'You'                      => 'You',
+                    'color'                    => $color,
+                    'colored_cards'            => $colored_cards,
+                    'splay_direction'          => $splay_direction,
+                    'splay_direction_in_clear' => $splay_direction_in_clear,
+                    'new_ressource_counts'     => $new_ressource_counts,
+                    'forced_unsplay'           => $force_unsplay,
+                    'new_score'                => $new_score,
+                )
             );
 
-            self::notifyAllPlayersBut($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays his ${colored_cards}.') : clienttranslate('${player_name} splays his ${colored_cards} ${splay_direction_in_clear}.'), array(
-                'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
-                'player_id'                => $player_id,
-                'player_name'              => self::getPlayerNameFromId($player_id),
-                'color'                    => $color,
-                'colored_cards'            => $colored_cards,
-                'splay_direction'          => $splay_direction,
-                'splay_direction_in_clear' => $splay_direction_in_clear,
-                'new_ressource_counts'     => $new_ressource_counts,
-                'forced_unsplay'           => $force_unsplay,
-                'new_score'                => $new_score,
-            )
+            self::notifyAllPlayersBut(
+                $player_id,
+                'splayedPile',
+                $force_unsplay ? clienttranslate('${player_name} unsplays his ${colored_cards}.') : clienttranslate('${player_name} splays his ${colored_cards} ${splay_direction_in_clear}.'),
+                array(
+                    'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
+                    'player_id'                => $player_id,
+                    'player_name'              => self::getPlayerNameFromId($player_id),
+                    'color'                    => $color,
+                    'colored_cards'            => $colored_cards,
+                    'splay_direction'          => $splay_direction,
+                    'splay_direction_in_clear' => $splay_direction_in_clear,
+                    'new_ressource_counts'     => $new_ressource_counts,
+                    'forced_unsplay'           => $force_unsplay,
+                    'new_score'                => $new_score,
+                )
             );
 
         } else {
 
-            self::notifyPlayer($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${You} unsplay ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${You} splay ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'), array(
-                'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
-                'player_id'                => $target_player_id,
-                'You'                      => 'You',
-                'target_player_name'       => self::getPlayerNameFromId($target_player_id),
-                'color'                    => $color,
-                'colored_cards'            => $colored_cards,
-                'splay_direction'          => $splay_direction,
-                'splay_direction_in_clear' => $splay_direction_in_clear,
-                'new_ressource_counts'     => $new_ressource_counts,
-                'forced_unsplay'           => $force_unsplay,
-                'new_score'                => $new_score,
-            )
+            self::notifyPlayer(
+                $player_id,
+                'splayedPile',
+                $force_unsplay ? clienttranslate('${You} unsplay ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${You} splay ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'),
+                array(
+                    'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
+                    'player_id'                => $target_player_id,
+                    'You'                      => 'You',
+                    'target_player_name'       => self::getPlayerNameFromId($target_player_id),
+                    'color'                    => $color,
+                    'colored_cards'            => $colored_cards,
+                    'splay_direction'          => $splay_direction,
+                    'splay_direction_in_clear' => $splay_direction_in_clear,
+                    'new_ressource_counts'     => $new_ressource_counts,
+                    'forced_unsplay'           => $force_unsplay,
+                    'new_score'                => $new_score,
+                )
             );
 
-            self::notifyPlayer($target_player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays your ${colored_cards}.') : clienttranslate('${player_name} splays your ${colored_cards} ${splay_direction_in_clear}.'), array(
-                'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
-                'player_id'                => $target_player_id,
-                'player_name'              => self::getPlayerNameFromId($player_id),
-                'color'                    => $color,
-                'colored_cards'            => $colored_cards,
-                'splay_direction'          => $splay_direction,
-                'splay_direction_in_clear' => $splay_direction_in_clear,
-                'new_ressource_counts'     => $new_ressource_counts,
-                'forced_unsplay'           => $force_unsplay,
-                'new_score'                => $new_score,
-            )
+            self::notifyPlayer(
+                $target_player_id,
+                'splayedPile',
+                $force_unsplay ? clienttranslate('${player_name} unsplays your ${colored_cards}.') : clienttranslate('${player_name} splays your ${colored_cards} ${splay_direction_in_clear}.'),
+                array(
+                    'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
+                    'player_id'                => $target_player_id,
+                    'player_name'              => self::getPlayerNameFromId($player_id),
+                    'color'                    => $color,
+                    'colored_cards'            => $colored_cards,
+                    'splay_direction'          => $splay_direction,
+                    'splay_direction_in_clear' => $splay_direction_in_clear,
+                    'new_ressource_counts'     => $new_ressource_counts,
+                    'forced_unsplay'           => $force_unsplay,
+                    'new_score'                => $new_score,
+                )
             );
 
-            self::notifyAllPlayersBut(array($player_id, $target_player_id), 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${player_name} splays ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'), array(
-                'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
-                'player_id'                => $target_player_id,
-                'player_name'              => self::getPlayerNameFromId($player_id),
-                'target_player_name'       => self::getPlayerNameFromId($target_player_id),
-                'color'                    => $color,
-                'colored_cards'            => $colored_cards,
-                'splay_direction'          => $splay_direction,
-                'splay_direction_in_clear' => $splay_direction_in_clear,
-                'new_ressource_counts'     => $new_ressource_counts,
-                'forced_unsplay'           => $force_unsplay,
-                'new_score'                => $new_score,
-            )
+            self::notifyAllPlayersBut(
+                array($player_id, $target_player_id),
+                'splayedPile',
+                $force_unsplay ? clienttranslate('${player_name} unsplays ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${player_name} splays ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'),
+                array(
+                    'i18n'                     => array('colored_cards', 'splay_direction_in_clear'),
+                    'player_id'                => $target_player_id,
+                    'player_name'              => self::getPlayerNameFromId($player_id),
+                    'target_player_name'       => self::getPlayerNameFromId($target_player_id),
+                    'color'                    => $color,
+                    'colored_cards'            => $colored_cards,
+                    'splay_direction'          => $splay_direction,
+                    'splay_direction_in_clear' => $splay_direction_in_clear,
+                    'new_ressource_counts'     => $new_ressource_counts,
+                    'forced_unsplay'           => $force_unsplay,
+                    'new_score'                => $new_score,
+                )
             );
 
         }
@@ -3938,29 +3988,45 @@ class Innovation extends Table
 
         foreach ($winners as $player_id) {
             if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${player_name} has got ${n} achievements. He wins!'), array(
-                    'n'           => $number_of_achievements_winner,
-                    'player_name' => self::getPlayerNameFromId($player_id)
-                )
+                self::notifyAllPlayersBut(
+                    $player_id,
+                    "log",
+                    clienttranslate('END OF GAME BY ACHIEVEMENTS: ${player_name} has got ${n} achievements. He wins!'),
+                    array(
+                        'n'           => $number_of_achievements_winner,
+                        'player_name' => self::getPlayerNameFromId($player_id)
+                    )
                 );
 
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${You} have got ${n} achievements. You win!'), array(
-                    'n'   => $number_of_achievements_winner,
-                    'You' => 'You'
-                )
+                self::notifyPlayer(
+                    $player_id,
+                    "log",
+                    clienttranslate('END OF GAME BY ACHIEVEMENTS: ${You} have got ${n} achievements. You win!'),
+                    array(
+                        'n'   => $number_of_achievements_winner,
+                        'You' => 'You'
+                    )
                 );
             } else { // Team game
                 $teammate_id = self::getPlayerTeammate($player_id);
                 $winning_team = array($player_id, $teammate_id);
-                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: The other team has got ${n} achievements. They win!'), array(
-                    'n' => $number_of_achievements_winner
-                )
+                self::notifyAllPlayersBut(
+                    $winning_team,
+                    "log",
+                    clienttranslate('END OF GAME BY ACHIEVEMENTS: The other team has got ${n} achievements. They win!'),
+                    array(
+                        'n' => $number_of_achievements_winner
+                    )
                 );
 
                 foreach ($winning_team as $player_id) {
-                    self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: Your team has got ${n} achievements. You win!'), array(
-                        'n' => $number_of_achievements_winner
-                    )
+                    self::notifyPlayer(
+                        $player_id,
+                        "log",
+                        clienttranslate('END OF GAME BY ACHIEVEMENTS: Your team has got ${n} achievements. You win!'),
+                        array(
+                            'n' => $number_of_achievements_winner
+                        )
                     );
                 }
             }
@@ -3972,28 +4038,44 @@ class Innovation extends Table
         $player_id = $this->innovationGameState->get('player_who_could_not_draw');
         $max_age = self::getMaxAge();
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-            self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The player with the greatest score win.'), array(
-                'player_name' => self::getPlayerNameFromId($player_id),
-                'age_10'      => $max_age
-            )
+            self::notifyAllPlayersBut(
+                $player_id,
+                "log",
+                clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The player with the greatest score win.'),
+                array(
+                    'player_name' => self::getPlayerNameFromId($player_id),
+                    'age_10'      => $max_age
+                )
             );
 
-            self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The player with the greatest score win.'), array(
-                'You'    => 'You',
-                'age_10' => $max_age
-            )
+            self::notifyPlayer(
+                $player_id,
+                "log",
+                clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The player with the greatest score win.'),
+                array(
+                    'You'    => 'You',
+                    'age_10' => $max_age
+                )
             );
         } else { // Team play
-            self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
-                'player_name' => self::getPlayerNameFromId($player_id),
-                'age_10'      => $max_age
-            )
+            self::notifyAllPlayersBut(
+                $player_id,
+                "log",
+                clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The team with the greatest combined score win.'),
+                array(
+                    'player_name' => self::getPlayerNameFromId($player_id),
+                    'age_10'      => $max_age
+                )
             );
 
-            self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
-                'You'    => 'You',
-                'age_10' => $max_age
-            )
+            self::notifyPlayer(
+                $player_id,
+                "log",
+                clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The team with the greatest combined score win.'),
+                array(
+                    'You'    => 'You',
+                    'age_10' => $max_age
+                )
             );
         }
     }
@@ -4049,7 +4131,8 @@ class Innovation extends Table
     // This function is used to mark a player when he executed a dogma card effect with true consequences
     function markExecutingPlayer($player_id)
     {
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 player
             SET
@@ -4057,8 +4140,8 @@ class Innovation extends Table
             WHERE
                 player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -4108,59 +4191,91 @@ class Innovation extends Table
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card_id);
 
         $card_arg = ['card_ids' => [$card_id], 'card' => self::getNotificationArgsForCardList(array($card))];
-        self::notifyPlayer($player_id, 'logWithCardTooltips', $message_for_player, array_merge($card_arg, $delimiters_for_player, array(
-            'You'  => 'You',
-            'icon' => $card['dogma_icon'],
+        self::notifyPlayer($player_id, 'logWithCardTooltips', $message_for_player, array_merge(
+            $card_arg,
+            $delimiters_for_player,
+            array(
+                'You'  => 'You',
+                'icon' => $card['dogma_icon'],
+            )
         )
-        ));
-        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', $message_for_others, array_merge($card_arg, $delimiters_for_others, array(
-            'player_name' => self::getPlayerNameFromId($player_id),
-            'icon'        => $card['dogma_icon'],
+        );
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', $message_for_others, array_merge(
+            $card_arg,
+            $delimiters_for_others,
+            array(
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'icon'        => $card['dogma_icon'],
+            )
         )
-        ));
+        );
     }
 
     function notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id)
     {
         if (self::isExecutingAgainDueToEndorsedAction()) {
-            self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
-                'i18n'             => array('qualified_effect'),
-                'You'              => 'You',
-                'qualified_effect' => $qualified_effect
-            )
+            self::notifyPlayer(
+                $player_id,
+                'log',
+                clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect} again because it was endorsed.</span>'),
+                array(
+                    'i18n'             => array('qualified_effect'),
+                    'You'              => 'You',
+                    'qualified_effect' => $qualified_effect
+                )
             );
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
-                'i18n'             => array('qualified_effect'),
-                'player_name'      => self::getPlayerNameFromId($player_id),
-                'qualified_effect' => $qualified_effect
-            )
+            self::notifyAllPlayersBut(
+                $player_id,
+                'log',
+                clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect} again because it was endorsed.</span>'),
+                array(
+                    'i18n'             => array('qualified_effect'),
+                    'player_name'      => self::getPlayerNameFromId($player_id),
+                    'qualified_effect' => $qualified_effect
+                )
             );
         } else {
-            self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect}.</span>'), array(
-                'i18n'             => array('qualified_effect'),
-                'You'              => 'You',
-                'qualified_effect' => $qualified_effect
-            )
+            self::notifyPlayer(
+                $player_id,
+                'log',
+                clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect}.</span>'),
+                array(
+                    'i18n'             => array('qualified_effect'),
+                    'You'              => 'You',
+                    'qualified_effect' => $qualified_effect
+                )
             );
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect}.</span>'), array(
-                'i18n'             => array('qualified_effect'),
-                'player_name'      => self::getPlayerNameFromId($player_id),
-                'qualified_effect' => $qualified_effect
-            )
+            self::notifyAllPlayersBut(
+                $player_id,
+                'log',
+                clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect}.</span>'),
+                array(
+                    'i18n'             => array('qualified_effect'),
+                    'player_name'      => self::getPlayerNameFromId($player_id),
+                    'qualified_effect' => $qualified_effect
+                )
             );
         }
     }
 
     function notifyPass($player_id)
     {
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} pass.'), array(
-            'You' => 'You'
-        )
+        self::notifyPlayer(
+            $player_id,
+            'log',
+            clienttranslate('${You} pass.'),
+            array(
+                'You' => 'You'
+            )
         );
 
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} passes.'), array(
-            'player_name' => self::getPlayerNameFromId($player_id)
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'log',
+            clienttranslate('${player_name} passes.'),
+            array(
+                'player_name' => self::getPlayerNameFromId($player_id)
+            )
         );
     }
 
@@ -4182,18 +4297,26 @@ class Innovation extends Table
     {
         $icon = "<span class='square N icon_" . $dogma_icon . "'></span>";
 
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${ressource_count} ${icon}.'), array(
-            'You'             => 'You',
-            'ressource_count' => $ressource_count,
-            'icon'            => $icon
-        )
+        self::notifyPlayer(
+            $player_id,
+            'log',
+            clienttranslate('${You} have ${ressource_count} ${icon}.'),
+            array(
+                'You'             => 'You',
+                'ressource_count' => $ressource_count,
+                'icon'            => $icon
+            )
         );
 
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${ressource_count} ${icon}.'), array(
-            'player_name'     => self::getPlayerNameFromId($player_id),
-            'ressource_count' => $ressource_count,
-            'icon'            => $icon
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'log',
+            clienttranslate('${player_name} has ${ressource_count} ${icon}.'),
+            array(
+                'player_name'     => self::getPlayerNameFromId($player_id),
+                'ressource_count' => $ressource_count,
+                'icon'            => $icon
+            )
         );
     }
 
@@ -4201,16 +4324,24 @@ class Innovation extends Table
     {
         $icon = "<span class='square N icon_" . $dogma_icon . "'></span>";
 
-        self::notifyPlayer($player_id, 'log', clienttranslate('This card has only an I demand effect but nobody has fewer ${icon} than ${you}. Nothing happens.'), array(
-            'you'  => 'you',
-            'icon' => $icon
-        )
+        self::notifyPlayer(
+            $player_id,
+            'log',
+            clienttranslate('This card has only an I demand effect but nobody has fewer ${icon} than ${you}. Nothing happens.'),
+            array(
+                'you'  => 'you',
+                'icon' => $icon
+            )
         );
 
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card has only an I demand effect but nobody has fewer ${icon} than ${player_name}. Nothing happens.'), array(
-            'player_name' => self::getPlayerNameFromId($player_id),
-            'icon'        => $icon
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'log',
+            clienttranslate('This card has only an I demand effect but nobody has fewer ${icon} than ${player_name}. Nothing happens.'),
+            array(
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'icon'        => $icon
+            )
         );
     }
 
@@ -4247,7 +4378,8 @@ class Innovation extends Table
         /**
             Get all information from the database about the card indicated by its position
         **/
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
                 SELECT * FROM card WHERE
                     owner = {owner}
                     AND location = '{location}'
@@ -4256,8 +4388,8 @@ class Innovation extends Table
                     AND is_relic = {is_relic}
                     AND position = {position}
             ",
-            array('owner' => $owner, 'location' => $location, 'age' => $age, 'type' => $type, 'is_relic' => $is_relic, 'position' => $position)
-        )
+                array('owner' => $owner, 'location' => $location, 'age' => $age, 'type' => $type, 'is_relic' => $is_relic, 'position' => $position)
+            )
         );
     }
 
@@ -4421,7 +4553,8 @@ class Innovation extends Table
                 -owner, location and position
         **/
 
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
             SELECT
                 *
             FROM
@@ -4432,8 +4565,8 @@ class Innovation extends Table
                 age = {age} AND
                 position = (SELECT MAX(position) FROM card WHERE location = 'deck' AND type = {type} AND age = {age})
         ",
-            array('type' => $type, 'age' => $age)
-        )
+                array('type' => $type, 'age' => $age)
+            )
         );
     }
 
@@ -4445,7 +4578,8 @@ class Innovation extends Table
                 -owner, location and position
         **/
 
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
             SELECT
                 *
             FROM
@@ -4456,8 +4590,8 @@ class Innovation extends Table
                 age = {age} AND
                 position = 0
         ",
-            array('type' => $type, 'age' => $age)
-        )
+                array('type' => $type, 'age' => $age)
+            )
         );
     }
 
@@ -4482,7 +4616,8 @@ class Innovation extends Table
 
     function getCurrentSplayDirection($player_id, $color): int
     {
-        $splay_direction = self::getUniqueValueFromDB(self::format("
+        $splay_direction = self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 splay_direction
             FROM
@@ -4493,8 +4628,8 @@ class Innovation extends Table
                 color = {color} AND
                 position = 0
         ",
-            array('owner' => $player_id, 'color' => $color)
-        )
+                array('owner' => $player_id, 'color' => $color)
+            )
         );
 
         return $splay_direction === null ? Directions::UNSPLAYED : intval($splay_direction);
@@ -4572,7 +4707,8 @@ class Innovation extends Table
         /**
             Return the size of the stack(s) which have maximum number of visible cards on a specific player's board 
         **/
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MAX(CASE WHEN splay_direction = 0 THEN 1 ELSE position + 1 END), 0)
             FROM
@@ -4581,8 +4717,8 @@ class Innovation extends Table
                 owner = {owner} AND
                 location = 'board'
         ",
-            array('owner' => $owner)
-        )
+                array('owner' => $owner)
+            )
         );
     }
 
@@ -4618,7 +4754,8 @@ class Innovation extends Table
             $num_min = 0;
             $num_max = 4;
         } else {
-            return self::$getFromDB(self::format("
+            return self::$getFromDB(
+                self::format("
                 SELECT
                     {type_of_result}
                 FROM
@@ -4630,15 +4767,16 @@ class Innovation extends Table
                     location = '{location}'
                 {opt_order_by}
             ",
-                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner_condition' => $owner_condition, 'location' => $location, 'opt_order_by' => $opt_order_by)
-            )
+                    array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner_condition' => $owner_condition, 'location' => $location, 'opt_order_by' => $opt_order_by)
+                )
             );
         }
 
         $result = array();
 
         for ($value = $num_min; $value <= $num_max; $value++) {
-            $result[$value] = self::$getFromDB(self::format("
+            $result[$value] = self::$getFromDB(
+                self::format("
                 SELECT
                     {type_of_result}
                 FROM
@@ -4651,8 +4789,8 @@ class Innovation extends Table
                     {key} = {value}
                 {opt_order_by}
             ",
-                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner_condition' => $owner_condition, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
-            )
+                    array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner_condition' => $owner_condition, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
+                )
             );
         }
         return $result;
@@ -4690,7 +4828,8 @@ class Innovation extends Table
         if ($card['position'] == null || $card['location'] != 'board') {
             return false;
         }
-        $number_of_cards_above = self::getUniqueValueFromDB(self::format("
+        $number_of_cards_above = self::getUniqueValueFromDB(
+            self::format("
                 SELECT
                     COUNT(*)
                 FROM
@@ -4700,15 +4839,16 @@ class Innovation extends Table
                     location = 'board' AND
                     color = {color} AND
                     position > {position}",
-            array('owner' => $card['owner'], 'color' => $card['color'], 'position' => $card['position'])
-        )
+                array('owner' => $card['owner'], 'color' => $card['color'], 'position' => $card['position'])
+            )
         );
         return $number_of_cards_above == 0;
     }
 
     function hasThisColorOnBoard($player_id, $color)
     {
-        $number_of_cards = self::getUniqueValueFromDB(self::format("
+        $number_of_cards = self::getUniqueValueFromDB(
+            self::format("
                 SELECT
                     COUNT(*)
                 FROM
@@ -4717,8 +4857,8 @@ class Innovation extends Table
                     owner = {owner} AND
                     location = 'board' AND
                     color = {color}",
-            array('owner' => $player_id, 'color' => $color)
-        )
+                array('owner' => $player_id, 'color' => $color)
+            )
         );
         return $number_of_cards > 0;
     }
@@ -4794,7 +4934,8 @@ class Innovation extends Table
         Get the top card of specified color
         (null if the player have no card on his board)
         **/
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
                 SELECT
                     *
                 FROM
@@ -4814,8 +4955,8 @@ class Innovation extends Table
                             color = {color}
                     )
         ",
-            array('player_id' => $player_id, 'color' => $color)
-        )
+                array('player_id' => $player_id, 'color' => $color)
+            )
         );
     }
 
@@ -4859,7 +5000,8 @@ class Innovation extends Table
         /**
         Get all of the top cards on a player board, or null if the player has no cards on his board
         **/
-        return self::getCollectionFromDb(self::format("
+        return self::getCollectionFromDb(
+            self::format("
                 SELECT
                     *
                 FROM
@@ -4879,8 +5021,8 @@ class Innovation extends Table
                     a.location = 'board' AND
                     a.position = b.position
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -4889,7 +5031,8 @@ class Innovation extends Table
         /**
         Returns the card if card is a top card on a board, or null if it isn't present as a top card
         **/
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
             SELECT
                 *
             FROM
@@ -4908,8 +5051,8 @@ class Innovation extends Table
                 a.location = 'board' AND
                 a.position = b.position
             ",
-            array('id' => $id)
-        )
+                array('id' => $id)
+            )
         );
     }
 
@@ -4919,7 +5062,8 @@ class Innovation extends Table
         Get the bottom card of specified color
         (null if the player have no card on his board)
         **/
-        return self::getObjectFromDB(self::format("
+        return self::getObjectFromDB(
+            self::format("
                 SELECT
                     *
                 FROM
@@ -4930,8 +5074,8 @@ class Innovation extends Table
                     card.color = {color} AND
                     card.position = 0
         ",
-            array('player_id' => $player_id, 'color' => $color)
-        )
+                array('player_id' => $player_id, 'color' => $color)
+            )
         );
     }
 
@@ -4965,7 +5109,8 @@ class Innovation extends Table
         **/
 
         // Get the min of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MIN(a.faceup_age), 0)
             FROM
@@ -4985,8 +5130,8 @@ class Innovation extends Table
                 a.location = 'board' AND
                 a.position = b.position
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -4998,7 +5143,8 @@ class Innovation extends Table
         **/
 
         // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MAX(a.faceup_age), 0)
             FROM
@@ -5018,8 +5164,8 @@ class Innovation extends Table
                 a.location = 'board' AND
                 a.position = b.position
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -5031,7 +5177,8 @@ class Innovation extends Table
         **/
 
         // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MAX(a.faceup_age), 0)
             FROM
@@ -5052,8 +5199,8 @@ class Innovation extends Table
                 a.color = {color} AND
                 a.position = b.position
         ",
-            array('color' => $color)
-        )
+                array('color' => $color)
+            )
         );
     }
 
@@ -5066,7 +5213,8 @@ class Innovation extends Table
 
 
         // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MIN(a.faceup_age), 0)
             FROM
@@ -5094,8 +5242,8 @@ class Innovation extends Table
                     (a.spot_6 IS NULL OR a.spot_6 <> {icon})
                 )
         ",
-            array('player_id' => $player_id, 'icon' => $icon)
-        )
+                array('player_id' => $player_id, 'icon' => $icon)
+            )
         );
     }
     function getMinAgeOnBoardTopCardsWithIcon($player_id, $icon)
@@ -5107,7 +5255,8 @@ class Innovation extends Table
 
 
         // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MIN(a.faceup_age), 0)
             FROM
@@ -5128,8 +5277,8 @@ class Innovation extends Table
                 a.position = b.position AND
                 (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon} OR a.spot_5 = {icon} OR a.spot_6 = {icon})
         ",
-            array('player_id' => $player_id, 'icon' => $icon)
-        )
+                array('player_id' => $player_id, 'icon' => $icon)
+            )
         );
     }
 
@@ -5142,7 +5291,8 @@ class Innovation extends Table
 
 
         // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MAX(a.faceup_age), 0)
             FROM
@@ -5163,8 +5313,8 @@ class Innovation extends Table
                 a.position = b.position AND
                 (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon} OR a.spot_5 = {icon} OR a.spot_6 = {icon})
         ",
-            array('player_id' => $player_id, 'icon' => $icon)
-        )
+                array('player_id' => $player_id, 'icon' => $icon)
+            )
         );
     }
 
@@ -5176,7 +5326,8 @@ class Innovation extends Table
         **/
 
         // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE(MAX(a.faceup_age), 0)
             FROM
@@ -5203,8 +5354,8 @@ class Innovation extends Table
                 (a.spot_5 IS NULL OR a.spot_5 <> {icon}) AND
                 (a.spot_6 IS NULL OR a.spot_6 <> {icon})
         ",
-            array('player_id' => $player_id, 'colors' => join(',', $colors), 'icon' => $icon)
-        )
+                array('player_id' => $player_id, 'colors' => join(',', $colors), 'icon' => $icon)
+            )
         );
     }
 
@@ -5215,7 +5366,8 @@ class Innovation extends Table
         (0 if the player have no card in this location)
         **/
 
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 COALESCE({min_or_max}(age), 0)
             FROM
@@ -5224,8 +5376,8 @@ class Innovation extends Table
                 owner = {player_id} AND
                 location = '{location}'
         ",
-            array('min_or_max' => $min_or_max, 'player_id' => $player_id, 'location' => $location)
-        )
+                array('min_or_max' => $min_or_max, 'player_id' => $player_id, 'location' => $location)
+            )
         );
     }
 
@@ -5494,30 +5646,32 @@ class Innovation extends Table
     /** Get and update game situation **/
     function incrementBGAScore($player_id, $is_special_achievement)
     { // Increment the BGA score of the team (single player or to player in 2 vs 2 game) (number of achievements) then check if he got enough to win
-        $player = self::getObjectFromDB(self::format(
-            "SELECT
+        $player = self::getObjectFromDB(
+            self::format(
+                "SELECT
                 player_score, player_team
             FROM
                 player
             WHERE
                 player_id={player_id}"
-            ,
-            array('player_id' => $player_id)
-        )
+                ,
+                array('player_id' => $player_id)
+            )
         );
 
         $player['player_score']++;
 
-        self::DbQuery(self::format(
-            "UPDATE
+        self::DbQuery(
+            self::format(
+                "UPDATE
                 player
             SET
                 player_score = {player_score}
             WHERE
                 player_team={player_team}"
-            ,
-            $player
-        )
+                ,
+                $player
+            )
         );
 
         // Stats
@@ -5537,30 +5691,32 @@ class Innovation extends Table
     /** Get and update game situation **/
     function decrementBGAScore($player_id)
     {
-        $player = self::getObjectFromDB(self::format(
-            "SELECT
+        $player = self::getObjectFromDB(
+            self::format(
+                "SELECT
                 player_score, player_team
             FROM
                 player
             WHERE
                 player_id={player_id}"
-            ,
-            array('player_id' => $player_id)
-        )
+                ,
+                array('player_id' => $player_id)
+            )
         );
 
         $player['player_score']--;
 
-        self::DbQuery(self::format(
-            "UPDATE
+        self::DbQuery(
+            self::format(
+                "UPDATE
                 player
             SET
                 player_score = {player_score}
             WHERE
                 player_team={player_team}"
-            ,
-            $player
-        )
+                ,
+                $player
+            )
         );
 
         // Stats
@@ -5569,7 +5725,8 @@ class Innovation extends Table
 
     function getPlayerScore($player_id)
     { // Player Innovation score is different from the BGA score (number of achievements)
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
         SELECT
             player_innovation_score
         FROM
@@ -5577,14 +5734,15 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
     function getPlayerNumberOfAchievements($player_id)
     { // Player Innovation score is different from the BGA score (number of achievements)
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
         SELECT
             player_score
         FROM
@@ -5592,8 +5750,8 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -5604,7 +5762,8 @@ class Innovation extends Table
             $score += $card['age'];
         }
         $score += self::countBonusPoints($player_id);
-        self::DBQuery(self::format("
+        self::DBQuery(
+            self::format("
             UPDATE
                 player
             SET
@@ -5612,8 +5771,8 @@ class Innovation extends Table
             WHERE
                 player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'score' => $score)
-        )
+                array('player_id' => $player_id, 'score' => $score)
+            )
         );
         self::setStat($score, 'score', $player_id);
         return $score;
@@ -5691,7 +5850,8 @@ class Innovation extends Table
 
     function getPlayerSingleRessourceCount($player_id, $icon)
     {
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 player_icon_count_{icon}
             FROM
@@ -5699,14 +5859,15 @@ class Innovation extends Table
             WHERE
                 player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'icon' => $icon)
-        )
+                array('player_id' => $player_id, 'icon' => $icon)
+            )
         );
     }
 
     function getPlayerResourceCounts($player_id)
     {
-        $table = self::getNonEmptyObjectFromDB(self::format("
+        $table = self::getNonEmptyObjectFromDB(
+            self::format("
         SELECT
             player_icon_count_1, player_icon_count_2, player_icon_count_3, player_icon_count_4, player_icon_count_5, player_icon_count_6, player_icon_count_7
         FROM
@@ -5714,8 +5875,8 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
 
         // Convert to a numeric associative array
@@ -5728,7 +5889,8 @@ class Innovation extends Table
 
     function getPlayerWishForSplay($player_id)
     {
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
         SELECT
             pile_display_mode
         FROM
@@ -5736,14 +5898,15 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         ) == 1;
     }
 
     function getPlayerWishForViewFull($player_id)
     {
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
         SELECT
             pile_view_full
         FROM
@@ -5751,14 +5914,15 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         ) == 1;
     }
 
     function setPlayerWishForSplay($player_id, $pile_display_mode)
     {
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
         UPDATE
             player
         SET
@@ -5766,14 +5930,15 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'pile_display_mode' => $pile_display_mode ? "TRUE" : "FALSE")
-        )
+                array('player_id' => $player_id, 'pile_display_mode' => $pile_display_mode ? "TRUE" : "FALSE")
+            )
         );
     }
 
     function setPlayerWishForViewFull($player_id, $pile_view_full)
     {
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
         UPDATE
             player
         SET
@@ -5781,14 +5946,15 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'pile_view_full' => $pile_view_full ? "TRUE" : "FALSE")
-        )
+                array('player_id' => $player_id, 'pile_view_full' => $pile_view_full ? "TRUE" : "FALSE")
+            )
         );
     }
 
     function getPlayerWillDrawUnseenCardNext($player_id)
     {
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
         SELECT
             will_draw_unseen_card_next
         FROM
@@ -5796,14 +5962,15 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         ) == 1;
     }
 
     function setPlayerWillDrawUnseenCardNext($player_id, $will_draw_unseen_card_next)
     {
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
         UPDATE
             player
         SET
@@ -5811,8 +5978,8 @@ class Innovation extends Table
         WHERE
             player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'will_draw_unseen_card_next' => $will_draw_unseen_card_next ? "TRUE" : "FALSE")
-        )
+                array('player_id' => $player_id, 'will_draw_unseen_card_next' => $will_draw_unseen_card_next ? "TRUE" : "FALSE")
+            )
         );
     }
 
@@ -5830,7 +5997,8 @@ class Innovation extends Table
                 (1), (2), (3), (4), (5), (6), (7)
         ");
 
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             INSERT INTO card_with_top_card_indication (id, type, age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, owner, location, position, splay_direction, selected, is_top_card)
                 SELECT
                 a.id, a.type, a.age, a.color, a.spot_1, a.spot_2, a.spot_3, a.spot_4, a.spot_5, a.spot_6, a.dogma_icon, a.owner, a.location, a.position, a.splay_direction, a.selected,
@@ -5852,8 +6020,8 @@ class Innovation extends Table
                     a.owner = {player_id} AND
                     a.location = 'board'
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
 
         self::DbQuery("
@@ -5871,7 +6039,8 @@ class Innovation extends Table
                     LEFT JOIN (SELECT spot_6, COUNT(spot_6) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE GROUP BY spot_6) AS s6 ON a.icon = s6.spot_6
         ");
 
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
             UPDATE
                 player AS a
                 LEFT JOIN icon_count AS i1 ON TRUE
@@ -5899,8 +6068,8 @@ class Innovation extends Table
                 i6.icon = 6 AND
                 i7.icon = 7
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
 
         // Delete all values of the auxiliary tables
@@ -5946,15 +6115,16 @@ class Innovation extends Table
     function binarizeBGAScore()
     {
         // Called if the game ends by dogma. The innovation score is 1 for winners, 0 for losers. There is no tie-breaker.
-        self::DbQuery(self::format("
+        self::DbQuery(
+            self::format("
         UPDATE
             player
         SET
             player_score_aux = 0,
             player_score = (CASE WHEN player_id = {winner} THEN 1 ELSE 0 END)
         ",
-            array('winner' => $this->innovationGameState->get('winner_by_dogma'))
-        )
+                array('winner' => $this->innovationGameState->get('winner_by_dogma'))
+            )
         );
 
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'team') {
@@ -6000,7 +6170,8 @@ class Innovation extends Table
 
     function getPlayerTeam($player_id)
     {
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 player_id
             FROM
@@ -6008,8 +6179,8 @@ class Innovation extends Table
             WHERE
                 player_id={player_id}
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -6028,7 +6199,8 @@ class Innovation extends Table
     function getPlayerTeammate($player_id)
     {
         /** Return the teammate in a team game or null if there is None **/
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 player_id
             FROM
@@ -6044,8 +6216,8 @@ class Innovation extends Table
                         player_id = {player_id}
                 )
         ",
-            array('player_id' => $player_id)
-        )
+                array('player_id' => $player_id)
+            )
         );
     }
 
@@ -6071,7 +6243,8 @@ class Innovation extends Table
     function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id)
     {
         // I demand
-        $launcher_icon_count = self::getUniqueValueFromDB(self::format("
+        $launcher_icon_count = self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 featured_icon_count
             FROM
@@ -6079,8 +6252,8 @@ class Innovation extends Table
             WHERE
                 player_id = {launcher_id}
         ",
-            array('launcher_id' => $launcher_id)
-        )
+                array('launcher_id' => $launcher_id)
+            )
         );
         // I demand
         if ($dogma_effect_type == 0) {
@@ -6110,7 +6283,8 @@ class Innovation extends Table
                 turn_order_ending_with_launcher = (CASE WHEN player_index <= {launcher_player_index} THEN player_index + 100 ELSE player_index END)
         ", array('launcher_player_index' => self::playerIdToPlayerIndex($launcher_id))));
         $current_turn = $player_id == -1 ? -1 : self::getUniqueValueFromDB(self::format("SELECT turn_order_ending_with_launcher FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
-        return self::getUniqueValueFromDB(self::format("
+        return self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 player_id
             FROM
@@ -6127,8 +6301,8 @@ class Innovation extends Table
                         AND {player_query}
                 )
         ",
-            array('player_query' => $player_query, 'current_turn' => $current_turn)
-        )
+                array('player_query' => $player_query, 'current_turn' => $current_turn)
+            )
         );
     }
 
@@ -6359,15 +6533,23 @@ class Innovation extends Table
         self::setStat(0, 'score', $player_id);
         self::setStat(0, 'max_age_on_board', $player_id);
 
-        self::notifyPlayer($player_id, 'removedPlayer', clienttranslate('All ${your} cards were removed from the game.'), array(
-            'your'             => 'your',
-            'player_to_remove' => $player_id,
-        )
+        self::notifyPlayer(
+            $player_id,
+            'removedPlayer',
+            clienttranslate('All ${your} cards were removed from the game.'),
+            array(
+                'your'             => 'your',
+                'player_to_remove' => $player_id,
+            )
         );
-        self::notifyAllPlayersBut($player_id, 'removedPlayer', clienttranslate('All ${player_name}\'s cards were removed from the game.'), array(
-            'player_name'      => self::renderPlayerName($player_id),
-            'player_to_remove' => $player_id,
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'removedPlayer',
+            clienttranslate('All ${player_name}\'s cards were removed from the game.'),
+            array(
+                'player_name'      => self::renderPlayerName($player_id),
+                'player_to_remove' => $player_id,
+            )
         );
     }
 
@@ -6890,7 +7072,8 @@ class Innovation extends Table
         }
 
         if ($this->innovationGameState->get('splay_direction') == -1 && $location_from == 'board') {
-            self::DbQuery(self::format("
+            self::DbQuery(
+                self::format("
                 UPDATE
                     card
                 LEFT JOIN
@@ -6918,28 +7101,29 @@ class Innovation extends Table
                     {condition_for_including_bonus} AND
                     {condition_for_excluding_bonus}
             ",
-                array(
-                    'position'                      => $this->innovationGameState->get('bottom_from') == 1 ? '0' : 'MAX(position)',
-                    'condition_for_owner'           => $condition_for_owner,
-                    'condition_for_location'        => $condition_for_location,
-                    'condition_for_age'             => $condition_for_age,
-                    'condition_for_claimable_ages'  => $condition_for_claimable_ages,
-                    'condition_for_demand_effect'   => $condition_for_demand_effect,
-                    'condition_for_color'           => $condition_for_color,
-                    'condition_for_type'            => $condition_for_type,
-                    'condition_for_icon'            => $condition_for_icon,
-                    'condition_for_icon_hash'       => $condition_for_icon_hash,
-                    'condition_for_splay'           => $condition_for_splay,
-                    'condition_for_requiring_id'    => $condition_for_requiring_id,
-                    'condition_for_excluding_id'    => $condition_for_excluding_id,
-                    'condition_for_including_relic' => $condition_for_including_relic,
-                    'condition_for_including_bonus' => $condition_for_including_bonus,
-                    'condition_for_excluding_bonus' => $condition_for_excluding_bonus
+                    array(
+                        'position'                      => $this->innovationGameState->get('bottom_from') == 1 ? '0' : 'MAX(position)',
+                        'condition_for_owner'           => $condition_for_owner,
+                        'condition_for_location'        => $condition_for_location,
+                        'condition_for_age'             => $condition_for_age,
+                        'condition_for_claimable_ages'  => $condition_for_claimable_ages,
+                        'condition_for_demand_effect'   => $condition_for_demand_effect,
+                        'condition_for_color'           => $condition_for_color,
+                        'condition_for_type'            => $condition_for_type,
+                        'condition_for_icon'            => $condition_for_icon,
+                        'condition_for_icon_hash'       => $condition_for_icon_hash,
+                        'condition_for_splay'           => $condition_for_splay,
+                        'condition_for_requiring_id'    => $condition_for_requiring_id,
+                        'condition_for_excluding_id'    => $condition_for_excluding_id,
+                        'condition_for_including_relic' => $condition_for_including_relic,
+                        'condition_for_including_bonus' => $condition_for_including_bonus,
+                        'condition_for_excluding_bonus' => $condition_for_excluding_bonus
+                    )
                 )
-            )
             );
         } else {
-            self::DbQuery(self::format("
+            self::DbQuery(
+                self::format("
                 UPDATE
                     card
                 SET
@@ -6961,24 +7145,24 @@ class Innovation extends Table
                     {condition_for_including_bonus} AND
                     {condition_for_excluding_bonus}
             ",
-                array(
-                    'condition_for_owner'           => $condition_for_owner,
-                    'condition_for_location'        => $condition_for_location,
-                    'condition_for_age'             => $condition_for_age,
-                    'condition_for_claimable_ages'  => $condition_for_claimable_ages,
-                    'condition_for_demand_effect'   => $condition_for_demand_effect,
-                    'condition_for_color'           => $condition_for_color,
-                    'condition_for_type'            => $condition_for_type,
-                    'condition_for_icon'            => $condition_for_icon,
-                    'condition_for_icon_hash'       => $condition_for_icon_hash,
-                    'condition_for_splay'           => $condition_for_splay,
-                    'condition_for_requiring_id'    => $condition_for_requiring_id,
-                    'condition_for_excluding_id'    => $condition_for_excluding_id,
-                    'condition_for_including_relic' => $condition_for_including_relic,
-                    'condition_for_including_bonus' => $condition_for_including_bonus,
-                    'condition_for_excluding_bonus' => $condition_for_excluding_bonus
+                    array(
+                        'condition_for_owner'           => $condition_for_owner,
+                        'condition_for_location'        => $condition_for_location,
+                        'condition_for_age'             => $condition_for_age,
+                        'condition_for_claimable_ages'  => $condition_for_claimable_ages,
+                        'condition_for_demand_effect'   => $condition_for_demand_effect,
+                        'condition_for_color'           => $condition_for_color,
+                        'condition_for_type'            => $condition_for_type,
+                        'condition_for_icon'            => $condition_for_icon,
+                        'condition_for_icon_hash'       => $condition_for_icon_hash,
+                        'condition_for_splay'           => $condition_for_splay,
+                        'condition_for_requiring_id'    => $condition_for_requiring_id,
+                        'condition_for_excluding_id'    => $condition_for_excluding_id,
+                        'condition_for_including_relic' => $condition_for_including_relic,
+                        'condition_for_including_bonus' => $condition_for_including_bonus,
+                        'condition_for_excluding_bonus' => $condition_for_excluding_bonus
+                    )
                 )
-            )
             );
         }
 
@@ -7212,7 +7396,9 @@ class Innovation extends Table
                 'qualified_effect'  => self::qualifyEffect($current_effect_type, $current_effect_number, $card),
                 'card_name'         => 'card_name',
                 'JSCardEffectQuery' => self::getJSCardEffectQuery($card, $current_effect_type, $current_effect_number)
-            ), $card_names);
+            ),
+            $card_names
+        );
 
         $args['i18n'][] = 'qualified_effect';
         $args['i18n'][] = 'card_name';
@@ -7408,7 +7594,8 @@ class Innovation extends Table
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
 
         // Get array size
-        $array_size = self::getUniqueValueFromDB(self::format("
+        $array_size = self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 value
             FROM
@@ -7417,8 +7604,8 @@ class Innovation extends Table
                 nesting_index = {nesting_index} AND
                 array_index = 0
         ",
-            array('nesting_index' => $nesting_index)
-        )
+                array('nesting_index' => $nesting_index)
+            )
         );
 
         // Return empty array if no array was stored
@@ -7429,7 +7616,8 @@ class Innovation extends Table
         // Get array values
         $array = array();
         for ($i = 1; $i <= $array_size; $i++) {
-            $array[] = self::getUniqueValueFromDB(self::format("
+            $array[] = self::getUniqueValueFromDB(
+                self::format("
                 SELECT
                     value
                 FROM
@@ -7438,8 +7626,8 @@ class Innovation extends Table
                     nesting_index = {nesting_index} AND
                     array_index = {array_index}
             ",
-                array('nesting_index' => $nesting_index, 'array_index' => $i)
-            )
+                    array('nesting_index' => $nesting_index, 'array_index' => $i)
+                )
             );
         }
 
@@ -7475,7 +7663,8 @@ class Innovation extends Table
     function getActionScopedAuxiliaryArray($card_id, $player_id)
     {
         // Get array size
-        $array_size = self::getUniqueValueFromDB(self::format("
+        $array_size = self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 value
             FROM
@@ -7485,8 +7674,8 @@ class Innovation extends Table
                 player_id = {player_id} AND
                 array_index = 0
         ",
-            array('card_id' => $card_id, 'player_id' => $player_id)
-        )
+                array('card_id' => $card_id, 'player_id' => $player_id)
+            )
         );
 
         // Return empty array if no array was stored
@@ -7497,7 +7686,8 @@ class Innovation extends Table
         // Get array values
         $array = array();
         for ($i = 1; $i <= $array_size; $i++) {
-            $array[] = self::getUniqueValueFromDB(self::format("
+            $array[] = self::getUniqueValueFromDB(
+                self::format("
                 SELECT
                     value
                 FROM
@@ -7507,8 +7697,8 @@ class Innovation extends Table
                     player_id = {player_id} AND
                     array_index = {array_index}
             ",
-                array('card_id' => $card_id, 'player_id' => $player_id, 'array_index' => $i)
-            )
+                    array('card_id' => $card_id, 'player_id' => $player_id, 'array_index' => $i)
+                )
             );
         }
 
@@ -7520,7 +7710,8 @@ class Innovation extends Table
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
 
         // Check to see if a value already exists
-        $result = self::getUniqueValueFromDB(self::format("
+        $result = self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 value
             FROM
@@ -7529,8 +7720,8 @@ class Innovation extends Table
                 nesting_index = {nesting_index} AND
                 index_id = {index_id}
         ",
-            array('nesting_index' => $nesting_index, 'index_id' => $index_id)
-        )
+                array('nesting_index' => $nesting_index, 'index_id' => $index_id)
+            )
         );
 
         // If it doesn't already exist, insert it
@@ -7558,7 +7749,8 @@ class Innovation extends Table
     function getIndexedAuxiliaryValue($index_id): int
     {
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
-        $result = self::getUniqueValueFromDB(self::format("
+        $result = self::getUniqueValueFromDB(
+            self::format("
             SELECT
                 value
             FROM
@@ -7567,8 +7759,8 @@ class Innovation extends Table
                 nesting_index = {nesting_index} AND
                 index_id = {index_id}
         ",
-            array('nesting_index' => $nesting_index, 'index_id' => $index_id)
-        )
+                array('nesting_index' => $nesting_index, 'index_id' => $index_id)
+            )
         );
         if ($result == null) {
             $result = -1;
@@ -7814,14 +8006,22 @@ class Innovation extends Table
         self::markAsSelected($card_id);
 
         // Notify
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array(
-            'You' => 'You'
-        )
+        self::notifyPlayer(
+            $player_id,
+            'log',
+            clienttranslate('${You} choose a card.'),
+            array(
+                'You' => 'You'
+            )
         );
 
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a card.'), array(
-            'player_name' => self::getPlayerNameFromId($player_id)
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'log',
+            clienttranslate('${player_name} chooses a card.'),
+            array(
+                'player_name' => self::getPlayerNameFromId($player_id)
+            )
         );
 
         // If that was the last player to choose his card, go on for the next state (whoBegins?), else, wait for remaining players
@@ -7851,14 +8051,22 @@ class Innovation extends Table
         }
 
         // Notify
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array(
-            'You' => 'You'
-        )
+        self::notifyPlayer(
+            $player_id,
+            'log',
+            clienttranslate('${You} choose a card.'),
+            array(
+                'You' => 'You'
+            )
         );
 
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a card.'), array(
-            'player_name' => self::getPlayerNameFromId($player_id)
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'log',
+            clienttranslate('${player_name} chooses a card.'),
+            array(
+                'player_name' => self::getPlayerNameFromId($player_id)
+            )
         );
 
         // If that was the last player to choose his card, go on for the next state (whoBegins?), else, wait for remaining players
@@ -8620,11 +8828,14 @@ class Innovation extends Table
 
     function updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta)
     {
-        self::notifyAll('updateResourcesForArtifactOnDisplay', '', array(
-            'player_id'            => $player_id,
-            'resource_icon'        => $resource_icon,
-            'resource_count_delta' => $resource_count_delta,
-        )
+        self::notifyAll(
+            'updateResourcesForArtifactOnDisplay',
+            '',
+            array(
+                'player_id'            => $player_id,
+                'resource_icon'        => $resource_icon,
+                'resource_count_delta' => $resource_count_delta,
+            )
         );
     }
 
@@ -8666,16 +8877,17 @@ class Innovation extends Table
         foreach ($players as $index => $player) {
             $player_icon_count = $index == $player_index ? $dogma_player_icon_count : $player[$icon_column];
             self::notifyPlayerRessourceCount($player['player_id'], $dogma_icon, $player_icon_count);
-            self::DBQuery(self::format("
+            self::DBQuery(
+                self::format("
                 UPDATE 
                     player
                 SET
                     featured_icon_count = {featured_icon_count}
                 WHERE
                     player_id = {player_id}"
-                ,
-                array('featured_icon_count' => $player_icon_count, 'player_id' => $player['player_id'])
-            )
+                    ,
+                    array('featured_icon_count' => $player_icon_count, 'player_id' => $player['player_id'])
+                )
             );
         }
 
@@ -8916,14 +9128,18 @@ class Innovation extends Table
                 $new_max_age_on_board = self::getMaxAgeOnBoardTopCards($player_id);
                 self::setStat($new_max_age_on_board, 'max_age_on_board', $player_id);
 
-                self::notifyPlayer($player_id, 'rearrangedPile', clienttranslate('${You} rearrange your ${color} stack.'), array(
-                    'i18n'                 => array('color'),
-                    'player_id'            => $player_id,
-                    'new_max_age_on_board' => $new_max_age_on_board,
-                    'rearrangement'        => $choice,
-                    'You'                  => 'You',
-                    'color'                => Colors::render($color)
-                )
+                self::notifyPlayer(
+                    $player_id,
+                    'rearrangedPile',
+                    clienttranslate('${You} rearrange your ${color} stack.'),
+                    array(
+                        'i18n'                 => array('color'),
+                        'player_id'            => $player_id,
+                        'new_max_age_on_board' => $new_max_age_on_board,
+                        'rearrangement'        => $choice,
+                        'You'                  => 'You',
+                        'color'                => Colors::render($color)
+                    )
                 );
                 self::notifyAllPlayersBut(
                     $player_id,
@@ -9971,7 +10187,8 @@ class Innovation extends Table
                     }
                     break;
                 case 'choose_player':
-                    $options = self::getObjectListFromDB(self::format("
+                    $options = self::getObjectListFromDB(
+                        self::format("
                     SELECT
                         player_id AS value,
                         player_name AS text
@@ -9980,8 +10197,8 @@ class Innovation extends Table
                     WHERE
                         player_index IN ({player_indexes})
                 ",
-                        array('player_indexes' => join(',', $this->innovationGameState->getAsArray('player_array')))
-                    )
+                            array('player_indexes' => join(',', $this->innovationGameState->getAsArray('player_array')))
+                        )
                     );
                     break;
                 case 'choose_special_achievement':
@@ -10205,7 +10422,9 @@ class Innovation extends Table
                     'message_for_player'     => array('i18n' => array('log'), 'log' => $message_for_player, 'args' => $message_args_for_player),
                     'message_for_others'     => array('i18n' => array('log'), 'log' => $message_for_others, 'args' => $message_args_for_others),
                     'player_name'            => $player_name
-                ), $card_names);
+                ),
+                $card_names
+            );
 
             if ($special_type_of_choice == 11 /* choose_non_negative_integer */) {
                 $args['default_integer'] = self::getAuxiliaryValue();
@@ -10620,15 +10839,23 @@ class Innovation extends Table
         $player_id = $earliest_card['owner'];
 
         $english_card_name = self::getCardName($earliest_card['id']);
-        self::notifyPlayer($player_id, 'initialCardChosen', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
-            'You'          => 'You',
-            'english_name' => $english_card_name,
-        )
+        self::notifyPlayer(
+            $player_id,
+            'initialCardChosen',
+            clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'),
+            array(
+                'You'          => 'You',
+                'english_name' => $english_card_name,
+            )
         );
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded the first card in English alphabetical order (${english_name}): he plays first.'), array(
-            'player_name'  => self::getPlayerNameFromId($player_id),
-            'english_name' => $english_card_name,
-        )
+        self::notifyAllPlayersBut(
+            $player_id,
+            'log',
+            clienttranslate('${player_name} melded the first card in English alphabetical order (${english_name}): he plays first.'),
+            array(
+                'player_name'  => self::getPlayerNameFromId($player_id),
+                'english_name' => $english_card_name,
+            )
         );
 
         // Enter normal play loop
@@ -10741,10 +10968,12 @@ class Innovation extends Table
         $first_player = $nested_card_state['nesting_index'] > 0 && ($current_effect_type == 1 || $current_effect_type == 3) ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
         if ($first_player === null) {
             // There is no player affected by the effect
-            self::notifyGeneralInfo("<span class='minor_information'>" . clienttranslate('Nobody is affected by the ${qualified_effect} of the card.') . "</span>", array(
-                'i18n'             => array('qualified_effect'),
-                'qualified_effect' => $qualified_effect
-            )
+            self::notifyGeneralInfo(
+                "<span class='minor_information'>" . clienttranslate('Nobody is affected by the ${qualified_effect} of the card.') . "</span>",
+                array(
+                    'i18n'             => array('qualified_effect'),
+                    'qualified_effect' => $qualified_effect
+                )
             );
 
             // End of the effect
@@ -12541,13 +12770,21 @@ class Innovation extends Table
                             }
                         }
                         if ($twice_the_achievements) {
-                            self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has at least twice as many achievements as each opponent.'), array(
-                                'player_name' => self::getPlayerNameFromId($player_id)
-                            )
+                            self::notifyAllPlayersBut(
+                                $player_id,
+                                "log",
+                                clienttranslate('${player_name} has at least twice as many achievements as each opponent.'),
+                                array(
+                                    'player_name' => self::getPlayerNameFromId($player_id)
+                                )
                             );
-                            self::notifyPlayer($player_id, "log", clienttranslate('${You} have at least twice as many achievements as each opponent.'), array(
-                                'You' => 'You'
-                            )
+                            self::notifyPlayer(
+                                $player_id,
+                                "log",
+                                clienttranslate('${You} have at least twice as many achievements as each opponent.'),
+                                array(
+                                    'You' => 'You'
+                                )
                             );
                             $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
@@ -12571,14 +12808,22 @@ class Innovation extends Table
                         }
                         if ($most_achievements) { // "If you have more achievements than each other player"
                             if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                                self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has more achievements than each other player.'), array(
-                                    'player_name' => self::getPlayerNameFromId($player_id)
-                                )
+                                self::notifyAllPlayersBut(
+                                    $player_id,
+                                    "log",
+                                    clienttranslate('${player_name} has more achievements than each other player.'),
+                                    array(
+                                        'player_name' => self::getPlayerNameFromId($player_id)
+                                    )
                                 );
 
-                                self::notifyPlayer($player_id, "log", clienttranslate('${You} have more achievements than each other player.'), array(
-                                    'You' => 'You'
-                                )
+                                self::notifyPlayer(
+                                    $player_id,
+                                    "log",
+                                    clienttranslate('${You} have more achievements than each other player.'),
+                                    array(
+                                        'You' => 'You'
+                                    )
                                 );
                             } else { // $this->innovationGameState->get('game_type')) == 'team'
                                 $teammate_id = self::getPlayerTeammate($player_id);
@@ -12658,16 +12903,24 @@ class Innovation extends Table
                                     $message_for_others = clienttranslate('${player_name} has ${n} points.');
                                     $message_for_player = clienttranslate('${You} have ${n} points.');
                                 }
-                                self::notifyAllPlayersBut($player_id, "log", $message_for_others, array(
-                                    'player_name' => self::getPlayerNameFromId($player_id),
-                                    'n'           => $score
-                                )
+                                self::notifyAllPlayersBut(
+                                    $player_id,
+                                    "log",
+                                    $message_for_others,
+                                    array(
+                                        'player_name' => self::getPlayerNameFromId($player_id),
+                                        'n'           => $score
+                                    )
                                 );
 
-                                self::notifyPlayer($player_id, "log", $message_for_player, array(
-                                    'You' => 'You',
-                                    'n'   => $score
-                                )
+                                self::notifyPlayer(
+                                    $player_id,
+                                    "log",
+                                    $message_for_player,
+                                    array(
+                                        'You' => 'You',
+                                        'n'   => $score
+                                    )
                                 );
                             } else { // $this->innovationGameState->get('game_type') == 'team'
                                 $current_team = $teams[$team];
@@ -12694,14 +12947,22 @@ class Innovation extends Table
                             $winning_team = $teams[$team_max];
                             if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
                                 $player_id = $winning_team[0];
-                                self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has a greater score than each other player.'), array(
-                                    'player_name' => self::getPlayerNameFromId($player_id)
-                                )
+                                self::notifyAllPlayersBut(
+                                    $player_id,
+                                    "log",
+                                    clienttranslate('${player_name} has a greater score than each other player.'),
+                                    array(
+                                        'player_name' => self::getPlayerNameFromId($player_id)
+                                    )
                                 );
 
-                                self::notifyPlayer($player_id, "log", clienttranslate('${You} have a greater score than each other player.'), array(
-                                    'You' => 'You'
-                                )
+                                self::notifyPlayer(
+                                    $player_id,
+                                    "log",
+                                    clienttranslate('${You} have a greater score than each other player.'),
+                                    array(
+                                        'You' => 'You'
+                                    )
                                 );
                             } else { // $this->innovationGameState->get('game_type')) == 'team'
                                 $player_id = $winning_team[0];
@@ -12762,29 +13023,45 @@ class Innovation extends Table
                                 $message_for_others = clienttranslate('${player_name} has ${n} points.');
                                 $message_for_player = clienttranslate('${You} have ${n} points.');
                             }
-                            self::notifyAllPlayersBut($any_player_id, "log", $message_for_others, array(
-                                'player_name' => self::getPlayerNameFromId($any_player_id),
-                                'n'           => $score
-                            )
+                            self::notifyAllPlayersBut(
+                                $any_player_id,
+                                "log",
+                                $message_for_others,
+                                array(
+                                    'player_name' => self::getPlayerNameFromId($any_player_id),
+                                    'n'           => $score
+                                )
                             );
 
-                            self::notifyPlayer($any_player_id, "log", $message_for_player, array(
-                                'You' => 'You',
-                                'n'   => $score
-                            )
+                            self::notifyPlayer(
+                                $any_player_id,
+                                "log",
+                                $message_for_player,
+                                array(
+                                    'You' => 'You',
+                                    'n'   => $score
+                                )
                             );
                         }
                         if ($tie) {
                             self::notifyGeneralInfo(clienttranslate('There is a tie for the lowest score. The game continues.'));
                         } else {
-                            self::notifyAllPlayersBut($player_with_min_score, "log", clienttranslate('${player_name} has the lowest score.'), array(
-                                'player_name' => self::getPlayerNameFromId($player_with_min_score)
-                            )
+                            self::notifyAllPlayersBut(
+                                $player_with_min_score,
+                                "log",
+                                clienttranslate('${player_name} has the lowest score.'),
+                                array(
+                                    'player_name' => self::getPlayerNameFromId($player_with_min_score)
+                                )
                             );
 
-                            self::notifyPlayer($player_with_min_score, "log", clienttranslate('${You} have the lowest score.'), array(
-                                'You' => 'You'
-                            )
+                            self::notifyPlayer(
+                                $player_with_min_score,
+                                "log",
+                                clienttranslate('${You} have the lowest score.'),
+                                array(
+                                    'You' => 'You'
+                                )
                             );
                             $this->innovationGameState->set('winner_by_dogma', $player_with_min_score); // "The single player with the most points wins" (scores are not combined for teams)
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn A. I.');
@@ -12808,17 +13085,6 @@ class Innovation extends Table
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                     for ($i = 0; $i < self::intDivision($number_of_clocks, 2); $i++) { // "For every two clocks on your board"
                         self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                    }
-                    break;
-
-                // id 201, Artifacts age 9: Rock Around the Clock
-                case "201N1":
-                    // "For each top card on your board with a clock, draw and score a 9"
-                    $top_cards = self::getTopCardsOnBoard($player_id);
-                    foreach ($top_cards as $card) {
-                        if (self::hasRessource($card, 6)) {
-                            self::executeDraw($player_id, 9, 'score');
-                        }
                     }
                     break;
 
@@ -12894,9 +13160,13 @@ class Innovation extends Table
                     // "You lose! If there is only one player remaining in the game, that player wins"
                     if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
-                            'player_name' => self::renderPlayerName($player_id)
-                        )
+                        self::notifyAllPlayersBut(
+                            $player_id,
+                            'log',
+                            clienttranslate('${player_name} loses.'),
+                            array(
+                                'player_name' => self::renderPlayerName($player_id)
+                            )
                         );
                         if (count(self::getAllActivePlayers()) == 2) {
                             $this->innovationGameState->set('winner_by_dogma', $launcher_id);

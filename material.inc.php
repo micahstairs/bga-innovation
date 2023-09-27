@@ -1328,8 +1328,9 @@ $this->textual_card_infos = array(
     ),
 
     201 => array(
-        'name'                => clienttranslate('Rock Around the Clock'),
-        'non_demand_effect_1' => clienttranslate('For each top card on your board with a ${icon_6}, draw and score a ${age_9}.'),
+        'name'                       => clienttranslate('Rock Around the Clock'),
+        'non_demand_effect_1'        => clienttranslate('For each top card on your board with a ${icon_6}, draw and score a ${age_9}.'),
+        'non_demand_effect_2_fourth' => clienttranslate('Junk all cards in the deck of value equal to the number of cards in your score pile.'),
     ),
 
     202 => array(
