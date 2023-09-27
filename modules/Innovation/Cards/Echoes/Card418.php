@@ -49,7 +49,7 @@ class Card418 extends AbstractCard
         foreach (self::getActionScopedAuxiliaryArray(self::getPlayerId()) as $cardId) {
           $card = self::getCard($cardId);
           $colors[] = $card['color'];
-          $faceupValues[] = $card['faceup_value'];
+          $faceupValues[] = $card['faceup_age'];
         }
         self::setActionScopedAuxiliaryArray($faceupValues, self::getPlayerId()); // Repurpose array to store the values to junk
       }
