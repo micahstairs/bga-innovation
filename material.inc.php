@@ -1308,8 +1308,10 @@ $this->textual_card_infos = array(
     ),
 
     198 => array(
-        'name'            => clienttranslate('Velcro Shoes'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a ${age_9} from your hand to my hand! If you do not, transfer a ${age_9} from your score pile to my score pile! If you do neither, I win!'),
+        'name'                            => clienttranslate('Velcro Shoes'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer a ${age_9} from your hand to my hand! If you do not, transfer a ${age_9} from your score pile to my score pile! If you do neither, I win!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer a ${age_9} from your hand to my hand! If you don\'t, transfer a ${age_9} from your score pile to my score pile! If you do neither, I win!'),
+        'non_demand_effect_1_fourth'      => clienttranslate('Score the highest top card on your board.'),
     ),
 
     199 => array(

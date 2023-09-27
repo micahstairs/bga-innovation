@@ -12309,11 +12309,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;      
 
-            // id 198, Artifacts age 9: Velcro Shoes
-            case "198C1":
-                $step_max = 1;
-                break;            
-
             // id 199, Artifacts age 9: Philips Compact Cassette
             case "199C1":
                 // "I compel you to unsplay all splayed colors on your board!"
@@ -15165,38 +15160,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;      
-
-         // id 198, Artifacts age 9: Velcro Shoes
-         case "198C1A":
-            // "Transfer a 9 from your hand to my hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-
-                'age' => 9
-            );
-            break;
-
-         case "198C1B":
-            // "Transfer a 9 from your score pile to my score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'age' => 9
-            );
-
-            break;
             
         // id 199, Artifacts age 9: Philips Compact Cassette
         case "199N1A":
@@ -16806,24 +16769,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards in your hand to my hand"
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                    }
-                    break;
-
-                // id 198, Artifacts age 9: Velcro Shoes
-                case "198C1A":
-                    // "If you do not"
-                    if ($n == 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "198C1B":
-                    // "If you do neither, I win"
-                    if ($n == 0) {
-                        self::notifyGeneralInfo(clienttranslate('Neither transfer took place.'));
-                        $this->innovationGameState->set('winner_by_dogma', $launcher_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep Velcro Shoes');
-                        throw new EndOfGame();
                     }
                     break;
 

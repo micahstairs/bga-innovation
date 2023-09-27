@@ -1,6 +1,6 @@
 <?php
 
-namespace Innovation\Cards\Echoes;
+namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
