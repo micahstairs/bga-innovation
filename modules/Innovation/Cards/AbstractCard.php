@@ -446,7 +446,7 @@ abstract class AbstractCard
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
   }
 
-  protected function return(?array $card): ?array
+  protected function return (?array $card): ?array
   {
     if (!$card) {
       return null;
@@ -473,6 +473,14 @@ abstract class AbstractCard
       return null;
     }
     return $this->game->junkCard($card);
+  }
+
+  protected function remove(?array $card): ?array
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->removeCard($card);
   }
 
   protected function foreshadow(?array $card, $callbackIfFull, int $playerId = null): ?array
@@ -1175,7 +1183,7 @@ abstract class AbstractCard
 
   protected function getBaseDecks(): array
   {
-    return $this->game->countCardsInLocationKeyedByAge(/*owner=*/0, 'deck', CardTypes::BASE);
+    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE);
   }
 
   protected function getUniqueColors(string $location, int $playerId = null): array

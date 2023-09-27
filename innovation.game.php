@@ -13088,29 +13088,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 203, Artifacts age 9: The Big Bang
-                case "203N1+":
-                    // "If this caused any change to occur, draw and remove a 10 from the game, then repeat this effect"
-                    if (self::getAuxiliaryValue() == 1) {
-                        $card = self::executeDraw($player_id, 10, 'revealed');
-                        self::transferCardFromTo($card, 0, 'removed');
-                        // Reset the post_execution_index so that we will return to 203N1+ (instead of 203N1++)
-                        // if we repeat the effect again.
-                        self::updateCurrentNestedCardState('post_execution_index', 0);
-                        // Purposefully fall through to 203N1 so that the effect can be repeated.
-                    } else {
-                        break;
-                    }
-
-                case "203N1":
-                    // "Execute the non-demand effects of your top blue card, without sharing"
-                    $top_blue_card = self::getTopCardOnBoard($player_id, 0);
-                    if ($top_blue_card !== null) {
-                        self::setAuxiliaryValue(0);
-                        self::selfExecute($top_blue_card);
-                    }
-                    break;
-
                 // id 204, Artifacts age 9: Marilyn Diptych
                 case "204N1":
                     $step_max = 2;

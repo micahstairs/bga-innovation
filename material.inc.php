@@ -1339,8 +1339,9 @@ $this->textual_card_infos = array(
     ),
 
     203 => array(
-        'name'                => clienttranslate('The Big Bang'),
-        'non_demand_effect_1' => clienttranslate('Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a ${age_10} from the game, then repeat this effect.'),
+        'name'                                => clienttranslate('The Big Bang'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a ${age_10} from the game, then repeat this effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Self-execute your top blue card. If this causes any change to occur, draw and junk a ${age_10}, then repeat this effect.'),
     ),
 
     204 => array(
