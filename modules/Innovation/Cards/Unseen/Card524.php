@@ -47,9 +47,7 @@ class Card524 extends AbstractCard
     $topCard = self::getTopCardOfColor($color);
     if ($topCard) {
       self::score($topCard);
-      $scores = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-      $scores[] = $topCard['faceup_age'];
-      self::setActionScopedAuxiliaryArray($scores, self::getPlayerId());
+      $scores = self::addToActionScopedAuxiliaryArray($topCard['faceup_age'], self::getPlayerId());
       if (array_sum($scores) < 9) {
         self::selfExecuteTopCard($color);
       }

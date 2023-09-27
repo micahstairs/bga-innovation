@@ -12308,33 +12308,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 195, Artifacts age 9: Yeager's Bell X-1A
-            case "195N1+":
-                // "If that card has a clock, repeat this effect"
-                if (self::getAuxiliaryValue() == 1) {
-                    // Reset the post_execution_index so that we will return to 195N1+ (instead of 195N1++)
-                    // if we repeat the effect again.
-                    self::updateCurrentNestedCardState('post_execution_index', 0);
-                    // Purposefully fall through to 195N1 so that the effect can be repeated.
-                } else {
-                    break;
-                }
-
-            case "195N1":
-                // "Draw and meld a 9"
-                $card = self::executeDrawAndMeld($player_id, 9);
-
-                // Store information about whether the card has a clock or not
-                if (self::hasRessource($card, 6)) {
-                    self::setAuxiliaryValue(1);
-                } else {
-                    self::setAuxiliaryValue(0);
-                }
-
-                // "Execute the effects of the melded card as if they were on this card, without sharing"
-                self::fullyExecute($card);
-                break;
 
             // id 196, Artifacts age 9: Luna 3
             case "196N1":

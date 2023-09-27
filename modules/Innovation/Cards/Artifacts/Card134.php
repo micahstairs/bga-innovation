@@ -30,7 +30,6 @@ class Card134 extends AbstractCard
   {
     $isSplayInteraction = false;
 
-
     if ($isSplayInteraction) {
       return [
         'owner_from'  => 'any player',

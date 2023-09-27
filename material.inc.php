@@ -1286,8 +1286,9 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 9 */
 
     195 => array(
-        'name'                => clienttranslate('Yeager\'s Bell X-1A'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has a ${icon_6}, repeat this effect.'),
+        'name'                                => clienttranslate('Yeager\'s Bell X-1A'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a ${age_9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has a ${icon_6}, repeat this effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a ${age_9}, and self-execute it. If that card has a ${icon_6}, repeat this effect.'),
     ),
 
     196 => array(
