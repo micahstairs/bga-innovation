@@ -1292,8 +1292,9 @@ $this->textual_card_infos = array(
     ),
 
     196 => array(
-        'name'                => clienttranslate('Luna 3'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your score pile. Draw and score a card of value equal to the number of cards returned.'),
+        'name'                       => clienttranslate('Luna 3'),
+        'non_demand_effect_1'        => clienttranslate('Return all cards from your score pile. Draw and score a card of value equal to the number of cards returned.'),
+        'non_demand_effect_2_fourth' => clienttranslate('Choose a value. Junk all cards in that deck.'),
     ),
 
     197 => array(

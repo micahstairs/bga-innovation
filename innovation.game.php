@@ -12309,11 +12309,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 196, Artifacts age 9: Luna 3
-            case "196N1":
-                $step_max = 1;
-                break;            
-
             // id 197, Artifacts age 9: United Nations Charter
             case "197C1":
                 $step_max = 1;
@@ -15185,20 +15180,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
             );
-            break;                   
-
-        // id 196, Artifacts age 9: Luna 3
-        case "196N1A":
-            // "Return all cards from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;            
+            break;      
 
          // id 197, Artifacts age 9: United Nations Charter
          case "197C1A":
@@ -16856,12 +16838,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                         self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
                     }
-                    break;
-                    
-                // id 196, Artifacts age 9: Luna 3
-                case "196N1A":
-                    // "Draw and score a card of value equal to the number of cards returned"
-                    self::executeDraw($player_id, $n, 'score');
                     break;
 
                 // id 198, Artifacts age 9: Velcro Shoes
