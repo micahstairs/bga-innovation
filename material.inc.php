@@ -1277,9 +1277,10 @@ $this->textual_card_infos = array(
     ),
 
     194 => array(
-        'name'                => clienttranslate('\'30 World Cup Final Ball'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to return one of your achievements!'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal an ${age_8}. The single player with the highest top card of the drawn card\'s color achieves it, ignoring eligibility. If that happens, repeat this effect.'),
+        'name'                            => clienttranslate('\'30 World Cup Final Ball'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to return one of your achievements!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to return one of your claimed standard achievements!'),
+        'non_demand_effect_1'             => clienttranslate('Draw and reveal an ${age_8}. The single player with the highest top card of the drawn card\'s color achieves it, ignoring eligibility. If that happens, repeat this effect.'),
     ),
 
     /* Artifacts - Age 9 */

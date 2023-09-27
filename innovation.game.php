@@ -12308,40 +12308,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 194, Artifacts age 8: '30 World Cup Final Ball
-            case "194C1":
-                $step_max = 1;
-                break;
-
-            case "194N1":
-                do {
-                    // "Draw and reveal an 8"
-                    $card = self::executeDraw($player_id, 8, 'revealed');
-                    $color = $card['color'];
-                    
-                    // "The single player with the highest top card of the drawn card's color achieves it, ignoring eligibility"
-                    $player_ids = self::getOwnersOfTopCardWithColorAndAge($color, self::getMaxAgeOfTopCardOfColor($color));
-                    if (count($player_ids) == 1) {
-                        $single_player_id = $player_ids[0];
-                        self::notifyPlayer($single_player_id, 'log', clienttranslate('${You} have the highest top ${color} card.'), array(
-                            'i18n' => array('color'),
-                            'You' => 'You',
-                            'color' => Colors::render($color)
-                        )); 
-                        self::notifyAllPlayersBut($single_player_id, 'log', clienttranslate('${player_name} has the highest top ${color} card.'), array(
-                            'i18n' => array('color'),
-                            'player_name' => self::renderPlayerName($single_player_id),
-                            'color' => Colors::render($color)
-                        ));
-                        self::transferCardFromTo($card, $single_player_id, 'achievements');
-                    } else {
-                        break;
-                    }
-                } while (true); // "If that happens, repeat this effect"
-                self::transferCardFromTo($card, $player_id, 'hand');
-                break;
-                
             
             // id 195, Artifacts age 9: Yeager's Bell X-1A
             case "195N1+":
@@ -15247,22 +15213,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;                   
-
-        // id 194, Artifacts age 8: 30 World Cup Final Ball
-        case "194C1A":
-            // "I compel you to return one of your achievements"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'achievements',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'include_relics' => false,
-            );
-            break;
 
         // id 196, Artifacts age 9: Luna 3
         case "196N1A":
