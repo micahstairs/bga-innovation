@@ -12811,28 +12811,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 199, Artifacts age 9: Philips Compact Cassette
-                case "199C1":
-                    // "I compel you to unsplay all splayed colors on your board!"
-                    foreach (Colors::ALL as $color) {
-                        self::unsplay($player_id, $player_id, $color);
-                    }
-                    break;
-
-                case "199N1":
-                    // If there are only one or two splayable stacks then we can splay up automatically
-                    $splayable_colors = self::getSplayableColorsOnBoard($player_id, Directions::UP);
-                    if (count($splayable_colors) <= 2) {
-                        foreach ($splayable_colors as $color) {
-                            self::splayUp($player_id, $player_id, $color);
-                        }
-
-                        // Otherwise we need to prompt the player to choose which colors to splay up
-                    } else {
-                        $step_max = 1;
-                    }
-                    break;
-
                 // id 200, Artifacts age 9: Syncom 3
                 case "200N1":
                     $step_max = 1;
@@ -15690,17 +15668,6 @@ class Innovation extends Table
                     'splay_direction' => 3,
                     /* up */
                     'color'           => array(2) /* green */
-                );
-                break;
-
-            // id 199, Artifacts age 9: Philips Compact Cassette
-            case "199N1A":
-                // "Splay up two colors on your board"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 2,
-
-                    'splay_direction' => 3
                 );
                 break;
 

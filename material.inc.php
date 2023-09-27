@@ -1243,7 +1243,8 @@ $this->textual_card_infos = array(
     ),
 
     189 => array(
-        'name'                                => clienttranslate('Ocean Liner Titanic'),
+        'name_first_and_third'                => clienttranslate('Ocean Liner Titanic'),
+        'name_fourth'                         => clienttranslate('Liner Titanic'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Score all bottom cards from your board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Score a bottom card of each color from your board.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Junk all cards from the deck of lowest value with a card.'),
@@ -1358,8 +1359,9 @@ $this->textual_card_infos = array(
     ),
 
     207 => array(
-        'name'            => clienttranslate('Exxon Valdez'),
-        'i_compel_effect' => clienttranslate('${I compel} you to remove all cards from your hand, score pile, board, and achievements from the game! You lose! If there is only one player remaining in the game, that player wins!'),
+        'name_first_and_third' => clienttranslate('Exxon Valdez'),
+        'name_fourth'          => clienttranslate('Tanker Exxon Valdez'),
+        'i_compel_effect'      => clienttranslate('${I compel} you to remove all cards from your hand, score pile, board, and achievements from the game! You lose! If there is only one player remaining in the game, that player wins!'),
     ),
 
     208 => array(

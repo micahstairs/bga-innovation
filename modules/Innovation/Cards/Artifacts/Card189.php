@@ -7,10 +7,9 @@ use Innovation\Enums\Colors;
 
 class Card189 extends AbstractCard
 {
-  // Ocean Liner Titanic
-  // - 3rd edition:
+  // Ocean Liner Titanic (3rd edition):
   //   - Score all bottom cards from your board.
-  // - 4th edition:
+  // Liner Titanic (4th edition):
   //   - Score a bottom card of each color from your board.
   //   - Junk all cards from the deck of lowest value with a card.
 
