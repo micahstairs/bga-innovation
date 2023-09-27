@@ -12811,11 +12811,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 200, Artifacts age 9: Syncom 3
-                case "200N1":
-                    $step_max = 1;
-                    break;
-
                 // id 201, Artifacts age 9: Rock Around the Clock
                 case "201N1":
                     // "For each top card on your board with a clock, draw and score a 9"
@@ -15671,19 +15666,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 200, Artifacts age 9: Syncom 3
-            case "200N1A":
-                // "Return all cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
             // id 204, Artifacts age 9: Marilyn Diptych
             case "204N1A":
                 // "You may score a card from your hand"
@@ -17274,32 +17256,6 @@ class Innovation extends Table
                         // "Transfer all cards in your hand to my hand"
                         foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                             self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                        }
-                        break;
-
-                    // id 200, Artifacts age 9: Syncom 3
-                    case "200N1A":
-                        // "Draw and reveal five 9s"
-                        $revealed_cards = array();
-                        $revealed_colors = array();
-                        for ($i = 0; $i < 5; $i++) {
-                            $card = self::executeDraw($player_id, 9, 'revealed');
-                            $revealed_cards[] = $card;
-                            $revealed_colors[] = $card['color'];
-                        }
-
-                        // "If you revealed all five colors, you win"
-                        if (count(array_count_values($revealed_colors)) == 5) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed all 5 colors.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed all 5 colors.'), array('player_name' => self::renderPlayerName($player_id)));
-                            $this->innovationGameState->set('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Syncom 3');
-                            throw new EndOfGame();
-                        }
-
-                        // Put the revealed cards in hand
-                        foreach ($revealed_cards as $card) {
-                            self::transferCardFromTo($card, $player_id, 'hand');
                         }
                         break;
 

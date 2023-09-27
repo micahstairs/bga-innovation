@@ -1322,8 +1322,9 @@ $this->textual_card_infos = array(
     ),
 
     200 => array(
-        'name'                => clienttranslate('Syncom 3'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw and reveal five ${age_9}. If you revealed all five colors, you win.'),
+        'name'                                => clienttranslate('Syncom 3'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. Draw and reveal five ${age_9}. If you revealed all five colors, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand. Draw and reveal five ${age_9}. If you reveal all five colors, you win.'),
     ),
 
     201 => array(
