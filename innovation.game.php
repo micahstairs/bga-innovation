@@ -12307,23 +12307,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 197, Artifacts age 9: United Nations Charter
-            case "197C1":
-                $step_max = 1;
-                break;            
-
-            case "197N1":
-                // "If you have a top card on your board with a demand effect, draw a 10"
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                foreach ($top_cards as $card){
-                    if ($card['has_demand'] == true) {
-                        self::executeDraw($player_id, 10);
-                        break;
-                    }
-                }
-                break;            
+                break;      
 
             // id 198, Artifacts age 9: Velcro Shoes
             case "198C1":
@@ -15181,21 +15165,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;      
-
-         // id 197, Artifacts age 9: United Nations Charter
-         case "197C1A":
-            // "Transfer all top cards on your board with a demand effect to my score pile"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'has_demand_effect' => true,
-            );
-            break;
 
          // id 198, Artifacts age 9: Velcro Shoes
          case "198C1A":

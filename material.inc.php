@@ -1298,9 +1298,13 @@ $this->textual_card_infos = array(
     ),
 
     197 => array(
-        'name'                => clienttranslate('United Nations Charter'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to transfer all top cards on your board with a demand effect to my score pile!'),
-        'non_demand_effect_1' => clienttranslate('If you have a top card on your board with a demand effect, draw a ${age_10}.'),
+        'name_first_and_third'                => clienttranslate('United Nations Charter'),
+        'name_fourth'                         => clienttranslate('Crusader Rabbit'),
+        'i_compel_effect_first_and_third'     => clienttranslate('${I compel} you to transfer all top cards on your board with a demand effect to my score pile!'),
+        'i_compel_effect_fourth'              => clienttranslate('${I compel} you to transfer the two bottom cards of each color which has a top card with a demand effect to my score pile!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have a top card on your board with a demand effect, draw a ${age_10}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have a top card on your board with a demand effect, score it, and draw a ${age_10}.'),
+        'separate_4E_implementation'          => true,
     ),
 
     198 => array(
