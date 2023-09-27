@@ -28,7 +28,8 @@ class Card120 extends AbstractCard
     ];
   }
 
-  public function handleCardChoice(array $meldedCard) {
+  public function handleCardChoice(array $meldedCard)
+  {
     foreach (array_reverse(self::getStack($meldedCard['color'])) as $card) {
       if ($card['id'] != $meldedCard['id']) {
         self::score($card);

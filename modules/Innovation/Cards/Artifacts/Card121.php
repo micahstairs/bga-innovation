@@ -26,20 +26,21 @@ class Card121 extends AbstractCard
       self::setAuxiliaryValue(-1);
       self::setAuxiliaryValue2(-1);
       return [
-        'n' => 3,
+        'n'             => 3,
         'location_from' => 'hand',
-        'location_to' => 'revealed'
+        'location_to'   => 'revealed'
       ];
     } else {
       return [
-        'n' => 2,
+        'n'             => 2,
         'location_from' => 'revealed',
         'score_keyword' => true,
       ];
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === -1) {
         self::setAuxiliaryValue($card['color']); // Track color of first scored card
@@ -49,7 +50,8 @@ class Card121 extends AbstractCard
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isSecondInteraction()) {
       self::tuck(self::getRevealedCard());
       $color1 = self::getAuxiliaryValue();

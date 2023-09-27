@@ -26,7 +26,7 @@ class Card116 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return [
         'location_from' => 'hand',
-        'location_to' => 'revealed,score',
+        'location_to'   => 'revealed,score',
         'score_keyword' => true,
       ];
     } else {

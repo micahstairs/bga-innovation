@@ -46,7 +46,8 @@ class Card118 extends AbstractCard
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isFourthEdition() && self::isSecondInteraction()) {
       self::junkBaseDeck(self::getAuxiliaryValue());
     }

@@ -35,12 +35,13 @@ class Card112 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
-      'location_from' => 'revealed,score',
+      'location_from'  => 'revealed,score',
       'return_keyword' => true,
     ];
   }
 
-  private function getCardName(array $card): string {
+  private function getCardName(array $card): string
+  {
     return $this->game->getCardName($card['id']);
   }
 
