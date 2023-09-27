@@ -1345,8 +1345,9 @@ $this->textual_card_infos = array(
     ),
 
     204 => array(
-        'name'                => clienttranslate('Marilyn Diptych'),
-        'non_demand_effect_1' => clienttranslate('You may score a card from your hand. You may transfer any card from your score pile to your hand. If you have exactly 25 points, you win.'),
+        'name'                       => clienttranslate('Marilyn Diptych'),
+        'non_demand_effect_1'        => clienttranslate('You may score a card from your hand. You may transfer any card from your score pile to your hand. If you have exactly 25 points, you win.'),
+        'non_demand_effect_2_fourth' => clienttranslate('Junk an available standard achievement.'),
     ),
 
     /* Artifacts - Age 10 */

@@ -4191,23 +4191,31 @@ class Innovation extends Table
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card_id);
 
         $card_arg = ['card_ids' => [$card_id], 'card' => self::getNotificationArgsForCardList(array($card))];
-        self::notifyPlayer($player_id, 'logWithCardTooltips', $message_for_player, array_merge(
-            $card_arg,
-            $delimiters_for_player,
-            array(
-                'You'  => 'You',
-                'icon' => $card['dogma_icon'],
+        self::notifyPlayer(
+            $player_id,
+            'logWithCardTooltips',
+            $message_for_player,
+            array_merge(
+                $card_arg,
+                $delimiters_for_player,
+                array(
+                    'You'  => 'You',
+                    'icon' => $card['dogma_icon'],
+                )
             )
-        )
         );
-        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', $message_for_others, array_merge(
-            $card_arg,
-            $delimiters_for_others,
-            array(
-                'player_name' => self::getPlayerNameFromId($player_id),
-                'icon'        => $card['dogma_icon'],
+        self::notifyAllPlayersBut(
+            $player_id,
+            'logWithCardTooltips',
+            $message_for_others,
+            array_merge(
+                $card_arg,
+                $delimiters_for_others,
+                array(
+                    'player_name' => self::getPlayerNameFromId($player_id),
+                    'icon'        => $card['dogma_icon'],
+                )
             )
-        )
         );
     }
 
@@ -13088,11 +13096,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 204, Artifacts age 9: Marilyn Diptych
-                case "204N1":
-                    $step_max = 2;
-                    break;
-
                 // id 205, Artifacts age 10: Rover Curiosity
                 case "205N1":
                     // "Draw and meld an Artifact 10"
@@ -15897,37 +15900,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 204, Artifacts age 9: Marilyn Diptych
-            case "204N1A":
-                // "You may score a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true
-                );
-                break;
-
-            case "204N1B":
-                // "You may transfer any card from your score pile to your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'hand'
-                );
-                break;
-
             // id 208, Artifacts age 10: Maldives
             case "208C1A":
                 // "I compel you to return all cards in your hand but two"
@@ -17487,17 +17459,6 @@ class Innovation extends Table
                         // "Transfer all cards in your hand to my hand"
                         foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                             self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                        }
-                        break;
-
-                    case "204N1B":
-                        // "If you have exactly 25 points, you win"
-                        if (self::getPlayerScore($player_id) == 25) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly 25 points.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly 25 points.'), array('player_name' => self::renderPlayerName($player_id)));
-                            $this->innovationGameState->set('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Marilyn Diptych');
-                            throw new EndOfGame();
                         }
                         break;
 

@@ -36,7 +36,7 @@ class Card203 extends AbstractCard
       }
     }
 
-    self::getAuxiliaryValue(0); // Indicate that no change has occurred yet
+    self::setAuxiliaryValue(0); // Indicate that no change has occurred yet
     self::selfExecute(self::getTopCardOfColor(Colors::BLUE));
   }
 
