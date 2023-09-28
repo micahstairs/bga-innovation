@@ -13110,14 +13110,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 205, Artifacts age 10: Rover Curiosity
-                case "205N1":
-                    // "Draw and meld an Artifact 10"
-                    $card = self::executeDrawAndMeld($player_id, 10, CardTypes::ARTIFACTS);
-                    // "Execute the effects of the melded card as if they were on this card. Do not share them"
-                    self::fullyExecute($card);
-                    break;
-
                 // id 206, Artifacts age 10: Higgs Boson
                 case "206N1":
                     // "Transfer all cards on your board to your score pile"

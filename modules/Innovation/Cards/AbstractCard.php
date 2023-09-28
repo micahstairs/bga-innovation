@@ -501,6 +501,11 @@ abstract class AbstractCard
     return $this->game->executeDrawAndMeld(self::coercePlayerId($playerId), $age);
   }
 
+  protected function drawAndMeldType(int $age, int $type, int $playerId = null): ?array
+  {
+    return $this->game->executeDrawAndMeld(self::coercePlayerId($playerId), $age, $type);
+  }
+
   protected function drawAndTuck(int $age, int $playerId = null): ?array
   {
     return $this->game->executeDrawAndTuck(self::coercePlayerId($playerId), $age);
