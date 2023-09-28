@@ -13045,29 +13045,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 209, Artifacts age 10: Maastricht Treaty
-                case "209N1":
-                    // "If you have the most cards in your score pile, you win"
-                    $win_condition_met = true;
-                    $cards_in_my_score_pile = self::countCardsInLocation($player_id, 'score');
-                    foreach (self::getAllActivePlayerIds() as $id) {
-                        if ($player_id != $id && self::countCardsInLocation($id, 'score') >= $cards_in_my_score_pile) {
-                            $win_condition_met = false;
-                            break;
-                        }
-                    }
-                    if ($win_condition_met) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards in your score pile.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in his score pile.'), array('player_name' => self::renderPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Maastricht Treaty');
-                        throw new EndOfGame();
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards in your score pile.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in his score pile.'), array('player_name' => self::renderPlayerName($player_id)));
-                    }
-                    break;
-
                 // id 210, Artifacts age 10: Seikan Tunnel
                 case "210N1":
                     // "If you have the most cards of a color showing on your board out of all colors on all boards, you win"

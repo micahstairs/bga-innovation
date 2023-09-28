@@ -1366,8 +1366,10 @@ $this->textual_card_infos = array(
     ),
 
     209 => array(
-        'name'                => clienttranslate('Maastricht Treaty'),
-        'non_demand_effect_1' => clienttranslate('If you have the most cards in your score pile, you win.'),
+        'name_first_and_third'                => clienttranslate('Maastricht Treaty'),
+        'name_fourth'                         => clienttranslate('Musk\'s Tesla Roadster'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have the most cards in your score pile, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have the most cards in your score pile, you win. Otherwise, draw and reveal an ${age_11}. Score all cards on your board of the color of the drawn card. If you do, return the drawn card. Otherwise, meld it.'),
     ),
 
     210 => array(
