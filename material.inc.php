@@ -1347,8 +1347,9 @@ $this->textual_card_infos = array(
     ),
 
     206 => array(
-        'name'                => clienttranslate('Higgs Boson'),
-        'non_demand_effect_1' => clienttranslate('Transfer all cards on your board to your score pile.'),
+        'name'                                => clienttranslate('Higgs Boson'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Transfer all cards on your board to your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score all cards on your board.'),
     ),
 
     207 => array(

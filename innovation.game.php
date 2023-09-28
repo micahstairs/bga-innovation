@@ -1373,9 +1373,9 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'board', ['bottom_to' => true]);
     }
 
-    function scoreCard($card, $owner_to): ?array
+    function scoreCard(array $card, int $owner_to, array $properties = []): ?array
     {
-        return self::transferCardFromTo($card, $owner_to, 'score', ['score_keyword' => true]);
+        return self::transferCardFromTo($card, $owner_to, 'score', array_merge($properties, ['score_keyword' => true]));
     }
 
     function meldCard($card, $owner_to): ?array
@@ -1403,29 +1403,9 @@ class Innovation extends Table
         return self::transferCardFromTo($card, 0, 'junk', $properties);
     }
 
-    function junkCards(array $cards): bool
-    {
-        if (count($cards) === 0) {
-            return false;
-        }
-        // NOTE: The caller is responsible for any relevant messages printed to the game log.
-        for ($i = 0; $i < count($cards); $i++) {
-            self::junkCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
-        }
-        return true;
-    }
-
     function removeCard(array $card, array $properties = []): ?array
     {
         return self::transferCardFromTo($card, 0, 'removed', $properties);
-    }
-
-    function removeCards(array $cards)
-    {
-        // NOTE: The caller is responsible for any relevant messages printed to the game log.
-        for ($i = 0; $i < count($cards); $i++) {
-            self::removeCard($cards[$i], ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]);
-        }
     }
 
     function safeguardCard($card, $owner_to): ?array
@@ -1438,10 +1418,22 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'safe', ['safeguard' => false, 'force' => true]);
     }
 
+    function bulkTransferCards(array $cards, int $owner_to, string $location_to, array $properties = []): bool
+    {
+        if (count($cards) === 0) {
+            return false;
+        }
+        // NOTE: The caller is responsible for printing any relevant messages to the game log.
+        for ($i = 0; $i < count($cards); $i++) {
+            self::transferCardFromTo($cards[$i], $owner_to, $location_to, array_merge($properties, ['bulk_transfer' => true, 'last_card_of_bulk_transfer' => $i == count($cards) - 1]));
+        }
+        return true;
+    }
+
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $properties = []): ?array
+    function transferCardFromTo(array $card, int $owner_to, string $location_to, array $properties = []): ?array
     {
         if (!$card) {
             return null;
@@ -6494,7 +6486,7 @@ class Innovation extends Table
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, CardTypes::BASE)]);
             return false;
         }
-        self::junkCards($cards);
+        self::bulkTransferCards($cards, 0, Locations::JUNK);
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
             ['age' => self::getAgeSquareWithType($age, CardTypes::BASE), 'n' => self::renderNumber(count($cards))]
@@ -12572,10 +12564,10 @@ class Innovation extends Table
                         }
 
                         if ($this->innovationGameState->usingFourthEditionRules()) {
-                            self::junkCards($cards);
+                            self::bulkTransferCards($cards, 0, Locations::JUNK);
                             self::notifyGeneralInfo(clienttranslate('Each player\'s non-achievement cards are junked.'));
                         } else {
-                            self::removeCards($cards);
+                            self::bulkTransferCards($cards, 0, Locations::REMOVED);
                             self::notifyGeneralInfo(clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'));
                         }
 
@@ -13107,18 +13099,6 @@ class Innovation extends Table
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                     for ($i = 0; $i < self::intDivision($number_of_clocks, 2); $i++) { // "For every two clocks on your board"
                         self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                    }
-                    break;
-
-                // id 206, Artifacts age 10: Higgs Boson
-                case "206N1":
-                    // "Transfer all cards on your board to your score pile"
-                    $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                    for ($i = 0; $i < 5; $i++) {
-                        $pile = $piles[$i];
-                        for ($j = count($pile) - 1; $j >= 0; $j--) {
-                            self::transferCardFromTo($pile[$j], $player_id, 'score');
-                        }
                     }
                     break;
 

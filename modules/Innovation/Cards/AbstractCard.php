@@ -358,12 +358,22 @@ abstract class AbstractCard
     return $this->game->scoreCard($card, self::coercePlayerId($playerId));
   }
 
+  protected function scoreCards(array $cards, int $playerId = null): bool
+  {
+    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), 'score', ['score_keyword' => true]);
+  }
+
   protected function transferToScorePile(?array $card, int $playerId = null)
   {
     if (!$card) {
       return null;
     }
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'score');
+  }
+
+  protected function transferCardsToScorePile(array $cards, int $playerId = null): bool
+  {
+    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), 'score');
   }
 
   protected function meld(?array $card, int $playerId = null)
@@ -464,7 +474,7 @@ abstract class AbstractCard
 
   protected function junkCards(array $cards): bool
   {
-    return $this->game->junkCards($cards);
+    return $this->game->bulkTransferCards($cards, 0, Locations::JUNK);
   }
 
   protected function junk(?array $card): ?array

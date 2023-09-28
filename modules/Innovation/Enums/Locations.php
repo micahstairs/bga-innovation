@@ -13,6 +13,7 @@ class Locations
   const JUNK = 'junk';
   const PILE = 'pile'; // This is special location used for board interactions, which allows players to choose all cards in the pile instead of just the top card of the stack
   const RELICS = 'relics';
+  const REMOVED = 'removed';
   const REVEALED = 'revealed'; // This location does not actually exist in the physical game
   const SAFE = 'safe';
   const SCORE = 'score';
