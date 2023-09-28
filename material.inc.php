@@ -1353,9 +1353,9 @@ $this->textual_card_infos = array(
     ),
 
     207 => array(
-        'name_first_and_third' => clienttranslate('Exxon Valdez'),
-        'name_fourth'          => clienttranslate('Tanker Exxon Valdez'),
-        'i_compel_effect'      => clienttranslate('${I compel} you to remove all cards from your hand, score pile, board, and achievements from the game! You lose! If there is only one player remaining in the game, that player wins!'),
+        'name_first_and_third'            => clienttranslate('Exxon Valdez'),
+        'name_fourth'                     => clienttranslate('Tanker Exxon Valdez'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to remove all cards from your hand, score pile, board, and achievements from the game! You lose! If there is only one player remaining in the game, that player wins!'),
     ),
 
     208 => array(

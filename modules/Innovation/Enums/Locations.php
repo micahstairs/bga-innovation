@@ -26,4 +26,6 @@ class Locations
 
   // Special values which are used for interaction options but cannot be encoded/decoded
   const AVAILABLE_ACHIEVEMENTS = 'available achievements';
+
+  const PLAYER_LOCATIONS = [ACHIEVEMENTS, BOARD, DISPLAY, FORECAST, HAND, SAFE, SCORE];
 }

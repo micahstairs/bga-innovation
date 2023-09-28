@@ -4794,35 +4794,6 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.notif_removedPlayer = function (notif) {
         var player_id = notif.args.player_to_remove;
-        // NOTE: The button to look at the player's forecast is broken in archive mode.
-        if (this.gamedatas.echoes_expansion_enabled && !g_archive_mode) {
-            this.zone["my_forecast_verso"].removeAll();
-        }
-        // NOTE: The button to look at the player's score pile is broken in archive mode.
-        if (!g_archive_mode) {
-            this.zone["my_score_verso"].removeAll();
-        }
-        this.zone["revealed"][player_id].removeAll();
-        this.zone["hand"][player_id].removeAll();
-        this.zone["forecast"][player_id].removeAll();
-        this.zone["score"][player_id].removeAll();
-        this.zone["achievements"][player_id].removeAll();
-        if (this.gamedatas.artifacts_expansion_enabled) {
-            this.zone["display"][player_id].removeAll();
-        }
-        for (var color = 0; color < 5; color++) {
-            this.zone["board"][player_id][color].removeAll();
-        }
-        this.scoreCtrl[player_id].setValue(0);
-        this.counter["score"][player_id].setValue(0);
-        this.zone["hand"][player_id].counter.setValue(0);
-        this.counter["max_age_on_board"][player_id].setValue(0);
-        if (this.gamedatas.echoes_expansion_enabled) {
-            this.zone["forecast"][player_id].counter.setValue(0);
-        }
-        for (var icon = 1; icon <= 7; icon++) {
-            this.counter["resource_count"][player_id][icon].setValue(0);
-        }
         dojo.byId('player_' + player_id).style.display = 'none';
     };
     Innovation.prototype.notif_updateResourcesForArtifactOnDisplay = function (notif) {

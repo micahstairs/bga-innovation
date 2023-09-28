@@ -1112,8 +1112,6 @@ abstract class AbstractCard
   {
     $playerId = self::coercePlayerId($playerId);
 
-    // TODO(4E): Junk all of the player's cards.
-
     // The entire team loses if one player loses 
     if ($this->game->isTeamGame()) {
       $teammateId = $this->game->getPlayerTeammate($playerId);
@@ -1134,6 +1132,40 @@ abstract class AbstractCard
     // Otherwise, eliminate the player
     $this->notifications->notifyPlayerLoses($playerId);
     $this->game->eliminatePlayer($playerId);
+    $args = ['player_to_remove' => $playerId];
+    $this->game->notifyPlayer($playerId, 'removedPlayer', '', $args);
+    $this->game->notifyAllPlayersBut($playerId, 'removedPlayer', '', $args);
+
+    // Junk all cards that the player had
+    self::junkAllCards($playerId);
+
+    // Even if no cards are removed we will still mark that change has occurred because a player has been eliminated.
+    $this->game->recordThatChangeOccurred();
+  }
+
+  protected function junkAllCards(int $playerId = null)
+  {
+    $playerId = self::coercePlayerId($playerId);
+
+    $cards = [];
+    foreach (Locations::PLAYER_LOCATIONS as $location) {
+      $cards = array_merge($cards, self::getCards($location, $playerId));
+    }
+
+    if (!$cards) {
+      return;
+    }
+
+    $targetLocation = self::isFirstOrThirdEdition() ? Locations::REMOVED : Locations::JUNK;
+    $this->game->bulkTransferCards($cards, 0, $targetLocation, ['player_already_lost' => true]);
+
+    if (self::isFirstOrThirdEdition()) {
+      self::notifyPlayer(clienttranslate('All ${your} cards were removed from the game.'));
+      self::notifyOthers(clienttranslate('All ${player_name}\'s cards were removed from the game.'));
+    } else {
+      self::notifyPlayer(clienttranslate('All ${your} cards were junked.'));
+      self::notifyOthers(clienttranslate('All ${player_name}\'s cards were junked.'));
+    }
   }
 
   private function getRemainingPlayerIdsAfterEliminating(array $idsToEliminate): array

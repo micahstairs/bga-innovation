@@ -1451,6 +1451,7 @@ class Innovation extends Table
         $force = array_key_exists('force', $properties) ? $properties['force'] : false;
         $bulk_transfer = array_key_exists('bulk_transfer', $properties) ? $properties['bulk_transfer'] : false;
         $last_card_of_bulk_transfer = array_key_exists('last_card_of_bulk_transfer', $properties) ? $properties['last_card_of_bulk_transfer'] : false;
+        $player_already_lost = array_key_exists('player_already_lost', $properties) ? $properties['player_already_lost'] : false;
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("  - Transferring " . self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
@@ -1683,7 +1684,7 @@ class Innovation extends Table
         if ($current_state['name'] != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
-                if ($card['type'] == 2) {
+                if ($card['type'] == CardTypes::CITIES && !$player_already_lost) {
                     if ($location_from == 'hand' && $location_to == 'junk') {
                         if (self::hasRessource($card, 8)) { // has a flag
                             self::claimSpecialAchievement($owner_from, 328); // Glory (4th edition)
@@ -6492,64 +6493,6 @@ class Innovation extends Table
             ['age' => self::getAgeSquareWithType($age, CardTypes::BASE), 'n' => self::renderNumber(count($cards))]
         );
         return true;
-    }
-
-    function removeAllCardsFromPlayer($player_id)
-    {
-        // Even if no cards are removed we will still mark that change has occurred because a player has been eliminated.
-        self::recordThatChangeOccurred();
-
-        self::DbQuery(self::format("
-            UPDATE
-                card
-            SET
-                owner = 0,
-                location = 'removed',
-                position = NULL
-            WHERE
-                owner = {player_id}
-        ", array('player_id' => $player_id)));
-
-        self::DbQuery(self::format("
-            UPDATE
-                player
-            SET
-                player_score = 0,
-                player_innovation_score = 0,
-                player_icon_count_1 = 0,
-                player_icon_count_2 = 0,
-                player_icon_count_3 = 0,
-                player_icon_count_4 = 0,
-                player_icon_count_5 = 0,
-                player_icon_count_6 = 0,
-                player_icon_count_7 = 0
-            WHERE
-                player_id = {player_id}
-        ", array('player_id' => $player_id)));
-
-        self::setStat(0, 'achievements_number', $player_id);
-        self::setStat(0, 'special_achievements_number', $player_id);
-        self::setStat(0, 'score', $player_id);
-        self::setStat(0, 'max_age_on_board', $player_id);
-
-        self::notifyPlayer(
-            $player_id,
-            'removedPlayer',
-            clienttranslate('All ${your} cards were removed from the game.'),
-            array(
-                'your'             => 'your',
-                'player_to_remove' => $player_id,
-            )
-        );
-        self::notifyAllPlayersBut(
-            $player_id,
-            'removedPlayer',
-            clienttranslate('All ${player_name}\'s cards were removed from the game.'),
-            array(
-                'player_name'      => self::renderPlayerName($player_id),
-                'player_to_remove' => $player_id,
-            )
-        );
     }
 
     function setSelectionRange($options)
@@ -13099,43 +13042,6 @@ class Innovation extends Table
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                     for ($i = 0; $i < self::intDivision($number_of_clocks, 2); $i++) { // "For every two clocks on your board"
                         self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                    }
-                    break;
-
-                // id 207, Artifacts age 10: Exxon Valdez
-                case "207C1":
-                    // "I compel you to remove all cards from your hand, score pile, board, and achievements from the game"
-                    self::removeAllCardsFromPlayer($player_id);
-
-                    // "You lose! If there is only one player remaining in the game, that player wins"
-                    if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut(
-                            $player_id,
-                            'log',
-                            clienttranslate('${player_name} loses.'),
-                            array(
-                                'player_name' => self::renderPlayerName($player_id)
-                            )
-                        );
-                        if (count(self::getAllActivePlayers()) == 2) {
-                            $this->innovationGameState->set('winner_by_dogma', $launcher_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
-                            throw new EndOfGame();
-                        } else {
-                            // Only eliminate the player if the game isn't ending
-                            self::eliminatePlayer($player_id);
-                        }
-                    } else { // Team play
-                        // Entire team loses if one player loses 
-                        $teammate_id = self::getPlayerTeammate($player_id);
-                        $losing_team = array($player_id, $teammate_id);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                        self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                        self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
-                        $this->innovationGameState->set('winner_by_dogma', $launcher_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
-                        throw new EndOfGame();
                     }
                     break;
 
