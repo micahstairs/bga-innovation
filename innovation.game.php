@@ -13045,19 +13045,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 208, Artifacts age 10: Maldives
-                case "208C1":
-                    $step_max = 2;
-                    break;
-
-                case "208N1":
-                    $score_cards = self::getCardsInLocation($player_id, 'score');
-                    self::setAuxiliaryValue(count($score_cards));
-                    if (count($score_cards) > 4) {
-                        $step_max = 1;
-                    }
-                    break;
-
                 // id 209, Artifacts age 10: Maastricht Treaty
                 case "209N1":
                     // "If you have the most cards in your score pile, you win"
@@ -15789,55 +15776,6 @@ class Innovation extends Table
                     'splay_direction' => 3,
                     /* up */
                     'color'           => array(2) /* green */
-                );
-                break;
-
-            // id 208, Artifacts age 10: Maldives
-            case "208C1A":
-                // "I compel you to return all cards in your hand but two"
-                $num_cards_in_hand = count(self::getCardsInLocation($player_id, 'hand'));
-                if ($num_cards_in_hand > 2) {
-                    $options = array(
-                        'player_id'     => $player_id,
-                        'n'             => $num_cards_in_hand - 2,
-                        'can_pass'      => false,
-
-                        'owner_from'    => $player_id,
-                        'location_from' => 'hand',
-                        'owner_to'      => 0,
-                        'location_to'   => 'deck'
-                    );
-                }
-                break;
-
-            case "208C1B":
-                // "Return all cards in your score pile but two"
-                $num_cards_in_score_pile = count(self::getCardsInLocation($player_id, 'score'));
-                if ($num_cards_in_score_pile > 2) {
-                    $options = array(
-                        'player_id'     => $player_id,
-                        'n'             => $num_cards_in_score_pile - 2,
-                        'can_pass'      => false,
-
-                        'owner_from'    => $player_id,
-                        'location_from' => 'score',
-                        'owner_to'      => 0,
-                        'location_to'   => 'deck'
-                    );
-                }
-                break;
-
-            case "208N1A":
-                // "Return all cards in your score pile but four"
-                $num_cards = self::getAuxiliaryValue();
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => $num_cards - 4,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
                 );
                 break;
 
