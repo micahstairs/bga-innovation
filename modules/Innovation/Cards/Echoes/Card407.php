@@ -78,11 +78,11 @@ class Card407 extends AbstractCard
           'with_icon'      => Icons::EFFICIENCY,
         ];
       } else {
-        // TODO(4E): Also allow player to junk special achievements.
         return [
-          'n'             => self::countCards(Locations::ACHIEVEMENTS),
-          'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-          'junk_keyword'  => true,
+          'n'                            => self::countCards(Locations::ACHIEVEMENTS),
+          'location_from'                => Locations::AVAILABLE_ACHIEVEMENTS,
+          'include_special_achievements' => true,
+          'junk_keyword'                 => true,
         ];
       }
     }

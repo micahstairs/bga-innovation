@@ -1953,7 +1953,7 @@ class Innovation extends Table
                 card
             WHERE
                 selected IS TRUE AND
-                (location = 'board' OR (owner = {player_id} AND location != 'achievements') OR (owner = 0 AND age IS NULL))
+                (location = 'board' OR (owner = {player_id} AND location != 'achievements') OR (location = 'achievements' AND age IS NULL))
         ",
                 ['player_id' => $player_id]
             )

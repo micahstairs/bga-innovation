@@ -45,9 +45,10 @@ class Card397 extends AbstractCard
         ];
       } else {
         return [
-          'n'             => 4,
-          'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-          'junk_keyword'  => true,
+          'n'                            => 4,
+          'location_from'                => Locations::AVAILABLE_ACHIEVEMENTS,
+          'include_special_achievements' => true,
+          'junk_keyword'                 => true,
         ];
       }
     } else {
