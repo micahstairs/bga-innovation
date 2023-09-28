@@ -1499,7 +1499,7 @@ class Innovation extends BgaGame {
                                     'card': option.card, // Used by cards like Scissors
                                     'i18n': option.i18n,
                                 }
-                            ), "action_clicForChooseSpecialOption")
+                                ), "action_clicForChooseSpecialOption")
                         }
                         last_button_id = "choice_" + args.options[args.options.length - 1].value;
                     } else if (splay_choice) {
@@ -2823,7 +2823,11 @@ class Innovation extends BgaGame {
         let identifiers: string[] = [];
         for (let i = 0; i < cards.length; i++) {
             let card = cards[i];
-            identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "M card"));
+            if (card.age === null) {
+                identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "S card"));
+            } else {
+                identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "M card"));
+            }
         }
         return dojo.query(identifiers.join(","));
     }
@@ -5167,7 +5171,7 @@ class Innovation extends BgaGame {
 
         if (card.location_to == 'removed') {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
-        } else  if (is_fountain_or_flag && card.owner_from == 0) {
+        } else if (is_fountain_or_flag && card.owner_from == 0) {
             // Make the card appear that it is coming from the card with the fountain/flag icon
             let pile = this.zone["board"][card.owner_to][card.color].items;
             let top_card = pile[pile.length - 1];

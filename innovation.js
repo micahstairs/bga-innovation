@@ -2619,7 +2619,12 @@ var Innovation = /** @class */ (function (_super) {
         var identifiers = [];
         for (var i = 0; i < cards.length; i++) {
             var card = cards[i];
-            identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "M card"));
+            if (card.age === null) {
+                identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "S card"));
+            }
+            else {
+                identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "M card"));
+            }
         }
         return dojo.query(identifiers.join(","));
     };
@@ -4494,7 +4499,6 @@ var Innovation = /** @class */ (function (_super) {
         dojo.subscribe('splayedPile', this, "notif_splayedPile");
         this.notifqueue.setSynchronous('splayedPile', reasonnable_delay); // Wait X milliseconds after executing the splayedPile handler
         dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile"); // This kind of notification does not need any delay
-        dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands"); // This kind of notification does not need any delay
         dojo.subscribe('removedPlayer', this, "notif_removedPlayer"); // This kind of notification does not need any delay
         dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay"); // This kind of notification does not need any delay
         dojo.subscribe('resetMonumentCounters', this, "notif_resetMonumentCounters"); // This kind of notification does not need any delay
@@ -4508,7 +4512,6 @@ var Innovation = /** @class */ (function (_super) {
             dojo.subscribe('splayedPile_spectator', this, "notif_splayedPile_spectator");
             this.notifqueue.setSynchronous('splayedPile_spectator', reasonnable_delay); // Wait X milliseconds after executing the handler
             dojo.subscribe('rearrangedPile_spectator', this, "notif_rearrangedPile_spectator"); // This kind of notification does not need any delay
-            dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator"); // This kind of notification does not need any delay
             dojo.subscribe('resetMonumentCounters_spectator', this, "notif_resetMonumentCounters_spectator"); // This kind of notification does not need any delay
@@ -4789,26 +4792,6 @@ var Innovation = /** @class */ (function (_super) {
         // Update special achievements overview with progression towards each achievement
         this.refreshSpecialAchievementProgression();
     };
-    Innovation.prototype.notif_removedTopCardsAndHands = function (notif) {
-        // Remove cards
-        for (var player_id in this.players) {
-            this.zone["hand"][player_id].removeAll();
-        }
-        for (var i = 0; i < notif.args.top_cards_to_remove.length; i++) {
-            var card = notif.args.top_cards_to_remove[i];
-            this.removeFromZone(this.zone["board"][card.owner][card.color], card.id, true, card.age, card.type, card.is_relic);
-        }
-        // Update counters
-        for (var player_id in this.players) {
-            this.zone["hand"][player_id].counter.setValue(0);
-            this.counter["max_age_on_board"][player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
-            for (var icon = 1; icon <= 7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
-            }
-        }
-        // Update special achievements overview with progression towards each achievement
-        this.refreshSpecialAchievementProgression();
-    };
     Innovation.prototype.notif_removedPlayer = function (notif) {
         var player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
@@ -4908,12 +4891,6 @@ var Innovation = /** @class */ (function (_super) {
         this.log_for_spectator(notif);
         // Call normal notif
         this.notif_rearrangedPile(notif);
-    };
-    Innovation.prototype.notif_removedTopCardsAndHands_spectator = function (notif) {
-        // Put the message for the spectator in log
-        this.log_for_spectator(notif);
-        // Call normal notif
-        this.notif_removedTopCardsAndHands(notif);
     };
     Innovation.prototype.notif_removedPlayer_spectator = function (notif) {
         // Put the message for the spectator in log

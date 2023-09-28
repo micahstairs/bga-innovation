@@ -1,19 +1,10 @@
 <?php
 /**
- *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Innovation implementation : © Jean Portemer <jportemer@gmail.com> and Micah Stairs <micah.stairs@gmail.com>
+ * Innovation implementation: © Jean Portemer <jportemer@gmail.com> and Micah Stairs <micah.stairs@gmail.com>
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
- * -----
- * 
- * innovation.game.php
- *
- * This is the main file for your game logic.
- *
- * In this PHP file, you are going to defines the rules of the game.
- *
  */
 
 require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
@@ -75,9 +66,9 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 59-67, 91-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 60-67, 91-92
         self::initGameStateLabels(
-            array(
+            [
                 'number_of_achievements_needed_to_win' => 10,
                 'turn0'                                => 11,
                 'first_player_with_only_one_action'    => 12,
@@ -87,8 +78,8 @@ class Innovation extends Table
                 'player_who_could_not_draw'            => 16,
                 'winner_by_dogma'                      => 17,
                 'active_player'                        => 18,
-                'endorse_action_state'                 => 19,
                 // 0 = not allowed to do an endorse action, 1 = allowed to do an endorse action, 2 = currently executing an effect for the 1st time, 3 = currently executing an effect for the 2nd time
+                'endorse_action_state'                 => 19,
                 'sharing_bonus'                        => 23,
                 'special_type_of_choice'               => 26,
                 'choice'                               => 27,
@@ -106,11 +97,11 @@ class Innovation extends Table
                 'age_min'                              => 38,
                 'age_max'                              => 39,
                 'color_array'                          => 40,
+                // TODO(LATER): Remove with_icon. It's now stored in with_icons instead.
                 'with_icon'                            => 41,
-                // TODO(LATER): Remove this. It's now stored in with_icons instead.
                 'with_icons'                           => 52,
+                // TODO(LATER): Remove without_icon. It's now stored in without_icons instead.
                 'without_icon'                         => 42,
-                // TODO(LATER): Remove this. It's now stored in without_icons instead.
                 'without_icons'                        => 53,
                 'not_id'                               => 43,
                 'n'                                    => 44,
@@ -120,13 +111,14 @@ class Innovation extends Table
                 'score_keyword'                        => 48,
                 'meld_keyword'                         => 50,
                 'achieve_keyword'                      => 54,
+                // TODO(4E): Remove draw_keyword if it doesn't end up being used
                 'draw_keyword'                         => 55,
-                // TODO(4E): Remove this if it doesn't end up being used
                 'safeguard_keyword'                    => 56,
                 'return_keyword'                       => 57,
                 'foreshadow_keyword'                   => 58,
-                'limit_shrunk_selection_size'          => 68,
+                'include_special_achievements'         => 59,
                 // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
+                'limit_shrunk_selection_size'          => 68,
                 'card_id_1'                            => 69,
                 'card_id_2'                            => 70,
                 'card_id_3'                            => 71,
@@ -150,38 +142,39 @@ class Innovation extends Table
                 'with_bonus'                           => 87,
                 'without_bonus'                        => 88,
                 'card_ids_are_in_auxiliary_array'      => 89,
-                'reveal_if_unable'                     => 90,
                 // 1 if the zone should be revealed if the player is unable to perform the interaction, else 0
+                'reveal_if_unable'                     => 90,
 
-                'foreseen_card_id'                     => 93,
                 // ID of the card which was foreseen
-                'melded_card_id'                       => 94,
+                'foreseen_card_id'                     => 93,
                 // ID of the card which was melded
-                'relic_id'                             => 95,
+                'melded_card_id'                       => 94,
                 // ID of the relic which may be seized
-                'current_action_number'                => 96,
+                'relic_id'                             => 95,
                 // -1 = none, 0 = free action, 1 = first action, 2 = second action
-                'current_nesting_index'                => 97,
+                'current_action_number'                => 96,
                 // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
-                'release_version'                      => 98,
+                'current_nesting_index'                => 97,
                 // Used to help release new versions of the game without breaking existing games (3 = Cities, 4 = 4th edition base game, 5 = 4th edition Unseen)
-                'debug_mode'                           => 99,
+                'release_version'                      => 98,
                 // 0 for disabled, 1 for enabled
+                'debug_mode'                           => 99,
 
-                'game_type'                            => 100,
                 // 1 for normal game, 2/3/4/5 for team game
-                'game_rules'                           => 101,
+                'game_type'                            => 100,
                 // 1 for third edition, 2 for first edition, 3 for fourth edition
-                'artifacts_mode'                       => 102,
+                'game_rules'                           => 101,
                 // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
+                'artifacts_mode'                       => 102,
+                // 1 for "Disabled", 2 for "Enabled"
                 'cities_mode'                          => 103,
                 // 1 for "Disabled", 2 for "Enabled"
                 'echoes_mode'                          => 104,
                 // 1 for "Disabled", 2 for "Enabled"
                 'unseen_mode'                          => 106,
                 // 1 for "Disabled", 2 for "Enabled"
-                'extra_achievement_to_win'             => 110 // 1 for "Disabled", 2 for "Enabled"
-            )
+                'extra_achievement_to_win'             => 110,
+            ]
         );
     }
 
@@ -223,6 +216,12 @@ class Innovation extends Table
                 'reveal_if_unable' => 90,
             ]);
             $this->innovationGameState->set('reveal_if_unable', -1);
+        }
+
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2309210501) {
+            self::initGameStateLabels(['include_special_achievements' => 59]);
+            $this->innovationGameState->set('include_special_achievements', -1);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -526,6 +525,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('icon_hash_5', -1); // icon hash of a card which is allowed to be selected, else -1
         $this->innovationGameState->setInitial('enable_autoselection', -1); // 1 if cards are allowed to be autoselected during an interaction
         $this->innovationGameState->setInitial('include_relics', -1); // 1 if relics cards are allowed to be selected during an interaction
+        $this->innovationGameState->setInitial('include_special_achievements', -1); // 1 if special achievements are allowed to be selected during an interaction
         $this->innovationGameState->setInitial('with_bonus', -1); // 1 if only cards with a bonus are allowed to be selected during an interaction
         $this->innovationGameState->setInitial('without_bonus', -1); // 1 if only cards without a bonus are allowed to be selected during an interaction
         $this->innovationGameState->setInitial('card_ids_are_in_auxiliary_array', -1); // 1 if only cards whose ID are in the auxiliary array are allowed to be selected during an interaction
@@ -1953,11 +1953,9 @@ class Innovation extends Table
                 card
             WHERE
                 selected IS TRUE AND
-                (location = 'board' OR owner = {player_id} AND location != 'achievements')
-                
+                (location = 'board' OR (owner = {player_id} AND location != 'achievements') OR (owner = 0 AND age IS NULL))
         ",
-                // A player can see the versos of all cards on all boards and all the cards in his hand and his score
-                array('player_id' => $player_id)
+                ['player_id' => $player_id]
             )
         );
     }
@@ -1973,9 +1971,10 @@ class Innovation extends Table
             WHERE
                 selected IS TRUE AND
                 location != 'board' AND
+                age IS NOT NULL AND
                 (owner != {player_id} OR location = 'score' OR location = 'forecast' OR location = 'achievements' OR location = 'safe')
         ",
-                array('player_id' => $player_id)
+                ['player_id' => $player_id]
             )
         );
     }
@@ -6717,10 +6716,13 @@ class Innovation extends Table
             $rewritten_options['icon_hash_5'] = -1;
         }
         if (!array_key_exists('enable_autoselection', $rewritten_options)) {
-            $rewritten_options['enable_autoselection'] = 1;
+            $rewritten_options['enable_autoselection'] = true;
         }
         if (!array_key_exists('include_relics', $rewritten_options)) {
-            $rewritten_options['include_relics'] = 1;
+            $rewritten_options['include_relics'] = true;
+        }
+        if (!array_key_exists('include_special_achievements', $rewritten_options)) {
+            $rewritten_options['include_special_achievements'] = false;
         }
         if (!array_key_exists('with_bonus', $rewritten_options)) {
             $rewritten_options['with_bonus'] = false;
@@ -6818,6 +6820,7 @@ class Innovation extends Table
                 case 'bottom_to':
                 case 'enable_autoselection':
                 case 'include_relics':
+                case 'include_special_achievements':
                 case 'with_bonus':
                 case 'without_bonus':
                 case 'card_ids_are_in_auxiliary_array':
@@ -6937,23 +6940,27 @@ class Innovation extends Table
         // Condition for age
         $age_min = $this->innovationGameState->get('age_min');
         $age_max = $this->innovationGameState->get('age_max');
+        $age_args = ['age_min' => $age_min, 'age_max' => $age_max];
+        $include_special_achievements = $this->innovationGameState->get('include_special_achievements') == 1;
         if ($location_from === 'board' || $location_from === 'display') {
-            $condition_for_age = self::format("faceup_age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
+            $condition_for_age = self::format("faceup_age BETWEEN {age_min} AND {age_max}", $age_args);
+        } else if ($include_special_achievements) {
+            $condition_for_age = self::format("(age IS NULL OR (age BETWEEN {age_min} AND {age_max}))", $age_args);
         } else {
-            $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
+            $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", $age_args);
         }
         // TODO(LATER): Take 'age_array' into account if there are any cards which need to rely on this mechanism.
 
         // Condition for age because of achievement eligibility
-        $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+        $condition_for_claimable_ages = true;
         if ($this->innovationGameState->get('require_achievement_eligibility') == 1) {
             $claimable_ages = self::getClaimableValuesIgnoringAvailability($player_id);
             if (count($claimable_ages) == 0) {
-                // Avoid calling a SQL query with 'age IN ()' in it since it isn't correct syntax.
-                $claimable_ages[] = -1;
+                $condition_for_claimable_ages = "FALSE";
+            } else {
+                $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", ['claimable_ages' => join(',', $claimable_ages)]);
             }
         }
-        $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", array('claimable_ages' => join(',', $claimable_ages)));
 
         // Condition for whether it has a demand effect
         $condition_for_demand_effect = "TRUE";
@@ -6963,7 +6970,13 @@ class Innovation extends Table
 
         // Condition for color
         $color_array = $this->innovationGameState->getAsArray('color_array');
-        $condition_for_color = count($color_array) == 0 ? "FALSE" : "color IN (" . join(',', $color_array) . ")";
+        if ($include_special_achievements) {
+            $condition_for_color = "TRUE";
+        } else if (count($color_array) == 0) {
+            $condition_for_color = "FALSE";
+        } else {
+            $condition_for_color = "color IN (" . join(',', $color_array) . ")";
+        }
 
         // Condition for type
         $type_array = $this->innovationGameState->getAsArray('type_array');
@@ -7058,7 +7071,7 @@ class Innovation extends Table
             $condition_for_excluding_id = self::format("id <> {not_id}", array('not_id' => $not_id));
         }
 
-        // Condition for including relic
+        // Condition for including relics
         $condition_for_including_relic = "TRUE";
         $include_relics = $this->innovationGameState->get('include_relics');
         if ($include_relics == 0) {
@@ -11204,6 +11217,7 @@ class Innovation extends Table
             $this->innovationGameState->set('icon_hash_5', -1);
             $this->innovationGameState->set('enable_autoselection', -1);
             $this->innovationGameState->set('include_relics', -1);
+            $this->innovationGameState->set('include_special_achievements', -1);
             $this->innovationGameState->set('can_pass', -1);
             $this->innovationGameState->set('n', -1);
             $this->innovationGameState->set('id_last_selected', -1);
@@ -18516,8 +18530,8 @@ class Innovation extends Table
                         if ($splay_direction == -1) {
 
                             if ($code !== null) {
-                                $this->innovationGameState->set("age_last_selected", $card['age']);
-                                $this->innovationGameState->set("color_last_selected", $card['color']);
+                                $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
+                                $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
                                 $this->innovationGameState->set("owner_last_selected", $card['owner']);
                                 $executionState = (new ExecutionState($this))
                                     ->setEdition($this->innovationGameState->getEdition())
@@ -18589,8 +18603,8 @@ class Innovation extends Table
         if ($special_type_of_choice == 0) {
             // Mark extra information about this chosen card
             // TODO(LATER): Remove this once it becomes redundant with the same 3 lines above (once all cards are in separate files)
-            $this->innovationGameState->set("age_last_selected", $card['age']);
-            $this->innovationGameState->set("color_last_selected", $card['color']);
+            $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
+            $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
             $this->innovationGameState->set("owner_last_selected", $card['owner']);
 
             // Indicate that the player decided to return a card in order to avoid a demand

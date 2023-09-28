@@ -1,22 +1,10 @@
 <?php
 /**
- *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Innovation implementation : © Jean Portemer <jportemer@gmail.com>
+ * Innovation implementation: © Jean Portemer <jportemer@gmail.com> and Micah Stairs <micah.stairs@gmail.com>
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
- * -----
- *
- * material.inc.php
- *
- * Innovation game material description
- *
- * Here, you can describe the material of your game with PHP variables.
- *   
- * This file is loaded in your game logic class constructor, ie these variables
- * are available everywhere in your game logic code.
- *
  */
 
 $this->textual_card_infos = array(
@@ -1421,8 +1409,6 @@ $this->textual_card_infos = array(
         'non_demand_effect_1' => clienttranslate('You may return any number of cards from your score pile. If you do, draw and meld a card of value equal to the number of cards returned. If the melded card has a ${icon_6}, return it.'),
     ),
 
-    // TODO(FIGURES): When implementing Figures, we need to transcribe this relic.
-    // TODO(FIGURES): Make sure we read https://boardgamegeek.com/thread/1811482/article/27436133#27436133 when implementing this card.
     218 => array(
         'name' => clienttranslate('Ching Shih'),
     ),
