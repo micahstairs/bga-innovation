@@ -1373,9 +1373,9 @@ $this->textual_card_infos = array(
     ),
 
     210 => array(
-        'name'                => clienttranslate('Seikan Tunnel'),
-        // NOTE: Chris provided this clearer wording in https://boardgamegeek.com/thread/1937834/article/40821205#40821205.
-        'non_demand_effect_1' => clienttranslate('If you have a color with the most visible cards out of all the colors on all boards, you win.'),
+        'name'                                => clienttranslate('Seikan Tunnel'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have the most cards of a color showing on your board out of all colors on all boards, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have the most cards of a color visible on your board out of all colors on all boards, you win.'),
     ),
 
     211 => array(

@@ -13045,31 +13045,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 210, Artifacts age 10: Seikan Tunnel
-                case "210N1":
-                    // "If you have the most cards of a color showing on your board out of all colors on all boards, you win"
-                    $win_condition_met = true;
-                    $max_visible_card_count = self::getSizeOfMaxVisiblePileOnBoard($player_id);
-                    foreach (self::getAllActivePlayerIds() as $id) {
-                        if ($id != $player_id && self::getSizeOfMaxVisiblePileOnBoard($id) > $max_visible_card_count) {
-                            $win_condition_met = false;
-                            break;
-                        }
-                    }
-
-                    // There is a stack on your board that has the most cards of all stacks on all boards
-                    if ($win_condition_met) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::renderPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Seikan Tunnel');
-                        throw new EndOfGame();
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::renderPlayerName($player_id)));
-                    }
-                    break;
-
                 // id 211, Artifacts age 10: Dolly the Sheep
                 case "211N1":
                     $step_max = 3;
