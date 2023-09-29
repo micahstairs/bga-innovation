@@ -67,8 +67,8 @@ class Card423 extends AbstractCard
       return [
         'can_pass'      => true,
         'location_from' => 'board',
-        'location_to'   => 'hand',
         'bottom_from'   => true,
+        'location_to'   => 'hand',
       ];
     } else {
       $value = 0;

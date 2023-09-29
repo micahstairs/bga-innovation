@@ -5,6 +5,7 @@ namespace Innovation\Enums;
 /* Class which maps card names to IDs */
 class CardIds
 {
+  const DOMESTICATION = 10;
   const FERMENTING = 22;
   const PAPER = 30;
   const AI = 103;

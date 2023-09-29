@@ -10314,29 +10314,6 @@ class Innovation extends Table
                     $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                     break;
 
-                // id 211, Artifacts age 10: Dolly the Sheep
-                case "211N1A":
-                    $message_for_player = clienttranslate('Do ${you} want to score your bottom yellow card?');
-                    $message_for_others = clienttranslate('${player_name} must choose whether to score his bottom yellow card');
-                    $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                    break;
-
-                case "211N1B":
-                    $age_to_draw = self::getAgeToDrawIn($player_id, 1);
-                    $age_1 = self::getAgeSquare($age_to_draw);
-                    $max_age = self::getMaxAge();
-                    $age_10 = self::getAgeSquare($max_age);
-                    $message_args_for_player['age_1'] = $age_1;
-                    $message_args_for_player['age_10'] = $age_10;
-                    $message_args_for_others['age_1'] = $age_1;
-                    $message_args_for_others['age_10'] = $age_10;
-                    $message_for_player = $age_to_draw <= $max_age ? clienttranslate('Do ${you} want to draw and tuck a ${age_1}?')
-                        : clienttranslate('Finish the game (attempt to draw above ${age_10})');
-                    $message_for_others = $age_to_draw <= $max_age ? clienttranslate('${player_name} may draw and tuck a ${age_1}')
-                        : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
-                    $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                    break;
-
                 // id 443, age 11: Fusion
                 case "443N1B":
                     $message_for_player = clienttranslate('Choose a value');
@@ -13045,11 +13022,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 211, Artifacts age 10: Dolly the Sheep
-                case "211N1":
-                    $step_max = 3;
-                    break;
-
                 // id 212, Artifacts age 10: Where's Waldo?
                 case "212N1":
                     // "You win"
@@ -15731,50 +15703,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 211, Artifacts age 10: Dolly the Sheep
-            case "211N1A":
-                // "You may score your bottom yellow card"
-                $bottom_yellow_card = self::getBottomCardOnBoard($player_id, 3);
-                if ($bottom_yellow_card != null) {
-                    $options = array(
-                        'player_id'        => $player_id,
-                        'can_pass'         => false,
-
-                        'choose_yes_or_no' => true
-                    );
-                }
-                break;
-
-            case "211N1B":
-                // "You may draw and tuck a 1"
-                $options = array(
-                    'player_id'        => $player_id,
-
-                    'choose_yes_or_no' => true
-                );
-                break;
-
-            case "211N1C":
-                // "Meld the highest card in your hand"
-                if (count(self::getCardsInLocation($player_id, 'hand')) > 0) {
-                    $options = array(
-                        'player_id'     => $player_id,
-                        'n'             => 1,
-                        'can_pass'      => false,
-
-                        'owner_from'    => $player_id,
-                        'location_from' => 'hand',
-                        'owner_to'      => $player_id,
-                        'location_to'   => 'board',
-
-                        'age'           => self::getMaxAgeInHand($player_id),
-
-                        'meld_keyword'  => true,
-                    );
-                }
-                break;
-
-
             // id 214, Artifacts age 10: Twister
             case "214C1A":
                 // "For each color, meld a card of that color from your score pile"
@@ -17244,38 +17172,6 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 211, Artifacts age 10: Dolly the Sheep
-                    case "211N1A":
-                        // "You may score your bottom yellow card"
-                        $choice = self::getAuxiliaryValue();
-                        if ($choice == 1) {
-                            $bottom_yellow_card = self::getBottomCardOnBoard($player_id, 3);
-                            self::scoreCard($bottom_yellow_card, $player_id);
-                        }
-                        break;
-
-                    case "211N1B":
-                        // "You may draw and tuck a 1"
-                        if (self::getAuxiliaryValue() == 1) {
-                            self::executeDrawAndTuck($player_id, 1);
-                        }
-
-                        // "If your bottom yellow card is Domestication, you win"
-                        $bottom_yellow_card = self::getBottomCardOnBoard($player_id, 3);
-                        if ($bottom_yellow_card != null && $bottom_yellow_card['id'] == 10) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Domestication as a bottom card.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Domestication as a bottom card.'), array('player_name' => self::renderPlayerName($player_id)));
-                            $this->innovationGameState->set('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Dolly the Sheep');
-                            throw new EndOfGame();
-                        }
-                        break;
-
-                    case "211N1C":
-                        // "Then draw a 10"
-                        self::executeDraw($player_id, 10);
-                        break;
-
                     // id 214, Artifacts age 10: Twister
                     case "214C1A":
                         if ($n > 0) {
@@ -18232,27 +18128,6 @@ class Innovation extends Table
                             self::scoreCard($card, $player_id);
                         }
                     }
-                    break;
-
-                // id 211, Artifacts age 10: Dolly the Sheep
-                case "211N1A":
-                    if ($choice == 0) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to score your bottom yellow card.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to score his bottom yellow card.'), array('player_name' => self::renderPlayerName($player_id)));
-                    }
-                    self::setAuxiliaryValue($choice);
-                    break;
-
-                case "211N1B":
-                    $age_to_draw_in = self::getAgeToDrawIn($player_id, 1);
-                    if ($choice == 0) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to draw and tuck.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to draw and tuck.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::renderPlayerName($player_id)));
-                    }
-                    self::setAuxiliaryValue($choice);
                     break;
 
                 case "346N1A":

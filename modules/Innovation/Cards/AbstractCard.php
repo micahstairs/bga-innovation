@@ -1392,7 +1392,7 @@ abstract class AbstractCard
 
   protected function notifyPlayer($log, array $args = [], int $playerId = null)
   {
-    $defaultArgs = ['You' => 'You'];
+    $defaultArgs = ['You' => 'You', 'you' => 'you', 'Your' => 'Your', 'your' => 'your'];
     $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, array_merge($defaultArgs, $args));
   }
 

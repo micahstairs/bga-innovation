@@ -1379,8 +1379,10 @@ $this->textual_card_infos = array(
     ),
 
     211 => array(
-        'name'                => clienttranslate('Dolly the Sheep'),
-        'non_demand_effect_1' => clienttranslate('You may score your bottom yellow card. You may draw and tuck a ${age_1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the highest card in your hand, then draw a ${age_10}.'),
+        'name'                                => clienttranslate('Dolly the Sheep'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may score your bottom yellow card. You may draw and tuck a ${age_1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the highest card in your hand, then draw a ${age_10}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may score your bottom yellow card. You may draw and tuck a ${age_1}. If your bottom yellow card is Domestication, you win. Otherwise, meld the highest card in your hand, then draw a ${age_11}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Junk all available achievements.'),
     ),
 
     212 => array(
