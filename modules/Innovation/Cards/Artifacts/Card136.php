@@ -40,7 +40,7 @@ class Card136 extends AbstractCard
       return [
         'owner_from'  => 'any player',
         'choose_from' => 'board',
-        'color'       => self::getAuxiliaryValue(),
+        'color'       => [self::getAuxiliaryValue()],
         'not_id'      => CardIds::YATA_NO_KAGAMI,
       ];
     }
