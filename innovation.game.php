@@ -4736,6 +4736,11 @@ class Innovation extends Table
         $type_condition = $type === null ? "" : self::format("type = {type} AND", array('type' => $type));
         $is_relic_condition = $is_relic === null ? "" : self::format("is_relic = {is_relic} AND", array('is_relic' => ($is_relic ? 'TRUE' : 'FALSE')));
 
+        if ($location == Locations::AVAILABLE_ACHIEVEMENTS) {
+            $location = Locations::ACHIEVEMENTS;
+            $owner = 0;
+        }
+
         if ($owner == -2) { // any player
             $owner_condition = "owner != 0 AND";
         } else if ($owner == -3) { // any opponent
