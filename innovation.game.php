@@ -13033,15 +13033,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 212, Artifacts age 10: Where's Waldo?
-                case "212N1":
-                    // "You win"
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} found Waldo!'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} found Waldo!'), array('player_name' => self::renderPlayerName($player_id)));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
-                    throw new EndOfGame();
-
                 // id 213, Artifacts age 10: DeLorean DMC-12
                 case "213N1":
                     // "If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game"
