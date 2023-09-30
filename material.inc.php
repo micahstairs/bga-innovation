@@ -1391,8 +1391,9 @@ $this->textual_card_infos = array(
     ),
 
     213 => array(
-        'name'                => clienttranslate('DeLorean DMC-12'),
-        'non_demand_effect_1' => clienttranslate('If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game.'),
+        'name'                                => clienttranslate('DeLorean DMC-12'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If Delorean DMC-12 is a top card on any board, junk a top card of each color from each board and all cards in all hands.'),
     ),
 
     214 => array(

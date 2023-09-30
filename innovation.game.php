@@ -13033,20 +13033,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 213, Artifacts age 10: DeLorean DMC-12
-                case "213N1":
-                    // "If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game"
-                    if (self::isTopBoardCard(self::getCardInfo(CardIds::DELOREAN_DMC_12))) {
-                        $cards = [];
-                        foreach (self::getAllActivePlayerIds() as $player_id) {
-                            $cards = array_merge($cards, self::getTopCardsOnBoard($player_id));
-                            $cards = array_merge($cards, self::getCardsInLocation($player_id, Locations::HAND));
-                        }
-                        self::removeCards($cards);
-                        self::notifyGeneralInfo(clienttranslate('All top cards on all boards and all cards in all hands are removed from the game.'));
-                    }
-                    break;
-
                 // id 214, Artifacts age 10: Twister
                 case "214C1":
                     // "I compel you to reveal your score pile"

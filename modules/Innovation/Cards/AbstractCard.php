@@ -493,6 +493,11 @@ abstract class AbstractCard
     return $this->game->removeCard($card);
   }
 
+  protected function removeCards(array $cards): bool
+  {
+    return $this->game->bulkTransferCards($cards, 0, Locations::REMOVED);
+  }
+
   protected function foreshadow(?array $card, $callbackIfFull, int $playerId = null): ?array
   {
     if (!$card) {
