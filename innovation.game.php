@@ -597,6 +597,12 @@ class Innovation extends Table
                 // TODO(4E): Implement Martian Internet later.
                 self::DbQuery("UPDATE card SET location = 'removed' WHERE id = 451");
             }
+            if ($edition <= 3) {
+                self::DbQuery("UPDATE card SET spot_1 = 3, spot_2 = 3, spot_3 = 3, dogma_icon = 3 WHERE id = 206"); // Higgs Boson
+                self::DbQuery("UPDATE card SET spot_1 = 1, spot_2 = 1, spot_4 = 1, dogma_icon = 1 WHERE id = 209"); // Maastricht Treaty
+                self::DbQuery("UPDATE card SET spot_2 = 6 WHERE id = 212"); // Where's Waldo
+                self::DbQuery("UPDATE card SET spot_2 = 5, spot_3 = 5, spot_4 = 6, dogma_icon = 5 WHERE id = 214"); // Twister
+            }
         }
 
         if ($this->innovationGameState->citiesExpansionEnabled()) {
