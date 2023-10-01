@@ -29,7 +29,8 @@ class Card456 extends AbstractCard
     }
   }
 
-  private function willShareEffect(int $icon): bool {
+  private function willShareEffect(int $icon): bool
+  {
     $iconCount = self::getStandardIconCount($icon);
     foreach (self::getOtherPlayerIds() as $playerId) {
       if (self::getStandardIconCount($icon, $playerId) >= $iconCount) {
