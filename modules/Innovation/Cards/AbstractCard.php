@@ -503,9 +503,11 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    if (!$this->game->foreshadowCard($card, self::coercePlayerId($playerId))) {
-      return $callbackIfFull($card);
+    $foreshadowedCard = $this->game->foreshadowCard($card, self::coercePlayerId($playerId));
+    if ($foreshadowedCard) {
+      return $foreshadowedCard;
     }
+    return $callbackIfFull($card);
   }
 
   protected function transferToForecast(?array $card, $callbackIfFull, int $playerId = null)
@@ -513,9 +515,11 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    if (!$this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::FORECAST)) {
-      return $callbackIfFull($card);
+    $transferredCard = $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::FORECAST);
+    if ($transferredCard) {
+      return $transferredCard;
     }
+    return $callbackIfFull($card);
   }
 
   protected function drawAndMeld(int $age, int $playerId = null): ?array
