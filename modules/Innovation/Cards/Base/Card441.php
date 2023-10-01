@@ -34,6 +34,7 @@ class Card441 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
+      'n'                               => 'all',
       'location_from'                   => 'pile',
       'return_keyword'                  => true,
       'color'                           => [self::getAuxiliaryValue()],

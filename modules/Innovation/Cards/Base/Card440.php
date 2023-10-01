@@ -15,7 +15,11 @@ class Card440 extends AbstractCard
 
   public function initialExecution()
   {
-    self::setMaxSteps(self::isDemand() ? 3 : 2);
+    if (self::isDemand()) {
+      self::setMaxSteps(3);
+    } else {
+      self::setMaxSteps(2);
+    }
   }
 
   public function getInteractionOptions(): array
@@ -25,6 +29,7 @@ class Card440 extends AbstractCard
         return [
           'player_id'        => self::getLauncherId(),
           'choose_icon_type' => true,
+          // TODO(4E): Non-standard icons should be an option too here.
           'icon'             => [1, 3, 4, 5, 6, 7],
         ];
       } else {
@@ -42,10 +47,10 @@ class Card440 extends AbstractCard
       ];
     } else {
       return [
+        'n'              => 'all',
         'location_from'  => 'score',
         'return_keyword' => true,
         'age_min'        => self::getAuxiliaryValue(),
-        'n'              => 'all',
       ];
     }
   }
@@ -55,7 +60,7 @@ class Card440 extends AbstractCard
     if (self::isNonDemand() && self::isFirstInteraction()) {
       $minAgeToReturn = 0;
       if (self::getNumChosen() > 0) {
-        $minAgeToReturn = self::getLastSelectedAge();
+        $minAgeToReturn = self::getLastSelectedFaceupAge();
       }
       self::setAuxiliaryValue($minAgeToReturn);
     }
