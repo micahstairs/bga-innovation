@@ -82,46 +82,43 @@ $game_options = array(
     101 => array(
         'name' => totranslate('Game rules'),
         'values' => array(
+            3 => array('name' => totranslate('4th edition'), 'tmdisplay' => totranslate('4th edition')),
             1 => array('name' => totranslate('3rd edition'), 'tmdisplay' => totranslate('3rd edition')),
             /* TODO(4E): Retire 1st editiion. */
-            2 => array('name' => totranslate('1st edition'), 'tmdisplay' => totranslate('1st edition')),
-            3 => array('name' => totranslate('4th edition'), 'tmdisplay' => totranslate('4th edition')),
+            // 2 => array('name' => totranslate('1st edition'), 'tmdisplay' => totranslate('1st edition')),
         ),
         'startcondition' => array(
             1 => array(
                 array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
                 array('type' => 'otheroption', 'id' => 106, 'value' => 1, 'message' => totranslate('The Unseen expansion can only be played when using the 4th edition rules')),
             ),
-            2 => array(
+            // 2 => array(
                 /* TODO(4E): Retire 1st editiion. */
-                array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
-                array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
-                array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
-                array('type' => 'otheroption', 'id' => 106, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
-                array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
-            ),
-            3 => array(
-                array('type' => 'otheroptionisnot', 'id' => 102, 'value' => 3, 'message' => totranslate('Relics are not part of the 4th edition rules')),
-            ),
+            //     array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+            //     array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+            //     array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+            //     array('type' => 'otheroption', 'id' => 106, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+            //     array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
+            // ),
         )
     ),
 
-    102 => array(
-        'name' => totranslate('Artifacts of History expansion'),
-        'values' => array(
-            1 => array('name' => totranslate('Disable')),
-            2 => array(
-                'name' => totranslate('Enable'),
-                'no_beginner' => true,
-                'tmdisplay' => totranslate('Artifacts Expansion'),
-            ),
-            3 => array(
-                'name' => totranslate('Enable with Relics'),
-                'no_beginner' => true,
-                'tmdisplay' => totranslate('Artifacts Expansion with Relics (3rd edition only)')
-            ),
-        )
-    ),
+    // 102 => array(
+    //     'name' => totranslate('Artifacts of History expansion'),
+    //     'values' => array(
+    //         1 => array('name' => totranslate('Disable')),
+    //         2 => array(
+    //             'name' => totranslate('Enable without Relics'),
+    //             'no_beginner' => true,
+    //             'tmdisplay' => totranslate('Artifacts Expansion'),
+    //         ),
+    //         3 => array(
+    //             'name' => totranslate('Enable with Relics'),
+    //             'no_beginner' => true,
+    //             'tmdisplay' => totranslate('Artifacts Expansion with Relics')
+    //         ),
+    //     )
+    // ),
 
     103 => array(
         'name' => totranslate('Cities of Destiny expansion'),

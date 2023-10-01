@@ -1426,7 +1426,8 @@ class Innovation extends Table
 
     function bulkTransferCards(array $cards, int $owner_to, string $location_to, array $properties = []): bool
     {
-        if (count($cards) === 0) {
+        if (count($cards) 
+            0) {
             return false;
         }
         // NOTE: The caller is responsible for printing any relevant messages to the game log.
