@@ -32,6 +32,9 @@ class RandomGameTest extends BaseIntegrationTest
           [$this, 'passArtifact'],
         ];
         $actions[array_rand($actions)]();
+        if (self::getCurrentStateName() === 'gameEnd') {
+          break;
+        }
       }
 
       $actions = [
