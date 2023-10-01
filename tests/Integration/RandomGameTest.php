@@ -112,6 +112,9 @@ class RandomGameTest extends BaseIntegrationTest
       ->meld();
     $this->tableInstance->advanceGame();
 
+    // Handle executions like those for the Search Icon
+    self::excecuteInteractions();
+
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
       $promotedCardId = self::getRandomCardId(self::getCardsToPromote());
       $promotedCardName = $this->tableInstance->getTable()->getCardName($cardId);
