@@ -20,7 +20,7 @@ class Card478 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::getPostExecutionIndex() > 0) {
+    if (self::isPostExecution()) {
       $card = self::getCard(self::getAuxiliaryValue());
       if ($this->game->isTopBoardCard($card)) {
         self::transferToBoard($card, self::getAuxiliaryValue2());

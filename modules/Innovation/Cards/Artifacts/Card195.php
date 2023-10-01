@@ -21,12 +21,8 @@ class Card195 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::getPostExecutionIndex() > 0) {
-      if (self::getAuxiliaryValue() === 1) {
-        self::setPostExecutionIndex(0);
-      } else {
-        return [];
-      }
+    if (self::isPostExecution() && self::getAuxiliaryValue() === 0) {
+      return [];
     }
 
     $card = self::drawAndMeld(9);

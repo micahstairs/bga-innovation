@@ -18,13 +18,16 @@ class Card456 extends AbstractCard
   public function initialExecution()
   {
     // No player shared, so do not repeat this effect.
-    if (self::getPostExecutionIndex() > 0 && self::getAuxiliaryValue() === 0) {
+    if (self::isPostExecution() && self::getAuxiliaryValue() === 0) {
       return;
     }
 
+    self::setAuxiliaryValue(0); // By default, we do not want to repeat the effect
     if (self::isTheirTurn()) {
       $card = self::drawAndMeld(11);
-      self::setAuxiliaryValue(self::willShareEffect($card['dogma_icon']) ? 1 : 0); // Track whether to repeat the effect
+      if (self::willShareEffect($card['dogma_icon'])) {
+        self::setAuxiliaryValue(1); // Indicate that we should repeat the effect
+      }
       self::fullyExecute($card);
     }
   }

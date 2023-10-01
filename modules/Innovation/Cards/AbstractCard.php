@@ -305,14 +305,9 @@ abstract class AbstractCard
     return $this->state->getNumChosen();
   }
 
-  protected function getPostExecutionIndex(): int
+  protected function isPostExecution(): int
   {
-    return $this->game->getCurrentNestedCardState()['post_execution_index'];
-  }
-
-  protected function setPostExecutionIndex(int $index)
-  {
-    $this->game->updateCurrentNestedCardState('post_execution_index', $index);
+    return $this->game->getCurrentNestedCardState()['post_execution_index'] > 0;
   }
 
   protected function selfExecute($card): bool

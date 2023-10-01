@@ -70,7 +70,7 @@ class Card134 extends AbstractCard
     if (self::isFourthEdition() && self::isFirstNonDemand()) {
       return true;
     }
-    if (self::isFirstOrThirdEdition() && (self::isSecondInteraction() || self::getPostExecutionIndex() > 0)) {
+    if (self::isFirstOrThirdEdition() && (self::isSecondInteraction() || self::isPostExecution())) {
       return true;
     }
     return false;

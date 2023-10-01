@@ -22,10 +22,9 @@ class Card203 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::getPostExecutionIndex() > 0) {
+    if (self::isPostExecution()) {
       // NOTE: The logic which sets the auxiliary value to 1 is in the recordThatChangeOccurred() method.
       if (self::getAuxiliaryValue() === 1) {
-        self::setPostExecutionIndex(0);
         if (self::isFirstOrThirdEdition()) {
           self::remove(self::draw(10));
         } else {

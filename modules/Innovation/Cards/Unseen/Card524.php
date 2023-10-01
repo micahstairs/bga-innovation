@@ -20,8 +20,7 @@ class Card524 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::getPostExecutionIndex() > 0) {
-      self::setPostExecutionIndex(0);
+    if (self::isPostExecution()) {
       self::scoreTopCardAndPotentiallyRepeat();
     } else {
       self::setMaxSteps(1);

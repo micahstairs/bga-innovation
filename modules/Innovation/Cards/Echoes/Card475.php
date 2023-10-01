@@ -25,9 +25,6 @@ class Card475 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::getPostExecutionIndex() > 0) {
-      self::setPostExecutionIndex(0);
-    }
     if (self::isFirstInteraction()) {
       return [
         'choose_player' => true,
