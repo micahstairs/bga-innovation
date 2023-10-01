@@ -6805,6 +6805,9 @@ class Innovation extends Table
                     break;
             }
             if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction' && $key <> 'with_icons' && $key <> 'without_icons') {
+                if (!is_numeric($value)) {
+                    throw new BgaUserException("Value for option '$key' must be numeric");
+                }
                 $this->innovationGameState->set($key, $value);
             }
         }
