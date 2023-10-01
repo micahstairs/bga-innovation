@@ -23,7 +23,6 @@ class Card484 extends AbstractCard
       self::revealHand(self::getLauncherId());
     }
     self::setActionScopedAuxiliaryArray($colorCounts);
-    self::setAuxiliaryValue(0); // Used to track whether the player has scored a card yet
     self::setMaxSteps(1);
   }
 
@@ -51,7 +50,7 @@ class Card484 extends AbstractCard
     if (self::getNumChosen() === 0) {
       $launcherCardsInHand = self::getCards('hand', self::getLauncherId());
       $cardsInHand = self::getCards('hand');
-      if (self::getAuxiliaryValue() === 0 && count($launcherCardsInHand) > 0) {
+      if (array_sum(self::getActionScopedAuxiliaryArray()) > 0 && count($launcherCardsInHand) > 0) {
         $cardsInScorePile = self::getCards('score', self::getLauncherId());
         foreach ($cardsInHand as $card) {
           self::transferToScorePile($card, self::getLauncherId());
@@ -65,7 +64,6 @@ class Card484 extends AbstractCard
       $colorCounts = self::getActionScopedAuxiliaryArray();
       $colorCounts[$color]--;
       self::setActionScopedAuxiliaryArray($colorCounts);
-      self::setAuxiliaryValue(1);
       self::setNextStep(1);
     }
   }
