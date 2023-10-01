@@ -16,8 +16,7 @@ class Card357 extends AbstractCard
     $bonuses = self::getBonuses();
     $maxBonus = $bonuses ? max($bonuses) : 0;
     $card = self::drawAndReveal($maxBonus);
-    // TODO(4E): There shouldn't be a forecast keyword here.
-    self::foreshadow($card, [$this, 'transferToHand'], self::getLauncherId());
+    self::transferToForecast($card, [$this, 'transferToHand'], self::getLauncherId());
     if (self::isRed($card)) {
       foreach (self::getCards('hand') as $card) {
         self::transferToScorePile($card, self::getLauncherId());

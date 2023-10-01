@@ -503,11 +503,18 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    $playerId = self::coercePlayerId($playerId);
-    if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
+    if (!$this->game->foreshadowCard($card, self::coercePlayerId($playerId))) {
       return $callbackIfFull($card);
-    } else {
-      return $this->game->foreshadowCard($card, $playerId);
+    }
+  }
+
+  protected function transferToForecast(?array $card, $callbackIfFull, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    if (!$this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::FORECAST)) {
+      return $callbackIfFull($card);
     }
   }
 
