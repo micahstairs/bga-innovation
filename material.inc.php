@@ -2363,6 +2363,7 @@ $this->textual_card_infos = array(
         'i_demand_effect_fourth'              => clienttranslate('${I demand} you return a card of matching value from your score pile for each bonus on your board!'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your score pile. If you do, you may splay any one color of your cards up.'),
         'non_demand_effect_1_fourth'          => clienttranslate('You may splay any one color of your cards up. If Barcode was foreseen, splay all your colors up.'),
+        'separate_4E_implementation'          => true,
     ),
 
     431 => array(
