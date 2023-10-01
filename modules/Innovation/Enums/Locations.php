@@ -33,7 +33,19 @@ class Locations
     self::DISPLAY,
     self::FORECAST,
     self::HAND,
+    self::REVEALED,
     self::SAFE,
     self::SCORE,
   ];
+
+  const FACEUP_LOCATIONS = [
+    self::BOARD,
+    self::DISPLAY,
+    self::REVEALED,
+  ];
+
+  public static function isFaceup(string $location): bool
+  {
+    return in_array($location, self::FACEUP_LOCATIONS);
+  }
 }

@@ -15,7 +15,7 @@ class Card162_4E extends AbstractCard
     $card = self::drawAndReveal(6);
     $this->notifications->notifyCardColor($card['color']);
     self::return($card);
-    $value = self::getTopCardOfColor($card['color'])['faceup_age'];
+    $value = self::getValue(self::getTopCardOfColor($card['color']));
     self::selfExecute(self::drawAndMeld($value));
   }
 

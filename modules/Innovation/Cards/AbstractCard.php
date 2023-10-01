@@ -605,11 +605,7 @@ abstract class AbstractCard
   protected function getValues(array $cards): array
   {
     return array_map(function ($card) {
-      if ($card['location'] === 'board' || $card['location'] === 'display') {
-        return $card['faceup_age'];
-      } else {
-        return $card['age'];
-      }
+      return AbstractCard::getValue($card);
     }, $cards);
   }
 
@@ -716,39 +712,47 @@ abstract class AbstractCard
     return $this->game->getVisibleBonusesOnBoard(self::coercePlayerId($playerId));
   }
 
-  protected function isValuedCard(?array $card): bool
+  protected static function isValuedCard(?array $card): bool
   {
     return $card && $card['age'] !== null;
   }
 
-  protected function isSpecialAchievement(?array $card): bool
+  protected static function isSpecialAchievement(?array $card): bool
   {
     return $card && $card['age'] === null && $card['id'] < 1000;
   }
 
-  protected function isBlue(?array $card): bool
+  protected static function isBlue(?array $card): bool
   {
     return $card && $card['color'] == Colors::BLUE;
   }
 
-  protected function isRed(?array $card): bool
+  protected static function isRed(?array $card): bool
   {
     return $card && $card['color'] == Colors::RED;
   }
 
-  protected function isGreen(?array $card): bool
+  protected static function isGreen(?array $card): bool
   {
     return $card && $card['color'] == Colors::GREEN;
   }
 
-  protected function isYellow(?array $card): bool
+  protected static function isYellow(?array $card): bool
   {
     return $card && $card['color'] == Colors::YELLOW;
   }
 
-  protected function isPurple(?array $card): bool
+  protected static function isPurple(?array $card): bool
   {
     return $card && $card['color'] == Colors::PURPLE;
+  }
+
+  protected static function getValue(array $card): int
+  {
+    if (!$card) {
+      return 0;
+    }
+    return Locations::isFaceup($card['location']) ? $card['faceup_age'] : $card['age'];
   }
 
   protected function getCard(int $cardId): ?array
