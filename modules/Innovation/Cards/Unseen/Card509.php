@@ -54,7 +54,9 @@ class Card509 extends AbstractCard
   {
     if (self::getNumChosen() === 0) {
       $card = $this->game->getDeckTopCard(4, CardTypes::BASE);
-      $this->game->transferCardFromTo($card, self::getPlayerId(), 'safe', ['draw_keyword' => false]);
+      if ($card) {
+        $this->game->transferCardFromTo($card, self::getPlayerId(), 'safe', ['draw_keyword' => false]);
+      }
     }
   }
 }
