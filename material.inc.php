@@ -1397,8 +1397,11 @@ $this->textual_card_infos = array(
     ),
 
     214 => array(
-        'name'            => clienttranslate('Twister'),
-        'i_compel_effect' => clienttranslate('${I compel} you to reveal your score pile! For each color, meld a card of that color from your score pile!'),
+        'name_first_and_third'            => clienttranslate('Twister'),
+        'name_fourth'                     => clienttranslate('Dragon\'s Lair'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to reveal your score pile! For each color, meld a card of that color from your score pile!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to meld the lowest card in your score pile with a unique value! If you do, meld a card of the same color from your hand! If you meld one card total, you lose! Otherwise, junk the top card of each deck!'),
+        'separate_4E_implementation'      => true,
     ),
 
     /* Artifacts - Relics */

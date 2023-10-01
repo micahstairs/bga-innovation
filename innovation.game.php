@@ -13033,20 +13033,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 214, Artifacts age 10: Twister
-                case "214C1":
-                    // "I compel you to reveal your score pile"
-                    self::revealScorePile($player_id);
-                    $colors = array();
-                    foreach (self::getCardsInLocation($player_id, 'score') as $card) {
-                        $colors[] = $card['color'];
-                    }
-                    if (count($colors) > 0) {
-                        self::setAuxiliaryValueFromArray(array_unique($colors));
-                        $step_max = 1;
-                    }
-                    break;
-
                 // id 216, Relic age 4: Complex Numbers
                 case "216N1":
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
@@ -15691,25 +15677,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 214, Artifacts age 10: Twister
-            case "214C1A":
-                // "For each color, meld a card of that color from your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => false,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'color'         => self::getAuxiliaryValueAsArray(),
-
-                    'meld_keyword'  => true,
-                );
-                break;
-
             // id 216, Relic age 4: Complex Numbers
             case "216N1A":
                 // "You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board"
@@ -17157,21 +17124,6 @@ class Innovation extends Table
                         // "Transfer all cards in your hand to my hand"
                         foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
                             self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                        }
-                        break;
-
-                    // id 214, Artifacts age 10: Twister
-                    case "214C1A":
-                        if ($n > 0) {
-                            $selectable_colors = self::getAuxiliaryValueAsArray();
-                            $selectable_colors = array_diff($selectable_colors, [$this->innovationGameState->get('color_last_selected')]);
-
-                            // Repeat this interaction if there are more cards to meld
-                            if (count($selectable_colors) > 0) {
-                                self::setAuxiliaryValueFromArray($selectable_colors);
-                                $step = 0;
-                                self::setStep(0);
-                            }
                         }
                         break;
 
