@@ -52,7 +52,7 @@ class Card130 extends AbstractCard
         self::setAuxiliaryValue($card['faceup_age']); // Track value of melded card
         self::setMaxSteps(2);
       }
-    } else if (self::isSecondInteraction() && self::getNumChosen() > 0) {
+    } else if (self::isFourthEdition() && self::isSecondInteraction() && self::getNumChosen() > 0) {
       self::junkBaseDeck(self::getAuxiliaryValue());
       self::junkBaseDeck($card['age']);
     }
