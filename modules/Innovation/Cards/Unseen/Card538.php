@@ -19,7 +19,10 @@ class Card538 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $colors = $this->game->getSplayableColorsOnBoard(self::getPlayerId(), Directions::UNSPLAYED);
+    $colors = [];
+    foreach (self::getTopCards() as $card) {
+      $colors[] = $card['color'];
+    }
     return [
       'player_id'    => self::getLauncherId(),
       'choose_color' => true,
