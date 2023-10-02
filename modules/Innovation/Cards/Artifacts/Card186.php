@@ -27,7 +27,10 @@ class Card186 extends AbstractCard
         'age'            => self::getAuxiliaryValue(),
       ];
     } else {
-      return ['achieve_keyword' => true];
+      return [
+        'achieve_keyword'              => true,
+        'include_special_achievements' => true,
+      ];
     }
   }
 

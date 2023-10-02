@@ -30,8 +30,9 @@ class Card163 extends AbstractCard
       return [];
     } else {
       return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword' => true,
+        'location_from'                => Locations::AVAILABLE_ACHIEVEMENTS,
+        'include_special_achievements' => true,
+        'junk_keyword'                 => true,
       ];
     }
   }

@@ -26,7 +26,10 @@ class Card174 extends AbstractCard
         'location_to'   => Locations::REVEALED_THEN_DECK,
       ];
     } else {
-      return ['achieve_keyword' => true];
+      return [
+        'achieve_keyword'              => true,
+        'include_special_achievements' => true,
+      ];
     }
   }
 
@@ -52,13 +55,13 @@ class Card174 extends AbstractCard
           self::notifyAll(clienttranslate('The cards both have the same value.'));
           self::draw($card1['age'] + 1);
         } else {
-          self::notifyAll(clienttranslate('The cards do not have the same value.'));
+          self::notifyAll(clienttranslate('The cards do not both have the same value.'));
         }
         if ($card1['color'] == $card2['color']) {
           self::notifyAll(clienttranslate('The cards both have the same color.'));
           self::setMaxSteps(2);
         } else {
-          self::notifyAll(clienttranslate('The cards do not have the same color.'));
+          self::notifyAll(clienttranslate('The cards do not both have the same color.'));
         }
       }
     }
