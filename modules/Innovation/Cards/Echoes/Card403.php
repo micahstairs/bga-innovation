@@ -19,7 +19,7 @@ class Card403 extends AbstractCard
   //   - ECHO: Score a non-purple top card from your board without a bonus.
   //   - I DEMAND you draw and meld a [1]!
   //   - Choose the [6], [7], [8], or [9] deck. You may junk all cards in the chosen deck. If you
-  //     do, achieve the highest junked card if eligible.
+  //     do, achieve the highest card in the junk if eligible.
 
   public function initialExecution()
   {

@@ -17,7 +17,7 @@ class Card351 extends AbstractCard
   // - 4th edition:
   //   - ECHO: Tuck all cards of one present value from your hand.
   //   - You may splay any one color of your cards left.
-  //   - You may junk all cards in the [2] deck. If you do, achieve the highest junked card if eligible.
+  //   - You may junk all cards in the [2] deck. If you do, achieve the highest card in the junk if eligible.
 
   public function initialExecution()
   {

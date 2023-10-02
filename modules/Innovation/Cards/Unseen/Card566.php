@@ -11,8 +11,8 @@ class Card566 extends AbstractCard
   // Fermi Paradox:
   //   - Reveal the top card of the [9] deck and the [10] deck. Return the top card of the [9] deck
   //     or the [10] deck.
-  //   - If you have no cards on your board, you win. Otherwise, transfer all valued junked cards
-  //     to your hand.
+  //   - If you have no cards on your board, you win. Otherwise, transfer all valued cards in the
+  //     junk to your hand.
 
   public function initialExecution()
   {

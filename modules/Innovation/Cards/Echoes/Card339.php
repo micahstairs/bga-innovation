@@ -15,7 +15,7 @@ class Card339 extends AbstractCard
   //   - If the [1] deck has at least one card, you may transfer its bottom card to the available achievements.
   // - 4th edition:
   //   - ECHO: You may draw and foreshadow a [1].
-  //   - You may junk all cards in the [1] deck. If you do, achieve the highest junked card if eligible.
+  //   - You may junk all cards in the [1] deck. If you do, achieve the highest card in the junk if eligible.
 
   public function initialExecution()
   {
@@ -25,7 +25,7 @@ class Card339 extends AbstractCard
       } else {
         self::setMaxSteps(1);
       }
-    } else if (self::getBaseDeckCount(1) > 0) {
+    } else if (self::isFirstNonDemand() && self::getBaseDeckCount(1) > 0) {
       self::setMaxSteps(1);
     }
   }

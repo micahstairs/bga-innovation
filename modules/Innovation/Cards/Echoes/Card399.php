@@ -18,7 +18,7 @@ class Card399 extends AbstractCard
   //   - ECHO: Draw two [8]. Return one, foreshadow the other.
   //   - Draw and reveal two cards of value equal to your top blue card. Meld one, and return the other.
   //   - Junk all cards in the [7] or [8] deck.
-  //   - If Jeans was foreseen, transfer a valued junked card to your hand.
+  //   - If Jeans was foreseen, transfer a valued card in the junk to your hand.
 
   public function initialExecution()
   {

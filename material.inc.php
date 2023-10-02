@@ -438,7 +438,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('You may rearrange the order of one color of cards on your board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('You may splay your yellow or blue cards up.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your yellow or blue cards up.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('You may junk an available special achievement or make a junked special achievement available.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('You may junk an available special achievement or make a special achievement in the junk available.'),
         'separate_4E_implementation'          => true,
     ),
 
@@ -1658,7 +1658,7 @@ $this->textual_card_infos = array(
         'echo_effect_first_and_third'         => clienttranslate('Draw a ${age_1}.'),
         'echo_effect_fourth'                  => clienttranslate('You may draw and foreshadow a ${age_1}.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('If the ${age_1} deck has at least one card, you may transfer its bottom card to the available achievements.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may junk all cards in the ${age_1} deck. If you do, achieve the highest junked card if eligible.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may junk all cards in the ${age_1} deck. If you do, achieve the highest card in the junk if eligible.'),
     ),
 
     340 => array(
@@ -1751,7 +1751,7 @@ $this->textual_card_infos = array(
         'echo_effect'                         => clienttranslate('Tuck all cards of one present value from your hand.'),
         'non_demand_effect_1'                 => clienttranslate('You may splay any one color of your cards left.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('If the ${age_2} deck has at least one card, you may transfer its bottom card to the available achievements.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('You may junk all cards in the ${age_2} deck. If you do, achieve the highest junked card if eligible.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('You may junk all cards in the ${age_2} deck. If you do, achieve the highest card in the junk if eligible.'),
     ),
 
     352 => array(
@@ -1974,7 +1974,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Seed Drill'),
         'i_demand_effect'                     => clienttranslate('${I demand} you return a top card from your board of value less than ${age_3}!'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. You may junk all cards in the chosen deck. If you do, achieve the highest junked card if eligible.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. You may junk all cards in the chosen deck. If you do, achieve the highest card in the junk if eligible.'),
     ),
 
     381 => array(
@@ -2122,7 +2122,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose two different values less than ${age_7}. Draw and reveal a card of each value. Meld one, and return the other.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal two cards of value equal to your top blue card. Meld one, and return the other.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Junk all cards in the ${age_7} or ${age_8} deck.'),
-        'non_demand_effect_3_fourth'          => clienttranslate('If Jeans was foreseen, transfer a valued junked card to your hand.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If Jeans was foreseen, transfer a valued card in the junk to your hand.'),
     ),
 
     400 => array(
@@ -2152,7 +2152,7 @@ $this->textual_card_infos = array(
         'echo_effect'                         => clienttranslate('Score a non-purple top card from your board without a bonus.'),
         'i_demand_effect'                     => clienttranslate('${I demand} you draw and meld a ${age_1}!'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. You may junk all cards in the chosen deck. If you do, achieve the highest junked card if eligible.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. You may junk all cards in the chosen deck. If you do, achieve the highest card in the junk if eligible.'),
     ),
 
     404 => array(
@@ -2642,7 +2642,7 @@ $this->textual_card_infos = array(
 
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
-        'non_demand_effect_1' => clienttranslate('You may return a ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using the next higher value.'),
+        'non_demand_effect_1' => clienttranslate('You may return a ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using a value one higher.'),
     ),
 
     486 => array(
@@ -2709,7 +2709,7 @@ $this->textual_card_infos = array(
     497 => array(
         'name'                => clienttranslate('Padlock'),
         'i_demand_effect'     => clienttranslate('${I demand} you transfer one of your secrets to the available achievements!'),
-        'non_demand_effect_1' => clienttranslate('If no card was transferred due to the demand, you may score up to three cards from hand of different values.'),
+        'non_demand_effect_1' => clienttranslate('If no card was transferred due to the demand, you may score up to three cards from your hand of different values.'),
     ),
 
     498 => array(
@@ -3007,7 +3007,7 @@ $this->textual_card_infos = array(
 
     548 => array(
         'name'                => clienttranslate('Safe Deposit Box'),
-        'non_demand_effect_1' => clienttranslate('You may choose to either draw and junk two ${age_7}, or exchange all cards in your score pile with all valued junked cards.'),
+        'non_demand_effect_1' => clienttranslate('You may choose to either draw and junk two ${age_7}, or exchange all cards in your score pile with all valued cards in the junk.'),
     ),
 
     549 => array(
@@ -3109,7 +3109,7 @@ $this->textual_card_infos = array(
     566 => array(
         'name'                => clienttranslate('Fermi Paradox'),
         'non_demand_effect_1' => clienttranslate('Reveal the top card of the ${age_9} deck and the ${age_10} deck. Return the top card of the ${age_9} deck or the ${age_10} deck.'),
-        'non_demand_effect_2' => clienttranslate('If you have no cards on your board, you win. Otherwise, transfer all valued junked cards to your hand.'),
+        'non_demand_effect_2' => clienttranslate('If you have no cards on your board, you win. Otherwise, transfer all valued cards in the junk to your hand.'),
     ),
 
     567 => array(
@@ -3138,7 +3138,7 @@ $this->textual_card_infos = array(
 
     571 => array(
         'name'                => clienttranslate('Magic 8-Ball'),
-        'non_demand_effect_1' => clienttranslate('Choose whether you wish to draw two ${age_10}, draw and score two ${age_8}, or safeguard two available achievements. Draw and tuck an ${age_8}. If it has a ${icon_3}, do as you wish. If it is red or purple, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Choose whether you wish to draw two ${age_10}, draw and score two ${age_8}, or safeguard two available standard achievements. Draw and tuck an ${age_8}. If it has a ${icon_3}, do as you wish. If it is red or purple, repeat this effect.'),
     ),
 
     572 => array(

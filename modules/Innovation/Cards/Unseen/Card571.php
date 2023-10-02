@@ -10,8 +10,8 @@ class Card571 extends AbstractCard
 
   // Magic 8-Ball:
   //   - Choose whether you wish to draw two [10], draw and score two [8], or safeguard two
-  //     available achievements. Draw and tuck an [8]. If it has a CONCEPT, do as you wish. If it
-  //     is red or purple, repeat this effect.
+  //     available standard achievements. Draw and tuck an [8]. If it has a CONCEPT, do as you
+  //     wish. If it is red or purple, repeat this effect.
 
   public function initialExecution()
   {
@@ -73,7 +73,7 @@ class Card571 extends AbstractCard
     return self::buildPromptFromList([
       1 => [clienttranslate('Draw two ${age}'), 'age' => self::renderValue(10)],
       2 => [clienttranslate('Draw and score two ${age}'), 'age' => self::renderValue(8)],
-      3 => clienttranslate('Safeguard two available achievements'),
+      3 => clienttranslate('Safeguard two available standard achievements'),
     ]);
   }
 
@@ -89,8 +89,8 @@ class Card571 extends AbstractCard
       $playerMessage = clienttranslate('${You} wish to draw and score two ${age}.');
       $othersMessage = clienttranslate('${player_name} wishes to draw and score two ${age}.');
     } else {
-      $playerMessage = clienttranslate('${You} wish to safeguard two available achievements.');
-      $othersMessage = clienttranslate('${player_name} wishes to safeguard two available achievements.');
+      $playerMessage = clienttranslate('${You} wish to safeguard two available standard achievements.');
+      $othersMessage = clienttranslate('${player_name} wishes to safeguard two available standard achievements.');
     }
     self::notifyPlayer($playerMessage, $args);
     self::notifyOthers($othersMessage, $args);
