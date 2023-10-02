@@ -9,7 +9,7 @@ class Card452 extends AbstractCard
 {
   // Psyche
   //   - Choose a value different from any top card on your board. Score all cards in the deck of
-  //     that value. Score all junked cards of that value.
+  //     that value. Score all cards in the junk of that value.
 
   public function initialExecution()
   {

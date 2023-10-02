@@ -10,7 +10,7 @@ class Card189 extends AbstractCard
   // Ocean Liner Titanic (3rd edition):
   //   - Score all bottom cards from your board.
   // Liner Titanic (4th edition):
-  //   - Score a bottom card of each color from your board.
+  //   - Score your bottom card of each color.
   //   - Junk all cards from the deck of lowest value with a card.
 
   public function initialExecution()

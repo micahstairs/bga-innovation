@@ -8,12 +8,8 @@ class Card121 extends AbstractCard
 {
 
   // Xianrendong Shards
-  // - 3rd edition:
   //   - Reveal three cards from your hand. Score two, then tuck the other. If you score two cards
   //     of the same color, draw three [1].
-  // - 4th edition:
-  //   - Reveal three cards from your hand. Score two, then tuck the other. If the scored cards are
-  //     the same color, draw three [1].
 
   public function initialExecution()
   {

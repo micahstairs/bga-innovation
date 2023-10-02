@@ -19,15 +19,18 @@ class Card385 extends AbstractCard
   // - 4th edition
   //   - ECHO: Return a card from your forecast.
   //   - Draw and foreshadow a [7], and then if Bifocals was foreseen, draw and foreshadow a card
-  //     of value equal to the number of available special achievements.
+  //     of value equal to the lowest available standard achievement.
   //   - You may splay your green cards right. If you do, splay any color of your cards up.
+
+  // TODO(LATER): Split this implementation into separate files for 3rd and 4th edition.
 
   public function initialExecution()
   {
     if (self::isFourthEdition() && self::isFirstNonDemand()) {
       self::drawAndForeshadow(7);
       if (self::wasForeseen()) {
-        self::drawAndForeshadow(self::getNumberOfAvailableSpecialAchievements());
+        $value = self::getMinValueInLocation(Locations::AVAILABLE_ACHIEVEMENTS);
+        self::drawAndForeshadow($value);
       }
     } else {
       self::setMaxSteps(1);
@@ -99,17 +102,6 @@ class Card385 extends AbstractCard
     if (self::isFourthEdition() && self::isSecondNonDemand() && self::isFirstInteraction() && self::getNumChosen() > 0) {
       self::setMaxSteps(2);
     }
-  }
-
-  private function getNumberOfAvailableSpecialAchievements(): int
-  {
-    $count = 0;
-    foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $achievement) {
-      if (self::isSpecialAchievement($achievement)) {
-        $count++;
-      }
-    }
-    return $count;
   }
 
 }

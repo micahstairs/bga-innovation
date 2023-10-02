@@ -13,7 +13,7 @@ class Card198 extends AbstractCard
   // - 4th edition:
   //   - I COMPEL you to transfer a [9] from your hand to my hand! If you don't, transfer a [9]
   //     from your score pile to my score pile! If you do neither, I win!
-  //   - Score the highest top card on your board.
+  //   - Score your highest top card.
 
   public function initialExecution()
   {

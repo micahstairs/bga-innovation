@@ -13,7 +13,7 @@ class Card173 extends AbstractCard
   //     board of that color. Claim an achievement, ignoring eligibility.
   // - 4th edition:
   //   - Choose a color on your board having the highest top card. Meld your bottom card of that color.
-  //   - Claim a standard achievement, ignoring eligibility. Junk an available standard achievement.
+  //   - Claim an available standard achievement, ignoring eligibility. Junk an available standard achievement.
 
   public function initialExecution()
   {

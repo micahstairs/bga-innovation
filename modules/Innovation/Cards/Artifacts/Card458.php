@@ -11,10 +11,26 @@ class Card458 extends AbstractCard
 
   // Jumbo Kingdom
   //   - Choose a color on your board. Junk all cards of that color from all boards.
+  //   - Score all valued cards of lowest value in the junk. If you do, and you score fewer than 11
+  //     points, repeat this effect.
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isFirstNonDemand()) {
+      self::setMaxSteps(1);
+    } else if (self::isSecondInteraction()) {
+      do {
+        $numPointsScored = 0;
+        $junkedCards = self::getCards(Locations::JUNK);
+        $minValue = self::getMinValue($junkedCards);
+        foreach ($junkedCards as $card) {
+          if ($card['age'] == $minValue) {
+            self::score($card);
+            $numPointsScored += $card['age'];
+          }
+        }
+      } while ($numPointsScored < 11);
+    }
   }
 
   public function getInteractionOptions(): array

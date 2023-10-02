@@ -13,9 +13,8 @@ class Card177 extends AbstractCard
   //     card's color! If the revealed card is a ${age_1}, return all cards of its color from your
   //     board!
   // - 4th edition:
-  //   - I COMPEL you to draw and meld a [7]! Reveal the bottom card on your board of the melded
-  //     card's color! If the revealed card is even-valued, return all cards of its color from your
-  //     board!
+  //   - I COMPEL you to draw and meld a [7]! Reveal your bottom card of the melded card's color! If
+  //     the revealed card is even-valued, return all cards of its color from your board!
 
   public function initialExecution()
   {
