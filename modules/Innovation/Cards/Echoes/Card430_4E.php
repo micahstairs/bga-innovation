@@ -6,7 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
-class Card430_3E extends AbstractCard
+class Card430_4E extends AbstractCard
 {
 
   // Barcode (4th edition):
