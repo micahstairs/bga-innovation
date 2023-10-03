@@ -37,7 +37,8 @@ abstract class AbstractCard
   public function getInteractionOptions(): array
   {
     // Subclasses are expected to override this method if the card has any interactions.
-    throw new \RuntimeException("Unimplemented getInteractionOptions");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented getInteractionOptions for card=$cardId");
   }
 
   public final function getSpecialChoicePrompt(): array
@@ -65,14 +66,16 @@ abstract class AbstractCard
       case 12: // choose_icon_type
         return static::getPromptForIconChoice();
       default:
-        throw new \RuntimeException("Unhandled value in getSpecialChoicePrompt: " . $choiceType);
+        $cardId = self::getThisCardId();
+        throw new \RuntimeException("Unhandled value in getSpecialChoicePrompt: $choiceType for card=$cardId");
     }
   }
 
   protected function getPromptForListChoice(): array
   {
     // Subclasses are expected to override this method if the card has any interactions which use the 'choices' option.
-    throw new \RuntimeException("Unimplemented getPromptForListChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented getPromptForListChoice for card=$cardId");
   }
 
   public function handleAbortedInteraction()
@@ -120,62 +123,72 @@ abstract class AbstractCard
       case 12: // choose_icon_type
         return static::handleIconChoice($choice);
       default:
-        throw new \RuntimeException("Unhandled value in handleSpecialChoice: " . $choiceType);
+        $cardId = self::getThisCardId();
+        throw new \RuntimeException("Unhandled value in handleSpecialChoice: $choiceType for card=$cardId");
     }
   }
 
   protected function handleListChoice(int $choice)
   {
     // Subclasses are expected to override this method if the card has any 'choose_from_list' interactions.
-    throw new \RuntimeException("Unimplemented handleListChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleListChoice for card=$cardId");
   }
 
   protected function handleValueChoice(int $value)
   {
     // Subclasses are expected to override this method if the card has any 'choose_value' interactions.
-    throw new \RuntimeException("Unimplemented handleValueChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleValueChoice for card=$cardId");
   }
 
   protected function handleColorChoice(int $color)
   {
     // Subclasses are expected to override this method if the card has any 'choose_color' interactions.
-    throw new \RuntimeException("Unimplemented handleColorChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleColorChoice for card=$cardId");
   }
 
   protected function handleTwoColorChoice(int $color1, int $color2)
   {
     // Subclasses are expected to override this method if the card has any 'choose_two_colors' interactions.
-    throw new \RuntimeException("Unimplemented handleTwoColorChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleTwoColorChoice for card=$cardId");
   }
 
   protected function handleThreeColorChoice(int $color1, int $color2, int $color3)
   {
     // Subclasses are expected to override this method if the card has any 'choose_three_colors' interactions.
-    throw new \RuntimeException("Unimplemented handleThreeColorChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleThreeColorChoice for card=$cardId");
   }
 
   protected function handleTypeChoice(int $type)
   {
     // Subclasses are expected to override this method if the card has any 'choose_type' interactions.
-    throw new \RuntimeException("Unimplemented handleTypeChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleTypeChoice for card=$cardId");
   }
 
   protected function handlePlayerChoice(int $playerId)
   {
     // Subclasses are expected to override this method if the card has any 'choose_player' interactions.
-    throw new \RuntimeException("Unimplemented handlePlayerChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handlePlayerChoice for card=$cardId");
   }
 
   protected function handleNumberChoice(int $number)
   {
     // Subclasses are expected to override this method if the card has any 'choose_non_negative_integer' interactions.
-    throw new \RuntimeException("Unimplemented handleNumberChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleNumberChoice for card=$cardId");
   }
 
   protected function handleIconChoice(int $icon)
   {
     // Subclasses are expected to override this method if the card has any 'choose_icon_type' interactions.
-    throw new \RuntimeException("Unimplemented handleIconChoice");
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleIconChoice for card=$cardId");
   }
 
   public function afterInteraction()
