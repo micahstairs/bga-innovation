@@ -202,7 +202,7 @@ class RandomGameTest extends BaseIntegrationTest
     }
 
     $state = self::getCurrentStateName();
-    if ($state !== 'playerTurn' && $state !== 'gameEnd' && $state !== 'artifactPlayerTurn') {
+    if (!in_array($state, ['playerTurn', 'gameEnd', 'artifactPlayerTurn', 'promoteCardPlayerTurn', 'dogmaPromotedPlayerTurn'])) {
       error_log("ERROR: Unexpected state after doing interactions: $state");
     }
   }

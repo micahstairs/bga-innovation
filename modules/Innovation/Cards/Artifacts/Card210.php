@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card210 extends AbstractCard
 {
