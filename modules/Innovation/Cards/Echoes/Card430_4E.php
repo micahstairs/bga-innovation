@@ -17,6 +17,7 @@ class Card430_4E extends AbstractCard
   {
     if (self::isDemand()) {
       self::setActionScopedAuxiliaryArray(self::getBonuses()); // Track values left to remove from score pile
+      self::setMaxSteps(1);
     } else if (self::wasForeseen()) {
       foreach (Colors::ALL as $color) {
         self::splayUp($color);
