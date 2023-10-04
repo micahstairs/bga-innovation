@@ -16,7 +16,7 @@ class Card380 extends AbstractCard
   // - 4th edition:
   //   - I DEMAND you return a top card from your board of value less than [3]!
   //   - Choose the [3], [4], or [5] deck. You may junk all cards in the chosen deck. If you do,
-  //     achieve the highest junked card if eligible.
+  //     achieve the highest card in the junk if eligible.
 
   public function initialExecution()
   {

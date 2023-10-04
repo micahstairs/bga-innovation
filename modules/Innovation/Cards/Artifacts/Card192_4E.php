@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Icons;
 
 class Card192_4E extends AbstractCard
 {
