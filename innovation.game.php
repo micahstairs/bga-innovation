@@ -17495,7 +17495,7 @@ class Innovation extends Table
 
             // There is no selectable card
             if ($selection_size == 0) {
-                if (($splay_direction == -1 && ($can_pass || $n_min <= 0)) && ($selection_will_reveal_hidden_information || ($num_cards_in_location_from > 0 && !$enable_autoselection))) {
+                if (($splay_direction == -1 && ($can_pass || $n_min <= 0)) && ($selection_will_reveal_hidden_information || ($num_cards_in_location_from > 0 && $autoselection_mode == 0))) {
                     // The player can pass or stop and the opponents can't know that the player has no eligible card
                     // This can happen for example in the Masonry effect
 
