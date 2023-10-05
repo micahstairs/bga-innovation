@@ -6,17 +6,12 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
-class Card415 extends AbstractCard
+class Card415_3E extends AbstractCard
 {
 
-  // Calculator
-  // - 3rd edition
+  // Calculator (3rd edition):
   //   - Score two bottom non-blue cards from your board. If you scored two and they have a total
   //     value less than 11, draw a card of that total value and repeat this dogma effect (once only).
-  //   - You may splay your blue cards up.
-  // - 4th edition
-  //   - Score two bottom non-blue cards on your board. If you score two and they have a total value
-  //     less than 12, draw a card of that total value and repeat this effect (once only).
   //   - You may splay your blue cards up.
 
   public function initialExecution()
@@ -48,15 +43,14 @@ class Card415 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::addToAuxiliaryArray($card['faceup_age']);
+    self::addToAuxiliaryArray(self::getValue($card));
   }
 
   public function afterInteraction()
   {
     if (self::isFirstNonDemand()) {
       $total = array_sum(self::getAuxiliaryArray());
-      $threshold = self::isFirstOrThirdEdition() ? 11 : 12;
-      if ($total < $threshold) {
+      if ($total < 11) {
         self::draw($total);
         self::setAuxiliaryArray([]);
         self::setMaxSteps(2);

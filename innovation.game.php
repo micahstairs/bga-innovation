@@ -66,7 +66,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 60-67, 91-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 61-67, 91-92
         self::initGameStateLabels(
             [
                 'number_of_achievements_needed_to_win' => 10,
@@ -117,6 +117,8 @@ class Innovation extends Table
                 'return_keyword'                       => 57,
                 'foreshadow_keyword'                   => 58,
                 'include_special_achievements'         => 59,
+                // Whether to refresh the selection after a choice is made (1 means it should be refreshed)
+                'refresh_selection'                    => 60,
                 // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
                 'limit_shrunk_selection_size'          => 68,
                 'card_id_1'                            => 69,
@@ -208,6 +210,14 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'replace_may_with_must'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `replace_may_with_must` BOOLEAN DEFAULT FALSE;");
+        }
+
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2310040231) {
+            self::initGameStateLabels([
+                'refresh_selection' => 60,
+            ]);
+            $this->innovationGameState->set('refresh_selection', -1);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -545,6 +555,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         $this->innovationGameState->setInitial('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         $this->innovationGameState->setInitial('has_splay_direction', -1); // List of splay directions encoded in a single value
+        $this->innovationGameState->setInitial('refresh_selection', -1); // 1 if the selection should be refreshed after a choice is made, else 0
         $this->innovationGameState->setInitial('limit_shrunk_selection_size', -1); // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
         $this->innovationGameState->setInitial('reveal_if_unable', -1); // 1 if the zone should be revealed if the player is unable to perform the interaction, else 0
 
@@ -6506,8 +6517,110 @@ class Innovation extends Table
         return true;
     }
 
-    function setSelectionRange($options)
+    function expandInteractionOptions(array $options, int $player_id): ?array
     {
+        if (empty($options)) {
+            return null;
+        }
+
+        if (array_key_exists('n', $options) && $options['n'] == 'all') {
+            $options['n'] = 999;
+        }
+        if (array_key_exists('n_max', $options) && $options['n_max'] == 'all') {
+            $options['n_max'] = 999;
+        }
+        if (!array_key_exists('can_pass', $options)) {
+            $options['can_pass'] = false;
+        }
+        if (array_key_exists('choose_from', $options)) {
+            $options['location_from'] = $options['choose_from'];
+            $options['location_to'] = 'none';
+            unset($options['choose_from']);
+        }
+        if (array_key_exists('achieve_if_eligible', $options)) {
+            $options['achieve_keyword'] = true;
+            $options['require_achievement_eligibility'] = true;
+            unset($options['achieve_if_eligible']);
+        }
+        if (array_key_exists('meld_keyword', $options)) {
+            $options['location_to'] = 'board';
+        }
+        if (array_key_exists('score_keyword', $options)) {
+            $options['location_to'] = 'score';
+        }
+        if (array_key_exists('tuck_keyword', $options)) {
+            $options['location_to'] = 'board';
+            $options['bottom_to'] = true;
+            unset($options['tuck_keyword']);
+        }
+        if (array_key_exists('achieve_keyword', $options)) {
+            $options['location_to'] = 'achievements';
+            if (!array_key_exists('owner_from', $options) && !array_key_exists('location_from', $options)) {
+                $options['owner_from'] = 0;
+                $options['location_from'] = 'achievements';
+            }
+        }
+        if (array_key_exists('safeguard_keyword', $options)) {
+            $options['location_to'] = 'safe';
+            if (!array_key_exists('owner_from', $options) && !array_key_exists('location_from', $options)) {
+                $options['owner_from'] = 0;
+                $options['location_from'] = 'achievements';
+            }
+        }
+        if (array_key_exists('foreshadow_keyword', $options)) {
+            $options['location_to'] = 'forecast';
+        }
+        if (array_key_exists('return_keyword', $options)) {
+            $options['location_to'] = 'deck';
+        }
+        if (array_key_exists('topdeck_keyword', $options)) {
+            $options['location_to'] = 'deck';
+            $options['bottom_to'] = false;
+            unset($options['topdeck_keyword']);
+        }
+        if (array_key_exists('junk_keyword', $options)) {
+            $options['location_to'] = 'junk';
+            unset($options['junk_keyword']);
+        }
+        if (array_key_exists('reveal_keyword', $options)) {
+            $options['location_to'] = 'revealed';
+            unset($options['reveal_keyword']);
+        }
+        if (array_key_exists('location_from', $options) && $options['location_from'] == Locations::AVAILABLE_ACHIEVEMENTS) {
+            $options['location_from'] = Locations::ACHIEVEMENTS;
+            $options['owner_from'] = 0;
+        }
+        if (array_key_exists('location_to', $options) && $options['location_to'] == Locations::AVAILABLE_ACHIEVEMENTS) {
+            $options['location_to'] = Locations::ACHIEVEMENTS;
+            $options['owner_to'] = 0;
+        }
+        if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
+            $options['n'] = 1;
+        }
+        if (!array_key_exists('player_id', $options)) {
+            $options['player_id'] = $player_id;
+        }
+        if (array_key_exists('location_from', $options) && ($options['location_from'] == 'deck' || $options['location_from'] == 'junk')) {
+            $options['owner_from'] = 0;
+        }
+        if (!array_key_exists('owner_from', $options)) {
+            $options['owner_from'] = $player_id;
+        }
+        if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
+            $options['owner_to'] = 0;
+        }
+        if (!array_key_exists('owner_to', $options)) {
+            $options['owner_to'] = $player_id;
+        }
+        if (array_key_exists('choices', $options)) {
+            $options['choose_from_list'] = true;
+        }
+        return $options;
+    }
+
+    function setSelectionRange(array $options, $is_refreshing_options = false)
+    {
+        self::deselectAllCards();
 
         $rewritten_options = array();
         foreach ($options as $key => $value) {
@@ -6613,10 +6726,10 @@ class Innovation extends Table
         }
 
         $this->innovationGameState->set('special_type_of_choice', 0);
-        if (!array_key_exists('n_min', $rewritten_options)) {
+        if (!$is_refreshing_options && !array_key_exists('n_min', $rewritten_options)) {
             $rewritten_options['n_min'] = 999;
         }
-        if (!array_key_exists('n_max', $rewritten_options)) {
+        if (!$is_refreshing_options && !array_key_exists('n_max', $rewritten_options)) {
             $rewritten_options['n_max'] = 999;
         }
         if (!array_key_exists('solid_constraint', $rewritten_options)) {
@@ -6709,6 +6822,9 @@ class Innovation extends Table
         if (!array_key_exists('require_achievement_eligibility', $rewritten_options)) {
             $rewritten_options['require_achievement_eligibility'] = false;
         }
+        if (!array_key_exists('refresh_selection', $rewritten_options)) {
+            $rewritten_options['refresh_selection'] = false;
+        }
         if (!array_key_exists('reveal_if_unable', $rewritten_options)) {
             $rewritten_options['reveal_if_unable'] = false;
         }
@@ -6760,6 +6876,7 @@ class Innovation extends Table
                 case 'return_keyword':
                 case 'solid_constraint':
                 case 'require_achievement_eligibility':
+                case 'refresh_selection':
                 case 'reveal_if_unable':
                 case 'has_demand_effect':
                 case 'bottom_from':
@@ -11159,6 +11276,7 @@ class Innovation extends Table
             $this->innovationGameState->set('foreshadow_keyword', -1);
             $this->innovationGameState->set('require_achievement_eligibility', -1);
             $this->innovationGameState->set('has_demand_effect', -1);
+            $this->innovationGameState->set('refresh_selection', -1);
             $this->innovationGameState->set('reveal_if_unable', -1);
             $this->innovationGameState->set('has_splay_direction', -1);
             $this->innovationGameState->set('foreseen_card_id', -1);
@@ -13552,6 +13670,7 @@ class Innovation extends Table
             ->setEffectType($current_effect_type)
             ->setEffectNumber($current_effect_number)
             ->setCurrentStep(self::getStep())
+            ->setNextStep(self::getStep() + 1)
             ->setMaxSteps(self::getStepMax());
 
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
@@ -13561,104 +13680,8 @@ class Innovation extends Table
         $clock = Icons::render(6);
 
         if (self::isInSeparateFile($card_id)) {
-            $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
-            if (empty($options)) {
-                $options = null;
-            } else {
-                // Use sensible defaults for unset options
-                if (array_key_exists('n', $options) && $options['n'] == 'all') {
-                    $options['n'] = 999;
-                }
-                if (array_key_exists('n_max', $options) && $options['n_max'] == 'all') {
-                    $options['n_max'] = 999;
-                }
-                if (!array_key_exists('can_pass', $options)) {
-                    $options['can_pass'] = false;
-                }
-                if (array_key_exists('choose_from', $options)) {
-                    $options['location_from'] = $options['choose_from'];
-                    $options['location_to'] = 'none';
-                    unset($options['choose_from']);
-                }
-                if (array_key_exists('achieve_if_eligible', $options)) {
-                    $options['achieve_keyword'] = true;
-                    $options['require_achievement_eligibility'] = true;
-                    unset($options['achieve_if_eligible']);
-                }
-                if (array_key_exists('meld_keyword', $options)) {
-                    $options['location_to'] = 'board';
-                }
-                if (array_key_exists('score_keyword', $options)) {
-                    $options['location_to'] = 'score';
-                }
-                if (array_key_exists('tuck_keyword', $options)) {
-                    $options['location_to'] = 'board';
-                    $options['bottom_to'] = true;
-                    unset($options['tuck_keyword']);
-                }
-                if (array_key_exists('achieve_keyword', $options)) {
-                    $options['location_to'] = 'achievements';
-                    if (!array_key_exists('owner_from', $options) && !array_key_exists('location_from', $options)) {
-                        $options['owner_from'] = 0;
-                        $options['location_from'] = 'achievements';
-                    }
-                }
-                if (array_key_exists('safeguard_keyword', $options)) {
-                    $options['location_to'] = 'safe';
-                    if (!array_key_exists('owner_from', $options) && !array_key_exists('location_from', $options)) {
-                        $options['owner_from'] = 0;
-                        $options['location_from'] = 'achievements';
-                    }
-                }
-                if (array_key_exists('foreshadow_keyword', $options)) {
-                    $options['location_to'] = 'forecast';
-                }
-                if (array_key_exists('return_keyword', $options)) {
-                    $options['location_to'] = 'deck';
-                }
-                if (array_key_exists('topdeck_keyword', $options)) {
-                    $options['location_to'] = 'deck';
-                    $options['bottom_to'] = false;
-                    unset($options['topdeck_keyword']);
-                }
-                if (array_key_exists('junk_keyword', $options)) {
-                    $options['location_to'] = 'junk';
-                    unset($options['junk_keyword']);
-                }
-                if (array_key_exists('reveal_keyword', $options)) {
-                    $options['location_to'] = 'revealed';
-                    unset($options['reveal_keyword']);
-                }
-                if (array_key_exists('location_from', $options) && $options['location_from'] == Locations::AVAILABLE_ACHIEVEMENTS) {
-                    $options['location_from'] = Locations::ACHIEVEMENTS;
-                    $options['owner_from'] = 0;
-                }
-                if (array_key_exists('location_to', $options) && $options['location_to'] == Locations::AVAILABLE_ACHIEVEMENTS) {
-                    $options['location_to'] = Locations::ACHIEVEMENTS;
-                    $options['owner_to'] = 0;
-                }
-                if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
-                    $options['n'] = 1;
-                }
-                if (!array_key_exists('player_id', $options)) {
-                    $options['player_id'] = $player_id;
-                }
-                if (array_key_exists('location_from', $options) && ($options['location_from'] == 'deck' || $options['location_from'] == 'junk')) {
-                    $options['owner_from'] = 0;
-                }
-                if (!array_key_exists('owner_from', $options)) {
-                    $options['owner_from'] = $player_id;
-                }
-                if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
-                    $options['owner_to'] = 0;
-                }
-                if (!array_key_exists('owner_to', $options)) {
-                    $options['owner_to'] = $player_id;
-                }
-                if (array_key_exists('choices', $options)) {
-                    $options['choose_from_list'] = true;
-                }
-            }
+            $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
+            $options = self::expandInteractionOptions($compact_options, $player_id);
         }
 
         switch ($code) {
@@ -16351,21 +16374,12 @@ class Innovation extends Table
             || (array_key_exists('n', $options) && $options['n'] <= 0)
             || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)
             || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age']))
-                || (array_key_exists('choices', $options) && empty($options['choices'])))
+            || (array_key_exists('choices', $options) && empty($options['choices'])))
         ) {
 
-            self::notifyIfLocationLimitShrunkSelection($player_id);
+            self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
 
             if (self::isInSeparateFile($card_id)) {
-                $executionState = (new ExecutionState($this))
-                    ->setEdition($this->innovationGameState->getEdition())
-                    ->setLauncherId($launcher_id)
-                    ->setPlayerId($player_id)
-                    ->setEffectType($current_effect_type)
-                    ->setEffectNumber($current_effect_number)
-                    ->setCurrentStep(self::getStep())
-                    ->setNextStep(self::getStep() + 1)
-                    ->setMaxSteps(self::getStepMax());
                 self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
                 $step = $executionState->getNextStep() - 1;
                 self::setStep($step);
@@ -17442,6 +17456,7 @@ class Innovation extends Table
             $n_max = $this->innovationGameState->get('n_max');
             $splay_direction = $this->innovationGameState->get('splay_direction');
             $enable_autoselection = $this->innovationGameState->get('enable_autoselection') == 1;
+            $refresh_selection = $this->innovationGameState->get('refresh_selection') == 1;
             $owner_from = $this->innovationGameState->get('owner_from');
             $location_from = self::decodeLocation($this->innovationGameState->get('location_from'));
             $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
@@ -17475,6 +17490,7 @@ class Innovation extends Table
             }
 
             // Special automation case for Periodic Table (it's broken into two interactions only because the choice is sometimes complex)
+            // TODO(LATER): Try to use refresh_selection instead.
             if ($code == '175N1A' && $selection_size == 2) {
                 $card = self::getSelectedCards()[0];
                 $this->innovationGameState->set('id_last_selected', $card['id']);
@@ -17504,7 +17520,6 @@ class Innovation extends Table
 
             // There is no selectable card
             if ($selection_size == 0) {
-
                 if (($splay_direction == -1 && ($can_pass || $n_min <= 0)) && ($selection_will_reveal_hidden_information || ($num_cards_in_location_from > 0 && !$enable_autoselection))) {
                     // The player can pass or stop and the opponents can't know that the player has no eligible card
                     // This can happen for example in the Masonry effect
@@ -17526,9 +17541,10 @@ class Innovation extends Table
                 self::trace('preSelectionMove->interInteractionStep (no card)');
                 $this->gamestate->nextState('interInteractionStep');
                 return;
-
-                // Color must be splayed and there is only one choice
-            } else if ($enable_autoselection && !$can_pass && $splay_direction >= 0 && count($colors) === 1) {
+            }
+            
+            // Color must be splayed and there is only one choice
+            if ($enable_autoselection && !$can_pass && $splay_direction >= 0 && count($colors) === 1) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
@@ -17538,15 +17554,17 @@ class Innovation extends Table
                 self::trace('preSelectionMove->interSelectionMove (automated splay selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-                // All selectable cards must be chosen
-            } else if (
+            }
+
+            // All selectable cards must be chosen
+            if (
                 $enable_autoselection
                 // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)
                 && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) <= $selection_size)
                 // The player must choose at least all of the selectable cards
                 && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                 // If there's more than one selectable card, only automate the choices if the order does not matter
-                && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck' && $location_to != 'safe'))
+                && ($selection_size == 1 || (!$refresh_selection && $location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck' && $location_to != 'safe'))
             ) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
@@ -17557,9 +17575,11 @@ class Innovation extends Table
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-                // Try to return cards to the deck where the order doesn't matter
-            } else if (
-                $enable_autoselection
+            }
+            
+            // Try to return cards to the deck where the order doesn't matter
+            if (
+                $enable_autoselection && !$refresh_selection
                 // Make sure choosing these cards won't reveal hidden information
                 && (!$selection_will_reveal_hidden_information)
                 // The player must choose at least all of the selectable cards
@@ -17575,9 +17595,11 @@ class Innovation extends Table
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-                // Try to tuck cards where the order doesn't matter
-            } else if (
-                $enable_autoselection
+            }
+            
+            // Try to tuck cards where the order doesn't matter
+            if (
+                $enable_autoselection && !$refresh_selection
                 // Make sure choosing these cards won't reveal hidden information
                 && (!$selection_will_reveal_hidden_information)
                 // The player must choose at least all of the selectable cards
@@ -17593,8 +17615,10 @@ class Innovation extends Table
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-                // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
-            } else if ($n_min < 800 && $selection_size < $n_min) {
+            }
+            
+            // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
+            if ($n_min < 800 && $selection_size < $n_min) {
                 if ($this->innovationGameState->get('solid_constraint') == 1) {
                     self::notifyGeneralInfo(clienttranslate("There are not enough cards to fulfill the condition."));
                     self::deselectAllCards();
@@ -18222,8 +18246,9 @@ class Innovation extends Table
             $this->innovationGameState->increment('n_min', -1);
             $this->innovationGameState->increment('n_max', -1);
         }
-        // Check if another selection is to be done
-        if ($special_type_of_choice != 0 || $this->innovationGameState->get('n_max') == 0) { // No more choice can be made
+
+        // Stop if no more choices should be made
+        if ($special_type_of_choice != 0 || $this->innovationGameState->get('n_max') == 0) {
             // Unset the selection
             self::deselectAllCards();
             // End of this interaction step
@@ -18231,7 +18256,20 @@ class Innovation extends Table
             $this->gamestate->nextState('interInteractionStep');
             return;
         }
-        // New selection move
+
+        // Refresh selection, if prompted by the card
+        if ($this->innovationGameState->get('refresh_selection') == 1) {
+            $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
+            $options = self::expandInteractionOptions($compact_options, $player_id);
+            // Clear the options that have to do with the number of cards being returned (only the
+            // initial getInteractionOptions call should set these)
+            unset($options['n'], $options['n_min'], $options['n_max']);
+            self::setSelectionRange($options, /*is_refreshing_options=*/ true);
+            self::trace('interSelectionMove->preSelectionMove');
+            $this->gamestate->nextState('preSelectionMove');
+            return;
+        }
+
         $this->innovationGameState->set('can_pass', 0); // Passing is no longer possible (stopping will be if n_min == 0)
         self::trace('interSelectionMove->preSelectionMove');
         $this->gamestate->nextState('preSelectionMove');
