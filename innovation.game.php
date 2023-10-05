@@ -533,7 +533,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('icon_hash_3', -1); // icon hash of a card which is allowed to be selected, else -1
         $this->innovationGameState->setInitial('icon_hash_4', -1); // icon hash of a card which is allowed to be selected, else -1
         $this->innovationGameState->setInitial('icon_hash_5', -1); // icon hash of a card which is allowed to be selected, else -1
-        $this->innovationGameState->setInitial('enable_autoselection', -1); // 1 if cards are allowed to be autoselected during an interaction
+        $this->innovationGameState->setInitial('enable_autoselection', -1); // 1 if cards are allowed to be autoselected during an interaction, 2 if forced autoselection should be used
         $this->innovationGameState->setInitial('include_relics', -1); // 1 if relics cards are allowed to be selected during an interaction
         $this->innovationGameState->setInitial('include_special_achievements', -1); // 1 if special achievements are allowed to be selected during an interaction
         $this->innovationGameState->setInitial('with_bonus', -1); // 1 if only cards with a bonus are allowed to be selected during an interaction
@@ -6615,6 +6615,13 @@ class Innovation extends Table
         if (array_key_exists('choices', $options)) {
             $options['choose_from_list'] = true;
         }
+        if (array_key_exists('enable_autoselection', $options)) {
+            if ($options['enable_autoselection']) {
+                $options['enable_autoselection'] = 2; // Forced on (more aggressive than the default)
+            } else {
+                $options['enable_autoselection'] = 0; // No autoselection
+            }
+        }
         return $options;
     }
 
@@ -6775,7 +6782,7 @@ class Innovation extends Table
             $rewritten_options['icon_hash_5'] = -1;
         }
         if (!array_key_exists('enable_autoselection', $rewritten_options)) {
-            $rewritten_options['enable_autoselection'] = true;
+            $rewritten_options['enable_autoselection'] = 1; // Non-aggressive autoselection
         }
         if (!array_key_exists('include_relics', $rewritten_options)) {
             $rewritten_options['include_relics'] = true;
@@ -6881,7 +6888,6 @@ class Innovation extends Table
                 case 'has_demand_effect':
                 case 'bottom_from':
                 case 'bottom_to':
-                case 'enable_autoselection':
                 case 'include_relics':
                 case 'include_special_achievements':
                 case 'with_bonus':
@@ -17455,7 +17461,7 @@ class Innovation extends Table
             $n_min = $this->innovationGameState->get('n_min');
             $n_max = $this->innovationGameState->get('n_max');
             $splay_direction = $this->innovationGameState->get('splay_direction');
-            $enable_autoselection = $this->innovationGameState->get('enable_autoselection') == 1;
+            $autoselection_mode = $this->innovationGameState->get('enable_autoselection');
             $refresh_selection = $this->innovationGameState->get('refresh_selection') == 1;
             $owner_from = $this->innovationGameState->get('owner_from');
             $location_from = self::decodeLocation($this->innovationGameState->get('location_from'));
@@ -17468,37 +17474,6 @@ class Innovation extends Table
             $without_bonus = $this->innovationGameState->get('without_bonus');
             $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile() : null;
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor() : null;
-
-            $nested_card_state = self::getCurrentNestedCardState();
-
-            // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
-            if ($nested_card_state == null) {
-                $code = null;
-                $current_effect_type = -1;
-                $current_effect_number = -1;
-            } else {
-                $card_id = $nested_card_state['card_id'];
-                $current_effect_type = $nested_card_state['current_effect_type'];
-                $current_effect_number = $nested_card_state['current_effect_number'];
-                // Echo effects are sometimes executed on cards other than the card being dogma'd
-                if ($current_effect_type == 3) {
-                    $nesting_index = $nested_card_state['nesting_index'];
-                    $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}", array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
-                }
-                $step = self::getStep();
-                $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-            }
-
-            // Special automation case for Periodic Table (it's broken into two interactions only because the choice is sometimes complex)
-            // TODO(LATER): Try to use refresh_selection instead.
-            if ($code == '175N1A' && $selection_size == 2) {
-                $card = self::getSelectedCards()[0];
-                $this->innovationGameState->set('id_last_selected', $card['id']);
-                self::unmarkAsSelected($card['id']);
-                self::trace('preSelectionMove->interSelectionMove (Periodic Table automation)');
-                $this->gamestate->nextState('interSelectionMove');
-                return;
-            }
 
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
             $num_cards_in_location_from = self::countCardsInLocation($owner_from, $location_from);
@@ -17544,7 +17519,7 @@ class Innovation extends Table
             }
             
             // Color must be splayed and there is only one choice
-            if ($enable_autoselection && !$can_pass && $splay_direction >= 0 && count($colors) === 1) {
+            if ($autoselection_mode >= 1 && !$can_pass && $splay_direction >= 0 && count($colors) === 1) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
@@ -17558,13 +17533,13 @@ class Innovation extends Table
 
             // All selectable cards must be chosen
             if (
-                $enable_autoselection
+                $autoselection_mode >= 1
                 // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)
                 && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) <= $selection_size)
                 // The player must choose at least all of the selectable cards
                 && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                 // If there's more than one selectable card, only automate the choices if the order does not matter
-                && ($selection_size == 1 || (!$refresh_selection && $location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck' && $location_to != 'safe'))
+                && ($selection_size == 1 || ((!$refresh_selection || $autoselection_mode == 2) && $location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck' && $location_to != 'safe'))
             ) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
@@ -17579,7 +17554,7 @@ class Innovation extends Table
             
             // Try to return cards to the deck where the order doesn't matter
             if (
-                $enable_autoselection && !$refresh_selection
+                (($autoselection_mode >= 1 && !$refresh_selection) || ($autoselection_mode == 2))
                 // Make sure choosing these cards won't reveal hidden information
                 && (!$selection_will_reveal_hidden_information)
                 // The player must choose at least all of the selectable cards
@@ -17599,7 +17574,7 @@ class Innovation extends Table
             
             // Try to tuck cards where the order doesn't matter
             if (
-                $enable_autoselection && !$refresh_selection
+                (($autoselection_mode >= 1 && !$refresh_selection) || ($autoselection_mode == 2))
                 // Make sure choosing these cards won't reveal hidden information
                 && (!$selection_will_reveal_hidden_information)
                 // The player must choose at least all of the selectable cards

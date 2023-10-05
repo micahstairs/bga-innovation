@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card175 extends AbstractCard
 {
@@ -12,8 +13,9 @@ class Card175 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::countTopCardsOfSameValue() >= 2) {
-      self::setMaxSteps(2);
+    if (count(self::getRepeatedValues(self::getTopCards())) >= 1) {
+      self::setMaxSteps(1);
+      self::setAuxiliaryValue(-1); // Indicate that the first color has not been chosen yet
     } else {
       self::notifyNoTopCardsOfSameValue();
     }
@@ -21,21 +23,24 @@ class Card175 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
+    if (self::getAuxiliaryValue() === -1) {
       $colors = [];
       $repeatedValues = self::getRepeatedValues(self::getTopCards());
       foreach (self::getTopCards() as $card) {
-        if (in_array($card['faceup_age'], $repeatedValues)) {
+        if (in_array(self::getValue($card), $repeatedValues)) {
           $colors[] = $card['color'];
         }
       }
       return [
-        'choose_from' => 'board',
-        'color'       => $colors,
+        'n'                 => 2,
+        'choose_from'       => Locations::BOARD,
+        'color'             => $colors,
+        'refresh_selection' => true,
+        'enable_autoselection' => true,
       ];
     } else {
       return [
-        'choose_from' => 'board',
+        'choose_from' => Locations::BOARD,
         'not_id'      => self::getLastSelectedId(),
         'age'         => self::getLastSelectedFaceUpAge(),
       ];
@@ -44,28 +49,24 @@ class Card175 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    $cardArgs = $this->game->getNotificationArgsForCardList([$card]);
-    self::notifyPlayer(clienttranslate('${You} choose ${card}.'), ['card' => $cardArgs]);
-    self::notifyOthers(clienttranslate('${player_name} chose ${card}'), ['card' => $cardArgs]);
-    if (self::isFirstInteraction()) {
+    $args = ['card' => $this->game->getNotificationArgsForCardList([$card])];
+    self::notifyPlayer(clienttranslate('${You} choose ${card}.'), $args);
+    self::notifyOthers(clienttranslate('${player_name} chose ${card}'), $args);
+    if (self::getAuxiliaryValue() === -1) {
       self::setAuxiliaryValue($card['color']);
     } else {
       $color1 = self::getAuxiliaryValue();
       $color2 = $card['color'];
-      $meldedCard = self::drawAndMeld($card['faceup_age'] + 1);
+      $meldedCard = self::drawAndMeld(self::getValue($card) + 1);
       if ($meldedCard['color'] == $color1 || $meldedCard['color'] == $color2) {
-        if (self::countTopCardsOfSameValue() >= 2) {
-          self::setNextStep(2);
+        if (count(self::getRepeatedValues(self::getTopCards())) >= 1) {
+          self::setNextStep(1);
+          self::setAuxiliaryValue(-1); // Indicate that the first color has not been chosen yet
         } else {
           self::notifyNoTopCardsOfSameValue();
         }
       }
     }
-  }
-
-  private function countTopCardsOfSameValue(): int
-  {
-    return count(self::getRepeatedValues(self::getTopCards()));
   }
 
   private function notifyNoTopCardsOfSameValue()
