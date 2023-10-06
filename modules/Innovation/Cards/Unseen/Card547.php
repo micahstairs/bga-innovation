@@ -16,8 +16,8 @@ class Card547 extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      self::setMaxSteps(3);
-    } else {
+      self::setMaxSteps(1);
+    } else if (self::isSecondNonDemand()) {
       foreach (self::getCards('achievements') as $card) {
         if (self::isSpecialAchievement($card)) {
           self::draw(7);
@@ -32,13 +32,8 @@ class Card547 extends AbstractCard
       return ['choices' => [0, 1]];
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === 1) {
-        $colors = [];
-        $repeatedValues = self::getRepeatedValues(self::getTopCards());
-        foreach (self::getTopCards() as $card) {
-          if (in_array($card['faceup_age'], $repeatedValues)) {
-            $colors[] = $card['color'];
-          }
-        }
+        $topCards = self::getTopCards();
+        $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
         return [
           'location_from' => 'board',
           'location_to'   => 'junk,safe',
@@ -80,6 +75,17 @@ class Card547 extends AbstractCard
 
   public function handleListChoice(int $choice): void
   {
+    if ($choice === 0) {
+      $cardIds = self::getCardIdsWithDuplicateValuesInLocation('safe');
+      if ($cardIds) {
+        self::setAuxiliaryArray($cardIds);
+        self::setMaxSteps(2);
+      }
+    } else {
+      if (self::getRepeatedValues(self::getTopCards())) {
+        self::setMaxSteps(2);
+      }
+    }
     self::setAuxiliaryValue($choice);
   }
 

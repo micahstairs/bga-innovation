@@ -13,7 +13,7 @@ class Card175 extends AbstractCard
 
   public function initialExecution()
   {
-    if (count(self::getRepeatedValues(self::getTopCards())) >= 1) {
+    if (self::getRepeatedValues(self::getTopCards())) {
       self::setMaxSteps(1);
       self::setAuxiliaryValue(-1); // Indicate that the first color has not been chosen yet
     } else {
@@ -24,13 +24,8 @@ class Card175 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::getAuxiliaryValue() === -1) {
-      $colors = [];
-      $repeatedValues = self::getRepeatedValues(self::getTopCards());
-      foreach (self::getTopCards() as $card) {
-        if (in_array(self::getValue($card), $repeatedValues)) {
-          $colors[] = $card['color'];
-        }
-      }
+      $topCards = self::getTopCards();
+      $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
       return [
         'n'                    => 2,
         'choose_from'          => Locations::BOARD,

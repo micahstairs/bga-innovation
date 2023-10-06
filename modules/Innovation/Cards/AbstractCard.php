@@ -628,6 +628,16 @@ abstract class AbstractCard
     return Arrays::getRepeatedValues($values);
   }
 
+  public function getColorsMatchingValues(array $cards, array $values): array {
+    $colors = [];
+    foreach ($cards as $card) {
+      if (in_array(self::getValue($card), $values)) {
+        $colors[] = $card['color'];
+      }
+    }
+    return $colors;
+  }
+
   protected function getMinValue(array $cards)
   {
     if (empty($cards)) {

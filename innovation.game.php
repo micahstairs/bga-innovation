@@ -10460,12 +10460,6 @@ class Innovation extends Table
                     $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                     break;
 
-                // id 443, age 11: Fusion
-                case "443N1B":
-                    $message_for_player = clienttranslate('Choose a value');
-                    $message_for_others = clienttranslate('${player_name} must choose a value');
-                    break;
-
                 // id 489, Unseen age 1: Handshake
                 case "489D1A":
                     $message_for_player = clienttranslate('${You} must choose two colors');
@@ -11323,8 +11317,7 @@ class Innovation extends Table
             || $card_id == 72
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
-            || (440 <= $card_id && $card_id <= 442)
-            || (445 <= $card_id && $card_id <= 459)
+            || (440 <= $card_id && $card_id <= 459)
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || $card_id == 490
@@ -13189,43 +13182,6 @@ class Innovation extends Table
 
                 case "219D1":
                     $step_max = 1;
-                    break;
-
-                // id 443, age 11: Fusion
-                case "443N1":
-                    self::setAuxiliaryValue(11);
-                    $step_max = 1;
-                    break;
-
-                // id 444, age 11: Hypersonics
-                case "444D1":
-                    $top_cards = self::getTopCardsOnBoard($player_id);
-                    $matching_cards = array();
-                    foreach ($top_cards as $first_card) {
-                        foreach ($top_cards as $second_card) {
-                            if ($first_card['id'] != $second_card['id'] && $first_card['faceup_age'] == $second_card['faceup_age']) {
-                                $matching_cards[] = $first_card['id'];
-                            }
-                        }
-                    }
-
-                    if (count($matching_cards) > 0) {
-                        $step_max = 2;
-                        self::setAuxiliaryArray($matching_cards);
-                    } else {
-                        self::notifyPlayer(
-                            $player_id,
-                            'log',
-                            clienttranslate('${You} do not have two top cards of matching value on your board.'),
-                            array('You' => 'You')
-                        );
-                        self::notifyAllPlayersBut(
-                            $player_id,
-                            'log',
-                            clienttranslate('${player_name} does not have two top cards of matching value on his board.'),
-                            array('player_name' => self::renderPlayerName($player_id))
-                        );
-                    }
                     break;
 
                 // id 487, Unseen age 1: Rumor
@@ -15797,83 +15753,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 443, age 11: Fusion
-            case "443N1A":
-            case "443N1C": // We have to use a third interaction because if we repeat the first interaction then we wind up overwriting the auxiliary value with 11
-                // "Score a top card of value 11 on your board."    
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getAuxiliaryValue(),
-
-                    'score_keyword' => true,
-                );
-                break;
-
-            case "443N1B":
-                // "Choose a value one or two lower than the scored card"
-
-                $options = array(
-                    'player_id'    => $player_id,
-                    'n'            => 1,
-
-                    'choose_value' => true,
-                    'age'          => self::getAuxiliaryArray(),
-                );
-                break;
-
-            // id 444, age 11: Hypersonics
-            case "444D1A":
-                // "I demand you return two top cards on your board of the same value!"
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-
-                    'owner_from'                      => $player_id,
-                    'location_from'                   => 'board',
-                    'owner_to'                        => 0,
-                    'location_to'                     => 'deck',
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                );
-                break;
-
-            case "444D1B":
-                // "I demand you return two top cards on your board of the same value!"  (second card)
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => $this->innovationGameState->get('age_last_selected'),
-                    // matches previous selection
-                );
-                break;
-
-            case "444D1C":
-                // "return all cards of that value or less in your hand and score pile!"
-                $options = array(
-                    'player_id'                       => $player_id,
-
-                    'owner_from'                      => $player_id,
-                    'location_from'                   => Locations::HAND_OR_SCORE,
-                    'owner_to'                        => 0,
-                    'location_to'                     => 'deck',
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                );
-                break;
-
             // id 487, Unseen age 1: Rumor
             case "487N1A":
                 // "Return a card from your score pile."
@@ -17079,73 +16958,6 @@ class Innovation extends Table
                         self::executeDraw($player_id, 6);
                         break;
 
-                    // id 443, age 11: Fusion
-                    case "443N1A":
-                    case "443N1C":
-                        // "If you do, choose a value one or two lower than the scored card, then repeat this dogma effect using the chosen value."
-                        if ($n > 0) {
-                            $age_last_selected = $this->innovationGameState->get('age_last_selected');
-                            $upper_age = $age_last_selected - 1;
-                            $lower_age = $age_last_selected - 2;
-                            $found_matching_card = false;
-                            foreach (self::getTopCardsOnBoard($player_id) as $card) {
-                                if ($card['age'] == $upper_age || $card['age'] == $lower_age) {
-                                    $found_matching_card = true;
-                                    break;
-                                }
-                            }
-                            if ($found_matching_card > 0) {
-                                self::setStep(1);
-                                $step = 1;
-                                self::setStepMax(3);
-                                self::setAuxiliaryArray([$lower_age, $upper_age]);
-                            } else {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${lower_age} or ${upper_age} on your board.'), array('You' => 'You', 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${lower_age} or ${upper_age} on their board.'), array('player_name' => self::renderPlayerName($player_id), 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));
-                            }
-                        }
-                        break;
-
-                    // id 444, age 11: Hypersonics
-                    case "444D1B":
-                        if ($n > 0) { // "if you do"
-                            // TODO(4E): There might be a Battleship Yamato bug here which could be solved with a faceup_age_last_selected global variable.
-                            $returned_age = $this->innovationGameState->get('age_last_selected');
-
-                            $hand_cards = self::getCardsInHand($player_id);
-                            $cards_to_return = array();
-                            foreach ($hand_cards as $card) {
-                                if ($card['age'] <= $returned_age) {
-                                    $cards_to_return[] = $card['id'];
-                                }
-                            }
-
-                            $score_cards = self::getCardsInScorePile($player_id);
-                            foreach ($score_cards as $card) {
-                                if ($card['age'] <= $returned_age) {
-                                    $cards_to_return[] = $card['id'];
-                                }
-                            }
-                            if (count($cards_to_return) > 0) {
-                                self::incrementStepMax(1);
-                                self::setAuxiliaryArray($cards_to_return);
-                            } else {
-                                self::notifyPlayer(
-                                    $player_id,
-                                    'log',
-                                    clienttranslate('${You} have no cards of value ${age} or less in your hand or score pile.'),
-                                    array('You' => 'You', 'age' => self::getAgeSquare($returned_age))
-                                );
-                                self::notifyAllPlayersBut(
-                                    $player_id,
-                                    'log',
-                                    clienttranslate('${player_name} has no cards of value ${age} or less in his hand or score pile.'),
-                                    array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($returned_age))
-                                );
-                            }
-                        }
-                        break;
-
                     // id 487, Unseen age 1: Rumor
                     case "487N1A":
                         if ($n > 0) { // "if you do"
@@ -17965,13 +17777,6 @@ class Innovation extends Table
                     break;
 
                 case "346N1A":
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                    self::setAuxiliaryValue($choice);
-                    break;
-
-                // id 443, age 11: Fusion
-                case "443N1B":
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                     self::setAuxiliaryValue($choice);
