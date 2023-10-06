@@ -1878,7 +1878,7 @@ $this->textual_card_infos = array(
     368 => array(
         'name'                            => clienttranslate('Shuriken'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_4} or ${icon_3} from your board to my board! If you do, draw a ${age_4}!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer two non-red top cards with a ${icon_4} or ${icon_7} from your board to my board! If you do, and Shuriken was foreseen, you lose!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer two non-red top cards with a ${icon_4} or ${icon_7} from your board to my board! If you do, and Shuriken was foreseen, transfer them to my achievements!'),
         'non_demand_effect_1'             => clienttranslate('You may splay your purple cards right.'),
     ),
 
@@ -2573,7 +2573,7 @@ $this->textual_card_infos = array(
 
     472 => array(
         'name'                => clienttranslate('Drone'),
-        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. If you have fewer than five cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom four cards of that color from all boards. If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. If you have fewer than six cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom five cards of that color from all boards. If you do, repeat this effect.'),
     ),
 
     473 => array(

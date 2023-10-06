@@ -6,6 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card368 extends AbstractCard
 {
@@ -17,7 +18,7 @@ class Card368 extends AbstractCard
   //   - You may splay your purple cards right.
   // - 4th edition:
   //   - I DEMAND you transfer two non-red top cards with a [AUTHORITY] or [AVATAR] from your board
-  //     to my board! If you do, and Shuriken was foreseen, you lose!
+  //     to my board! If you do, and Shuriken was foreseen, transfer them to my achievements!
   //   - You may splay your purple cards right.
 
   public function initialExecution()
@@ -30,18 +31,19 @@ class Card368 extends AbstractCard
     if (self::isDemand()) {
       if (self::isFirstOrThirdEdition()) {
         return [
-          'location_from' => 'board',
+          'location_from' => Locations::BOARD,
           'owner_to'      => self::getLauncherId(),
-          'location_to'   => 'board',
+          'location_to'   => Locations::BOARD,
           'color'         => Colors::NON_RED,
           'with_icons'    => [Icons::AUTHORITY, Icons::CONCEPT],
         ];
       } else {
+        self::setAuxiliaryArray([]); // Tracks cards transferred
         return [
           'n'             => 2,
-          'location_from' => 'board',
+          'location_from' => Locations::BOARD,
           'owner_to'      => self::getLauncherId(),
-          'location_to'   => 'board',
+          'location_to'   => Locations::BOARD,
           'color'         => Colors::NON_RED,
           'with_icons'    => [Icons::AUTHORITY, Icons::AVATAR],
         ];
@@ -55,13 +57,23 @@ class Card368 extends AbstractCard
     }
   }
 
+  public function handleCardChoice(array $card)
+  {
+    if (self::isDemand() && self::isFourthEdition()) {
+      self::addToAuxiliaryArray($card['id']);
+    }
+  }
+
+
   public function afterInteraction()
   {
     if (self::isDemand()) {
       if (self::isFirstOrThirdEdition() && self::getNumChosen() === 1) {
         self::draw(4);
       } else if (self::wasForeseen() && self::getNumChosen() === 2) {
-        self::lose();
+        foreach (self::getAuxiliaryArray() as $cardId) {
+          self::transferToAchievements(self::getCard($cardId), self::getLauncherId());
+        }
       }
     }
   }
