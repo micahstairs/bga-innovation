@@ -22,21 +22,27 @@ class Card133 extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::drawType(self::getMaxValue(self::getTopCards()), CardTypes::ARTIFACTS);
     } else if (self::isSecondNonDemand()) {
-      self::setMaxSteps(1);
+      self::setMaxSteps(2);
     }
   }
 
   public function getInteractionOptions(): array
   {
-    $values = [];
-    foreach (self::getPlayerIds() as $playerId) {
-      $values[] = self::getMaxValue(self::getTopCards($playerId));
+    if (self::isFirstInteraction()) {
+      return ['choose_player' => true];
+    } else {
+      return [
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
+        'junk_keyword'  => true,
+        'age'           => self::getAuxiliaryValue(),
+      ];
     }
-    return [
-      'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-      'junk_keyword'  => true,
-      'age'           => $values,
-    ];
+  }
+
+  public function handlePlayerChoice(int $playerId)
+  {
+    $maxValue = self::getMaxValue(self::getTopCards($playerId));
+    self::setAuxiliaryValue($maxValue); // Track value to junk
   }
 
 }

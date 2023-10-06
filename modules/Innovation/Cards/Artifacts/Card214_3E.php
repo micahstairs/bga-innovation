@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card214_3E extends AbstractCard
 {
@@ -24,7 +25,7 @@ class Card214_3E extends AbstractCard
       return [];
     }
     return [
-      'location_from' => 'score',
+      'location_from' => Locations::SCORE,
       'meld_keyword'  => true,
       'color'         => $colors,
     ];
