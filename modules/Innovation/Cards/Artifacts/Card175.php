@@ -32,10 +32,10 @@ class Card175 extends AbstractCard
         }
       }
       return [
-        'n'                 => 2,
-        'choose_from'       => Locations::BOARD,
-        'color'             => $colors,
-        'refresh_selection' => true,
+        'n'                    => 2,
+        'choose_from'          => Locations::BOARD,
+        'color'                => $colors,
+        'refresh_selection'    => true,
         'enable_autoselection' => true,
       ];
     } else {
