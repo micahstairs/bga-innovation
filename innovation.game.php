@@ -6463,10 +6463,19 @@ class Innovation extends Table
 
         if ($this->innovationGameState->echoesExpansionEnabled()) {
             if ($this->innovationGameState->usingFourthEditionRules()) {
-                // Draw an Echoes card if yellow top card is higher than the blue top card
-                $topBlue = self::getTopCardOnBoard($player_id, Colors::BLUE);
-                $topYellow = self::getTopCardOnBoard($player_id, Colors::YELLOW);
-                if ($topYellow && (!$topBlue || $topYellow['faceup_age'] > $topBlue['faceup_age'])) {
+                // Draw an Echoes card if you have a unique highest top card
+                $maxValue = null;
+                $uniqueHighestValue = false;
+                foreach (self::getTopCardsOnBoard($player_id) as $card) {
+                    $value = $card['faceup_age'];
+                    if ($maxValue === null || $value > $maxValue) {
+                        $maxValue = $value;
+                        $uniqueHighestValue = true;
+                    } else if ($maxValue != null && $value === $maxValue) {
+                        $uniqueHighestValue = false;
+                    }
+                }
+                if ($uniqueHighestValue) {
                     $card_type = CardTypes::ECHOES;
                 }
             } else {

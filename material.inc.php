@@ -2644,7 +2644,7 @@ $this->textual_card_infos = array(
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
         'non_demand_effect_1' => clienttranslate('You may return a ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using a value one higher.'),
-        'non_demand_effect_2' => clienttranslate('You may junk the ${age_1} deck.'),
+        'non_demand_effect_2' => clienttranslate('You may junk all cards in the ${age_1} deck.'),
     ),
 
     486 => array(
