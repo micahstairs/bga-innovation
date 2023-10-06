@@ -10,7 +10,7 @@ class Card441 extends AbstractCard
 
   // Solar Sailing:
   //   - Draw and meld an [11]. If its color is not splayed aslant on your board, return all but
-  ///    your top two cards of that color, and splay that color aslant. If there are four cards of
+  ///    your top four cards of that color, and splay that color aslant. If there are six cards of
   //     that color on your board, you win.
 
   public function initialExecution()
@@ -20,13 +20,13 @@ class Card441 extends AbstractCard
     $stack = self::getStack($color);
     if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];
-      for ($i = 0; $i < count($stack) - 2; $i++) {
+      for ($i = 0; $i < count($stack) - 4; $i++) {
         $cardIds[] = $stack[$i]['id'];
       }
       self::setAuxiliaryArray($cardIds);
       self::setAuxiliaryValue($color); // Track color to return
       self::setMaxSteps(1);
-    } else if (count($stack) >= 4) {
+    } else if (count($stack) >= 6) {
       self::win();
     }
   }
@@ -46,7 +46,7 @@ class Card441 extends AbstractCard
   {
     $color = self::getAuxiliaryValue();
     self::splayAslant($color);
-    if (count(self::getStack($color)) >= 4) {
+    if (count(self::getStack($color)) >= 6) {
       self::win();
     }
   }

@@ -10,8 +10,8 @@ class Card442 extends AbstractCard
 
   // Astrogeology:
   //   - Draw and reveal an [11]. Splay its color on your board aslant. If you do, transfer all but
-  //     your top two cards of that color into your hand.
-  //   - If you have eleven cards in your hand, you win.
+  //     your top four cards of that color into your hand.
+  //   - If you have eight cards in your hand, you win.
 
   public function initialExecution()
   {
@@ -20,15 +20,15 @@ class Card442 extends AbstractCard
       $color = $revealedCard['color'];
       if (self::splayAslant($color)) {
         $stack = self::getStack($color);
-        for ($i = 0; $i < count($stack) - 2; $i++) {
+        for ($i = 0; $i < count($stack) - 4; $i++) {
           self::transferToHand($stack[$i]);
         }
       }
       self::transferToHand($revealedCard);
-    } else {
-      if (self::countCards(Locations::HAND) >= 11) {
-        self::notifyPlayer(clienttranslate('${You} have 11 or more cards in your hand.'));
-        self::notifyOthers(clienttranslate('${player_name} has 11 or more cards in his hand.'));
+    } else if (self::isSecondNonDemand()) {
+      if (self::countCards(Locations::HAND) >= 8) {
+        self::notifyPlayer(clienttranslate('${You} have eight or more cards in your hand.'));
+        self::notifyOthers(clienttranslate('${player_name} has eight or more cards in his hand.'));
         self::win();
       }
     }

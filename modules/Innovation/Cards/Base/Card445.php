@@ -9,7 +9,7 @@ class Card445 extends AbstractCard
 
   // Space Traffic:
   //   - Draw and tuck an [11]. If you tuck directly under an [11], you lose. Otherwise, score all
-  //     but your top three cards of the color of the tucked card, splay that color aslant, and if
+  //     but your top five cards of the color of the tucked card, splay that color aslant, and if
   //     you do not have the highest score, repeat this effect.
 
   public function initialExecution()
@@ -19,12 +19,12 @@ class Card445 extends AbstractCard
       $color = $card['color'];
       $stack = self::getStack($color);
       
-      if (count($stack) >= 2 && $stack[1]['faceup_age'] == 11) {
+      if (count($stack) >= 2 && self::getValue($stack[1]) === 11) {
         self::lose();
         return;
       }
 
-      for ($i = 0; $i < count($stack) - 3; $i++) {
+      for ($i = 0; $i < count($stack) - 5; $i++) {
         self::score($stack[$i]);
       }
       self::splayAslant($color);

@@ -765,7 +765,7 @@ abstract class AbstractCard
     if (!$card) {
       return 0;
     }
-    return Locations::isFaceup($card['location']) ? $card['faceup_age'] : $card['age'];
+    return Locations::isFaceup($card['location']) ? intval($card['faceup_age']) : intval($card['age']);
   }
 
   protected function getCard(int $cardId): ?array

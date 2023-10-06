@@ -2446,13 +2446,13 @@ $this->textual_card_infos = array(
 
     441 => array(
         'name'                => clienttranslate('Solar Sailing'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld an ${age_11}. If its color is not splayed aslant on your board, return all but your top two cards of that color, and splay that color aslant. If there are four cards of that color on your board, you win.'),
+        'non_demand_effect_1' => clienttranslate('Draw and meld an ${age_11}. If its color is not splayed aslant on your board, return all but your top four cards of that color, and splay that color aslant. If there are six cards of that color on your board, you win.'),
     ),
 
     442 => array(
         'name'                => clienttranslate('Astrogeology'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal an ${age_11}. Splay its color on your board aslant. If you do, transfer all but your top two cards of that color into your hand.'),
-        'non_demand_effect_2' => clienttranslate('If you have eleven cards in your hand, you win.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal an ${age_11}. Splay its color on your board aslant. If you do, transfer all but your top four cards of that color into your hand.'),
+        'non_demand_effect_2' => clienttranslate('If you have eight cards in your hand, you win.'),
     ),
 
     443 => array(
@@ -2467,7 +2467,7 @@ $this->textual_card_infos = array(
 
     445 => array(
         'name'                => clienttranslate('Space Traffic'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_11}. If you tucked directly under an ${age_11}, you lose. Score all but your top three cards of the color of the tucked card, and splay that color aslant, and if you do not have the highest score, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_11}. If you tucked directly under an ${age_11}, you lose. Score all but your top five cards of the color of the tucked card, and splay that color aslant, and if you do not have the highest score, repeat this effect.'),
     ),
 
     446 => array(
