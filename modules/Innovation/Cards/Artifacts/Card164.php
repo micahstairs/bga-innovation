@@ -7,10 +7,9 @@ use Innovation\Enums\Locations;
 
 class Card164 extends AbstractCard
 {
-  // Almira, Queen of the Castle
-  // - 3rd edition:
+  // Almira, Queen of the Castle (3rd edition):
   //   - Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.
-  // - 4th edition:
+  // Almira, Queen of Castile (4th edition):
   //   - Meld a card from your hand. If you do, claim an achievement of matching value, ignoring
   //     eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available
   //     achievement, if there is one.
@@ -24,18 +23,19 @@ class Card164 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'hand',
-        'meld_keyword' => true,
+        'location_from' => Locations::HAND,
+        'meld_keyword'  => true,
       ];
     } else {
       return [
-        'age' => self::getLastSelectedFaceUpAge(),
+        'age'             => self::getLastSelectedFaceUpAge(),
         'achieve_keyword' => true,
       ];
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isFirstInteraction()) {
       if (self::getNumChosen() === 1) {
         self::setMaxSteps(2);
@@ -43,7 +43,7 @@ class Card164 extends AbstractCard
         $achievementsByValue = self::getCardsKeyedByValue(Locations::ACHIEVEMENTS);
         foreach ($achievementsByValue as $achievements) {
           if ($achievements) {
-            self::junkBaseDeck($achievements[0]['age']);
+            self::junkBaseDeck(self::getValue($achievements[0]));
             break;
           }
         }
