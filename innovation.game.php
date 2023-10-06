@@ -11318,10 +11318,10 @@ class Innovation extends Table
             || (445 <= $card_id && $card_id <= 459)
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
+            || $card_id == 490
             || (492 <= $card_id && $card_id <= 494)
             || $card_id == 498
-            || $card_id == 503
-            || (505 <= $card_id && $card_id <= 509)
+            || (502 <= $card_id && $card_id <= 509)
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
             || $card_id >= 528;
@@ -13255,11 +13255,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 490, Unseen age 1: Tomb
-                case "490N1":
-                    $step_max = 1;
-                    break;
-
                 // id 491, Unseen age 1: Woodworking
                 case "491N1":
                     // "Draw and meld a 2."
@@ -13380,29 +13375,6 @@ class Innovation extends Table
                             self::returnCard(self::getCardInfo(501));
                         }
                         self::executeDraw($player_id, 3);
-                    }
-                    break;
-
-                // id 502, Unseen age 2: Fingerprints
-                case "502N1":
-                    $step_max = 1;
-                    break;
-
-                case "502N2":
-                    $step_max = 1;
-                    break;
-
-                // id 504, Unseen age 2: Steganography
-                case "504N1":
-                    $color_array = array();
-                    foreach (Colors::ALL as $color) {
-                        if (self::countVisibleIconsInPile($player_id, 3, $color) > 0) {
-                            $color_array[] = $color;
-                        }
-                    }
-                    if (count($color_array) > 0) {
-                        $step_max = 1;
-                        self::setAuxiliaryValueFromArray($color_array);
                     }
                     break;
 
@@ -15932,22 +15904,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 490, Unseen age 1: Tomb
-            case "490N1A":
-                // "Safeguard an available achievement of value 1 plus the number of achievements you have."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => 0,
-                    'location_from' => 'achievements',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'safe',
-
-                    'age'           => self::countCardsInLocation($player_id, 'achievements') + 1,
-                );
-                break;
-
             // id 495, Unseen age 2: Astrology
             case "495N1A":
                 // "You may splay left the color of which you have the most cards on your board."
@@ -16107,72 +16063,6 @@ class Innovation extends Table
                     'location_to'   => 'deck',
 
                     'age'           => $this->innovationGameState->get('age_last_selected'),
-                );
-                break;
-
-            // id 502, Unseen age 2: Fingerprints
-            case "502N1A":
-                // "You may splay your red or yellow cards left."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 1,
-                    'color'           => array(1, 3),
-                    // red or yellow
-                );
-                break;
-
-            case "502N2A":
-                // "Safeguard an available achievement of value equal to the number of splayed colors on your board."
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $count = 0;
-                foreach ($top_cards as $card) {
-                    if ($card !== null) {
-                        if ($card['splay_direction'] > 0) {
-                            $count++;
-                        }
-                    }
-                }
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => 0,
-                    'location_from' => 'achievements',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'safe',
-
-                    'age'           => $count,
-                );
-                break;
-
-            // id 504, Unseen age 2: Steganography
-            case "504N1A":
-                // "You may splay left a color on your board with a visible bulb."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => self::getAuxiliaryValueAsArray(),
-                );
-                break;
-
-            case "504N1B":
-                // "safeguard an available achievement of value equal to the number of cards of that color on your board."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => 0,
-                    'location_from' => 'achievements',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'safe',
-
-                    'age'           => self::countCardsInLocationKeyedByColor($player_id, 'board')[$this->innovationGameState->get('color_last_selected')],
                 );
                 break;
 
@@ -17342,13 +17232,6 @@ class Innovation extends Table
 
                     case "501D1B":
                         self::setAuxiliaryValue($n + self::getAuxiliaryValue());
-                        break;
-
-                    // id 504, Unseen age 2: Steganography
-                    case "504N1A":
-                        if ($n > 0) { // "If you do,"
-                            self::incrementStepMax(1);
-                        }
                         break;
 
                     // id 525, Unseen age 5: Popular Science

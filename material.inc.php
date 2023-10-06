@@ -2644,6 +2644,7 @@ $this->textual_card_infos = array(
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
         'non_demand_effect_1' => clienttranslate('You may return a ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using a value one higher.'),
+        'non_demand_effect_2' => clienttranslate('You may junk the ${age_1} deck.'),
     ),
 
     486 => array(
@@ -2671,6 +2672,7 @@ $this->textual_card_infos = array(
     490 => array(
         'name'                => clienttranslate('Tomb'),
         'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value 1 plus the number of achievements you have.'),
+        'non_demand_effect_2' => clienttranslate('You may transfer the lowest available achievement to your hand. If you do, return all yellow cards and all blue cards on your board.'),
     ),
 
     491 => array(
@@ -2739,7 +2741,7 @@ $this->textual_card_infos = array(
     502 => array(
         'name'                => clienttranslate('Fingerprints'),
         'non_demand_effect_1' => clienttranslate('You may splay your red or yellow cards left.'),
-        'non_demand_effect_2' => clienttranslate('Safeguard an available achievement of value equal to the number of splayed colors on your board.'),
+        'non_demand_effect_2' => clienttranslate('Safeguard an available achievement of value equal to the number of splayed colors on your board. Transfer a card of that value in your hand to any board.'),
     ),
 
     503 => array(
@@ -2750,7 +2752,7 @@ $this->textual_card_infos = array(
 
     504 => array(
         'name'                => clienttranslate('Steganography'),
-        'non_demand_effect_1' => clienttranslate('You may splay left a color on your board with a visible ${icon_3}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board.'),
+        'non_demand_effect_1' => clienttranslate('You may splay left a color on your board with a visible ${icon_3}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board. Otherwise, draw and tuck a ${age_3}.'),
     ),
 
     /* Unseen - Age 3 */
@@ -3262,12 +3264,12 @@ $this->textual_card_infos = array(
     592 => array(
         'name'                => clienttranslate('Fashion Mask'),
         'non_demand_effect_1' => clienttranslate('Tuck a top card with a ${icon_1} or ${icon_5} of each color on your board. You may safeguard one of the tucked cards.'),
-        'non_demand_effect_2' => clienttranslate('You may score all but the top three of your yellow or purple cards. If you do, splay that color aslant.'),
+        'non_demand_effect_2' => clienttranslate('You may score all but the top five of your yellow or purple cards. If you do, splay that color aslant.'),
     ),
 
     593 => array(
         'name'                => clienttranslate('Holography'),
-        'non_demand_effect_1' => clienttranslate('Choose red, blue, or green. Score all but your top four cards of that color, then splay it aslant. If you do both, exchange all lowest cards in your score pile with all your claimed standard achievements of lower value.'),
+        'non_demand_effect_1' => clienttranslate('Choose red, blue, or green. Score all but your top five cards of that color, then splay it aslant. If you do both, exchange all lowest cards in your score pile with all your claimed standard achievements of lower value.'),
     ),
 
     594 => array(

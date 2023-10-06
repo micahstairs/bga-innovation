@@ -12,7 +12,7 @@ class Card592 extends AbstractCard
   // Fashion Mask:
   //   - Tuck a top card with a [PROSPERITY] or [INDUSTRY] of each color on your board. You may
   //     safeguard one of the tucked cards.
-  //   - You may score all but the top three of your yellow or purple cards. If you do, splay
+  //   - You may score all but the top five of your yellow or purple cards. If you do, splay
   //     that color aslant.
 
   public function initialExecution()
@@ -55,8 +55,8 @@ class Card592 extends AbstractCard
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      Colors::YELLOW => clienttranslate('Score all but top three yellow cards'),
-      Colors::PURPLE => clienttranslate('Score all but top three purple cards'),
+      Colors::YELLOW => clienttranslate('Score all but top five yellow cards'),
+      Colors::PURPLE => clienttranslate('Score all but top five purple cards'),
     ]);
   }
 
@@ -64,7 +64,7 @@ class Card592 extends AbstractCard
   {
     $stack = self::getStack($color);
     $scoredCard = false;
-    for ($i = 0; $i < count($stack) - 3; $i++) {
+    for ($i = 0; $i < count($stack) - 5; $i++) {
       self::score($stack[$i]);
       $scoredCard = true;
     }
