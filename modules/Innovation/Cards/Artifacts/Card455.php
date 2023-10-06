@@ -9,8 +9,8 @@ class Card455 extends AbstractCard
 {
   // Sanskrit
   //   - Junk all cards in all score piles. If you don't, for each player, choose the highest top
-  //     card on their board, then for each other different color, transfer the top card of that
-  //     color from their board to their score pile.
+  //     card on their board, then for each other different color, transfer their top card of that
+  //     color to their score pile.
 
   public function initialExecution()
   {

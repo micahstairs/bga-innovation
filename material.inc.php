@@ -2522,7 +2522,7 @@ $this->textual_card_infos = array(
 
     455 => array(
         'name'                => clienttranslate('Sanskrit'),
-        'non_demand_effect_1' => clienttranslate('Junk all cards in all score piles. If you don\'t, for each player, choose the highest top card on their board, then for each other different color, transfer the top card of that color from their board to their score pile.'),
+        'non_demand_effect_1' => clienttranslate('Junk all cards in all score piles. If you don\'t, for each player, choose the highest top card on their board, then for each other different color, transfer their top card of that color to their score pile.'),
     ),
 
     456 => array(
