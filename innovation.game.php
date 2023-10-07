@@ -11312,7 +11312,7 @@ class Innovation extends Table
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id <= 459)
-            || (470 <= $card_id && $card_id <= 495)
+            || (470 <= $card_id && $card_id <= 496)
             || $card_id == 498
             || (502 <= $card_id && $card_id <= 509)
             || $card_id == 512
@@ -13173,29 +13173,6 @@ class Innovation extends Table
 
                 case "219D1":
                     $step_max = 1;
-                    break;
-
-                // id 496, Unseen age 2: Meteorology
-                case "496N1":
-                    // "Draw and reveal a 3. If it has a leaf, score it.  Otherwise, if it has a crown, return it and draw two 3. Otherwise, tuck it."
-                    $revealed_card = self::executeDrawAndReveal($player_id, 3);
-                    if (self::hasRessource($revealed_card, Icons::HEALTH)) {
-                        self::scoreCard($revealed_card, $player_id);
-                    } else if (self::hasRessource($revealed_card, Icons::PROSPERITY)) {
-                        self::returnCard($revealed_card);
-                        self::executeDraw($player_id, 3);
-                        self::executeDraw($player_id, 3);
-                    } else {
-                        self::tuckCard($revealed_card, $player_id);
-                    }
-                    break;
-
-                case "496N2":
-                    // "If you have no towers, claim the Zen achievement."
-                    $icon_counts = self::getPlayerResourceCounts($player_id);
-                    if ($icon_counts[Icons::AUTHORITY] == 0) {
-                        self::claimSpecialAchievement($player_id, 596); // Zen
-                    }
                     break;
 
                 // id 497, Unseen age 2: Padlock
