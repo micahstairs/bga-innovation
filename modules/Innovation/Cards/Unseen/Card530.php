@@ -12,7 +12,7 @@ class Card530 extends AbstractCard
 
   // Secret History:
   //   - I DEMAND you transfer one of your secrets to my safe!
-  //   - If your red or purple cards are splayed right, claim the Mystery achievement. Otherwise,
+  //   - If your red and purple cards are splayed right, claim the Mystery achievement. Otherwise,
   //     splay your red or purple cards right.
 
   public function initialExecution()
@@ -20,7 +20,7 @@ class Card530 extends AbstractCard
     if (self::isDemand()) {
       self::setMaxSteps(1);
     } else {
-      if (self::getSplayDirection(Colors::RED) == Directions::RIGHT || self::getSplayDirection(Colors::PURPLE) == Directions::RIGHT) {
+      if (self::getSplayDirection(Colors::RED) == Directions::RIGHT && self::getSplayDirection(Colors::PURPLE) == Directions::RIGHT) {
         $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::MYSTERY);
       } else {
         self::setMaxSteps(1);

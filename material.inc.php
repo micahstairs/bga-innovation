@@ -2904,7 +2904,7 @@ $this->textual_card_infos = array(
     530 => array(
         'name'                => clienttranslate('Secret History'),
         'i_demand_effect'     => clienttranslate('${I demand} you transfer one of your secrets to my safe!'),
-        'non_demand_effect_1' => clienttranslate('If your red or purple cards are splayed right, claim the Mystery achievement. Otherwise, splay your red or purple cards right.'),
+        'non_demand_effect_1' => clienttranslate('If your red and purple cards are splayed right, claim the Mystery achievement. Otherwise, splay your red or purple cards right.'),
     ),
 
     531 => array(

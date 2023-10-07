@@ -11312,9 +11312,7 @@ class Innovation extends Table
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id <= 459)
-            || (470 <= $card_id && $card_id <= 488)
-            || $card_id == 490
-            || (492 <= $card_id && $card_id <= 494)
+            || (470 <= $card_id && $card_id <= 495)
             || $card_id == 498
             || (502 <= $card_id && $card_id <= 509)
             || $card_id == 512
@@ -13175,41 +13173,6 @@ class Innovation extends Table
 
                 case "219D1":
                     $step_max = 1;
-                    break;
-
-                // id 491, Unseen age 1: Woodworking
-                case "491N1":
-                    // "Draw and meld a 2."
-                    $card = self::executeDrawAndMeld($player_id, 2);
-                    $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
-                    if ($bottom_card['id'] == $card['id']) {
-                        // "If the melded card is a bottom card on your board, score it."
-                        self::scoreCard($card, $player_id);
-                    }
-                    break;
-
-                // id 495, Unseen age 2: Astrology
-                case "495N1":
-                    $stack_size = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                    $largest_stack = max($stack_size);
-                    $color_array = array();
-                    foreach (Colors::ALL as $color) {
-                        if ($stack_size[$color] == $largest_stack) {
-                            $color_array[] = $color;
-                        }
-                    }
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($color_array);
-                    break;
-
-                case "495N2":
-                    // "Draw and meld a card of value equal to the number of visible purple cards on your board."
-                    $purple_pile_size = self::countVisibleCards($player_id, 4);
-                    $card = self::executeDrawAndMeld($player_id, $purple_pile_size);
-                    if (!self::hasRessource($card, Icons::PROSPERITY)) {
-                        // "If the melded card has no crowns, tuck it."
-                        self::tuckCard($card, $player_id);
-                    }
                     break;
 
                 // id 496, Unseen age 2: Meteorology
@@ -15710,19 +15673,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 495, Unseen age 2: Astrology
-            case "495N1A":
-                // "You may splay left the color of which you have the most cards on your board."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => self::getAuxiliaryValueAsArray(),
-                );
-                break;
-
             // id 497, Unseen age 2: Padlock
             case "497D1A":
                 // "I demand you transfer one of your secrets to the available achievements!"
@@ -16076,7 +16026,8 @@ class Innovation extends Table
             || (array_key_exists('n', $options) && $options['n'] <= 0)
             || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)
             || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age']))
-            || (array_key_exists('choices', $options) && empty($options['choices'])))
+            || (array_key_exists('choices', $options) && empty($options['choices']))
+            || (array_key_exists('splay_direction', $options) && array_key_exists('color', $options) && empty($options['color'])))
         ) {
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
