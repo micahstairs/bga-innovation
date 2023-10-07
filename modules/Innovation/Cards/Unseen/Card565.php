@@ -38,7 +38,7 @@ class Card565 extends AbstractCard
 
   public function handlePlayerChoice(int $playerId): void
   {
-    $this->notifications->notifyPlayerChoice($playerId, self::getPlayerId());
+    self::notifyPlayerChoice($playerId);
     self::setAuxiliaryValue($playerId);
     self::drawAndMeld(10);
     self::drawAndMeld(10);

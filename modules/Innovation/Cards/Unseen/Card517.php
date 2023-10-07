@@ -60,7 +60,7 @@ class Card517 extends AbstractCard
 
   public function handleColorChoice(int $color): void
   {
-    $this->notifications->notifyColorChoice($color, self::getLauncherId());
+    self::notifyColorChoice($color, self::getLauncherId());
     self::setAuxiliaryValue($color);
   }
 

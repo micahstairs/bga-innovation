@@ -52,7 +52,7 @@ class Card428 extends AbstractCard
       ];
     } else {
       if (self::isFirstInteraction()) {
-        // TODO(4E): Confirm whether we need to offer non-standard icons as options for this card.
+        // TODO(4E): Offer non-standard icons as options for this card.
         return ['choose_icon_type' => true];
       } else {
         return [
@@ -68,7 +68,7 @@ class Card428 extends AbstractCard
 
   public function handleIconChoice(int $icon)
   {
-    $this->notifications->notifyIconChoice($icon, self::getPlayerId());
+    self::notifyIconChoice($icon);
     self::setAuxiliaryValue($icon); // Track exempted icon
   }
 

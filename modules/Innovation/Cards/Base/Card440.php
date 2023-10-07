@@ -68,7 +68,7 @@ class Card440 extends AbstractCard
 
   public function handleIconChoice(int $icon)
   {
-    $this->notifications->notifyIconChoice($icon, self::getPlayerId());
+    self::notifyIconChoice($icon);
     self::setAuxiliaryValue($icon);
   }
 }

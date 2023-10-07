@@ -44,7 +44,7 @@ class Card336 extends AbstractCard
 
   public function handleColorChoice(int $color)
   {
-    $this->notifications->notifyColorChoice($color, self::getPlayerId());
+    self::notifyColorChoice($color);
     $revealedCards = [];
     for ($i = 0; $i < 5; $i++) {
       $revealedCards[] = self::drawAndReveal(1);

@@ -58,7 +58,7 @@ class Card559 extends AbstractCard
 
   public function handleValueChoice(int $value)
   {
-    $this->notifications->notifyValueChoice($value, self::getPlayerId());
+    self::notifyValueChoice($value);
     foreach (self::getCardsKeyedByValue('hand')[$value] as $card) {
       self::score($card);
     }

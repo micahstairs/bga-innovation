@@ -31,7 +31,7 @@ class Card179_4E extends AbstractCard
   }
 
   public function handleValueChoice(int $value) {
-    $this->notifications->notifyValueChoice($value, self::getPlayerId());
+    self::notifyValueChoice($value);
 
     $card1 = self::drawAndReveal($value);
     $card2 = self::drawAndReveal($value);

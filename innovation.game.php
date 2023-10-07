@@ -10460,12 +10460,6 @@ class Innovation extends Table
                     $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                     break;
 
-                // id 489, Unseen age 1: Handshake
-                case "489D1A":
-                    $message_for_player = clienttranslate('${You} must choose two colors');
-                    $message_for_others = clienttranslate('${player_name} must choose two colors');
-                    break;
-
                 // id 525, Unseen age 5: Popular Science
                 case "525N1A":
                     $message_for_player = clienttranslate('Choose a value');
@@ -11318,8 +11312,7 @@ class Innovation extends Table
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id <= 459)
-            || (470 <= $card_id && $card_id <= 486)
-            || $card_id == 488
+            || (470 <= $card_id && $card_id <= 488)
             || $card_id == 490
             || (492 <= $card_id && $card_id <= 494)
             || $card_id == 498
@@ -13182,42 +13175,6 @@ class Innovation extends Table
 
                 case "219D1":
                     $step_max = 1;
-                    break;
-
-                // id 487, Unseen age 1: Rumor
-                case "487N1":
-                    $step_max = 1;
-                    break;
-
-                case "487N2":
-                    $step_max = 1;
-                    break;
-
-                // id 489, Unseen age 1: Handshake
-                case "489D1":
-                    // "I demand you transfer all cards from my hand to your hand!"
-                    foreach (self::getCardsInHand($launcher_id) as $card) {
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-
-                    // Find unique colors
-                    $cards_in_player_hand = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                    $color_array = array();
-                    foreach (Colors::ALL as $color) {
-                        if ($cards_in_player_hand[$color] > 0) {
-                            $color_array[] = $color;
-                        }
-                    }
-
-                    // "Choose two colors of cards in your hand! Transfer all cards in your hand of those colors to my hand!"
-                    if (count($color_array) == 1 || count($color_array) == 2) {
-                        foreach (self::getCardsInHand($player_id) as $card) {
-                            self::transferCardFromTo($card, $launcher_id, 'hand');
-                        }
-                    } else if (count($color_array) > 2) {
-                        $step_max = 1;
-                        self::setAuxiliaryValueFromArray($color_array);
-                    }
                     break;
 
                 // id 491, Unseen age 1: Woodworking
@@ -15753,45 +15710,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 487, Unseen age 1: Rumor
-            case "487N1A":
-                // "Return a card from your score pile."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "487N2A":
-                // "Transfer a card from your hand to the hand of the player on your left."
-                $players = self::getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer();
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $players[0],
-                    'location_to'   => 'hand',
-                );
-                break;
-
-            // id 489, Unseen age 1: Handshake
-            case "489D1A":
-                // "Choose two colors of cards in your hand!"
-                $options = array(
-                    'player_id'         => $player_id,
-
-                    'choose_two_colors' => true,
-                    'color'             => self::getAuxiliaryValueAsArray(),
-                );
-                break;
-
             // id 495, Unseen age 2: Astrology
             case "495N1A":
                 // "You may splay left the color of which you have the most cards on your board."
@@ -16958,25 +16876,6 @@ class Innovation extends Table
                         self::executeDraw($player_id, 6);
                         break;
 
-                    // id 487, Unseen age 1: Rumor
-                    case "487N1A":
-                        if ($n > 0) { // "if you do"
-                            // "draw a card of value one higher than the card you return."
-                            self::executeDraw($player_id, $this->innovationGameState->get('age_last_selected') + 1);
-                        }
-                        break;
-
-                    // id 489, Unseen age 1: Handshake
-                    case "489D1A":
-                        // "Transfer all cards in your hand of those colors to my hand!"
-                        $colors = self::getAuxiliaryValueAsArray();
-                        foreach (self::getCardsInHand($player_id) as $card) {
-                            if ($colors[0] == $card['color'] || $colors[1] == $card['color']) {
-                                self::transferCardFromTo($card, $launcher_id, 'hand');
-                            }
-                        }
-                        break;
-
                     // id 497, Unseen age 2: Padlock
                     case "497D1A":
                         self::setAuxiliaryValue($n);
@@ -17780,15 +17679,6 @@ class Innovation extends Table
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                     self::setAuxiliaryValue($choice);
-                    break;
-
-                // id 489, Unseen age 1: Handshake     
-                case "489D1A":
-                    // $choice was two colors
-                    $colors = Arrays::getValueAsArray($choice);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
-                    self::setAuxiliaryValueFromArray($colors);
                     break;
 
                 // id 499, Unseen age 2: Cipher

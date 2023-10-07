@@ -22,7 +22,7 @@ class Card179_3E extends AbstractCard
   }
 
   public function handleValueChoice(int $value) {
-    $this->notifications->notifyValueChoice($value, self::getPlayerId());
+    self::notifyValueChoice($value);
     $card = self::drawAndMeld($value);
     self::splayUp($card['color']);
     if ($card['faceup_age'] == self::countVisibleCardsInStack($card['color'])) {

@@ -32,49 +32,6 @@ class Notifications
     self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($color)));
   }
 
-  // CHOICE NOTIFICATIONS
-
-  public function notifyIconChoice(int $icon, int $playerId)
-  {
-    $iconSquare = Icons::render($icon);
-    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${icon}.'), ['You' => 'You', 'icon' => $iconSquare]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${icon}.'), ['player_name' => self::renderPlayerName($playerId), 'icon' => $iconSquare]);
-  }
-
-  public function notifyValueChoice(int $value, int $playerId)
-  {
-    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose the value ${age}.'), ['You' => 'You', 'age' => self::renderValue($value)]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::renderPlayerName($playerId), 'age' => self::renderValue($value)]);
-  }
-
-  public function notifyColorChoice(int $color, int $playerId)
-  {
-    $colorText = Colors::render($color);
-    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${color}.'), ['i18n' => ['color'], 'You' => 'You', 'color' => $colorText]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${color}.'), ['i18n' => ['color'], 'player_name' => self::renderPlayerName($playerId), 'color' => $colorText]);
-  }
-
-  public function notifyPlayerChoice(int $chosenPlayerId, int $playerId) {
-    self::notifyPlayer(
-      $playerId,
-      'log',
-      clienttranslate('${You} choose the player ${player_choice}.'),
-      array(
-        'You'           => 'You',
-        'player_choice' => self::renderPlayerName($chosenPlayerId)
-      )
-    );
-    self::notifyAllPlayersBut(
-      $playerId,
-      'log',
-      clienttranslate('${player_name} chooses the player ${player_choice}.'),
-      array(
-        'player_name'   => self::renderPlayerName($playerId),
-        'player_choice' => self::renderPlayerName($chosenPlayerId)
-      )
-    );
-  }
-
   // MISCELLANEOUS NOTIFICATIONS
 
   public function renderValue(int $value): string

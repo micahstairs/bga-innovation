@@ -1246,13 +1246,23 @@ abstract class AbstractCard
   protected function getUniqueValues(string $location, int $playerId = null): array
   {
     $values = [];
-    $countsByValue = self::countCardsKeyedByValue($location, $playerId);
-    for ($age = 1; $age <= 11; $age++) {
-      if ($countsByValue[$age] > 0) {
-        $values[] = $age;
+    foreach (self::countCardsKeyedByValue($location, $playerId) as $value => $count) {
+      if ($count > 0) {
+        $values[] = $value;
       }
     }
     return $values;
+  }
+
+  protected function getUniqueColors(string $location, int $playerId = null): array
+  {
+    $colors = [];
+    foreach (self::countCardsKeyedByColor($location, $playerId) as $color => $count) {
+      if ($count > 0) {
+        $colors[] = $color;
+      }
+    }
+    return $colors;
   }
 
   protected function getCardsKeyedByValue(string $location, int $playerId = null): array
@@ -1269,18 +1279,6 @@ abstract class AbstractCard
   protected function getBaseDecks(): array
   {
     return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE);
-  }
-
-  protected function getUniqueColors(string $location, int $playerId = null): array
-  {
-    $colors = [];
-    $counts = self::countCardsKeyedByColor($location, $playerId);
-    foreach (Colors::ALL as $color) {
-      if ($counts[$color] > 0) {
-        $colors[] = $color;
-      }
-    }
-    return $colors;
   }
 
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
@@ -1439,6 +1437,41 @@ abstract class AbstractCard
     $playerId = self::coercePlayerId($playerId);
     $defaultArgs = ['player_name' => self::renderPlayerName($playerId)];
     $this->game->notifyAllPlayersBut($playerId, 'log', $log, array_merge($defaultArgs, $args));
+  }
+
+  public function notifyValueChoice(int $value, int $playerId = null)
+  {
+    $args = ['age' => $this->notifications->renderValue($value)];
+    self::notifyPlayer(clienttranslate('${You} choose ${age}.'), $args, $playerId);
+    self::notifyOthers(clienttranslate('${player_name} chooses ${age}.'), $args, $playerId);
+  }
+
+  public function notifyColorChoice(int $color, int $playerId = null)
+  {
+    $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
+    self::notifyPlayer(clienttranslate('${You} choose ${color}.'), $args, $playerId);
+    self::notifyOthers(clienttranslate('${player_name} chooses ${color}.'), $args, $playerId);
+  }
+
+  public function notifyTwoColorChoice(int $color1, int $color2, int $playerId = null)
+  {
+    $args = ['i18n' => ['color_1', 'color_2'], 'color_1' => Colors::render($color1), 'color_2' => Colors::render($color2)];
+    self::notifyPlayer(clienttranslate('${You} choose ${color_1} and ${color_2}.'), $args, $playerId);
+    self::notifyOthers(clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), $args, $playerId);
+  }
+
+  public function notifyIconChoice(int $icon, int $playerId = null)
+  {
+    $args = ['icon' => Icons::render($icon)];
+    self::notifyPlayer(clienttranslate('${You} choose ${icon}.'), $args, $playerId);
+    self::notifyOthers(clienttranslate('${player_name} chooses ${icon}.'), $args, $playerId);
+  }
+
+  public function notifyPlayerChoice(int $chosenPlayerId, int $playerId = null)
+  {
+    $args = ['player_choice' => $this->notifications->renderPlayerName($chosenPlayerId)];
+    self::notifyPlayer(clienttranslate('${You} choose the player ${player_choice}.'), $args, $playerId);
+    self::notifyOthers(clienttranslate('${player_name} chooses the player ${player_choice}.'), $args, $playerId);
   }
 
   public function renderValue(int $value): string
