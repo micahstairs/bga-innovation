@@ -506,7 +506,7 @@ abstract class AbstractCard
     return $this->game->bulkTransferCards($cards, 0, Locations::REMOVED);
   }
 
-  protected function foreshadow(?array $card, $callbackIfFull, int $playerId = null): ?array
+  protected function foreshadow(?array $card, $callbackIfFull = null, int $playerId = null): ?array
   {
     if (!$card) {
       return null;
@@ -515,10 +515,13 @@ abstract class AbstractCard
     if ($foreshadowedCard) {
       return $foreshadowedCard;
     }
+    if ($callbackIfFull === null) {
+      return null;
+    }
     return $callbackIfFull($card);
   }
 
-  protected function transferToForecast(?array $card, $callbackIfFull, int $playerId = null)
+  protected function transferToForecast(?array $card, $callbackIfFull = null, int $playerId = null)
   {
     if (!$card) {
       return null;
@@ -526,6 +529,9 @@ abstract class AbstractCard
     $transferredCard = $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::FORECAST);
     if ($transferredCard) {
       return $transferredCard;
+    }
+    if ($callbackIfFull === null) {
+      return null;
     }
     return $callbackIfFull($card);
   }

@@ -25,7 +25,7 @@ class Card355 extends AbstractCard
       if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(4);
       } else {
-        self::foreshadow(self::drawType(4, CardTypes::ECHOES), [$this, 'transferToHand']);
+        self::foreshadow(self::drawType(4, CardTypes::ECHOES));
       }
     } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);

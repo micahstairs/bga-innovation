@@ -60,7 +60,7 @@ class Card358 extends AbstractCard
         if ($auxiliaryValue > 0) {
           $card = self::draw($auxiliaryValue);
           // TODO(4E): There shouldn't be a forecast keyword here.
-          self::foreshadow($card, [$this, 'transferToHand'], self::getLauncherId());
+          self::foreshadow($card, null, self::getLauncherId());
         }
       } else {
         if ($auxiliaryValue === 1 && self::wasForeseen()) {

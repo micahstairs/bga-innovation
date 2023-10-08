@@ -52,7 +52,7 @@ class Card353 extends AbstractCard
         // Reveal hand to prove that there were no matching cards of the drawn card's color.
         // TODO: Use reveal_if_unable instead.
         self::revealHand();
-        self::foreshadow($drawnCard, [$this, 'transferToHand']);
+        self::foreshadow($drawnCard);
       }
     } else {
       // Only reveal (in 4th edition) if a card was actually tucked

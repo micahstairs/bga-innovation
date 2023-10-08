@@ -26,7 +26,7 @@ class Card366 extends AbstractCard
       if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(5);
       } else {
-        self::foreshadow(self::drawType(5, CardTypes::ECHOES), [$this, 'transferToHand']);
+        self::foreshadow(self::drawType(5, CardTypes::ECHOES));
       }
     } else {
       self::setMaxSteps(1);
