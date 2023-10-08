@@ -11299,6 +11299,10 @@ class Innovation extends Table
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id)
     {
+        $card = $this->getCardInfo($card_id);
+        if ($card['type'] == CardTypes::CITIES) {
+            return false;
+        }
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
@@ -11313,11 +11317,11 @@ class Innovation extends Table
     {
         $card = $this->getCardInfo($card_id);
         $set = "Base";
-        if ($card['type'] == 1) {
+        if ($card['type'] == CardTypes::ARTIFACTS) {
             $set = "Artifacts";
-        } else if ($card['type'] == 3) {
+        } else if ($card['type'] == CardTypes::ECHOES) {
             $set = "Echoes";
-        } else if ($card['type'] == 5) {
+        } else if ($card['type'] == CardTypes::UNSEEN) {
             $set = "Unseen";
         }
         $suffix = self::getEditionSuffix($card_id);
