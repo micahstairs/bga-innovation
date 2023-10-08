@@ -2914,7 +2914,7 @@ $this->textual_card_infos = array(
     ),
 
     532 => array(
-        'name'                => clienttranslate('Museum'),
+        'name'                => clienttranslate('Gallery'),
         'non_demand_effect_1' => clienttranslate('If you have a ${age_2} in your score pile, draw a ${age_6}.'),
         'non_demand_effect_2' => clienttranslate('If you have a ${age_1} in your score pile, draw a ${age_7}. Otherwise, draw a ${age_5}.'),
     ),

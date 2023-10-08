@@ -29,25 +29,26 @@ class Card576 extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(0); // Track whether cards were transferred as part of either interaction
       return [
-        'can_pass' => true,
-        'location_from' => 'board',
-        'location_to'   => 'deck',
-        'bottom_to' => false, // Topdeck'
+        'can_pass'        => true,
+        'location_from'   => 'board',
+        'topdeck_keyword' => true,
       ];
     } else {
       return [
-        'can_pass' => true,
+        'can_pass'      => true,
         'location_from' => 'hand',
-        'meld_keyword'   => true,
+        'meld_keyword'  => true,
       ];
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::setAuxiliaryValue(1);
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isSecondInteraction() && self::getAuxiliaryValue() == 1) {
       self::setNextStep(1);
     }

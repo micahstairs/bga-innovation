@@ -13,9 +13,9 @@ class Card481 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::drawAndMeld(1);
-    } else {
+    } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     }
   }
