@@ -6541,6 +6541,10 @@ class Innovation extends Table
         if (!array_key_exists('can_pass', $options)) {
             $options['can_pass'] = false;
         }
+        if (array_key_exists('location', $options)) {
+            $options['location_from'] = $options['location'];
+            $options['location_to'] = $options['location'];
+        }
         if (array_key_exists('choose_from', $options)) {
             $options['location_from'] = $options['choose_from'];
             $options['location_to'] = 'none';
@@ -11309,8 +11313,7 @@ class Innovation extends Table
             || $card_id == 72
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
-            || (502 <= $card_id && $card_id <= 509)
-            || $card_id >= 512;
+            || $card_id >= 502;
     }
 
     function getCardInstance($card_id, $execution_state)
@@ -13218,41 +13221,6 @@ class Innovation extends Table
                         }
                         self::executeDraw($player_id, 3);
                     }
-                    break;
-
-                // id 506, Unseen age 3: Secret Secretorum
-                case "506N1":
-                    break;
-
-                // id 510, Unseen age 3: Smuggling
-                case "510D1":
-                    $demander_top_yellow = self::getTopCardOnBoard($launcher_id, 3);
-                    $demandee_top_yellow = self::getTopCardOnBoard($player_id, 3);
-                    if ($demandee_top_yellow !== null && $demander_top_yellow !== null) {
-                        $step_max = 2;
-                    } else if ($demander_top_yellow !== null) {
-                        // demander has a yellow, skip to interaction #2
-                        $step_max = 2;
-                        $step = 2;
-                    } else if ($demandee_top_yellow !== null) {
-                        $step_max = 1;
-                    } else {
-                        // no yellow cards.  Stop the action
-                    }
-                    break;
-
-                // id 511, Unseen age 3: Freemasons
-                case "511N1":
-                    $cards_in_hand = self::getCardsInHand($player_id);
-                    if (count($cards_in_hand) > 0) {
-                        self::setAuxiliaryValue2FromArray(array(0, 1, 2, 3, 4));
-                        $step_max = 1;
-                        self::setAuxiliaryValue(0); // no yellows or expansion cards tucked
-                    }
-                    break;
-
-                case "511N2":
-                    $step_max = 1;
                     break;
 
                 default:
@@ -15614,68 +15582,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 510, Unseen age 3: Smuggling
-            case "510D1A":
-                // "I demand you transfer a card of value equal to the top yellow card on your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getTopCardOnBoard($player_id, 3)['age'],
-                );
-                break;
-
-            case "510D1B":
-                // "and a card of value  equal to the top yellow card on my board from your score pile to my score pile!"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getTopCardOnBoard($launcher_id, 3)['age'],
-                );
-                break;
-
-            // id 511, Unseen age 3: Freemasons
-            case "511N1A":
-                // "For each color, you may tuck a card from your hand of that color."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'bottom_to'     => true,
-                    'color'         => self::getAuxiliaryValue2AsArray(),
-                );
-                break;
-
-            case "511N2A":
-                // "You may splay your yellow or blue cards left."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => array(0, 3),
-                    // blue or yellow
-                );
-                break;
-
             default:
                 if (!self::isInSeparateFile($card_id)) {
                     // This should not happen
@@ -16550,38 +16456,6 @@ class Innovation extends Table
 
                     case "501D1B":
                         self::setAuxiliaryValue($n + self::getAuxiliaryValue());
-                        break;
-
-                    // id 511, Unseen age 3: Freemasons
-                    case "511N1A":
-                        if ($n > 0) {
-                            $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                            if ($card['color'] == 3 || $card['type'] > 0) {
-                                self::setAuxiliaryValue(1); // yellow or expansion card!
-                            }
-
-                            $color_array = array_diff(self::getAuxiliaryValue2AsArray(), array($this->innovationGameState->get('color_last_selected')));
-
-                            if (count($color_array) > 0) {
-                                // more to tuck
-                                self::setStep(0);
-                                $step = 0; // repeat until all colors are considered
-                                self::setAuxiliaryValue2FromArray($color_array);
-                            } else {
-                                // "If you tuck a yellow card or an expansion card, draw two 3s."
-                                if (self::getAuxiliaryValue() == 1) {
-                                    self::executeDraw($player_id, 3);
-                                    self::executeDraw($player_id, 3);
-                                }
-                            }
-
-                        } else {
-                            // "If you tuck a yellow card or an expansion card, draw two 3s."
-                            if (self::getAuxiliaryValue() == 1) {
-                                self::executeDraw($player_id, 3);
-                                self::executeDraw($player_id, 3);
-                            }
-                        }
                         break;
 
                 }
