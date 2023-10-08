@@ -10460,12 +10460,6 @@ class Innovation extends Table
                     $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                     break;
 
-                // id 525, Unseen age 5: Popular Science
-                case "525N1A":
-                    $message_for_player = clienttranslate('Choose a value');
-                    $message_for_others = clienttranslate('${player_name} must choose a value');
-                    break;
-
                 default:
                     // This should not happen
                     if (!self::isInSeparateFile($card_id)) {
@@ -11310,12 +11304,9 @@ class Innovation extends Table
             || $card_id == 65
             || $card_id == 72
             || (110 <= $card_id && $card_id <= 214)
-            || (330 <= $card_id && $card_id <= 434)
-            || (440 <= $card_id && $card_id <= 459)
-            || (470 <= $card_id && $card_id <= 498)
+            || (220 <= $card_id && $card_id <= 498)
             || (502 <= $card_id && $card_id <= 509)
-            || (512 <= $card_id && $card_id <= 524)
-            || $card_id >= 528;
+            || $card_id >= 512;
     }
 
     function getCardInstance($card_id, $execution_state)
@@ -13258,98 +13249,6 @@ class Innovation extends Table
 
                 case "511N2":
                     $step_max = 1;
-                    break;
-
-                // id 525, Unseen age 5: Popular Science
-                case "525N1":
-                    $age_array = array();
-                    foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $all_player_id) {
-                        $top_green_card = self::getTopCardOnBoard($all_player_id, 2);
-                        if ($top_green_card !== null) {
-                            $age_array[] = $top_green_card['age'];
-                        }
-                    }
-                    if (count($age_array) == 1) {
-                        // "Draw and meld a card of value equal to the value of a top green card anywhere."
-                        self::executeDrawAndMeld($player_id, $age_array[0]);
-                    } else if (count($age_array) > 1) {
-                        $step_max = 1;
-                        self::setAuxiliaryArray(array_unique($age_array));
-                    }
-                    break;
-
-                case "525N2":
-                    // "Draw and meld a card of value one higher than the value of your top yellow card."
-                    $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                    if ($top_yellow_card !== null) {
-                        self::executeDrawAndMeld($player_id, $top_yellow_card['age'] + 1);
-                    } else {
-                        self::executeDrawAndMeld($player_id, 1);
-                    }
-                    break;
-
-                case "525N3":
-                    $step_max = 1;
-                    break;
-
-                // id 526, Unseen age 5: Probability
-                case "526N1":
-                    $step_max = 1;
-                    break;
-
-                case "526N2":
-                    // "Draw and reveal two 6"
-                    $card1 = self::executeDrawAndReveal($player_id, 6);
-                    $card2 = self::executeDrawAndReveal($player_id, 6);
-                    $unique_icon_count = 0;
-                    for ($icon = 1; $icon < 10; $icon++) {
-                        if (self::hasRessource($card1, $icon) || self::hasRessource($card2, $icon)) {
-                            $unique_icon_count++;
-                        }
-                    }
-                    for ($icon = 11; $icon < 18; $icon++) {
-                        if (self::hasRessource($card1, $icon) || self::hasRessource($card2, $icon)) {
-                            $unique_icon_count++;
-                        }
-                    }
-                    for ($icon = 101; $icon < 113; $icon++) {
-                        if (self::hasRessource($card1, $icon) || self::hasRessource($card2, $icon)) {
-                            $unique_icon_count++;
-                        }
-                    }
-                    self::setAuxiliaryValue($unique_icon_count);
-                    $step_max = 1;
-                    break;
-
-                // id 527, Unseen age 5: Cabal
-                case "527D1":
-                    // "I demand you transfer all cards from your hand that have a value matching any of my secrets to my score pile!"
-                    $hand_cards = self::getCardsInHand($player_id);
-                    $safe_cards_by_age = self::countCardsInLocationKeyedByAge($launcher_id, 'safe');
-                    foreach ($hand_cards as $card) {
-                        if ($safe_cards_by_age[$card['age']] > 0) {
-                            self::transferCardFromTo($card, $launcher_id, 'score');
-                        }
-                    }
-                    // "Draw a 5!"
-                    self::executeDraw($player_id, 5);
-                    break;
-
-                case "527N1":
-                    $card_id_array = array();
-                    $top_cards = self::getTopCardsOnBoard($player_id);
-                    $achievement_cards = self::getCardsInLocation(0, 'achievements');
-                    foreach ($achievement_cards as $achieve_card) {
-                        foreach ($top_cards as $top_card) {
-                            if ($top_card['age'] == $achieve_card['age']) {
-                                $card_id_array[] = $achieve_card['id'];
-                            }
-                        }
-                    }
-                    if (count($card_id_array) > 0) {
-                        $step_max = 1;
-                        self::setAuxiliaryArray($card_id_array);
-                    }
                     break;
 
                 default:
@@ -15773,70 +15672,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 525, Unseen age 5: Popular Science
-            case "525N1A":
-                $options = array(
-                    'player_id'    => $player_id,
-                    'n'            => 1,
-
-                    'choose_value' => true,
-                    'age'          => self::getAuxiliaryArray(),
-                );
-                break;
-
-            case "525N3A":
-                // "You may splay your blue cards right."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(0),
-                );
-                break;
-
-            // id 526, Unseen age 5: Probability
-            case "526N1A":
-                // "Return all cards from your hand."
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "526N2A":
-                // ", then return them"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'revealed',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            // id 527, Unseen age 5: Cabal
-            case "527N1A":
-                // "Safeguard an available achievement of value equal to a top card on your board."
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-
-                    'owner_from'                      => 0,
-                    'location_from'                   => 'achievements',
-                    'owner_to'                        => $player_id,
-                    'location_to'                     => 'safe',
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                );
-                break;
-
             default:
                 if (!self::isInSeparateFile($card_id)) {
                     // This should not happen
@@ -16713,26 +16548,6 @@ class Innovation extends Table
                         self::setAuxiliaryValue($n + self::getAuxiliaryValue());
                         break;
 
-                    // id 525, Unseen age 5: Popular Science
-                    case "525N1A":
-                        // "Draw and meld a card of value equal to the value of a top green card anywhere."
-                        self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
-                        break;
-
-                    // id 526, Unseen age 5: Probability
-                    case "526N2A":
-                        // "If exactly two different icon types appear on the drawn cards, draw and score two 6."
-                        if (self::getAuxiliaryValue() == 2) {
-                            self::executeDrawAndScore($player_id, 6);
-                            self::executeDrawAndScore($player_id, 6);
-                            // "If exactly four different icon types appear, draw a 7."
-                        } else if (self::getAuxiliaryValue() == 4) {
-                            self::executeDraw($player_id, 7);
-                        }
-                        // "Draw a 6."
-                        self::executeDraw($player_id, 6);
-                        break;
-
                     // id 511, Unseen age 3: Freemasons
                     case "511N1A":
                         if ($n > 0) {
@@ -17431,13 +17246,6 @@ class Innovation extends Table
                         self::setAuxiliaryValue($card['age']);
                     }
                     self::returnCard($card);
-                    break;
-
-                // id 525, Unseen age 5: Popular Science
-                case "525N1A":
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                    self::setAuxiliaryValue($choice);
                     break;
 
                 default:
