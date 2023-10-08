@@ -11312,8 +11312,7 @@ class Innovation extends Table
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
             || (440 <= $card_id && $card_id <= 459)
-            || (470 <= $card_id && $card_id <= 496)
-            || $card_id == 498
+            || (470 <= $card_id && $card_id <= 498)
             || (502 <= $card_id && $card_id <= 509)
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
@@ -13173,19 +13172,6 @@ class Innovation extends Table
 
                 case "219D1":
                     $step_max = 1;
-                    break;
-
-                // id 497, Unseen age 2: Padlock
-                case "497D1":
-                    $step_max = 1;
-                    self::setAuxiliaryValue(0);
-                    break;
-
-                case "497N1":
-                    // "If no card was transferred due to the demand,"
-                    if (self::getAuxiliaryValue() <= 0) {
-                        $step_max = 1;
-                    }
                     break;
 
                 // id 499, Unseen age 2: Cipher
@@ -15650,70 +15636,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 497, Unseen age 2: Padlock
-            case "497D1A":
-                // "I demand you transfer one of your secrets to the available achievements!"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'safe',
-                    'owner_to'      => 0,
-                    'location_to'   => 'achievements',
-                );
-                break;
-
-            case "497N1A":
-                // "you may score up to three cards from hand of different values."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true,
-                );
-                break;
-
-            case "497N1B":
-                // "you may score up to three cards from hand of different values."
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-                    'can_pass'                        => true,
-
-                    'owner_from'                      => $player_id,
-                    'location_from'                   => 'hand',
-                    'owner_to'                        => $player_id,
-                    'location_to'                     => 'score',
-
-                    'score_keyword'                   => true,
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                );
-                break;
-
-            case "497N1C":
-                // "you may score up to three cards from hand of different values."
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-                    'can_pass'                        => true,
-
-                    'owner_from'                      => $player_id,
-                    'location_from'                   => 'hand',
-                    'owner_to'                        => $player_id,
-                    'location_to'                     => 'score',
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                );
-                break;
-
             // id 499, Unseen age 2: Cipher
             case "499N1A":
                 // "Return all cards from your hand."
@@ -16802,45 +16724,6 @@ class Innovation extends Table
                     case "219D1A":
                         // "Draw a 6!"
                         self::executeDraw($player_id, 6);
-                        break;
-
-                    // id 497, Unseen age 2: Padlock
-                    case "497D1A":
-                        self::setAuxiliaryValue($n);
-                        break;
-
-                    case "497N1A":
-                        if ($n > 0) { // card scored
-                            $selectable_card_ids = array();
-                            $age = $this->innovationGameState->get('age_last_selected');
-                            foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                                if ($age != $card['age']) {
-                                    $selectable_card_ids[] = $card['id'];
-                                }
-                            }
-                            if (count($selectable_card_ids) > 0) {
-                                self::setAuxiliaryArray($selectable_card_ids);
-                                self::setAuxiliaryValue2($age);
-                                self::incrementStepMax(1);
-                            }
-                        }
-                        break;
-
-                    case "497N1B":
-                        if ($n > 0) { // card scored
-                            $selectable_card_ids = array();
-                            $age = $this->innovationGameState->get('age_last_selected');
-                            $age2 = self::getAuxiliaryValue2();
-                            foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                                if ($age != $card['age'] && $age2 != $card['age']) {
-                                    $selectable_card_ids[] = $card['id'];
-                                }
-                            }
-                            if (count($selectable_card_ids) > 0) {
-                                self::setAuxiliaryArray($selectable_card_ids);
-                                self::incrementStepMax(1);
-                            }
-                        }
                         break;
 
                     // id 499, Unseen age 2: Cipher
