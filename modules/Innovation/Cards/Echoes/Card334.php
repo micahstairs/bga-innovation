@@ -41,22 +41,16 @@ class Card334 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       return [
-        'owner_from'       => self::getPlayerId(),
-        'location_from'    => 'hand',
+        'location'         => 'hand',
         'owner_to'         => self::getLauncherId(),
-        'location_to'      => 'hand',
         'with_icon'        => Icons::AUTHORITY,
         'reveal_if_unable' => true,
       ];
     } else {
-      self::setAuxiliaryArray(self::getCardIdsInHandWithAuthorityOrConceptIcon());
       return [
-        'owner_from'                      => self::getPlayerId(),
-        'location_from'                   => 'hand',
+        'location'                        => 'hand',
         'owner_to'                        => self::getLauncherId(),
-        'location_to'                     => 'hand',
-        'with_icon'                       => Icons::AUTHORITY,
-        'card_ids_are_in_auxiliary_array' => true,
+        'with_icons'                      => [Icons::AUTHORITY, Icons::CONCEPT],
         'enable_autoselection'            => false,
         'reveal_if_unable'                => true,
       ];
@@ -66,17 +60,6 @@ class Card334 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     self::draw(1);
-  }
-
-  private function getCardIdsInHandWithAuthorityOrConceptIcon(): array
-  {
-    $cardIds = [];
-    foreach (self::getCards('hand') as $card) {
-      if (self::hasIcon($card, Icons::AUTHORITY) || self::hasIcon($card, Icons::CONCEPT)) {
-        $cardIds[] = $card['id'];
-      }
-    }
-    return $cardIds;
   }
 
 }
