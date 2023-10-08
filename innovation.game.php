@@ -11314,8 +11314,7 @@ class Innovation extends Table
             || (440 <= $card_id && $card_id <= 459)
             || (470 <= $card_id && $card_id <= 498)
             || (502 <= $card_id && $card_id <= 509)
-            || $card_id == 512
-            || (514 <= $card_id && $card_id <= 524)
+            || (512 <= $card_id && $card_id <= 524)
             || $card_id >= 528;
     }
 
@@ -13258,15 +13257,6 @@ class Innovation extends Table
                     break;
 
                 case "511N2":
-                    $step_max = 1;
-                    break;
-
-                // id 513, Unseen age 3: Masquerade
-                case "513N1":
-                    $step_max = 1;
-                    break;
-
-                case "513N2":
                     $step_max = 1;
                     break;
 
@@ -15783,48 +15773,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 513, Unseen age 3: Masquerade
-            case "513N1A":
-                // "Safeguard an available achievement of value equal to the number of cards in your hand."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => 0,
-                    'location_from' => 'achievements',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'safe',
-
-                    'age'           => self::countCardsInHand($player_id),
-                );
-                break;
-
-            case "513N1B":
-                // "return all the highest cards from your hand."
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => self::getMaxAgeInHand($player_id),
-                );
-                break;
-
-            case "513N2A":
-                // "You may splay your purple cards left."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => array(4),
-                );
-                break;
-
             // id 525, Unseen age 5: Popular Science
             case "525N1A":
                 $options = array(
@@ -16813,22 +16761,6 @@ class Innovation extends Table
                             if (self::getAuxiliaryValue() == 1) {
                                 self::executeDraw($player_id, 3);
                                 self::executeDraw($player_id, 3);
-                            }
-                        }
-                        break;
-
-                    // id 513, Unseen age 3: Masquerade
-                    case "513N1A":
-                        if ($n > 0) { // "if you do"
-                            self::incrementStepMax(1);
-                        }
-                        break;
-
-                    case "513N1B":
-                        if ($n > 0) {
-                            // "If you return a 4, claim the Anonymity achievement."
-                            if ($this->innovationGameState->get('age_last_selected') == 4) {
-                                self::claimSpecialAchievement($player_id, 597);
                             }
                         }
                         break;
