@@ -2013,6 +2013,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_7}, and then if Bifocals was foreseen, draw and foreshadow a card of value equal to the lowest available standard achievement.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your green cards right.'),
         'non_demand_effect_2_fourth'          => clienttranslate('You may splay your green cards right. If you do, splay any color of your cards up.'),
+        'separate_4E_implementation'          => true,
     ),
 
     386 => array(

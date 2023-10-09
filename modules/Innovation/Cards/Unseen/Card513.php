@@ -5,6 +5,7 @@ namespace Innovation\Cards\Unseen;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 class Card513 extends AbstractCard
@@ -52,7 +53,7 @@ class Card513 extends AbstractCard
       if (self::isFirstInteraction()) {
         self::setMaxSteps(2);
       } else if (self::isSecondInteraction() && self::getValue($card) === 4) {
-        $this->game->claimSpecialAchievement($this->player_id, CardIds::ANONYMITY);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::ANONYMITY);
       }
     }
   }

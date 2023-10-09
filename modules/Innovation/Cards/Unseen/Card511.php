@@ -5,6 +5,7 @@ namespace Innovation\Cards\Unseen;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 

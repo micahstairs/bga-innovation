@@ -30,7 +30,7 @@ class Card490 extends AbstractCard
       return [
         'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'location_to'   => Locations::HAND,
-        'age'           => self::getMinValueInLocation(Locations::AVAILABLE_ACHIEVEMENTS),
+        'age'           => self::getMinValue(self::getAvailableStandardAchievements()),
       ];
     } else {
       return [

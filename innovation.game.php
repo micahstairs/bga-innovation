@@ -6544,6 +6544,7 @@ class Innovation extends Table
         if (array_key_exists('location', $options)) {
             $options['location_from'] = $options['location'];
             $options['location_to'] = $options['location'];
+            unset($options['location']);
         }
         if (array_key_exists('choose_from', $options)) {
             $options['location_from'] = $options['choose_from'];

@@ -650,11 +650,7 @@ abstract class AbstractCard
       return 0;
     }
     return min(array_map(function ($card) {
-      if ($card['location'] === 'board' || $card['location'] === 'display') {
-        return $card['faceup_age'];
-      } else {
-        return $card['age'];
-      }
+      return AbstractCard::getValue($card);
     }, $cards));
   }
 
@@ -664,11 +660,7 @@ abstract class AbstractCard
       return 0;
     }
     return max(array_map(function ($card) {
-      if ($card['location'] === 'board' || $card['location'] === 'display') {
-        return $card['faceup_age'];
-      } else {
-        return $card['age'];
-      }
+      return AbstractCard::getValue($card);
     }, $cards));
   }
 
