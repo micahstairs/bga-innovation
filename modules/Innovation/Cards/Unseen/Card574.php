@@ -19,7 +19,7 @@ class Card574 extends AbstractCard
     if (self::getEffectNumber() === 1) {
       $numCardsDrawn = 0;
       foreach (Colors::ALL as $color) {
-        if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::INDUSTRY, $color) > 0) {
+        if (self::getIconCountInStack($color, Icons::INDUSTRY) > 0) {
           self::draw(9);
           $numCardsDrawn++;
         }

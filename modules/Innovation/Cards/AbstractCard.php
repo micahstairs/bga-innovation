@@ -440,7 +440,7 @@ abstract class AbstractCard
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements", ["achieve_keyword" => true]);
   }
 
-  protected function claim(int $cardId): ?array {
+  protected function claim(int $cardId, int $playerId = null): ?array {
     if (!self::isSpecialAchievement(self::getCard($cardId))) {
       return null;
     }
@@ -1345,9 +1345,9 @@ abstract class AbstractCard
       foreach ($stack as $card) {
         if ($card['position'] == count($stack) - 1) {
           // All icons are visible on the top card in the stack
-          $icons = array_merge($icons, self::getIcons($card));
+          $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], true));
         } else {
-          $icons = array_merge($icons, self::getIcons($card, $spots));
+          $icons = array_merge($icons, self::getIcons($card, $spots, true));
         }
       }
     }
@@ -1365,15 +1365,23 @@ abstract class AbstractCard
     foreach ($stack as $card) {
       if ($card['position'] == count($stack) - 1) {
         // All icons are visible on the top card in the stack
-        $icons = array_merge($icons, self::getIcons($card));
+        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], true));
       } else {
-        $icons = array_merge($icons, self::getIcons($card, $spots));
+        $icons = array_merge($icons, self::getIcons($card, $spots, true));
       }
     }
     // Convert array of icons to array of counts
     return array_count_values($icons);
   }
 
+  protected function getIconCountInStack(int $color, int $icon, int $playerId = null): int
+  {
+    $countsByIcon = self::getAllIconCountsInStack($color);
+    if (key_exists($icon, $countsByIcon)) {
+      return $countsByIcon[$icon];
+    }
+    return 0;
+  }
 
   protected function hasIconInCommon(array $card1, array $card2): bool
   {
@@ -1396,13 +1404,13 @@ abstract class AbstractCard
     }
   }
 
-  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6]): array
+  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6], $includeEchoEffects = false): array
   {
     $icons = [];
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
-      if ($icon && $icon != Icons::ECHO_EFFECT) {
+      if ($icon && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
         // Bonus icons are normalized to 100 since they are considered to be the same icon type
         $icons[] = min($icon, 100);
       }

@@ -33,7 +33,7 @@ class Card387 extends AbstractCard
       }
     } else {
       foreach (Colors::ALL as $color) {
-        if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::HEX_IMAGE, $color) >= 5) {
+        if (self::getIconCountInStack($color, Icons::HEX_IMAGE) >= 5) {
           self::claim(CardIds::HERITAGE);
           break;
         }

@@ -27,7 +27,7 @@ class Card395 extends AbstractCard
       self::setMaxSteps(1);
     } else {
       foreach (Colors::ALL as $color) {
-        if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::ECHO_EFFECT, $color) >= 3) {
+        if (self::getIconCountInStack($color, Icons::ECHO_EFFECT) >= 3) {
           self::claim(CardIds::HISTORY);
           if (self::wasForeseen()) {
             self::win();

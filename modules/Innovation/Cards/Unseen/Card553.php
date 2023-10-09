@@ -15,32 +15,16 @@ class Card553 extends AbstractCard
 
   public function initialExecution()
   {
-    $iconCounts = [0, 0, 0, 0, 0, 0, 0, 0];
-    foreach (Colors::ALL as $color) {
-      foreach (self::getStandardIconCounts() as $icon => $count) {
-        $iconCounts[$icon] += $this->game->countVisibleIconsInPile(self::getPlayerId(), $icon, $color);
-      }
-    }
-
-    $hadSeven = false;
-    $hadEight = false;
-    $hadNine = false;
-    foreach ($iconCounts as $count) {
-      if ($count === 7) {
-        $hadSeven = true;
-      } else if ($count === 8) {
-        $hadEight = true;
-      } else if ($count === 9) {
-        $hadNine = true;
-      }
-    }
+    $iconCounts = array_values(self::getAllIconCounts());
+    $hadSeven = in_array(7, $iconCounts);
+    $hadEight = in_array(8, $iconCounts);
+    $hadNine = in_array(9, $iconCounts);
 
     if ($hadSeven) {
       self::drawAndScore(7);
-    }
-    if ($hadEight) {
+    } else if ($hadEight) {
       self::setMaxSteps(1);
-      self::setAuxiliaryValue($hadNine);
+      self::setAuxiliaryValue($hadNine ? 1 : 0);
     } else if ($hadNine) {
       self::draw(9);
     }

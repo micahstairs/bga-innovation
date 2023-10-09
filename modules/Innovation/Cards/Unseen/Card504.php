@@ -19,7 +19,7 @@ class Card504 extends AbstractCard
   {
     $colors = [];
     foreach (Colors::ALL as $color) {
-      if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::CONCEPT, $color) > 0) {
+      if (self::getIconCountInStack($color, Icons::CONCEPT) > 0) {
         $colors[] = $color;
       }
     }
