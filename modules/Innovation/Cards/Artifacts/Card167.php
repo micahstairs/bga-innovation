@@ -28,7 +28,7 @@ class Card167 extends AbstractCard
         'n'              => 'all',
         'location_from'  => Locations::PILE,
         'return_keyword' => true,
-        'color'          => self::getLastSelectedColor(),
+        'color'          => [self::getLastSelectedColor()],
       ];
     }
   }
