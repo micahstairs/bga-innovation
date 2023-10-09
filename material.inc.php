@@ -2264,6 +2264,7 @@ $this->textual_card_infos = array(
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect!'),
         'i_demand_effect_fourth'          => clienttranslate('${I demand} you return your top card of the last color I melded due to Jet\'s echo effect during this action! Junk all available achievements of values equal to the melded card and the returned card!'),
         'non_demand_effect_1_fourth'      => clienttranslate('Draw and foreshadow a ${age_10}.'),
+        'separate_4E_implementation'      => true,
     ),
 
     419 => array(

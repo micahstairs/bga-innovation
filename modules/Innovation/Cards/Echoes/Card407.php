@@ -45,7 +45,7 @@ class Card407 extends AbstractCard
   {
     if (self::isEcho()) {
       return [
-        'location_from' => 'hand',
+        'location_from' => Locations::HAND,
         'meld_keyword'  => true,
         'with_icon'     => Icons::HEALTH,
       ];
