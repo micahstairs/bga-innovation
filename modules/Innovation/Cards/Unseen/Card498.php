@@ -15,7 +15,7 @@ class Card498 extends AbstractCard
   public function initialExecution()
   {
     $card = self::transferToHand(self::drawAndReveal(2));
-    if (self::countCards('hand') > 2) {
+    if (self::countCards('hand') > 1) {
       self::setAuxiliaryValue($card['id']);
       self::setMaxSteps(1);
     }
