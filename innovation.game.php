@@ -3135,7 +3135,7 @@ class Innovation extends Table
             'your'           => 'your',
             'player_name'    => $player_name,
             'action'         => $action_for_opponent,
-            'from_somewhere' => ['log' => $from_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name]],
+            'from_somewhere' => ['log' => $from_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name, 'your' => 'your']],
             'to_somewhere'   => ['log' => $to_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name, 'your' => 'your']],
         ];
         $notif_args_for_others = [
@@ -3370,7 +3370,7 @@ class Innovation extends Table
                     'action'         => $action,
                     'card_qualifier' => $card_qualifier,
                     'card'           => $cards,
-                    'from_somewhere' => ['log' => $from_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name]],
+                    'from_somewhere' => ['log' => $from_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name, 'your' => $your]],
                     'to_somewhere'   => ['log' => $to_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name, 'your' => $your]],
                 ],
             ],
