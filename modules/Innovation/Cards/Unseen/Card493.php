@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card493 extends AbstractCard
 {
@@ -20,7 +21,8 @@ class Card493 extends AbstractCard
   {
     $iconsMelded = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $cardIds = [];
-    foreach (self::getCards('hand') as $card) {
+    $cardsInHand = self::getCards(Locations::HAND);
+    foreach ($cardsInHand as $card) {
       foreach ($iconsMelded as $icon) {
         if (self::hasIcon($card, $icon)) {
           continue 2;
@@ -30,11 +32,11 @@ class Card493 extends AbstractCard
     }
     self::setAuxiliaryArray($cardIds);
     return [
-      'location_from'                   => 'hand',
+      'location_from'                   => Locations::HAND,
       'meld_keyword'                    => true,
       'card_ids_are_in_auxiliary_array' => true,
       // Automating this can sometimes reveal hidden info
-      'enable_autoselection'            => false,
+      'enable_autoselection'            => count($cardsInHand) <= 1,
       'reveal_if_unable'                => true,
     ];
   }
