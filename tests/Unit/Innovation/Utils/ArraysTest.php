@@ -15,23 +15,23 @@ class ArraysTest extends BaseTest
         $this->assertEquals([10, 11, 20, 21, 22], $flattened);
     }
 
-    public function testGetArrayAsValue()
+    public function testEncode()
     {
         $a = [10, 20, 30];
-        $v = Arrays::getArrayAsValue($a);
+        $v = Arrays::encode($a);
         $this->assertEquals(1074791424, $v);
     }
 
-    public function testGetValueAsArray()
+    public function testDecode()
     {
-        $v = Arrays::getValueAsArray(1074791424);
+        $v = Arrays::decode(1074791424);
         $this->assertEquals([10, 20, 30], $v);
     }
 
     public function testSetAsArrayAndGetAsArray()
     {
         $original = [1, 2, 3, 4, 5];
-        $output = Arrays::getValueAsArray(Arrays::getArrayAsValue($original));
+        $output = Arrays::decode(Arrays::encode($original));
         $this->assertEmpty(array_diff($original, $output));
     }
 

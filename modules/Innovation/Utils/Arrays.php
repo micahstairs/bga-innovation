@@ -19,7 +19,7 @@ class Arrays
      * @param array $array
      * @return int
      */
-    public static function getArrayAsValue(array $array): int
+    public static function encode(array $array): int
     {
         $encodedValue = 0;
         foreach ($array as $value) {
@@ -32,7 +32,7 @@ class Arrays
      * @param int $encodedValue
      * @return array
      */
-    public static function getValueAsArray(int $encodedValue): array
+    public static function decode(int $encodedValue): array
     {
         $array = [];
         $value = 0;

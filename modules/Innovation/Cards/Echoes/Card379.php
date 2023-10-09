@@ -29,7 +29,7 @@ class Card379 extends AbstractCard
       self::setMaxSteps(1);
     } else {
       if (count(self::getBonuses()) >= 6) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::WEALTH);
+        self::claim(CardIds::WEALTH);
       }
     }
   }

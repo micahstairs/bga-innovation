@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Utils\Arrays;
 
 class Card356 extends AbstractCard
 {
@@ -30,7 +31,7 @@ class Card356 extends AbstractCard
       $values = self::getValuesWithThreeOrMoreInHand();
       if (count($values) > 0) {
         self::setMaxSteps(2);
-        $this->game->setAuxiliaryValueFromArray($values);
+        self::setAuxiliaryValue(Arrays::encode($values));
       }
     } else {
       self::setMaxSteps(1);
@@ -49,7 +50,7 @@ class Card356 extends AbstractCard
         return [
           'can_pass'     => true,
           'choose_value' => true,
-          'age'          => $this->game->getAuxiliaryValueAsArray(),
+          'age'          => Arrays::decode(self::getAuxiliaryValue()),
         ];
       } else {
         return [

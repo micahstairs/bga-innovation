@@ -65,7 +65,7 @@ class GameState
      */
     public function setFromArray(string $key, array $array)
     {
-        $this->set($key, Arrays::getArrayAsValue($array));
+        $this->set($key, Arrays::encode($array));
     }
 
     /**
@@ -74,7 +74,7 @@ class GameState
      */
     public function getAsArray(string $key): array
     {
-        return Arrays::getValueAsArray($this->get($key));
+        return Arrays::decode($this->get($key));
     }
 
     /**

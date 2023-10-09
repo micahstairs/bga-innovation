@@ -21,7 +21,7 @@ class Card530 extends AbstractCard
       self::setMaxSteps(1);
     } else {
       if (self::getSplayDirection(Colors::RED) == Directions::RIGHT && self::getSplayDirection(Colors::PURPLE) == Directions::RIGHT) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::MYSTERY);
+        self::claim(CardIds::MYSTERY);
       } else {
         self::setMaxSteps(1);
       }

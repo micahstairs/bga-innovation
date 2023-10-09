@@ -31,7 +31,8 @@ class Card22 extends AbstractCard
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
         foreach (Colors::ALL as $color) {
-          if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, Icons::HEALTH)) {
+          $countsByIcon = self::getAllIconCountsInStack($color);
+          if (key_exists(Icons::HEALTH, $countsByIcon) && $countsByIcon[Icons::HEALTH] > 0) {
             $numToDraw++;
           }
         }

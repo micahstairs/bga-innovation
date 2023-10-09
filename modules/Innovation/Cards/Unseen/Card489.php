@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
+use Innovation\Utils\Arrays;
 
 class Card489 extends AbstractCard
 {
@@ -23,8 +24,8 @@ class Card489 extends AbstractCard
         self::transferToHand($card, self::getLauncherId());
       }
     } else {
-        self::setMaxSteps(1);
-        $this->game->setAuxiliaryValueFromArray($colors);
+      self::setMaxSteps(1);
+      self::setAuxiliaryValue(Arrays::encode($colors));
     }
   }
 
@@ -32,11 +33,12 @@ class Card489 extends AbstractCard
   {
     return [
       'choose_two_colors' => true,
-        'color'             => $this->game->getAuxiliaryValueAsArray(),
+      'color'             => Arrays::decode(self::getAuxiliaryValue()),
     ];
   }
 
-  public function handleTwoColorChoice(int $color1, int $color2) {
+  public function handleTwoColorChoice(int $color1, int $color2)
+  {
     self::notifyTwoColorChoice($color1, $color2);
     foreach (self::getCards(Locations::HAND) as $card) {
       if (in_array($card['color'], [$color1, $color2])) {

@@ -20,7 +20,7 @@ class Card511 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       self::setAuxiliaryValue(0); // Track whether a yellow or expansion card was tucked
-      $this->game->setAuxiliaryValue2FromArray([0, 1, 2, 3, 4]); // Track which colors can still be chosen
+      self::setAuxiliaryValue2(Arrays::encode([0, 1, 2, 3, 4])); // Track which colors can still be chosen
       self::setMaxSteps(1);
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
@@ -34,7 +34,7 @@ class Card511 extends AbstractCard
         'can_pass'      => true,
         'location_from' => Locations::HAND,
         'tuck_keyword'  => true,
-        'color'         => $this->game->getAuxiliaryValue2AsArray(),
+        'color'         => Arrays::decode(self::getAuxiliaryValue2()),
       ];
     } else {
       return [
@@ -51,10 +51,10 @@ class Card511 extends AbstractCard
       if ($card['color'] == Colors::YELLOW || $card['type'] != CardTypes::BASE) {
         self::setAuxiliaryValue(1); // Remember that a yellow card or an expansion card was tucked
       }
-      $colors = Arrays::removeElement($this->game->getAuxiliaryValue2AsArray(), $card['color']);
+      $colors = Arrays::removeElement(Arrays::decode(self::getAuxiliaryValue2()), $card['color']);
       if ($colors) {
         self::setNextStep(1);
-        $this->game->setAuxiliaryValue2FromArray($colors);
+        self::setAuxiliaryValue2(Arrays::encode($colors));
       }
     }
   }

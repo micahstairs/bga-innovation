@@ -109,12 +109,12 @@ abstract class AbstractCard
       case 4: // choose_color
         return static::handleColorChoice($choice);
       case 5: // choose_two_colors
-        $colors = Arrays::getValueAsArray($choice);
+        $colors = Arrays::decode($choice);
         return static::handleTwoColorChoice($colors[0], $colors[1]);
       case 8; // choose_type
         return static::handleTypeChoice($choice);
       case 9: // choose_two_colors
-        $colors = Arrays::getValueAsArray($choice);
+        $colors = Arrays::decode($choice);
         return static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
       case 10: // choose_player
         return static::handlePlayerChoice($choice);
@@ -440,6 +440,13 @@ abstract class AbstractCard
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements", ["achieve_keyword" => true]);
   }
 
+  protected function claim(int $cardId): ?array {
+    if (!self::isSpecialAchievement(self::getCard($cardId))) {
+      return null;
+    }
+    return $this->game->claimSpecialAchievement(self::coercePlayerId($playerId), $cardId);
+  }
+
   protected function achieveIfEligible(?array $card, int $playerId = null)
   {
     if (self::isEligibleForAchieving($card, self::coercePlayerId($playerId))) {
@@ -618,6 +625,13 @@ abstract class AbstractCard
   {
     return array_filter($cards, function ($card) use ($colors) {
       return in_array($card['color'], $colors);
+    });
+  }
+
+  protected function filterByType(array $cards, array $types): array
+  {
+    return array_filter($cards, function ($card) use ($types) {
+      return in_array($card['type'], $types);
     });
   }
 

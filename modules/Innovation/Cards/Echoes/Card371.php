@@ -119,7 +119,7 @@ class Card371 extends AbstractCard
           self::setAuxiliaryValue2(1);
         }
       } else if (self::isThirdInteraction() && self::getAuxiliaryValue2() === 1) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::DESTINY);
+        self::claim(CardIds::DESTINY);
       }
     }
   }

@@ -28,7 +28,7 @@ class Card496 extends AbstractCard
       }
     } else if (self::isSecondNonDemand()) {
       if (self::getAllIconCounts()[Icons::AUTHORITY] == 0) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::ZEN);
+        self::claim(CardIds::ZEN);
       }
     }
   }

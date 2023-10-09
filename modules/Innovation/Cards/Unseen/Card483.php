@@ -34,7 +34,7 @@ class Card483 extends AbstractCard
           }
       }
       if (!$isGreenCardOnAnyBoard) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::CONFIDENCE);
+        self::claim(CardIds::CONFIDENCE);
       }
     }
   }

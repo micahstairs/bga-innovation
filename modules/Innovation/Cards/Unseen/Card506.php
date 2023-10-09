@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
+use Innovation\Utils\Arrays;
 
 class Card506 extends AbstractCard
 {
@@ -21,7 +22,7 @@ class Card506 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      $this->game->setAuxiliaryValueFromArray([]);
+      self::setAuxiliaryValue(Arrays::encode([]));
       return [
         'location_from' => Locations::HAND_OR_SCORE,
         'location_to'   => 'revealed,deck',
@@ -40,9 +41,9 @@ class Card506 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       // Keep track of the colors of the cards being returned
-      $colors = $this->game->getAuxiliaryValueAsArray();
+      $colors = Arrays::decode(self::getAuxiliaryValue());
       $colors[] = $card['color'];
-      $this->game->setAuxiliaryValueFromArray(array_unique($colors));
+      self::setAuxiliaryValue(Arrays::encode(array_unique($colors)));
     } else {
       // Score the other card
       $cardIds = self::getAuxiliaryArray();
@@ -55,7 +56,7 @@ class Card506 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       // Draw two cards and store the IDs in the auxiliary array
-      $numColors = count($this->game->getAuxiliaryValueAsArray());
+      $numColors = count(Arrays::decode(self::getAuxiliaryValue()));
       $card1 = self::draw($numColors);
       $card2 = self::draw($numColors);
       self::setAuxiliaryArray([$card1['id'], $card2['id']]);

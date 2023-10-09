@@ -266,15 +266,15 @@ class Innovation extends Table
             $this->innovationGameState->set('limit_shrunk_selection_size', -1);
             // $with_icon = $this->innovationGameState->get('with_icon');
             // if ($with_icon > 0) {
-            //     $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([$with_icon]));
+            //     $this->innovationGameState->set('with_icons', Arrays::encode([$with_icon]));
             // } else {
-            $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([]));
+            $this->innovationGameState->set('with_icons', Arrays::encode([]));
             // }
             // $without_icon = $this->innovationGameState->get('without_icon');
             // if ($without_icon > 0) {
-            //     $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([$without_icon]));
+            //     $this->innovationGameState->set('without_icons', Arrays::encode([$without_icon]));
             // } else {
-            $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([]));
+            $this->innovationGameState->set('without_icons', Arrays::encode([]));
             // }
         }
 
@@ -286,7 +286,7 @@ class Innovation extends Table
                     'choice_array' => 51,
                 )
             );
-            $this->innovationGameState->set('icon_array', Arrays::getArrayAsValue([1, 2, 3, 4, 5, 6]));
+            $this->innovationGameState->set('icon_array', Arrays::encode([1, 2, 3, 4, 5, 6]));
         }
         // TODO(LATER): Remove this.
         if ($from_version <= 2303050253) {
@@ -7636,7 +7636,7 @@ class Innovation extends Table
 
     function setAuxiliaryValueFromArray($array)
     {
-        self::setAuxiliaryValue(Arrays::getArrayAsValue($array));
+        self::setAuxiliaryValue(Arrays::encode($array));
     }
 
     function getAuxiliaryValue()
@@ -7646,7 +7646,7 @@ class Innovation extends Table
 
     function getAuxiliaryValueAsArray()
     {
-        return Arrays::getValueAsArray(self::getAuxiliaryValue());
+        return Arrays::decode(self::getAuxiliaryValue());
     }
 
     function setAuxiliaryValue2($auxiliary_value_2)
@@ -7656,7 +7656,7 @@ class Innovation extends Table
 
     function setAuxiliaryValue2FromArray($array)
     {
-        self::setAuxiliaryValue2(Arrays::getArrayAsValue($array));
+        self::setAuxiliaryValue2(Arrays::encode($array));
     }
 
     function getAuxiliaryValue2()
@@ -7666,7 +7666,7 @@ class Innovation extends Table
 
     function getAuxiliaryValue2AsArray()
     {
-        return Arrays::getValueAsArray(self::getAuxiliaryValue2());
+        return Arrays::decode(self::getAuxiliaryValue2());
     }
 
     function setAuxiliaryArray($array)
@@ -8713,14 +8713,15 @@ class Innovation extends Table
         $this->gamestate->nextState('interPlayerTurn');
     }
 
-    function claimSpecialAchievement($player_id, $achievement_id)
+    function claimSpecialAchievement($player_id, $achievement_id): ?array
     {
         $achievement = self::getCardInfo($achievement_id);
         if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
-            self::transferCardFromTo($achievement, $player_id, 'achievements');
+            return self::transferCardFromTo($achievement, $player_id, 'achievements');
         } else {
             $card_args = self::getNotificationArgsForCardList([$achievement]);
             self::notifyAll('logWithCardTooltips', clienttranslate('${card} has already been claimed.'), ['card' => $card_args, 'card_ids' => [$achievement_id]]);
+            return null;
         }
     }
 
@@ -9161,7 +9162,7 @@ class Innovation extends Table
                 if (!ctype_digit($choice) || $choice < 0) {
                     self::throwInvalidChoiceException();
                 }
-                $colors = Arrays::getValueAsArray($choice);
+                $colors = Arrays::decode($choice);
                 if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], $this->innovationGameState->getAsArray('color_array')) || !in_array($colors[1], $this->innovationGameState->getAsArray('color_array'))) {
                     self::throwInvalidChoiceException();
                 }
@@ -9170,7 +9171,7 @@ class Innovation extends Table
                 if (!ctype_digit($choice) || $choice < 0) {
                     self::throwInvalidChoiceException();
                 }
-                $colors = Arrays::getValueAsArray($choice);
+                $colors = Arrays::decode($choice);
                 $allowed_color_choices = $this->innovationGameState->getAsArray('color_array');
                 if (count($colors) <> 3 || count(array_unique($colors)) <> 3 || !in_array($colors[0], $allowed_color_choices) || !in_array($colors[1], $allowed_color_choices) || !in_array($colors[2], $allowed_color_choices)) {
                     self::throwInvalidChoiceException();
@@ -17053,7 +17054,7 @@ class Innovation extends Table
                 // id 83, age 8: Empiricism     
                 case "83N1A":
                     // $choice was two colors
-                    $colors = Arrays::getValueAsArray($choice);
+                    $colors = Arrays::decode($choice);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
 

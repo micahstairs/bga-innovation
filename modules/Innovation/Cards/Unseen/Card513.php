@@ -53,7 +53,7 @@ class Card513 extends AbstractCard
       if (self::isFirstInteraction()) {
         self::setMaxSteps(2);
       } else if (self::isSecondInteraction() && self::getValue($card) === 4) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::ANONYMITY);
+        self::claim(CardIds::ANONYMITY);
       }
     }
   }

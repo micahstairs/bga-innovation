@@ -27,13 +27,13 @@ class Card452 extends AbstractCard
   }
 
   public function handleValueChoice(int $value) {
-    $cards = $this->game->getCardsInLocationKeyedByAge(/*owner=*/0, Locations::DECK, CardTypes::BASE)[$value];
+    $cards = self::filterByType(self::getCardsKeyedByValue(Locations::DECK)[$value], [CardTypes::BASE]);
     self::scoreCards($cards);
     $args = ['age' => self::renderValueWithType($value, CardTypes::BASE)];
     self::notifyPlayer(clienttranslate('${You} score all cards in the ${age} deck.'), $args);
     self::notifyOthers(clienttranslate('${player_name} scores all cards in the ${age} deck.'), $args);
 
-    $cards = $this->game->getCardsInLocationKeyedByAge(/*owner=*/0, Locations::JUNK)[$value];
+    $cards = self::getCardsKeyedByValue(Locations::JUNK)[$value];
     self::scoreCards($cards);
     $args = ['age' => self::renderValueWithType($value, CardTypes::BASE)];
     self::notifyPlayer(clienttranslate('${You} score all ${age} cards in the junk.'), $args);

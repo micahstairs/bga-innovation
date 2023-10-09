@@ -42,7 +42,7 @@ class Card521 extends AbstractCard
 
   public function afterInteraction() {
     if (self::isFirstNonDemand() && self::getNumChosen() === 0) {
-      $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::FOLKLORE);
+      self::claim(CardIds::FOLKLORE);
     }
   }
 

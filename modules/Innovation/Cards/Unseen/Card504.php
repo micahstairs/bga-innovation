@@ -6,6 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
+use Innovation\Utils\Arrays;
 
 class Card504 extends AbstractCard
 {
@@ -24,7 +25,7 @@ class Card504 extends AbstractCard
     }
     if (count($colors) > 0) {
       self::setMaxSteps(1);
-      $this->game->setAuxiliaryValueFromArray($colors);
+      self::setAuxiliaryValue(Arrays::encode($colors));
     } else {
       self::drawAndTuck(3);
     }
@@ -36,7 +37,7 @@ class Card504 extends AbstractCard
       return [
         'can_pass'        => true,
         'splay_direction' => Directions::LEFT,
-        'color'           => $this->game->getAuxiliaryValueAsArray(),
+        'color'           => Arrays::decode(self::getAuxiliaryValue()),
       ];
     } else {
       return [

@@ -82,7 +82,7 @@ class Card363 extends AbstractCard
         }
       }
       if ($numCards > 0 && $hasCommonIcon) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::SUPREMACY);
+        self::claim(CardIds::SUPREMACY);
         return;
       }
     }

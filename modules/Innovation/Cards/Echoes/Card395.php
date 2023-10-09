@@ -28,7 +28,7 @@ class Card395 extends AbstractCard
     } else {
       foreach (Colors::ALL as $color) {
         if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::ECHO_EFFECT, $color) >= 3) {
-          $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::HISTORY);
+          self::claim(CardIds::HISTORY);
           if (self::wasForeseen()) {
             self::win();
           }
