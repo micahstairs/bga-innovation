@@ -7898,13 +7898,7 @@ class Innovation extends Table
     {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
-        // TODO(4E): There may be a bug here if a card calls this which does not actually use the word "self-execute".
-        if ($this->innovationGameState->get('current_nesting_index') >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
-            self::incStat(1, 'execution_combo_count', $player_id);
-            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You',]);
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Achievement.'), ['player_name' => self::renderPlayerName($player_id)]);
-            self::executeDraw($player_id, 11, 'achievements');
-        }
+        self::checkForChainAchievement($player_id);
 
         $card_args = self::getNotificationArgsForCardList([$card]);
         if (self::getNonDemandEffect($card['id'], 1) === null) {
@@ -7947,13 +7941,7 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $current_nested_state = self::getCurrentNestedCardState();
 
-        // TODO(4E): There may be a bug here if a card calls this which does not actually use the phrase "fully execute".
-        if ($current_nested_state['nesting_index'] >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
-            self::incStat(1, 'execution_combo_count', $player_id);
-            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You',]);
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Achievement.'), ['player_name' => self::renderPlayerName($player_id)]);
-            self::executeDraw($player_id, 11, 'achievements');
-        }
+        self::checkForChainAchievement($player_id);
 
         $current_card = self::getCardInfo($current_nested_state['card_id']);
         $card_1_args = self::getNotificationArgsForCardList([$current_card]);
@@ -7973,6 +7961,27 @@ class Innovation extends Table
             ['player_name' => self::renderPlayerName($player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]
         );
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/true);
+    }
+
+    function checkForChainAchievement(int $player_id)
+    {
+        // TODO(4E): There may be a bug here if a card calls this which does not actually mention
+        // "self-execute" or "fully execute".
+
+        if (!$this->innovationGameState->usingFourthEditionRules()) {
+            return;
+        }
+
+        // Make sure this player is the same one who executed the current card
+        if (self::getCurrentNestedCardState()['launcher_id'] == $player_id) {
+            return;
+        }
+        if ($this->innovationGameState->get('current_nesting_index') >= 1) {
+            self::incStat(1, 'execution_combo_count', $player_id);
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You',]);
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Achievement.'), ['player_name' => self::renderPlayerName($player_id)]);
+            self::executeDraw($player_id, 11, 'achievements');
+        }
     }
 
     function pushCardIntoNestedDogmaStack($card, $execute_demand_effects, $replace_may_with_must = false)
