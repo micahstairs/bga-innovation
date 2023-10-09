@@ -2177,6 +2177,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your yellow cards up.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Return all cards from your hand.'),
         'non_demand_effect_3_fourth'          => clienttranslate('You may splay your yellow cards up.'),
+        'separate_4E_implementation'          => true,
     ),
 
     407 => array(
