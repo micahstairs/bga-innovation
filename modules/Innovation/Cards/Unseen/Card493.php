@@ -33,7 +33,9 @@ class Card493 extends AbstractCard
       'location_from'                   => 'hand',
       'meld_keyword'                    => true,
       'card_ids_are_in_auxiliary_array' => true,
-      'enable_autoselection'            => false, // Automating this can sometimes reveal hidden info
+      // Automating this can sometimes reveal hidden info
+      'enable_autoselection'            => false,
+      'reveal_if_unable'                => true,
     ];
   }
 
