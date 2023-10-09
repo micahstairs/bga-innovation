@@ -320,7 +320,11 @@ class Innovation extends BgaGame {
         this.text_for_view_full = _("Resume normal view");
 
         // GENERAL INFO
-        this.cards = gamedatas.cards;
+        this.cards = [];
+        let self = this;
+        Object.keys(gamedatas.cards).forEach(function(id) {
+            self.cards[id] = parseCard(gamedatas.cards[id]);
+        });
         this.players = gamedatas.players;
 
         // PLAYER PANELS
@@ -875,7 +879,6 @@ class Innovation extends BgaGame {
         this.refreshLayout();
 
         // Force refresh page on resize if width changes
-        let self = this;
         window.onresize = function () {
             self.refreshLayout();
         }
@@ -897,18 +900,17 @@ class Innovation extends BgaGame {
 
     onLoadingComplete() {
         // Add card tooltips to existing game log messages
-        for (let i = 0; i < this.cards.length; i++) {
-            let card_id = this.cards[i].id;
+        this.cards.forEach(card => {
             // For some reason, after a page refresh, each entry in the game log is located in two diffferent
             // spots on the page, meaning that each span holding a card name no longer has a unique ID (since
             // it appears exactly twice), and BGA's framework to add a tooltip requires that it has a unique ID.
             // The workaround here is to first remove the extra IDs, before trying to add the tooltips.
-            dojo.query("#chatbar .card_id_" + card_id).removeAttr('id');
-            let elements = dojo.query(".card_id_" + card_id);
-            if (elements.length > 0 && this.canShowCardTooltip(card_id)) {
-                this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
+            dojo.query("#chatbar .card_id_" + card.id).removeAttr('id');
+            let elements = dojo.query(".card_id_" + card.id);
+            if (elements.length > 0 && this.canShowCardTooltip(card.id)) {
+                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
             }
-        }
+        });
     }
 
     onScreenWidthChange() {
@@ -3107,7 +3109,10 @@ class Innovation extends BgaGame {
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     }
 
-    getIconDiv(card: Card, icon: number, icon_location: string, size: string) {
+    getIconDiv(card: Card, icon: number | null, icon_location: string, size: string) {
+        if (icon === null) {
+            return '';
+        }
         if (icon == 0) {
             return `<div class="hexagon_card_icon ${size} ${icon_location} hexagon_icon_${card.id}"></div>`;
         }

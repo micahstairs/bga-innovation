@@ -1,33 +1,73 @@
+function parseCard(card) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    return {
+        id: parseInt(card.id),
+        type: parseInt(card.type),
+        age: parseInt(card.age),
+        faceup_age: parseInt(card.faceup_age),
+        color: parseInt(card.color),
+        spot_1: parseInt(card.spot_1),
+        spot_2: parseInt(card.spot_2),
+        spot_3: parseInt(card.spot_3),
+        spot_4: parseInt(card.spot_4),
+        spot_5: card.spot_5 ? parseInt(card.spot_5) : null,
+        spot_6: card.spot_6 ? parseInt(card.spot_6) : null,
+        dogma_icon: parseInt(card.dogma_icon),
+        is_relic: card.is_relic,
+        name: card.name,
+        condition_for_claiming: (_a = card.condition_for_claiming) !== null && _a !== void 0 ? _a : null,
+        alternative_condition_for_claiming: (_b = card.alternative_condition_for_claiming) !== null && _b !== void 0 ? _b : null,
+        echo_effect: (_c = card.echo_effect) !== null && _c !== void 0 ? _c : null,
+        i_demand_effect: (_d = card.i_demand_effect) !== null && _d !== void 0 ? _d : null,
+        i_compel_effect: (_e = card.i_compel_effect) !== null && _e !== void 0 ? _e : null,
+        non_demand_effect_1: (_f = card.non_demand_effect_1) !== null && _f !== void 0 ? _f : null,
+        non_demand_effect_2: (_g = card.non_demand_effect_2) !== null && _g !== void 0 ? _g : null,
+        non_demand_effect_3: (_h = card.non_demand_effect_3) !== null && _h !== void 0 ? _h : null
+    };
+}
 function getHiddenIconsWhenSplayed(card, direction) {
+    var icons = [];
     switch (direction) {
         case 1: // left
-            return [card.spot_1, card.spot_2, card.spot_3, card.spot_6];
+            icons = [card.spot_1, card.spot_2, card.spot_3, card.spot_6];
+            break;
         case 2: // right
-            return [card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+            icons = [card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+            break;
         case 3: // up
-            return [card.spot_1, card.spot_5, card.spot_6];
+            icons = [card.spot_1, card.spot_5, card.spot_6];
+            break;
         case 4: // aslant
-            return [card.spot_5, card.spot_6];
+            icons = [card.spot_5, card.spot_6];
+            break;
         default: // unsplayed
-            return getAllIcons(card);
+            icons = getAllIcons(card);
+            break;
     }
+    return icons.filter(function (icon) { return icon !== null; });
 }
 function getVisibleIconsWhenSplayed(card, direction) {
+    var icons = [];
     switch (direction) {
         case 1: // left
-            return [card.spot_4, card.spot_5];
+            icons = [card.spot_4, card.spot_5];
+            break;
         case 2: // right
-            return [card.spot_1, card.spot_2];
+            icons = [card.spot_1, card.spot_2];
+            break;
         case 3: // up
-            return [card.spot_2, card.spot_3, card.spot_4];
+            icons = [card.spot_2, card.spot_3, card.spot_4];
+            break;
         case 4: // aslant
-            return [card.spot_1, card.spot_2, card.spot_3, card.spot_4];
+            icons = [card.spot_1, card.spot_2, card.spot_3, card.spot_4];
+            break;
         default: // unsplayed
             return [];
     }
+    return icons.filter(function (icon) { return icon !== null; });
 }
 function getAllIcons(card) {
-    return [card.spot_1, card.spot_2, card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+    return [card.spot_1, card.spot_2, card.spot_3, card.spot_4, card.spot_5, card.spot_6].filter(function (icon) { return icon !== null; });
 }
 function getBonusIconValues(icons) {
     var bonus_values = [];
@@ -346,7 +386,11 @@ var Innovation = /** @class */ (function (_super) {
         this.text_for_view_normal = _("Look at all cards in piles");
         this.text_for_view_full = _("Resume normal view");
         // GENERAL INFO
-        this.cards = gamedatas.cards;
+        this.cards = [];
+        var self = this;
+        Object.keys(gamedatas.cards).forEach(function (id) {
+            self.cards[id] = parseCard(gamedatas.cards[id]);
+        });
         this.players = gamedatas.players;
         // PLAYER PANELS
         for (var player_id in this.players) {
@@ -846,7 +890,6 @@ var Innovation = /** @class */ (function (_super) {
         this.onScreenWidthChange();
         this.refreshLayout();
         // Force refresh page on resize if width changes
-        var self = this;
         window.onresize = function () {
             self.refreshLayout();
         };
@@ -863,19 +906,19 @@ var Innovation = /** @class */ (function (_super) {
         }
     };
     Innovation.prototype.onLoadingComplete = function () {
+        var _this = this;
         // Add card tooltips to existing game log messages
-        for (var i = 0; i < this.cards.length; i++) {
-            var card_id = this.cards[i].id;
+        this.cards.forEach(function (card) {
             // For some reason, after a page refresh, each entry in the game log is located in two diffferent
             // spots on the page, meaning that each span holding a card name no longer has a unique ID (since
             // it appears exactly twice), and BGA's framework to add a tooltip requires that it has a unique ID.
             // The workaround here is to first remove the extra IDs, before trying to add the tooltips.
-            dojo.query("#chatbar .card_id_" + card_id).removeAttr('id');
-            var elements = dojo.query(".card_id_" + card_id);
-            if (elements.length > 0 && this.canShowCardTooltip(card_id)) {
-                this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
+            dojo.query("#chatbar .card_id_" + card.id).removeAttr('id');
+            var elements = dojo.query(".card_id_" + card.id);
+            if (elements.length > 0 && _this.canShowCardTooltip(card.id)) {
+                _this.addCustomTooltipToClass("card_id_" + card.id, _this.getTooltipForCard(card.id), "");
             }
-        }
+        });
     };
     Innovation.prototype.onScreenWidthChange = function () {
         // Remove broken "zoom" property added by BGA framework
@@ -2871,6 +2914,9 @@ var Innovation = /** @class */ (function (_super) {
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     };
     Innovation.prototype.getIconDiv = function (card, icon, icon_location, size) {
+        if (icon === null) {
+            return '';
+        }
         if (icon == 0) {
             return "<div class=\"hexagon_card_icon ".concat(size, " ").concat(icon_location, " hexagon_icon_").concat(card.id, "\"></div>");
         }

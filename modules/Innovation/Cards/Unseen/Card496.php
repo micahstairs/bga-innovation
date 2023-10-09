@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Icons;
 
 class Card496 extends AbstractCard
 {

@@ -10,8 +10,8 @@ declare type Card = {
     spot_2: number;
     spot_3: number;
     spot_4: number;
-    spot_5: number;
-    spot_6: number;
+    spot_5: number | null;
+    spot_6: number | null;
     dogma_icon: number;
     is_relic: boolean;
 
@@ -27,38 +27,78 @@ declare type Card = {
     non_demand_effect_3: string;
 }
 
+function parseCard(card: any): Card {
+    return {
+        id: parseInt(card.id),
+        type: parseInt(card.type),
+        age: parseInt(card.age),
+        faceup_age: parseInt(card.faceup_age),
+        color: parseInt(card.color),
+        spot_1: parseInt(card.spot_1),
+        spot_2: parseInt(card.spot_2),
+        spot_3: parseInt(card.spot_3),
+        spot_4: parseInt(card.spot_4),
+        spot_5: card.spot_5 ? parseInt(card.spot_5) : null,
+        spot_6: card.spot_6 ? parseInt(card.spot_6) : null,
+        dogma_icon: parseInt(card.dogma_icon),
+        is_relic: card.is_relic,
+        name: card.name,
+        condition_for_claiming: card.condition_for_claiming ?? null,
+        alternative_condition_for_claiming: card.alternative_condition_for_claiming ?? null,
+        echo_effect: card.echo_effect ?? null,
+        i_demand_effect: card.i_demand_effect ?? null,
+        i_compel_effect: card.i_compel_effect ?? null,
+        non_demand_effect_1: card.non_demand_effect_1 ?? null,
+        non_demand_effect_2: card.non_demand_effect_2 ?? null,
+        non_demand_effect_3: card.non_demand_effect_3 ?? null
+    };
+}
+
 function getHiddenIconsWhenSplayed(card: Card, direction: number): number[] {
+    var icons: (number | null)[] = [];
     switch (direction) {
         case 1: // left
-            return [card.spot_1, card.spot_2, card.spot_3, card.spot_6];
+            icons = [card.spot_1, card.spot_2, card.spot_3, card.spot_6];
+            break;
         case 2: // right
-            return [card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+            icons = [card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+            break;
         case 3: // up
-            return [card.spot_1, card.spot_5, card.spot_6];
+            icons = [card.spot_1, card.spot_5, card.spot_6];
+            break;
         case 4: // aslant
-            return [card.spot_5, card.spot_6];
+            icons = [card.spot_5, card.spot_6];
+            break;
         default: // unsplayed
-            return getAllIcons(card);
+            icons = getAllIcons(card);
+            break;
     }
+    return icons.filter(icon => icon !== null) as number[];
 }
 
 function getVisibleIconsWhenSplayed(card: Card, direction: number): number[] {
+    var icons: (number | null)[] = [];
     switch (direction) {
         case 1: // left
-            return [card.spot_4, card.spot_5];
+            icons = [card.spot_4, card.spot_5];
+            break;
         case 2: // right
-            return [card.spot_1, card.spot_2];
+            icons = [card.spot_1, card.spot_2];
+            break;
         case 3: // up
-            return [card.spot_2, card.spot_3, card.spot_4];
+            icons = [card.spot_2, card.spot_3, card.spot_4];
+            break;
         case 4: // aslant
-            return [card.spot_1, card.spot_2, card.spot_3, card.spot_4];
+            icons = [card.spot_1, card.spot_2, card.spot_3, card.spot_4];
+            break;
         default: // unsplayed
             return [];
     }
+    return icons.filter(icon => icon !== null) as number[];
 }
 
 function getAllIcons(card: Card): number[] {
-    return [card.spot_1, card.spot_2, card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+    return [card.spot_1, card.spot_2, card.spot_3, card.spot_4, card.spot_5, card.spot_6].filter(icon => icon !== null) as number[];
 }
 
 function getBonusIconValues(icons: number[]) {
