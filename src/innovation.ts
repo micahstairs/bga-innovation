@@ -1921,13 +1921,17 @@ class Innovation extends BgaGame {
                                 let top_card = self.cards[top_card_id];
                                 if (top_card.age >= 6 && !value_6_or_higher) {
                                     value_6_or_higher = true;
-                                    numerator++;
                                 }
                                 if (top_card.age % 2 === 1 && !has_odd_value) {
                                     has_odd_value = true;
-                                    numerator++;
                                 }
                             }
+                        }
+                        if (value_6_or_higher) {
+                            numerator++;
+                        }
+                        if (!has_odd_value) {
+                            numerator++;
                         }
                         break;
 
