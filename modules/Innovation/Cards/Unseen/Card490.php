@@ -27,6 +27,7 @@ class Card490 extends AbstractCard
       ];
     } else if (self::isFirstInteraction()) {
       return [
+        'can_pass'      => true,
         'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'location_to'   => Locations::HAND,
         'age'           => self::getMinValue(self::getAvailableStandardAchievements()),
