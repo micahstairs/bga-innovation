@@ -1051,12 +1051,6 @@ class Innovation extends Table
         return $percentage;
     }
 
-
-    function getFaceupAgeLastSelected()
-    {
-        return self::getUniqueValueFromDB(self::format("SELECT faceup_age FROM card WHERE id = {id}", array('id' => $this->innovationGameState->get('id_last_selected'))));
-    }
-
     /** integer division **/
     function intDivision($a, $b)
     {
@@ -2230,11 +2224,6 @@ class Innovation extends Table
     function revealHand($player_id)
     {
         self::revealLocation($player_id, 'hand');
-    }
-
-    function revealScorePile($player_id)
-    {
-        self::revealLocation($player_id, 'score');
     }
 
     function revealCardWithoutMoving($player_id, $card, $mentionLocation = true)
@@ -6204,18 +6193,6 @@ class Innovation extends Table
                 array('player_id' => $player_id)
             )
         );
-    }
-
-    function countNonEliminatedPlayers()
-    {
-        return self::getUniqueValueFromDB("
-            SELECT
-                COUNT(*)
-            FROM
-                player
-            WHERE
-                player_eliminated=0
-        ");
     }
 
     function getPlayerTeammate($player_id)
