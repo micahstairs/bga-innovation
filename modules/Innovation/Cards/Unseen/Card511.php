@@ -21,7 +21,8 @@ class Card511 extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::setAuxiliaryValue(0); // Track whether a yellow or expansion card was tucked
       self::setAuxiliaryValue2(Arrays::encode([0, 1, 2, 3, 4])); // Track which colors can still be chosen
-      self::setMaxSteps(1);
+      // TODO(4E): Add an "afterEffect" function instead of using a fake interaction.
+      self::setMaxSteps(2); // The second interaction is fake, but we need it to be able to execute something at the end of the effect
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     }
@@ -30,12 +31,20 @@ class Card511 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-        'color'         => Arrays::decode(self::getAuxiliaryValue2()),
-      ];
+      if (self::isFirstInteraction()) {
+        return [
+          'can_pass'      => true,
+          'location_from' => Locations::HAND,
+          'tuck_keyword'  => true,
+          'color'         => Arrays::decode(self::getAuxiliaryValue2()),
+        ];
+      } else {
+        if (self::getAuxiliaryValue() === 1) {
+          self::draw(3);
+          self::draw(3);
+        }
+        return [];
+      }
     } else {
       return [
         'can_pass'        => true,
@@ -56,14 +65,6 @@ class Card511 extends AbstractCard
         self::setNextStep(1);
         self::setAuxiliaryValue2(Arrays::encode($colors));
       }
-    }
-  }
-
-  public function afterInteraction()
-  {
-    if (self::getAuxiliaryValue() === 1) {
-      self::draw(3);
-      self::draw(3);
     }
   }
 
