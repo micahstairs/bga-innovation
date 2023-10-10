@@ -22,7 +22,6 @@ class Card490 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       return [
-        'location_from'     => Locations::AVAILABLE_ACHIEVEMENTS,
         'safeguard_keyword' => true,
         'age'               => self::countCards(Locations::ACHIEVEMENTS) + 1,
       ];
@@ -34,9 +33,10 @@ class Card490 extends AbstractCard
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => Locations::PILE,
-        'color'         => Colors::YELLOW,
+        'n'              => 'all',
+        'location_from'  => Locations::PILE,
+        'return_keyword' => true,
+        'color'          => [Colors::YELLOW, Colors::BLUE],
       ];
     }
   }
