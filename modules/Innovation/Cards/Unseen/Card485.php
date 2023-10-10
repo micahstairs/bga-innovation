@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
 class Card485 extends AbstractCard
