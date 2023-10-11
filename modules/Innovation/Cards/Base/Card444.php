@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card444 extends AbstractCard
 {
@@ -26,13 +27,13 @@ class Card444 extends AbstractCard
       $topCards = self::getTopCards();
       $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
       return [
-        'location_from'  => 'board',
+        'location_from'  => Locations::BOARD,
         'return_keyword' => true,
         'color'          => $colors,
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'location_from'  => 'board',
+        'location_from'  => Locations::BOARD,
         'return_keyword' => true,
         'age'            => self::getLastSelectedFaceUpAge(),
       ];
