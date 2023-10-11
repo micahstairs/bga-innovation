@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card525 extends AbstractCard
 {
