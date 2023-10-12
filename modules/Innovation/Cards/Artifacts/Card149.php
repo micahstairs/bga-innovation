@@ -82,7 +82,7 @@ class Card149 extends AbstractCard
   public function afterInteraction()
   {
     if (self::isFourthEdition() && self::isSecondInteraction()) {
-      self::junkBaseDeck(self::getTopCardOfColor(Colors::GREEN)['faceup_age']);
+      self::junkBaseDeck(self::getValue(self::getTopCardOfColor(Colors::GREEN)));
     }
   }
 

@@ -782,7 +782,7 @@ abstract class AbstractCard
     return $card && $card['color'] == Colors::PURPLE;
   }
 
-  protected static function getValue(array $card): int
+  protected static function getValue(?array $card): int
   {
     if (!$card) {
       return 0;
