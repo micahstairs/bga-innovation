@@ -58,6 +58,7 @@ class Card447 extends AbstractCard
   {
     $card = self::drawAndMeld(ceil(self::getAuxiliaryValue2() / 2));
     if (self::getNumChosen() === 3) {
+      self::setAuxiliaryValue($card['color']);
       self::setNextStep(1);
     }
   }
