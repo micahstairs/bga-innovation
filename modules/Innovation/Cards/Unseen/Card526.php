@@ -37,7 +37,7 @@ class Card526 extends AbstractCard
     } else {
       return [
         'n'              => 'all',
-        'location_from'  => Locations::REVEALED,
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     }
