@@ -12533,7 +12533,7 @@ class Innovation extends Table
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least twenty ${lightbulbs}.'), array('You' => 'You', 'lightbulbs' => $lightbulb));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least twenty ${lightbulbs}.'), array('player_name' => self::renderPlayerName($player_id), 'lightbulbs' => $lightbulb));
                         // Abort win if the game is in a special debug mode which prevents the game from ending
-                        if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                        if ($this->innovationGameState->get('debug_mode') != 2) {
                             $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Empiricism');
                             throw new EndOfGame();
@@ -12667,7 +12667,7 @@ class Innovation extends Table
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least ten green cards.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least ten green cards.'), array('player_name' => self::renderPlayerName($player_id)));
                         // Abort win if the game is in a special debug mode which prevents the game from ending
-                        if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                        if ($this->innovationGameState->get('debug_mode') != 2) {
                             $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Collaboration');
                             throw new EndOfGame();
@@ -12778,7 +12778,7 @@ class Innovation extends Table
                         self::notifyPlayer($owner_of_max_number_of_leaves, 'log', clienttranslate('${You} have more ${leaves} than each opponent.'), array('You' => 'You', 'leaves' => $leaf));
                         self::notifyAllPlayersBut($owner_of_max_number_of_leaves, 'log', clienttranslate('${player_name} has more ${leaves} than each opponent.'), array('player_name' => self::renderPlayerName($owner_of_max_number_of_leaves), 'leaves' => $leaf));
                         // Abort win if the game is in a special debug mode which prevents the game from ending
-                        if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                        if ($this->innovationGameState->get('debug_mode') != 2) {
                             $this->innovationGameState->set('winner_by_dogma', $owner_of_max_number_of_leaves); // "Wins"
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Bioengineering');
                             throw new EndOfGame();
@@ -12854,7 +12854,7 @@ class Innovation extends Table
                                 )
                             );
                             // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            if ($this->innovationGameState->get('debug_mode') != 2) {
                                 $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
                                 self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
                                 throw new EndOfGame();
@@ -12905,7 +12905,7 @@ class Innovation extends Table
                                 self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
                             }
                             // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            if ($this->innovationGameState->get('debug_mode') != 2) {
                                 $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
                                 self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
                                 throw new EndOfGame();
@@ -13047,7 +13047,7 @@ class Innovation extends Table
                                 self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has a greater score than the other one.'), array());
                             }
                             // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            if ($this->innovationGameState->get('debug_mode') != 2) {
                                 $this->innovationGameState->set('winner_by_dogma', $player_id); // "The single player with the most points wins" (or combined scores for team)
                                 self::trace('EOG bubbled from self::stPlayerInvolvedTurn Globalization');
                                 throw new EndOfGame();
@@ -13140,7 +13140,7 @@ class Innovation extends Table
                                 )
                             );
                             // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            if ($this->innovationGameState->get('debug_mode') != 2) {
                                 $this->innovationGameState->set('winner_by_dogma', $player_with_min_score); // "The single player with the most points wins" (scores are not combined for teams)
                                 self::trace('EOG bubbled from self::stPlayerInvolvedTurn A. I.');
                                 throw new EndOfGame();
