@@ -12532,9 +12532,12 @@ class Innovation extends Table
                     if (self::getPlayerSingleRessourceCount($player_id, 3 /* lightbulb */) >= 20) { // "If you have twenty or more lightbulbs on your board"
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least twenty ${lightbulbs}.'), array('You' => 'You', 'lightbulbs' => $lightbulb));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least twenty ${lightbulbs}.'), array('player_name' => self::renderPlayerName($player_id), 'lightbulbs' => $lightbulb));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Empiricism');
-                        throw new EndOfGame();
+                        // Abort win if the game is in a special debug mode which prevents the game from ending
+                        if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Empiricism');
+                            throw new EndOfGame();
+                        }
                     }
                     break;
 
@@ -12663,9 +12666,12 @@ class Innovation extends Table
                     if ($number_of_green_cards >= 10) { // "If you have ten or more green cards on your board"
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least ten green cards.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least ten green cards.'), array('player_name' => self::renderPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Collaboration');
-                        throw new EndOfGame();
+                        // Abort win if the game is in a special debug mode which prevents the game from ending
+                        if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Collaboration');
+                            throw new EndOfGame();
+                        }
                     }
                     break;
 
@@ -12771,9 +12777,12 @@ class Innovation extends Table
                     } else { // "If any player has less than three leaves, the single player with the most number of leaves"
                         self::notifyPlayer($owner_of_max_number_of_leaves, 'log', clienttranslate('${You} have more ${leaves} than each opponent.'), array('You' => 'You', 'leaves' => $leaf));
                         self::notifyAllPlayersBut($owner_of_max_number_of_leaves, 'log', clienttranslate('${player_name} has more ${leaves} than each opponent.'), array('player_name' => self::renderPlayerName($owner_of_max_number_of_leaves), 'leaves' => $leaf));
-                        $this->innovationGameState->set('winner_by_dogma', $owner_of_max_number_of_leaves); // "Wins"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Bioengineering');
-                        throw new EndOfGame();
+                        // Abort win if the game is in a special debug mode which prevents the game from ending
+                        if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                            $this->innovationGameState->set('winner_by_dogma', $owner_of_max_number_of_leaves); // "Wins"
+                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Bioengineering');
+                            throw new EndOfGame();
+                        }
                     }
 
                     break;
@@ -12844,9 +12853,12 @@ class Innovation extends Table
                                     'You' => 'You'
                                 )
                             );
-                            $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                            throw new EndOfGame();
+                            // Abort win if the game is in a special debug mode which prevents the game from ending
+                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
+                                throw new EndOfGame();
+                            }
                         }
                     } else {
                         $step_max = 1;
@@ -12892,9 +12904,12 @@ class Innovation extends Table
 
                                 self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
                             }
-                            $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                            throw new EndOfGame();
+                            // Abort win if the game is in a special debug mode which prevents the game from ending
+                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
+                                throw new EndOfGame();
+                            }
                         }
                     }
                     break;
@@ -13031,9 +13046,12 @@ class Innovation extends Table
 
                                 self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has a greater score than the other one.'), array());
                             }
-                            $this->innovationGameState->set('winner_by_dogma', $player_id); // "The single player with the most points wins" (or combined scores for team)
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Globalization');
-                            throw new EndOfGame();
+                            // Abort win if the game is in a special debug mode which prevents the game from ending
+                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "The single player with the most points wins" (or combined scores for team)
+                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Globalization');
+                                throw new EndOfGame();
+                            }
                         }
                     }
                     break;
@@ -13121,9 +13139,12 @@ class Innovation extends Table
                                     'You' => 'You'
                                 )
                             );
-                            $this->innovationGameState->set('winner_by_dogma', $player_with_min_score); // "The single player with the most points wins" (scores are not combined for teams)
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn A. I.');
-                            throw new EndOfGame();
+                            // Abort win if the game is in a special debug mode which prevents the game from ending
+                            if ($this->game->innovationGameState->get('debug_mode') != 2) {
+                                $this->innovationGameState->set('winner_by_dogma', $player_with_min_score); // "The single player with the most points wins" (scores are not combined for teams)
+                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn A. I.');
+                                throw new EndOfGame();
+                            }
                         }
                     }
                     break;
