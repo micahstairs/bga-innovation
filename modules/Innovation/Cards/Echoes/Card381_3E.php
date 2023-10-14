@@ -38,7 +38,7 @@ class Card381_3E extends AbstractCard
     $remainingValues = self::removeFromAuxiliaryArray($value);
     self::draw($value);
     if ($remainingValues) {
-      self::setNextStep(1);
+      self::setNextStep(2);
     }
   }
 

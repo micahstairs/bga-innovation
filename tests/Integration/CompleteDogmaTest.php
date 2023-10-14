@@ -50,7 +50,8 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
     self::setGlobalVariable("debug_mode", 2);
 
-    error_log("*** STARTING GAME ***");
+    $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
+    error_log("*** STARTING GAME (edition: $edition) ***");
 
     $numCardsTested = 0;
     foreach ($cardIds as $cardId) {
