@@ -398,12 +398,12 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance->advanceGame();
   }
 
-  private function getRandomFromArray(array $array): int
+  protected function getRandomFromArray(array $array): int
   {
     return $array[array_rand($array)];
   }
 
-  private function getRandomElementsFromArray(array $array, int $numToChoose): array
+  protected function getRandomElementsFromArray(array $array, int $numToChoose): array
   {
     $choices = [];
     for ($i = 0; $i < $numToChoose; $i++) {

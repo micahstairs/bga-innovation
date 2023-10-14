@@ -4,18 +4,13 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
-use Innovation\Utils\Arrays;
 
-class Card381 extends AbstractCard
+class Card381_3E extends AbstractCard
 {
 
-  // Pressure Cooker
-  // - 3rd edition:
+  // Pressure Cooker (3rd edition):
   //   - Return all cards from your hand. For each top card on your board with a bonus, draw a
   //     card of value equal to that bonus.
-  // - 4th edition:
-  //   - Return all cards from your hand. For each top card on your board with a bonus, both draw
-  //     a card and junk an available achievement of value equal to that bonus.
 
   public function initialExecution()
   {
@@ -27,34 +22,23 @@ class Card381 extends AbstractCard
     if (self::isFirstInteraction()) {
       return [
         'n'              => 'all',
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
-      ];
-    } else if (self::isSecondInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
       ];
     } else {
       return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => self::getAuxiliaryValue(),
+        'choose_value' => true,
+        'age'          => self::getAuxiliaryArray(),
       ];
     }
   }
 
   public function handleValueChoice($value)
   {
-    $remainingValues = Arrays::removeElement(self::getAuxiliaryArray(), $value);
-    self::setAuxiliaryArray($remainingValues);
+    $remainingValues = self::removeFromAuxiliaryArray($value);
     self::draw($value);
-    if (self::isFirstOrThirdEdition()) {
-      if (count($remainingValues) > 0) {
-        self::setNextStep(1);
-      }
-    } else {
-      self::setAuxiliaryValue($value); // Track which value needs to be junked
+    if ($remainingValues) {
+      self::setNextStep(1);
     }
   }
 
@@ -64,11 +48,7 @@ class Card381 extends AbstractCard
       $bonuses = self::getTopBonuses();
       if (count($bonuses) > 0) {
         self::setAuxiliaryArray($bonuses);
-        self::setMaxSteps(self::isFirstOrThirdEdition() ? 2 : 3);
-      }
-    } else if (self::isThirdInteraction()) {
-      if (count(self::getAuxiliaryArray()) > 0) {
-        self::setNextStep(2);
+        self::setMaxSteps(2);
       }
     }
   }
