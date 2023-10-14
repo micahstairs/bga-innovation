@@ -1095,7 +1095,7 @@ $this->textual_card_infos = array(
     166 => array(
         'name'                                => clienttranslate('Puffing Billy'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board. Splay right that color.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Tuck a card from your hand. Splay right its color on your board. Draw a card of value equal to the highest number of icons of the same type visible in that color on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Tuck a card from your hand. Splay right its color on your board. Draw a card of value equal to the highest number of icons of the same type in that color on your board.'),
     ),
 
     167 => array(
@@ -1892,8 +1892,9 @@ $this->textual_card_infos = array(
     370 => array(
         'name'                                => clienttranslate('Globe'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may return up to three cards from hand of the same color. If you return one, splay any color left; two, right; three, up. If you returned at least one card, draw and foreshadow a ${age_6}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may return all cards from your hand. If you return three cards, splay any color on your board right, and draw and foreshadow a ${age_6}, a ${age_7}, and then an ${age_8}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return all cards from your hand. If you return three ${age_4}, splay any color on your board right, and draw and foreshadow a ${age_6}, a ${age_7}, and then an ${age_8}.'),
         'non_demand_effect_2_fourth'          => clienttranslate('If Globe was foreseen, foreshadow a top card from any board.'),
+        'separate_4E_implementation'          => true,
     ),
 
     371 => array(
@@ -2431,7 +2432,7 @@ $this->textual_card_infos = array(
     438 => array(
         'name'                                   => clienttranslate('History'),
         'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have a color with four or more visible echo effects.'),
-        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have a color with four visible echo effects.'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have a color with four echo effects.'),
         'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_7} Photography.')
     ),
 
@@ -2579,7 +2580,7 @@ $this->textual_card_infos = array(
 
     472 => array(
         'name'                => clienttranslate('Drone'),
-        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. If you have fewer than six cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom five cards of that color from all boards. If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_10}. If you have fewer than six cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom five cards of that color from all boards. If you do, repeat this effect.'),
     ),
 
     473 => array(
@@ -2758,7 +2759,7 @@ $this->textual_card_infos = array(
 
     504 => array(
         'name'                => clienttranslate('Steganography'),
-        'non_demand_effect_1' => clienttranslate('You may splay left a color on your board with a visible ${icon_3}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board. Otherwise, draw and tuck a ${age_3}.'),
+        'non_demand_effect_1' => clienttranslate('You may splay left a color on your board with a ${icon_3}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board. Otherwise, draw and tuck a ${age_3}.'),
     ),
 
     /* Unseen - Age 3 */
@@ -3043,7 +3044,7 @@ $this->textual_card_infos = array(
 
     553 => array(
         'name'                => clienttranslate('Fortune Cookie'),
-        'non_demand_effect_1' => clienttranslate('If you have exactly seven of any icon visible on your board, draw and score a ${age_7}; exactly eight, splay your green or purple cards right and draw an ${age_8}; exactly nine, draw a ${age_9}.'),
+        'non_demand_effect_1' => clienttranslate('If you have exactly seven of any icon on your board, draw and score a ${age_7}; exactly eight, splay your green or purple cards right and draw an ${age_8}; exactly nine, draw a ${age_9}.'),
     ),
 
     554 => array(
@@ -3270,7 +3271,7 @@ $this->textual_card_infos = array(
     592 => array(
         'name'                => clienttranslate('Fashion Mask'),
         'non_demand_effect_1' => clienttranslate('Tuck a top card with a ${icon_1} or ${icon_5} of each color on your board. You may safeguard one of the tucked cards.'),
-        'non_demand_effect_2' => clienttranslate('You may score all but the top five of your yellow or purple cards. If you do, splay that color aslant.'),
+        'non_demand_effect_2' => clienttranslate('Score all but the top five each of your yellow and purple cards. Splay those colors aslant.'),
     ),
 
     593 => array(

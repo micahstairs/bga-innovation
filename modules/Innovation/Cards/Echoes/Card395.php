@@ -18,8 +18,8 @@ class Card395 extends AbstractCard
   // - 4th edition
   //   - ECHO: Meld a card from your forecast.
   //   - I DEMAND you transfer your highest top card to your hand!
-  //   - If you have three echo effects visible in one color, claim the History achievement.
-  //     If you do, and Photography was foreseen, you win.
+  //   - If you have three echo effects in one color, claim the History achievement. If you do,
+  //     and Photography was foreseen, you win.
 
   public function initialExecution()
   {
@@ -46,7 +46,6 @@ class Card395 extends AbstractCard
         'meld_keyword'  => true,
       ];
     } else {
-      // TODO(4E): Test that this behaves correctly with Battleship Yamato.
       return [
         'location_from' => 'board',
         'location_to'   => 'hand',

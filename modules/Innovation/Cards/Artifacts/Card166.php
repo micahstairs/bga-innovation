@@ -13,7 +13,7 @@ class Card166 extends AbstractCard
   //     of the same type visible in that color on your board. Splay right that color.
   // - 4th edition:
   //   - Tuck a card from your hand. Splay right its color on your board. Draw a card of value
-  //     equal to the highest number of icons of the same type visible in that color on your board.
+  //     equal to the highest number of icons of the same type in that color on your board.
 
   public function initialExecution()
   {

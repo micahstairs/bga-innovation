@@ -12,7 +12,7 @@ use Innovation\Utils\Arrays;
 class Card504 extends AbstractCard
 {
   // Steganography
-  //   - You may splay left a color on your board with a visible [CONCEPT]. If you do, safeguard an
+  //   - You may splay left a color on your board with a [CONCEPT]. If you do, safeguard an
   //     available achievement of value equal to the number of cards of that color on your board.
   //     Otherwise, draw and tuck a [3].
 

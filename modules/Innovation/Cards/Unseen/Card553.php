@@ -10,8 +10,8 @@ class Card553 extends AbstractCard
 {
 
   // Fortune Cookie
-  //   - If you have exactly seven of any icon visible on your board, draw and score a [7]; exactly
-  //     eight, splay your green or purple cards right and draw an [8]; exactly nine, draw a [9].
+  //   - If you have exactly seven of any icon on your board, draw and score a [7]; exactly eight,
+  //     splay your green or purple cards right and draw an [8]; exactly nine, draw a [9].
 
   public function initialExecution()
   {
