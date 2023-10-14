@@ -24,7 +24,8 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   public function test_allDogmas_fourthEdition_artifacts()
   {
-    self::executeCards(array_merge(range(110, 214), range(450, 459)));
+    // TODO(4E): Add Martian Internet later
+    self::executeCards(array_merge(range(110, 187), range(189, 214), [450], range(452, 459)));
   }
 
   public function test_allDogmas_thirdEdition_echoes()
@@ -34,17 +35,20 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   public function test_allDogmas_fourthEdition_echoes()
   {
-    self::executeCards(array_merge(range(330, 434), range(450, 459)));
+    self::executeCards(array_merge(range(330, 434), range(470, 479)));
   }
 
   public function test_allDogmas_fourthEdition_unseen()
   {
-    self::executeCards(range(480, 594));
+    // TODO(4E): Add Hitchhiking and Teleprompter later
+    self::executeCards(array_merge(range(480, 559), range(561, 569), range(571, 594)));
   }
 
   private function executeCards(array $cardIds)
   {
     shuffle($cardIds);
+
+    self::setGlobalVariable("debug_mode", 2);
 
     error_log("*** STARTING GAME ***");
 

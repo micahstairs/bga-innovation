@@ -159,7 +159,7 @@ class Innovation extends Table
                 'current_nesting_index'                => 97,
                 // Used to help release new versions of the game without breaking existing games (3 = Cities, 4 = 4th edition base game, 5 = 4th edition Unseen)
                 'release_version'                      => 98,
-                // 0 for disabled, 1 for enabled
+                // 0 for disabled, 1 for enabled, 2 for a special mode of testing which does not terminate the game
                 'debug_mode'                           => 99,
 
                 // 1 for normal game, 2/3/4/5 for team game
@@ -462,6 +462,11 @@ class Innovation extends Table
         // Add extra achievement to win
         if ($this->innovationGameState->get('extra_achievement_to_win') > 1) {
             $this->innovationGameState->increment('number_of_achievements_needed_to_win');
+        }
+
+        // In a certain debug mode, make it so that achievements do not cause the game to end
+        if ($this->innovationGameState->get('debug_mode') == 2) {
+            $this->innovationGameState->set('number_of_achievements_needed_to_win', 100);
         }
 
         // Flag used to know if we are still on turn0 (1) or not (0)
@@ -1464,7 +1469,7 @@ class Innovation extends Table
         $last_card_of_bulk_transfer = array_key_exists('last_card_of_bulk_transfer', $properties) ? $properties['last_card_of_bulk_transfer'] : false;
         $player_already_lost = array_key_exists('player_already_lost', $properties) ? $properties['player_already_lost'] : false;
 
-        if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
+        if (self::getGameStateValue('debug_mode') >= 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("  - Transferring " . self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
         }
 
@@ -6391,11 +6396,15 @@ class Innovation extends Table
 
         $max_age = self::getMaxAge();
         if ($age_to_draw > $max_age) {
-            // Attempt to draw a card above the max age : end of the game by score
-            $this->innovationGameState->set('game_end_type', 1);
-            $this->innovationGameState->set('player_who_could_not_draw', $player_id);
-            self::trace('EOG bubbled from self::executeDraw (age higher than highest deck age');
-            throw new EndOfGame();
+            if ($this->innovationGameState->get('debug_mode') == 2) {
+                error_log("* Altering age of drawn card to hopefully avoid ending the game...");
+                $age_to_draw = self::getAgeToDrawIn($player_id, 0);
+            } else {
+                $this->innovationGameState->set('game_end_type', 1);
+                $this->innovationGameState->set('player_who_could_not_draw', $player_id);
+                self::trace('EOG bubbled from self::executeDraw (age higher than highest deck age');
+                throw new EndOfGame();
+            }
         }
 
         // "If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
@@ -9315,7 +9324,7 @@ class Innovation extends Table
 
     function throwInvalidChoiceException()
     {
-        if (self::getGameStateValue('debug_mode') == 1) {
+        if (self::getGameStateValue('debug_mode') >= 1) {
             debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         }
         throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));

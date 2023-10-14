@@ -239,6 +239,11 @@ abstract class BaseIntegrationTest extends BaseTest
     return $cards[array_rand($cards)]['id'];
   }
 
+  protected function setGlobalVariable(string $name, int $value)
+  {
+    $this->tableInstance->getTable()->innovationGameState->set($name, $value);
+  }
+
   protected function getGlobalVariable(string $name): int
   {
     return $this->tableInstance->getTable()->innovationGameState->get($name);

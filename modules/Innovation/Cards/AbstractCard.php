@@ -1154,12 +1154,22 @@ abstract class AbstractCard
 
   protected function win(int $playerId = null): void
   {
+    // Abort if the game is in a special debug mode which prevents the game from ending
+    if ($this->game->innovationGameState->get('debug_mode') == 2) {
+      return;
+    }
+
     $this->game->innovationGameState->set('winner_by_dogma', self::coercePlayerId($playerId));
     throw new \EndOfGame();
   }
 
   protected function lose(int $playerId = null): void
   {
+    // Abort if the game is in a special debug mode which prevents the game from ending
+    if ($this->game->innovationGameState->get('debug_mode') == 2) {
+      return;
+    }
+
     $playerId = self::coercePlayerId($playerId);
 
     // The entire team loses if one player loses 
