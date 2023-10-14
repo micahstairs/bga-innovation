@@ -1,4 +1,4 @@
-name: Run integration tests
+name: Run integration tests (all dogmas)
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
           php-version: '7.4'
       - name: Install dependencies
         run: composer install -n --prefer-dist
-      - name: Run Tests
-        run: env CI=1 ./vendor/bin/phpunit tests/Integration/RandomGameTest.php
+      - name: Execute every dogma effect
+        run: env CI=1 ./vendor/bin/phpunit tests/Integration/CompleteDogmaTest.php
         env:
           DB_PORT: ${{ job.services.mysql.ports[3306] }}

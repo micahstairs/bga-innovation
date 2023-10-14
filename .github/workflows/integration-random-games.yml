@@ -1,0 +1,32 @@
+name: Run integration tests (random games)
+
+on:
+  push:
+    branches:
+      - 'main-4'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+          MYSQL_DATABASE: innovation_test
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v2
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Install dependencies
+        run: composer install -n --prefer-dist
+      - name: Run random games
+        run: env CI=1 ./vendor/bin/phpunit tests/Integration/RandomGameTest.php
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
