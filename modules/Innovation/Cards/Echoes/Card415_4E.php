@@ -16,15 +16,17 @@ class Card415_4E extends AbstractCard
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isFirstNonDemand()) {
+      self::setAuxiliaryArray([]); // Tracks total value of cards scored
+      self::setMaxSteps(1);
+    } else if (self::isSecondNonDemand()) {
+      self::setMaxSteps(1);
+    }
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      if (self::isFirstInteraction()) {
-        self::setAuxiliaryArray([]); // Tracks total value of cards scored
-      }
       return [
         'n'                 => 2,
         'location_from'     => 'board',
