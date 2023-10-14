@@ -4,20 +4,14 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 
-class Card372 extends AbstractCard
+class Card372_4E extends AbstractCard
 {
 
-  // Pencil
-  // - 3rd edition:
+  // Pencil (4th edition):
   //   - ECHO: Draw a [5].
   //   - You may return up to three cards from your hand. If you do, draw that many cards of value
-  //     one higher than the highest card you returned. Foreshadow one of them, and return the rest
-  //     of the drawn cards.
-  // - 4th edition:
-  //   - ECHO: Draw a [5].
-  //   - You may return up to three cards from your hand. If you do, draw that many cards of value
-  //     one higher than the highest card you return. Foreshadow one of them, and return the rest
-  //     of the drawn cards.
+  //     one higher than the highest card you return. Return all but one of them, and foreshadow
+  //     the remaining card.
 
   public function initialExecution()
   {
@@ -41,13 +35,7 @@ class Card372 extends AbstractCard
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'location_from'                   => 'hand',
-        'foreshadow_keyword'              => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
-    } else {
-      return [
-        'n'                               => 'all',
+        'n'                               => count(self::getAuxiliaryArray()) - 1,
         'location_from'                   => 'hand',
         'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
@@ -74,7 +62,10 @@ class Card372 extends AbstractCard
         $cardIds[] = $card['id'];
       }
       self::setAuxiliaryArray($cardIds); // Track cards to foreshadow/return
-      self::setMaxSteps(3);
+      self::setMaxSteps(2);
+    } else if (self::isSecondInteraction()) {
+      $card = self::getCard(self::getAuxiliaryArray()[0]);
+      self::foreshadow($card);
     }
   }
 
