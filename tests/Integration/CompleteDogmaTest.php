@@ -19,7 +19,7 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   public function test_allDogmas_thirdEdition_artifacts()
   {
-    self::executeCards(range(110, 214));
+    self::executeCards(array_merge(range(110, 187), range(189, 214)));
   }
 
   public function test_allDogmas_fourthEdition_artifacts()

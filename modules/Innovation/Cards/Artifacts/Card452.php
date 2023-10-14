@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
 class Card452 extends AbstractCard
