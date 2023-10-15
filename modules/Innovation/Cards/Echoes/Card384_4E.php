@@ -20,6 +20,7 @@ class Card384_4E extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       if (self::countCards('hand') > 0) {
         self::setMaxSteps(1);
+        self::setAuxiliaryValue(0); // Track which repetition this is
       }
     }
   }
@@ -37,7 +38,7 @@ class Card384_4E extends AbstractCard
       ];
     } else {
       return [
-        'can_pass'           => self::isSecondInteraction(),
+        'can_pass'           => self::getAuxiliaryValue() > 0,
         'location_from'      => 'hand',
         'foreshadow_keyword' => true,
       ];
@@ -62,6 +63,7 @@ class Card384_4E extends AbstractCard
         self::return($revealedCard);
         if (self::countCards('hand') > 0) {
           self::setNextStep(1);
+          self::incrementAuxiliaryValue();
         }
       }
     }

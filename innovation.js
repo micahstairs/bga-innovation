@@ -308,6 +308,7 @@ var Innovation = /** @class */ (function (_super) {
                     + "<button id='debug_splay_aslant' class='action-button debug_button bgabutton bgabutton_red'>SPLAY ASLANT</button>"
                     + main_area.innerHTML;
             if (gamedatas.echoes_expansion_enabled) {
+                main_area.innerHTML = "<button id='debug_empty_forecast' class='action-button debug_button bgabutton bgabutton_red'>EMPTY FORECAST</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
             }
             if (gamedatas.artifacts_expansion_enabled) {
@@ -362,6 +363,7 @@ var Innovation = /** @class */ (function (_super) {
             }
             if (gamedatas.echoes_expansion_enabled) {
                 dojo.connect($('debug_foreshadow'), 'onclick', function (_) { return _this.debugTransfer("foreshadow"); });
+                dojo.connect($('debug_empty_forecast'), 'onclick', function (_) { return _this.debugTransferAll("forecast", "deck"); });
             }
             if (gamedatas.fourth_edition) {
                 dojo.connect($('debug_junk'), 'onclick', function (_) { return _this.debugTransfer("junk"); });
