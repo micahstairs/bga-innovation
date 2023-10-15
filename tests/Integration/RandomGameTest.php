@@ -67,6 +67,13 @@ class RandomGameTest extends BaseIntegrationTest
   private function dogmaArtifact()
   {
     $cardId = self::getRandomCardId(self::getCards('display'));
+
+    // Make sure we don't try to dogma Battleship Yamato
+    if ($cardId == 188) {
+      self::returnArtifact();
+      return;
+    }
+
     $cardName = $this->tableInstance->getTable()->getCardName($cardId);
     error_log("* DOGMA ARTIFACT $cardName");
     $this->tableInstance
