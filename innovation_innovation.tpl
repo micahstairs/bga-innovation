@@ -28,10 +28,18 @@
                 <div id="revealed_container_{PLAYER_ID}" class="revealed_container">
                     <div id="revealed_{PLAYER_ID}" class="revealed"></div>
                 </div>
-                <div id="display_container_{PLAYER_ID}" class="display_container">
-                    <div style="background-color:rgba({R}, {G}, {B}, .2);">
-                        <p>{DISPLAY}</p>
-                        <div id="display_{PLAYER_ID}" class="display"></div>
+                <div id="artifacts_{PLAYER_ID}" class="artifacts">
+                    <div id="display_container_{PLAYER_ID}" class="display_container">
+                        <div style="background-color:rgba({R}, {G}, {B}, .2);">
+                            <p>{DISPLAY}</p>
+                            <div id="display_{PLAYER_ID}" class="display"></div>
+                        </div>
+                    </div>
+                    <div id="museums_container_{PLAYER_ID}" class="museums_container">
+                        <div style="background-color:rgba({R}, {G}, {B}, .2);">
+                            <p>{MUSEUMS}</p>
+                            <div id="museums_{PLAYER_ID}" class="museums"></div>
+                        </div>
                     </div>
                 </div>
                 <div id="hand_container_{PLAYER_ID}" class="hand_container">

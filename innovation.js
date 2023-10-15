@@ -156,6 +156,7 @@ var Innovation = /** @class */ (function (_super) {
             ["my_hand", "M card"],
             ["opponent_hand", "S recto"],
             ["display", "M card"],
+            ["museums", "M card"],
             ["deck", "S recto"],
             ["board", "M card"],
             ["forecast", "S recto"],
@@ -173,6 +174,7 @@ var Innovation = /** @class */ (function (_super) {
             ["my_hand", -1],
             ["opponent_hand", -1],
             ["display", 1],
+            ["museums", 5],
             ["deck", 15],
             ["board", -1],
             ["forecast", -1],
@@ -190,6 +192,7 @@ var Innovation = /** @class */ (function (_super) {
             "my_hand": { "x": 189, "y": 133 },
             "opponent_hand": { "x": 35, "y": 49 },
             "display": { "x": 189, "y": 133 },
+            "museums": { "x": 189, "y": 133 },
             "deck": { "x": 3, "y": 3 },
             "board": { "x": 0, "y": 0 },
             "forecast": { "x": 35, "y": 49 },
@@ -649,6 +652,25 @@ var Innovation = /** @class */ (function (_super) {
                 this.addTooltipForCard(card);
             }
         }
+        // PLAYERS' MUSEUMS
+        this.zone["museums"] = {};
+        for (var player_id in this.players) {
+            if (!gamedatas.artifacts_expansion_enabled || !gamedatas.fourth_edition) {
+                dojo.byId('museums_container_' + player_id).style.display = 'none';
+                continue;
+            }
+            // Creation of the zone
+            var zone = this.createZone('museums', player_id, null, null, null);
+            this.zone["museums"][player_id] = zone;
+            this.setPlacementRules(zone, /*left_to_right=*/ true);
+            // Add cards to zone
+            var cards = gamedatas.artifacts_in_museums[player_id];
+            for (var _i = 0, cards_1 = cards; _i < cards_1.length; _i++) {
+                var card = cards_1[_i];
+                this.createAndAddToZone(zone, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
+                this.addTooltipForCard(card);
+            }
+        }
         // PLAYERS' FORECAST
         this.zone["forecast"] = {};
         for (var player_id in this.players) {
@@ -1003,6 +1025,7 @@ var Innovation = /** @class */ (function (_super) {
         var achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
         var score_container_width = main_area_inner_width - forecast_container_width - achievement_container_width - safe_container_width;
         for (var player_id in this.players) {
+            var hand_width = dojo.position('hand_container_' + player_id).w;
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
             dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
             dojo.setStyle(this.zone["forecast"][player_id].container_div, 'width', forecast_container_width + "px");
@@ -1015,7 +1038,8 @@ var Innovation = /** @class */ (function (_super) {
             dojo.style('safe_container_' + player_id, 'width', safe_container_width + 'px');
             dojo.style('safe_' + player_id, 'width', safe_container_width + 'px');
             dojo.setStyle(this.zone["safe"][player_id].container_div, 'width', safe_container_width + "px");
-            dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
+            dojo.style('progress_' + player_id, 'width', hand_width + 'px');
+            dojo.style('artifacts_' + player_id, 'width', hand_width + 'px');
         }
         // Defining the number of cards hand zone can host
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));

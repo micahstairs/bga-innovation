@@ -11,7 +11,7 @@ class Locations
   const FORECAST = 'forecast';
   const HAND = 'hand';
   const JUNK = 'junk';
-  const MUSEUM = 'museum';
+  const MUSEUMS = 'museums';
   const PILE = 'pile'; // This is special location used for board interactions, which allows players to choose all cards in the pile instead of just the top card of the stack
   const RELICS = 'relics';
   const REMOVED = 'removed';
@@ -34,7 +34,7 @@ class Locations
     self::DISPLAY,
     self::FORECAST,
     self::HAND,
-    self::MUSEUM,
+    self::MUSEUMS,
     self::REVEALED,
     self::SAFE,
     self::SCORE,
@@ -43,7 +43,7 @@ class Locations
   const FACEUP_LOCATIONS = [
     self::BOARD,
     self::DISPLAY,
-    self::MUSEUM,
+    self::MUSEUMS,
     self::REVEALED,
   ];
 
@@ -116,7 +116,7 @@ class Locations
         return 18;
       case 'pile,score':
         return 19;
-      case self::MUSEUM:
+      case self::MUSEUMS:
         return 20;
       default:
         throw new \Exception("Unhandled case in Locations::encode: $location.");
@@ -167,7 +167,7 @@ class Locations
       case 19:
         return 'pile,score';
       case 20:
-        return self::MUSEUM;
+        return self::MUSEUMS;
       default:
         throw new \Exception("Unhandled case in Locations::decode: $locationCode.");
     }

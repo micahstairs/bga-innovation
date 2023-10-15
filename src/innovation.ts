@@ -51,6 +51,7 @@ class Innovation extends BgaGame {
         ["my_hand", "M card"],
         ["opponent_hand", "S recto"],
         ["display", "M card"],
+        ["museums", "M card"],
         ["deck", "S recto"],
         ["board", "M card"],
         ["forecast", "S recto"],
@@ -69,6 +70,7 @@ class Innovation extends BgaGame {
         ["my_hand", -1], // Computed dynamically
         ["opponent_hand", -1], // Computed dynamically
         ["display", 1],
+        ["museums", 5], // TODO(4E): Compute this dynamically
         ["deck", 15],
         ["board", -1], // Computed dynamically
         ["forecast", -1], // Computed dynamically
@@ -87,6 +89,7 @@ class Innovation extends BgaGame {
         "my_hand": { "x": 189, "y": 133 }, // +7
         "opponent_hand": { "x": 35, "y": 49 },  // + 2
         "display": { "x": 189, "y": 133 }, // +7
+        "museums": { "x": 189, "y": 133 }, // +7
         "deck": { "x": 3, "y": 3 },   // overlap
         "board": { "x": 0, "y": 0 },   // Computed dynamically
         "forecast": { "x": 35, "y": 49 },  // + 2
@@ -606,6 +609,27 @@ class Innovation extends BgaGame {
             }
         }
 
+        // PLAYERS' MUSEUMS
+        this.zone["museums"] = {};
+        for (let player_id in this.players) {
+            if (!gamedatas.artifacts_expansion_enabled || !gamedatas.fourth_edition) {
+                dojo.byId('museums_container_' + player_id).style.display = 'none';
+                continue;
+            }
+
+            // Creation of the zone
+            let zone = this.createZone('museums', player_id, null, null, null);
+            this.zone["museums"][player_id] = zone;
+            this.setPlacementRules(zone, /*left_to_right=*/ true);
+
+            // Add cards to zone
+            let cards = gamedatas.artifacts_in_museums[player_id];
+            for (let card of cards) {
+                this.createAndAddToZone(zone, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
+                this.addTooltipForCard(card);
+            }
+        }
+
         // PLAYERS' FORECAST
         this.zone["forecast"] = {};
         for (let player_id in this.players) {
@@ -1000,6 +1024,7 @@ class Innovation extends BgaGame {
         let achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
         let score_container_width = main_area_inner_width - forecast_container_width - achievement_container_width - safe_container_width;
         for (let player_id in this.players) {
+            let hand_width = dojo.position('hand_container_' + player_id).w;
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
             dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
             dojo.setStyle(this.zone["forecast"][player_id].container_div, 'width', forecast_container_width + "px");
@@ -1012,7 +1037,8 @@ class Innovation extends BgaGame {
             dojo.style('safe_container_' + player_id, 'width', safe_container_width + 'px');
             dojo.style('safe_' + player_id, 'width', safe_container_width + 'px');
             dojo.setStyle(this.zone["safe"][player_id].container_div, 'width', safe_container_width + "px");
-            dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
+            dojo.style('progress_' + player_id, 'width', hand_width + 'px');
+            dojo.style('artifacts_' + player_id, 'width', hand_width + 'px');
         }
 
         // Defining the number of cards hand zone can host

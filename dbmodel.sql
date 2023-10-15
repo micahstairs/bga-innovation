@@ -479,7 +479,18 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (456, 1, 11, 3, 0, 1, 7, 7, 7, 'removed'),
 (457, 1, 11, 3, 3, 0, 3, 2, 3, 'removed'),
 (458, 1, 11, 4, 0, 1, 1, 3, 1, 'removed'),
-(459, 1, 11, 4, 3, 6, 6, 0, 6, 'removed'),
+(459, 1, 11, 4, 3, 6, 6, 0, 6, 'removed');
+
+/* Artifacts - Museums */
+/* TODO(4E): Revisit this to see if we need to add more. */
+INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
+(1200, 1, 'removed', 0),
+(1201, 1, 'removed', 1),
+(1202, 1, 'removed', 2),
+(1203, 1, 'removed', 3),
+(1204, 1, 'removed', 4);
+
+INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `location`) VALUES
 
 /* Echoes - Age 1 */
 (330, 3, 1, 0,  0,101,  1,  1, 1, 'removed'),

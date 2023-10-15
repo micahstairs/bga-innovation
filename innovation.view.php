@@ -104,6 +104,7 @@
                                                     "OPT_SCORE_CLASS" => " class='score_show_window'",
                                                     "HAND" => self::_("Hand"),
                                                     "DISPLAY" => self::_("Artifact on Display"),
+                                                    "MUSEUMS" => self::_("Museums"),
                                                     "SCORE_PILE" => self::_("Score pile"),
                                                     ) );
             // Opponents
@@ -157,6 +158,7 @@
                                         "OPT_SCORE_CLASS" => "",
                                         "HAND" => self::_("Hand"),
                                         "DISPLAY" => self::_("Artifact on Display"),
+                                        "MUSEUMS" => self::_("Museums"),
                                         "SCORE_PILE" => self::_("Score pile"),
                                          ) );
         }

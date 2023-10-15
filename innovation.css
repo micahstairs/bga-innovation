@@ -98,6 +98,27 @@
   padding-bottom: 12px;
 }
 
+.museums_container {
+  flex-grow: 1;
+  background-color: #FFFFFF;
+  border: 1px solid black;
+  width: 195px;
+  height: 165px;
+  margin-bottom: 5px;
+  margin-left: 4px;
+}
+.museums_container > div {
+  padding: 5px;
+}
+.museums_container > div > p {
+  font-style: italic;
+  margin: 0;
+}
+.museums_container .museums {
+  top: 5px;
+  padding-bottom: 12px;
+}
+
 .hand_container {
   background-color: #FFFFFF;
   border: 1px solid black;
@@ -249,7 +270,7 @@
   min-height: 126px;
 }
 
-.progress {
+.progress, .artifacts {
   display: flex;
 }
 

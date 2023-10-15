@@ -609,6 +609,7 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET location = 'relics', position = 0 WHERE is_relic");
             }
             if ($edition == 4) {
+                self::DbQuery("UPDATE card SET location = 'museums' WHERE 1200 <= id AND id <= 1204");
                 self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 450 <= id AND id <= 459");
                 // TODO(4E): Implement Martian Internet later.
                 self::DbQuery("UPDATE card SET location = 'removed' WHERE id = 451");
@@ -816,6 +817,7 @@ class Innovation extends Table
 
         // Artifacts on display
         $result['artifacts_on_display'] = self::getArtifactsOnDisplay($players);
+        $result['artifacts_in_museums'] = self::getArtifactsInAllMuseums($players);
 
         // Backs of the cards in junk
         $result['junk_counts'] = array();
@@ -4823,18 +4825,27 @@ class Innovation extends Table
 
     function getArtifactOnDisplay($player_id)
     {
-        $cards = self::getCardsInLocation($player_id, 'display');
+        $cards = self::getCardsInLocation($player_id, Locations::DISPLAY);
         if (empty($cards)) {
             return null;
         }
         return $cards[0];
     }
 
+    function getArtifactsInAllMuseums($players)
+    {
+        $result = array();
+        foreach ($players as $player_id => $player) {
+            $result[$player_id] = self::getCardsInLocation($player_id, Locations::MUSEUMS);
+        }
+        return $result;
+    }
+
     function getBoards($player_ids)
     {
         $result = array();
         foreach ($player_ids as $player_id) {
-            $result[$player_id] = self::getCardsInLocationKeyedByColor($player_id, 'board');
+            $result[$player_id] = self::getCardsInLocationKeyedByColor($player_id, Locations::BOARD);
         }
         return $result;
     }
@@ -4859,24 +4870,6 @@ class Innovation extends Table
             )
         );
         return $number_of_cards_above == 0;
-    }
-
-    function hasThisColorOnBoard($player_id, $color)
-    {
-        $number_of_cards = self::getUniqueValueFromDB(
-            self::format("
-                SELECT
-                    COUNT(*)
-                FROM
-                    card
-                WHERE
-                    owner = {owner} AND
-                    location = 'board' AND
-                    color = {color}",
-                array('owner' => $player_id, 'color' => $color)
-            )
-        );
-        return $number_of_cards > 0;
     }
 
     function getCardsInLocationKeyedByAge($owner, $location, $type = null)
@@ -4912,11 +4905,6 @@ class Innovation extends Table
     function countCardsInHand($player_id): int
     {
         return self::countCardsInLocation($player_id, 'hand');
-    }
-
-    function getCardsInScorePile($player_id)
-    {
-        return self::getCardsInLocation($player_id, 'score');
     }
 
     function countCardsInLocationKeyedByAge($owner, $location, $type = null, $is_relic = null)
@@ -6400,6 +6388,9 @@ class Innovation extends Table
                 $age_to_draw = self::getAgeToDrawIn($player_id, 0);
                 if ($age_to_draw > $max_age) {
                     error_log("* All base decks are empty, so was unable to draw and avoid ending the game...");
+                    $this->innovationGameState->set('game_end_type', 1);
+                    $this->innovationGameState->set('player_who_could_not_draw', $player_id);
+                    throw new EndOfGame();
                 } else {
                     error_log("* Avoided ending the game by altering the age of drawn card");
                 }
@@ -11443,7 +11434,7 @@ class Innovation extends Table
                 case "14N1":
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1
                     $color = $card['color'];
-                    if (self::hasThisColorOnBoard($player_id, $color)) { // "If it is the same color of any card on your board"
+                    if (self::getTopCardOnBoard($player_id, $color)) { // "If it is the same color of any card on your board"
                         self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => Colors::render($color)));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($color)));
                         self::meldCard($card, $player_id); // "Meld it"
