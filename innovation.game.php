@@ -1449,7 +1449,7 @@ class Innovation extends Table
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo(array $card, int $owner_to, string $location_to, array $properties = []): ?array
+    function transferCardFromTo(?array $card, int $owner_to, string $location_to, array $properties = []): ?array
     {
         if (!$card) {
             return null;

@@ -6,7 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
-class Card370_3E extends AbstractCard
+class Card370_4E extends AbstractCard
 {
 
   // Globe (4th edition):
