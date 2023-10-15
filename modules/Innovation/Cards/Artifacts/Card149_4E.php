@@ -6,7 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card149_3E extends AbstractCard
+class Card149_4E extends AbstractCard
 {
 
   // Molasses Reef Caravel (4th edition):

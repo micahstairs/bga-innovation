@@ -17,7 +17,7 @@ class Card372_4E extends AbstractCard
   {
     if (self::isEcho()) {
       self::draw(5);
-    } else {
+    } else if (self::isFirstNonDemand()) {
       self::setAuxiliaryValue(0); // Track the value of the highest returned card
       self::setMaxSteps(1);
     }
@@ -33,7 +33,7 @@ class Card372_4E extends AbstractCard
         'location_from'  => 'hand',
         'return_keyword' => true,
       ];
-    } else if (self::isSecondInteraction()) {
+    } else {
       return [
         'n'                               => count(self::getAuxiliaryArray()) - 1,
         'location_from'                   => 'hand',
@@ -57,15 +57,17 @@ class Card372_4E extends AbstractCard
     if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       $valueToDraw = self::getAuxiliaryValue() + 1;
       $cardIds = [];
-      for ($i = 1; $i <= self::getNumChosen(); $i++) {
+      for ($i = 0; $i < self::getNumChosen(); $i++) {
         $card = self::draw($valueToDraw);
         $cardIds[] = $card['id'];
       }
       self::setAuxiliaryArray($cardIds); // Track cards to foreshadow/return
       self::setMaxSteps(2);
     } else if (self::isSecondInteraction()) {
-      $card = self::getCard(self::getAuxiliaryArray()[0]);
-      self::foreshadow($card);
+      // NOTE: There should always be exactly one card in the array at this point
+      foreach (self::getAuxiliaryArray() as $cardId) {
+        self::foreshadow(self::getCard($cardId));
+      }
     }
   }
 

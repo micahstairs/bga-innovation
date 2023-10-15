@@ -1436,7 +1436,7 @@ class Innovation extends Table
 
     function bulkTransferCards(array $cards, int $owner_to, string $location_to, array $properties = []): bool
     {
-        if (count($cards) === 0) {
+        if (!$cards) {
             return false;
         }
         // NOTE: The caller is responsible for printing any relevant messages to the game log.
@@ -6397,8 +6397,12 @@ class Innovation extends Table
         $max_age = self::getMaxAge();
         if ($age_to_draw > $max_age) {
             if ($this->innovationGameState->get('debug_mode') == 2) {
-                error_log("* Altering age of drawn card to hopefully avoid ending the game...");
                 $age_to_draw = self::getAgeToDrawIn($player_id, 0);
+                if ($age_to_draw > $max_age) {
+                    error_log("* All base decks are empty, so was unable to draw and avoid ending the game...");
+                } else {
+                    error_log("* Avoided ending the game by altering the age of drawn card");
+                }
             } else {
                 $this->innovationGameState->set('game_end_type', 1);
                 $this->innovationGameState->set('player_who_could_not_draw', $player_id);
