@@ -16707,6 +16707,15 @@ class Innovation extends Table
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             }
+        } else if ($special_type_of_choice == 12) { // choose_icon_type
+            $icon_array = $this->innovationGameState->getAsArray('icon_array');
+            // Automatically choose the icon if there's only one option (and passing isn't allowed)
+            if (count($icon_array) == 1 && !$can_pass) {
+                $this->innovationGameState->set('choice', $icon_array[0]);
+                self::trace('preSelectionMove->interSelectionMove (only one icon)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
         }
 
         // Let the player make his choice

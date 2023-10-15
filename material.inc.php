@@ -2617,7 +2617,7 @@ $this->textual_card_infos = array(
 
     479 => array(
         'name'            => clienttranslate('Meritocracy'),
-        'i_demand_effect' => clienttranslate('${I demand} you transfer a top card of each color from your board to mine, each card with any icon of which there are more of on my board than yours! If you transfer a card, and Meritocracy was foreseen, repeat this effect!'),
+        'i_demand_effect' => clienttranslate('${I demand} you choose the standard icon of which I have the most among my icon types!  Transfer all cards with that icon from your board to mine, or if Meritocracy was foreseen, to my achievements!'),
     ),
 
     /* Unseen - Age 1 */

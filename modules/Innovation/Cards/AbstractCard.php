@@ -1145,11 +1145,6 @@ abstract class AbstractCard
     return $options;
   }
 
-  private function canPass(): bool
-  {
-    return $this->game->innovationGameState->get('can_pass');
-  }
-
   // PLAYER HELPERS
 
   protected function win(int $playerId = null): void
@@ -1398,7 +1393,7 @@ abstract class AbstractCard
     return count(array_intersect(self::getIcons($card1), self::getIcons($card2))) > 0;
   }
 
-  private function getVisibleSpotsOnBuriedCard(int $splayDirection): array
+  protected function getVisibleSpotsOnBuriedCard(int $splayDirection): array
   {
     switch ($splayDirection) {
       case Directions::LEFT:
@@ -1524,7 +1519,12 @@ abstract class AbstractCard
     return $this->game->renderPlayerName(self::coercePlayerId($playerId));
   }
 
-  // GENERAL UTILITY HELPERS
+// PRIVATE HELPERS
+
+  private function canPass(): bool
+  {
+    return $this->game->innovationGameState->get('can_pass');
+  }
 
   private function getThisCardId(): string
   {
@@ -1536,8 +1536,6 @@ abstract class AbstractCard
   {
     return self::getCard(self::getThisCardId());
   }
-
-  // PRIVATE HELPERS
 
   private function coercePlayerId(?int $playerId): int
   {
