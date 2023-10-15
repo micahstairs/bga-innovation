@@ -2034,7 +2034,7 @@ class Innovation extends Table
     function notifyIfLocationLimitShrunkSelection($player_id)
     {
         if ($this->innovationGameState->get('limit_shrunk_selection_size') == 1) {
-            $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
+            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
             if ($location_to == 'safe') {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${Your} safe is full so no more cards can be transferred to your safe.'), ['Your' => 'Your']);
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s safe is full so no more cards can be transferred to his safe.'), ['player_name' => self::renderPlayerName($player_id)]);
@@ -2196,7 +2196,7 @@ class Innovation extends Table
     function revealLocation(int $player_id, string $location, bool $forProvingPurposes = false)
     {
         $cards = self::getCardsInLocation($player_id, $location);
-        $args = ['i18n' => ['location'], 'location' => self::renderLocation($location)];
+        $args = ['i18n' => ['location'], 'location' => Locations::render($location)];
         if (count($cards) == 0) {
             if (!$forProvingPurposes) {
                 $this->notifyPlayer(
@@ -2234,7 +2234,7 @@ class Innovation extends Table
     function revealCardWithoutMoving($player_id, $card, $mentionLocation = true)
     {
         if ($mentionLocation) {
-            $args = ['i18n' => ['location'], 'location' => self::renderLocation($card['location']), 'card_ids' => [$card['id']], 'card_list' => self::getNotificationArgsForCardList([$card])];
+            $args = ['i18n' => ['location'], 'location' => Locations::render($card['location']), 'card_ids' => [$card['id']], 'card_list' => self::getNotificationArgsForCardList([$card])];
             $this->notifyPlayer(
                 $player_id,
                 'logWithCardTooltips',
@@ -6901,7 +6901,7 @@ class Innovation extends Table
                     break;
                 case 'location_from':
                 case 'location_to':
-                    $value = self::encodeLocation($value);
+                    $value = Locations::encode($value);
                     break;
                 case 'age':
                     $this->innovationGameState->setFromArray('age_array', $value);
@@ -6998,7 +6998,7 @@ class Innovation extends Table
         }
 
         // Condition for location
-        $location_from = self::decodeLocation($this->innovationGameState->get('location_from'));
+        $location_from = Locations::decode($this->innovationGameState->get('location_from'));
         if ($location_from == 'revealed,hand') {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == 'revealed,score') {
@@ -7264,125 +7264,6 @@ class Innovation extends Table
         }
 
         return self::getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE selected IS TRUE");
-    }
-
-    function renderLocation($location)
-    {
-        switch ($location) {
-            case 'deck':
-                return clienttranslate('deck');
-            case 'hand':
-                return clienttranslate('hand');
-            case 'board':
-                return clienttranslate('board');
-            case 'score':
-                return clienttranslate('score pile');
-            case 'forecast':
-                return clienttranslate('forecast');
-            case 'safe':
-                return clienttranslate('safe');
-            default:
-                // NOTE: If this code path gets hit, then that means we are not properly translating it.
-                return $location;
-        }
-    }
-
-    function encodeLocation($location)
-    {
-        switch ($location) {
-            case 'deck':
-                return 0;
-            case 'hand':
-                return 1;
-            case 'board':
-                return 2;
-            case 'score':
-                return 3;
-            case 'revealed':
-                return 4;
-            case 'revealed,hand':
-                return 5;
-            case 'revealed,deck':
-                return 6;
-            case 'pile':
-                return 7;
-            case 'revealed,score':
-                return 8;
-            case 'achievements':
-                return 9;
-            case 'none':
-                return 10;
-            case 'display':
-                return 11;
-            case 'relics':
-                return 12;
-            case 'removed':
-                return 13;
-            case 'forecast':
-                return 14;
-            case Locations::HAND_OR_SCORE:
-                return 15;
-            case 'junk':
-                return 16;
-            case 'safe':
-                return 17;
-            case 'junk,safe':
-                return 18;
-            case 'pile,score':
-                return 19;
-            default:
-                // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
-        }
-    }
-
-    function decodeLocation($location_code)
-    {
-        switch ($location_code) {
-            case 0:
-                return 'deck';
-            case 1:
-                return 'hand';
-            case 2:
-                return 'board';
-            case 3:
-                return 'score';
-            case 4:
-                return 'revealed';
-            case 5:
-                return 'revealed,hand';
-            case 6:
-                return 'revealed,deck';
-            case 7:
-                return 'pile';
-            case 8:
-                return 'revealed,score';
-            case 9:
-                return 'achievements';
-            case 10:
-                return 'none';
-            case 11:
-                return 'display';
-            case 12:
-                return 'relics';
-            case 13:
-                return 'removed';
-            case 14:
-                return 'forecast';
-            case 15:
-                return Locations::HAND_OR_SCORE;
-            case 16:
-                return 'junk';
-            case 17:
-                return 'safe';
-            case 18:
-                return 'junk,safe';
-            case 19:
-                return 'pile,score';
-            default:
-                // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
-        }
     }
 
     function encodeSpecialTypeOfChoice($special_type_of_choice)
@@ -10520,10 +10401,10 @@ class Innovation extends Table
         $n = $this->innovationGameState->get("n");
         $owner_from = $this->innovationGameState->get("owner_from");
         if ($splay_direction == -1) {
-            $location_from = self::decodeLocation($this->innovationGameState->get("location_from"));
+            $location_from = Locations::decode($this->innovationGameState->get("location_from"));
             $bottom_from = $this->innovationGameState->get("bottom_from");
             $owner_to = $this->innovationGameState->get("owner_to");
-            $location_to = self::decodeLocation($this->innovationGameState->get("location_to"));
+            $location_to = Locations::decode($this->innovationGameState->get("location_to"));
             $bottom_to = $this->innovationGameState->get("bottom_to");
             $age_min = $this->innovationGameState->get("age_min");
             $age_max = $this->innovationGameState->get("age_max");
@@ -15619,7 +15500,7 @@ class Innovation extends Table
                 $space_left = 0;
             }
             // NOTE: This is only being set now in case notifyIfLocationLimitShrunkSelection is called.
-            $this->innovationGameState->set('location_to', self::encodeLocation($options['location_to']));
+            $this->innovationGameState->set('location_to', Locations::encode($options['location_to']));
             if (array_key_exists('n', $options) && $options['n'] > $space_left) {
                 $options['n'] = $space_left;
                 $this->innovationGameState->set('limit_shrunk_selection_size', 1);
@@ -16525,8 +16406,8 @@ class Innovation extends Table
             $autoselection_mode = $this->innovationGameState->get('enable_autoselection');
             $refresh_selection = $this->innovationGameState->get('refresh_selection') == 1;
             $owner_from = $this->innovationGameState->get('owner_from');
-            $location_from = self::decodeLocation($this->innovationGameState->get('location_from'));
-            $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
+            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $colors = $this->innovationGameState->getAsArray('color_array');
             $with_icons = $this->innovationGameState->getAsArray('with_icons');
@@ -16825,7 +16706,7 @@ class Innovation extends Table
 
             // Flags
             $owner_to = $this->innovationGameState->get('owner_to');
-            $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
+            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $score_keyword = $this->innovationGameState->get('score_keyword') == 1;
             $meld_keyword = $this->innovationGameState->get('meld_keyword') == 1;

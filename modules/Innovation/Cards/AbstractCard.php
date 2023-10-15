@@ -1203,6 +1203,7 @@ abstract class AbstractCard
     $playerId = self::coercePlayerId($playerId);
 
     $cards = [];
+    // TODO(4E): Make sure the museum cards themselves are junked, not just the artifacts in the museums.
     foreach (Locations::PLAYER_LOCATIONS as $location) {
       $cards = array_merge($cards, self::getCards($location, $playerId));
     }
