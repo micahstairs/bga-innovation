@@ -120,7 +120,7 @@ class RandomGameTest extends BaseIntegrationTest
 
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
       $promotedCardId = self::getRandomCardId(self::getCardsToPromote());
-      $promotedCardName = $this->tableInstance->getTable()->getCardName($cardId);
+      $promotedCardName = $this->tableInstance->getTable()->getCardName($promotedCardId);
       error_log("* PROMOTE $promotedCardName");
       $this->tableInstance
         ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())

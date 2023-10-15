@@ -14,7 +14,13 @@ class Card381_3E extends AbstractCard
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    $bonuses = self::getTopBonuses();
+    if (count($bonuses) > 0) {
+      self::setAuxiliaryArray($bonuses);
+      self::setMaxSteps(2);
+    } else {
+      self::setMaxSteps(1);
+    }
   }
 
   public function getInteractionOptions(): array
@@ -39,17 +45,6 @@ class Card381_3E extends AbstractCard
     self::draw($value);
     if ($remainingValues) {
       self::setNextStep(2);
-    }
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isFirstInteraction()) {
-      $bonuses = self::getTopBonuses();
-      if (count($bonuses) > 0) {
-        self::setAuxiliaryArray($bonuses);
-        self::setMaxSteps(2);
-      }
     }
   }
 
