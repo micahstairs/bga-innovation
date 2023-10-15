@@ -27,7 +27,7 @@ class Card496 extends AbstractCard
         self::tuck($card);
       }
     } else if (self::isSecondNonDemand()) {
-      if (self::getAllIconCounts()[Icons::AUTHORITY] == 0) {
+      if (self::getStandardIconCounts()[Icons::AUTHORITY] == 0) {
         self::claim(CardIds::ZEN);
       }
     }
