@@ -28,17 +28,16 @@ class Card452 extends AbstractCard
   }
 
   public function handleValueChoice(int $value) {
-    $cards = self::filterByType(self::getCardsKeyedByValue(Locations::DECK)[$value], [CardTypes::BASE]);
-    self::scoreCards($cards);
-    $args = ['age' => self::renderValueWithType($value, CardTypes::BASE)];
-    self::notifyPlayer(clienttranslate('${You} score all cards in the ${age} deck.'), $args);
-    self::notifyOthers(clienttranslate('${player_name} scores all cards in the ${age} deck.'), $args);
 
-    $cards = self::getCardsKeyedByValue(Locations::JUNK)[$value];
-    self::scoreCards($cards);
+    $deckCards = self::filterByType(self::getCardsKeyedByValue(Locations::DECK)[$value], [CardTypes::BASE]);
+    self::scoreCards($deckCards);
+
+    $junkCards = self::getCardsKeyedByValue(Locations::JUNK)[$value];
+    self::scoreCards($junkCards);
+
     $args = ['age' => self::renderValueWithType($value, CardTypes::BASE)];
-    self::notifyPlayer(clienttranslate('${You} score all ${age} cards in the junk.'), $args);
-    self::notifyOthers(clienttranslate('${player_name} scores all ${age} cards in the junk.'), $args);
+    self::notifyPlayer(clienttranslate('${You} score all cards in the ${age} deck and in the junk.'), $args);
+    self::notifyOthers(clienttranslate('${player_name} scores all cards in the ${age} deck and in the junk.'), $args);
   }
 
 }
