@@ -88,6 +88,7 @@
 }
 .display_container > div {
   padding: 5px;
+  height: -webkit-fill-available;
 }
 .display_container > div > p {
   font-style: italic;
@@ -109,6 +110,7 @@
 }
 .museums_container > div {
   padding: 5px;
+  height: -webkit-fill-available;
 }
 .museums_container > div > p {
   font-style: italic;

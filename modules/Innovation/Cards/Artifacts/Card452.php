@@ -28,7 +28,6 @@ class Card452 extends AbstractCard
   }
 
   public function handleValueChoice(int $value) {
-
     $deckCards = self::filterByType(self::getCardsKeyedByValue(Locations::DECK)[$value], [CardTypes::BASE]);
     self::scoreCards($deckCards);
 

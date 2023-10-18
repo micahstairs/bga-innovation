@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `card_id` SMALLINT COMMENT '-1 means no card',
  `executing_as_if_on_card_id` SMALLINT COMMENT '-1 means no card',
  `replace_may_with_must` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether effects that say "may" should be executed as if it said "must"',
- `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
+ `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (usually board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
  `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
  `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel, 3=echo',

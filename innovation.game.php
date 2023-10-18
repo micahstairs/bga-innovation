@@ -2398,6 +2398,11 @@ class Innovation extends Table
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
 
+        if ($location_from === Locations::MUSEUMS && $location_to === Locations::REMOVED) {
+            // We are already notifying about the artifact being transferred.
+            return;
+        }
+
         // TODO(4E): Revise this.
         switch ($location_from . '->' . $location_to) {
             case 'deck->achievements':
@@ -2540,6 +2545,13 @@ class Innovation extends Table
             $to_somewhere_for_player = clienttranslate(' and put it on display');
             $action_for_others = clienttranslate('digs');
             $to_somewhere_for_others = clienttranslate(' and puts it on display');
+        } else if ($location_to === Locations::MUSEUMS) {
+            $visible_for_player = true;
+            $visible_for_others = true;
+            $action_for_player = clienttranslate('rotate');
+            $to_somewhere_for_player = clienttranslate(' into a museum');
+            $action_for_others = clienttranslate('rotates');
+            $to_somewhere_for_others = clienttranslate(' into a museum');
         } else if ($location_to === 'forecast') {
             $visible_for_player = true;
             if ($draw_keyword) {
@@ -8182,15 +8194,23 @@ class Innovation extends Table
         self::checkAction('passArtifactOnDisplay');
 
         $player_id = self::getCurrentPlayerId();
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to return or dogma your Artifact on display.'), array('You' => 'You'));
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return or dogma his Artifact on display.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to dogma your Artifact on display.'), array('You' => 'You'));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to dogma his Artifact on display.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        } else {
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to return or dogma your Artifact on display.'), array('You' => 'You'));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return or dogma his Artifact on display.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        }
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
-        // Check for special achievements (only necessary in 4th edition)
         if ($this->innovationGameState->usingFourthEditionRules()) {
+            self::rotateArtifactOnDisplayIntoMuseum($player_id);
+
+            // Check for special achievements (only necessary in 4th edition)
             try {
-                self::checkForSpecialAchievements( /*is_end_of_action_check=*/true);
+                self::checkForSpecialAchievements(/*is_end_of_action_check=*/true);
             } catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
                 self::trace('EOG bubbled from self::passArtifactOnDisplay');
@@ -8206,6 +8226,13 @@ class Innovation extends Table
         $this->innovationGameState->set('current_action_number', 1);
 
         self::incStat(1, 'free_action_pass_number', $player_id);
+    }
+
+    function rotateArtifactOnDisplayIntoMuseum($player_id) {
+        $artifact = self::getArtifactOnDisplay($player_id);
+        self::transferCardFromTo($artifact, $player_id, Locations::MUSEUMS);
+        $museum = self::getCardsInLocation(0, Locations::MUSEUMS)[0];
+        self::removeCard($museum);
     }
 
     function passPromoteCard()
@@ -8289,6 +8316,11 @@ class Innovation extends Table
     {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('passDogmaPromotedCard');
+
+        // Dogma'ing the promoted card became mandatory in 4th edition
+        if (!$this->innovationGameState->usingFourthEditionRules()) {
+            self::throwInvalidChoiceException();
+        }
 
         $player_id = self::getCurrentPlayerId();
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to dogma your promoted card.'), array('You' => 'You'));
@@ -11045,12 +11077,16 @@ class Innovation extends Table
                 return;
             }
 
-            // Return the Artifact on display if the free dogma action was used
+            // Move the Artifact on display if the free dogma action was used
             $this->gamestate->changeActivePlayer($launcher_id);
             $nested_card_state = self::getNestedCardState(0);
-            if ($nested_card_state['card_location'] == 'display') {
+            if ($nested_card_state['card_location'] === Locations::DISPLAY) {
                 $launcher_id = $nested_card_state['launcher_id'];
-                self::returnCard($card);
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    self::rotateArtifactOnDisplayIntoMuseum($launcher_id);
+                } else {
+                    self::returnCard($card);
+                }
                 self::giveExtraTime($launcher_id);
             }
 
