@@ -161,6 +161,10 @@
                 <p class="text_center"><!-- BEGIN special_achievements -->{SPECIAL_ACHIEVEMENTS}<!-- END special_achievements --></p>
                 <div id="special_achievements"></div>
             </div>
+            <div id="available_museums_container">
+                <p class="text_center"><!-- BEGIN available_museums -->{AVAILABLE_MUSEUMS}<!-- END available_museums --></p>
+                <div id="available_museums"></div>
+            </div>
             <div id="junk_container">
                 <p id="junk_header" class="text_center"><!-- BEGIN junk -->{JUNK}<!-- END junk --></p>
             </div>

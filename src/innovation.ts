@@ -63,6 +63,7 @@ class Innovation extends BgaGame {
         ["relics", "S recto"],
         ["achievements", "S recto"],
         ["special_achievements", "S card"],
+        ["available_museums", "S card"],
         ["junk", "S recto"],
     ]);
 
@@ -82,6 +83,7 @@ class Innovation extends BgaGame {
         ["relics", -1], // Computed dynamically
         ["achievements", -1], // Computed dynamically
         ["special_achievements", -1], // Computed dynamically
+        ["available_museums", 5],
         ["junk", 1], // TODO(4E): Compute this dynamically
     ]);
 
@@ -99,6 +101,7 @@ class Innovation extends BgaGame {
         "safe": { "x": 35, "y": 49 },  // + 2
         "revealed": { "x": 189, "y": 133 }, // +7,
         "achievements": { "x": 35, "y": 49 },  // + 2
+        "available_museums": { "x": 35, "y": 49 },  // + 2
         "junk": { "x": 35, "y": 49 },  // + 2
     };
 
@@ -485,6 +488,23 @@ class Innovation extends BgaGame {
             }
         } else {
             dojo.byId('available_relics_container').style.display = 'none';
+        }
+
+        // AVAILABLE MUSEUMS
+        this.zone["available_museums"] = {};
+        this.zone["available_museums"]["0"] = this.createZone('available_museums', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ false);
+        this.setPlacementRulesForMuseums();
+        if (gamedatas.artifacts_expansion_enabled && gamedatas.fourth_edition) {
+            for (let i = 0; i < gamedatas.unclaimed_museums.length; i++) {
+                let museum = gamedatas.unclaimed_museums[i];
+                console.log("museum: " + JSON.stringify(museum));
+                this.createAndAddToZone(this.zone["available_museums"]["0"], i, museum.age, museum.type, museum.is_relic, museum.id, dojo.body(), museum);
+                if (this.canShowCardTooltip(museum['id'])) {
+                    this.addTooltipForCard(museum);
+                }
+            }
+        } else {
+            dojo.byId('available_museums_container').style.display = 'none';
         }
 
         // AVAILABLE ACHIEVEMENTS
@@ -2931,18 +2951,25 @@ class Innovation extends BgaGame {
             case "relics":
             case "junk":
                 return root[0];
-            case "hand":
-            case "display":
-            case "forecast":
-            case "score":
-            case "revealed":
+            case "museums":
+                if (owner == 0) {
+                    return age === null ? this.zone["available_museums"][0] : this.zone[location][0];
+                } else {
+                    return root[owner];
+                }
             case "achievements":
-            case "safe":
                 if (owner == 0) {
                     return age === null ? this.zone["special_achievements"][0] : this.zone["achievements"][0];
                 } else {
                     return root[owner];
                 }
+            case "hand":
+            case "display":
+            case "forecast":
+            case "score":
+            case "revealed":
+            case "safe":
+                return root[owner];
             case "board":
                 return root[owner][color!];
         }
@@ -3074,6 +3101,8 @@ class Innovation extends BgaGame {
                 HTML_inside = `<span class="square in_tooltip icon_9 fountain_flag_card color_${card.color}"></span>`;
             } else if (isFlag(card.id)) {
                 HTML_inside = `<span class="square in_tooltip icon_8 fountain_flag_card color_${card.color}"></span>`;
+            } else if (isMuseum(card.id)) {
+                HTML_inside = '';
             } else {
                 HTML_inside = this.writeOverCard(card, size, HTML_id);
             }
@@ -3171,6 +3200,8 @@ class Innovation extends BgaGame {
             return _("This represents a visible fountain on your board which currently counts as an achievement.");
         } else if (isFlag(card.id)) {
             return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
+        } else if (isMuseum(card.id)) {
+            return _("This museum was earned as an achievement.");
         }
         let card_data = this.cards[card.id];
         let name = _(card_data.name).toUpperCase();
@@ -3280,12 +3311,13 @@ class Innovation extends BgaGame {
             }
         } else {
             // verso
-            if (zone.owner != 0 && zone.location == 'achievements' && !isFlag(id) && !isFountain(id)) {
+            if (zone.owner != 0 && zone.location == 'achievements' && !isFlag(id) && !isFountain(id) && !isMuseum(id)) {
                 visible_card = false;
             } else {
                 visible_card = true;
             }
         }
+        console.log(visible_card + " " + JSON.stringify(card));
         // Create a new card and place it on start position
         let node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
         dojo.place(node, start);
@@ -3457,6 +3489,22 @@ class Innovation extends BgaGame {
             let h = self.card_dimensions[this.HTML_class].height;
 
             let x = (i % 3) * (w + 5);
+            if (i >= 3) {
+                x = x + ((w + 5) / 2);
+            }
+            let y = Math.floor(i / 3) * (h + 5);
+
+            return { 'x': x, 'y': y, 'w': w, 'h': h };
+        }
+    }
+
+    setPlacementRulesForMuseums() {
+        let self = this;
+        this.zone["available_museums"]["0"].itemIdToCoordsGrid = function (i: number, control_width: number) {
+            let w = self.card_dimensions[this.HTML_class].width;
+            let h = self.card_dimensions[this.HTML_class].height;
+
+            let x = 25 + (i % 3) * (w + 5);
             if (i >= 3) {
                 x = x + ((w + 5) / 2);
             }
@@ -5116,8 +5164,9 @@ class Innovation extends BgaGame {
         let zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
 
         let is_fountain_or_flag = isFountain(card.id) || isFlag(card.id);
-        let visible_from = is_fountain_or_flag || zone_from && this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-        let visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+        let is_museum = isMuseum(card.id);
+        let visible_from = is_fountain_or_flag || is_museum || zone_from && this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+        let visible_to = is_fountain_or_flag || is_museum || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
 
         let id_from: number;
         let id_to: number | null;

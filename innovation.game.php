@@ -878,7 +878,10 @@ class Innovation extends Table
         }
 
         // Unclaimed relics
-        $result['unclaimed_relics'] = self::getCardsInLocation(0, 'relics');
+        $result['unclaimed_relics'] = self::getCardsInLocation(0, Locations::RELICS);
+
+        // Unclaimed museums
+        $result['unclaimed_museums'] = self::getCardsInLocation(0, Locations::MUSEUMS);
 
         // Unclaimed achievements
         // TODO(#229): Deprecate this and add a new unclaimed_special_achievements entry.

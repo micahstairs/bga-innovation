@@ -416,6 +416,7 @@
 #available_relics_container,
 #available_achievements_container,
 #available_special_achievements_container,
+#available_museums_container,
 #junk_container {
     vertical-align: top;
     margin-top: 30px;
@@ -1640,6 +1641,15 @@
             &.item_597,
             &.item_598,
             &.item_599 {
+                background-image: none;
+                background-color: black;
+            }
+
+            &.item_1200,
+            &.item_1201,
+            &.item_1202,
+            &.item_1203,
+            &.item_1204 {
                 background-image: none;
                 background-color: black;
             }

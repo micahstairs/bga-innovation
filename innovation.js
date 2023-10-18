@@ -97,6 +97,9 @@ function isFlag(card_id) {
 function isFountain(card_id) {
     return 1100 <= card_id && card_id <= 1199;
 }
+function isMuseum(card_id) {
+    return 1200 <= card_id && card_id <= 1204;
+}
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -168,6 +171,7 @@ var Innovation = /** @class */ (function (_super) {
             ["relics", "S recto"],
             ["achievements", "S recto"],
             ["special_achievements", "S card"],
+            ["available_museums", "S card"],
             ["junk", "S recto"],
         ]);
         _this.num_cards_in_row = new Map([
@@ -186,6 +190,7 @@ var Innovation = /** @class */ (function (_super) {
             ["relics", -1],
             ["achievements", -1],
             ["special_achievements", -1],
+            ["available_museums", 5],
             ["junk", 1], // TODO(4E): Compute this dynamically
         ]);
         _this.delta = {
@@ -202,6 +207,7 @@ var Innovation = /** @class */ (function (_super) {
             "safe": { "x": 35, "y": 49 },
             "revealed": { "x": 189, "y": 133 },
             "achievements": { "x": 35, "y": 49 },
+            "available_museums": { "x": 35, "y": 49 },
             "junk": { "x": 35, "y": 49 }, // + 2
         };
         _this.incremental_id = 0;
@@ -537,6 +543,23 @@ var Innovation = /** @class */ (function (_super) {
         }
         else {
             dojo.byId('available_relics_container').style.display = 'none';
+        }
+        // AVAILABLE MUSEUMS
+        this.zone["available_museums"] = {};
+        this.zone["available_museums"]["0"] = this.createZone('available_museums', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ false);
+        this.setPlacementRulesForMuseums();
+        if (gamedatas.artifacts_expansion_enabled && gamedatas.fourth_edition) {
+            for (var i = 0; i < gamedatas.unclaimed_museums.length; i++) {
+                var museum = gamedatas.unclaimed_museums[i];
+                console.log("museum: " + JSON.stringify(museum));
+                this.createAndAddToZone(this.zone["available_museums"]["0"], i, museum.age, museum.type, museum.is_relic, museum.id, dojo.body(), museum);
+                if (this.canShowCardTooltip(museum['id'])) {
+                    this.addTooltipForCard(museum);
+                }
+            }
+        }
+        else {
+            dojo.byId('available_museums_container').style.display = 'none';
         }
         // AVAILABLE ACHIEVEMENTS
         // Creation of the zone
@@ -2756,19 +2779,27 @@ var Innovation = /** @class */ (function (_super) {
             case "relics":
             case "junk":
                 return root[0];
-            case "hand":
-            case "display":
-            case "forecast":
-            case "score":
-            case "revealed":
+            case "museums":
+                if (owner == 0) {
+                    return age === null ? this.zone["available_museums"][0] : this.zone[location][0];
+                }
+                else {
+                    return root[owner];
+                }
             case "achievements":
-            case "safe":
                 if (owner == 0) {
                     return age === null ? this.zone["special_achievements"][0] : this.zone["achievements"][0];
                 }
                 else {
                     return root[owner];
                 }
+            case "hand":
+            case "display":
+            case "forecast":
+            case "score":
+            case "revealed":
+            case "safe":
+                return root[owner];
             case "board":
                 return root[owner][color];
         }
@@ -2886,6 +2917,9 @@ var Innovation = /** @class */ (function (_super) {
             else if (isFlag(card.id)) {
                 HTML_inside = "<span class=\"square in_tooltip icon_8 fountain_flag_card color_".concat(card.color, "\"></span>");
             }
+            else if (isMuseum(card.id)) {
+                HTML_inside = '';
+            }
             else {
                 HTML_inside = this.writeOverCard(card, size, HTML_id);
             }
@@ -2973,6 +3007,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         else if (isFlag(card.id)) {
             return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
+        }
+        else if (isMuseum(card.id)) {
+            return _("This is a museum.");
         }
         var card_data = this.cards[card.id];
         var name = _(card_data.name).toUpperCase();
@@ -3082,13 +3119,14 @@ var Innovation = /** @class */ (function (_super) {
         }
         else {
             // verso
-            if (zone.owner != 0 && zone.location == 'achievements' && !isFlag(id) && !isFountain(id)) {
+            if (zone.owner != 0 && zone.location == 'achievements' && !isFlag(id) && !isFountain(id) && !isMuseum(id)) {
                 visible_card = false;
             }
             else {
                 visible_card = true;
             }
         }
+        console.log(visible_card + " " + JSON.stringify(card));
         // Create a new card and place it on start position
         var node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
         dojo.place(node, start);
@@ -3238,6 +3276,19 @@ var Innovation = /** @class */ (function (_super) {
             var w = self.card_dimensions[this.HTML_class].width;
             var h = self.card_dimensions[this.HTML_class].height;
             var x = (i % 3) * (w + 5);
+            if (i >= 3) {
+                x = x + ((w + 5) / 2);
+            }
+            var y = Math.floor(i / 3) * (h + 5);
+            return { 'x': x, 'y': y, 'w': w, 'h': h };
+        };
+    };
+    Innovation.prototype.setPlacementRulesForMuseums = function () {
+        var self = this;
+        this.zone["available_museums"]["0"].itemIdToCoordsGrid = function (i, control_width) {
+            var w = self.card_dimensions[this.HTML_class].width;
+            var h = self.card_dimensions[this.HTML_class].height;
+            var x = 25 + (i % 3) * (w + 5);
             if (i >= 3) {
                 x = x + ((w + 5) / 2);
             }
@@ -4621,8 +4672,9 @@ var Innovation = /** @class */ (function (_super) {
         var zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
         var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
         var is_fountain_or_flag = isFountain(card.id) || isFlag(card.id);
-        var visible_from = is_fountain_or_flag || zone_from && this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-        var visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+        var is_museum = isMuseum(card.id);
+        var visible_from = is_fountain_or_flag || is_museum || zone_from && this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+        var visible_to = is_fountain_or_flag || is_museum || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         var id_from;
         var id_to;
         if (visible_from) {

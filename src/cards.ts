@@ -133,3 +133,7 @@ function isFlag(card_id: number) {
 function isFountain(card_id: number) {
     return 1100 <= card_id && card_id <= 1199;
 }
+
+function isMuseum(card_id: number) {
+    return 1200 <= card_id && card_id <= 1204;
+}

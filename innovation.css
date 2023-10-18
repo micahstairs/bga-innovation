@@ -384,6 +384,7 @@
 #available_relics_container,
 #available_achievements_container,
 #available_special_achievements_container,
+#available_museums_container,
 #junk_container {
   vertical-align: top;
   margin-top: 30px;
@@ -1539,6 +1540,10 @@
   border-radius: 3px;
 }
 .card.S.age_null.item_595, .card.S.age_null.item_596, .card.S.age_null.item_597, .card.S.age_null.item_598, .card.S.age_null.item_599 {
+  background-image: none;
+  background-color: black;
+}
+.card.S.age_null.item_1200, .card.S.age_null.item_1201, .card.S.age_null.item_1202, .card.S.age_null.item_1203, .card.S.age_null.item_1204 {
   background-image: none;
   background-color: black;
 }
