@@ -8145,6 +8145,11 @@ class Innovation extends Table
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('returnArtifactOnDisplay');
 
+        // Artifacts cannot be returned in the 4th edition
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            self::throwInvalidChoiceException();
+        }
+
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);

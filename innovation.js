@@ -1442,7 +1442,9 @@ var Innovation = /** @class */ (function (_super) {
                     if (this.selectArtifactOnDisplayIfEligibleForDogma().length == 1) {
                         this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
                     }
-                    this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
+                    if (!this.gamedatas.fourth_edition) {
+                        this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
+                    }
                     this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
                     break;
                 case 'promoteCardPlayerTurn':
@@ -3009,7 +3011,7 @@ var Innovation = /** @class */ (function (_super) {
             return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
         }
         else if (isMuseum(card.id)) {
-            return _("This is a museum.");
+            return _("This museum was earned as an achievement.");
         }
         var card_data = this.cards[card.id];
         var name = _(card_data.name).toUpperCase();

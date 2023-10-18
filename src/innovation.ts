@@ -1475,7 +1475,9 @@ class Innovation extends BgaGame {
                     if (this.selectArtifactOnDisplayIfEligibleForDogma().length == 1) {
                         this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
                     }
-                    this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
+                    if (!this.gamedatas.fourth_edition) {
+                        this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
+                    }
                     this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
                     break;
                 case 'promoteCardPlayerTurn':

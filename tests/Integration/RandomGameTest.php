@@ -22,15 +22,18 @@ class RandomGameTest extends BaseIntegrationTest
   private function executeGame()
   {
     error_log("*** STARTING GAME ***");
+    $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
     while (self::getCurrentStateName() !== 'gameEnd') {
 
       // Handle free action at start of turn
       if (self::getCurrentStateName() === 'artifactPlayerTurn') {
         $actions = [
           [$this, 'dogmaArtifact'],
-          [$this, 'returnArtifact'],
           [$this, 'passArtifact'],
         ];
+        if ($edition <= 3) {
+          $actions[] = [$this, 'returnArtifact'];
+        }
         $actions[array_rand($actions)]();
         if (self::getCurrentStateName() === 'gameEnd') {
           break;
