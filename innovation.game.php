@@ -8444,9 +8444,10 @@ class Innovation extends Table
         self::checkAction('meld');
         $player_id = self::getActivePlayerId();
 
-        // Check if the player really has this card in their hand or on display
+        // Check if the player really has this card in their hand or is in the location where artifacts can be melded from
         $card = self::getCardInfo($card_id);
-        if ($card['owner'] != $player_id || ($card['location'] != "hand" && $card['location'] != "display")) {
+        $artifact_location = $this->innovationGameState->usingFourthEditionRules() ? Locations::MUSEUMS : Locations::DISPLAY;
+        if ($card['owner'] != $player_id || ($card['location'] != Locations::HAND && $card['location'] != $artifact_location)) {
             self::throwInvalidChoiceException();
         }
 
@@ -9378,10 +9379,16 @@ class Innovation extends Table
 
         // Get list iof cards which can be melded right now
         $cards_which_can_be_melded = self::getCardsInLocation($player_id, 'hand');
-        $artifact = self::getArtifactOnDisplay($player_id);
-        if ($artifact !== null) {
-            $cards_which_can_be_melded[] = $artifact;
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            foreach (self::getCardsInLocation($player_id, Locations::MUSEUMS) as $card) {
+                $cards_which_can_be_melded[] = $card;
+            }
+        } else {
+            foreach (self::getCardsInLocation($player_id, Locations::DISPLAY) as $card) {
+                $cards_which_can_be_melded[] = $card;
+            }
         }
+        
 
         // Identify which cards will trigger a City draw when melded
         $cities_expansion_enabled = $this->innovationGameState->citiesExpansionEnabled();

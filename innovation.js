@@ -551,7 +551,6 @@ var Innovation = /** @class */ (function (_super) {
         if (gamedatas.artifacts_expansion_enabled && gamedatas.fourth_edition) {
             for (var i = 0; i < gamedatas.unclaimed_museums.length; i++) {
                 var museum = gamedatas.unclaimed_museums[i];
-                console.log("museum: " + JSON.stringify(museum));
                 this.createAndAddToZone(this.zone["available_museums"]["0"], i, museum.age, museum.type, museum.is_relic, museum.id, dojo.body(), museum);
                 if (this.canShowCardTooltip(museum['id'])) {
                     this.addTooltipForCard(museum);
@@ -1247,10 +1246,10 @@ var Innovation = /** @class */ (function (_super) {
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clickMeld');
                     // Artifact on display (meld action)
-                    this.addTooltipWithMeldActionToMyArtifactOnDisplay(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
-                    var artifact_on_display = this.selectArtifactOnDisplay();
-                    artifact_on_display.addClass("clickable");
-                    this.on(artifact_on_display, 'onclick', 'action_clickMeld');
+                    this.addTooltipWithMeldActionToMyArtifacts(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
+                    var meldable_artifacts = this.gamedatas.fourth_edition ? this.selectArtifactsInMuseums() : this.selectArtifactOnDisplay();
+                    meldable_artifacts.addClass("clickable");
+                    this.on(meldable_artifacts, 'onclick', 'action_clickMeld');
                     // Cards on my board (dogma action)
                     var cards_on_my_board = this.selectTopCardsEligibleForDogma([this.player_id]);
                     this.addTooltipsWithActionsToBoard(cards_on_my_board, args.args._private.dogma_effect_info);
@@ -1400,6 +1399,7 @@ var Innovation = /** @class */ (function (_super) {
                     this.addTooltipsWithoutActionsToMyForecast();
                     break;
                 case 'playerTurn':
+                    this.addTooltipsWithoutActionsToMyArtifacts();
                     this.addTooltipsWithoutActionsToMyHand();
                     this.addTooltipsWithoutActionsToMyBoard();
                 // TODO(LATER): Figure out if this fallthrough is intentional or is a bug. Maybe this is causing https://boardgamearena.com/bug?id=13012.
@@ -2211,8 +2211,9 @@ var Innovation = /** @class */ (function (_super) {
     Innovation.prototype.addTooltipsWithoutActionsToMyBoard = function () {
         this.addTooltipsWithoutActionsTo(this.selectAllCardsOnMyBoard());
     };
-    Innovation.prototype.addTooltipsWithoutActionsToMyArtifactOnDisplay = function () {
+    Innovation.prototype.addTooltipsWithoutActionsToMyArtifacts = function () {
         this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
+        this.addTooltipsWithoutActionsTo(this.selectArtifactsInMuseums());
     };
     Innovation.prototype.addTooltipsWithActionsTo = function (nodes, action_text_function, extra_param_1, extra_param_2, extra_param_3) {
         var self = this;
@@ -2261,8 +2262,8 @@ var Innovation = /** @class */ (function (_super) {
             dojo.attr(HTML_id, 'on_non_adjacent_board', (_f = dogma_effect_info[id]) === null || _f === void 0 ? void 0 : _f.on_non_adjacent_board);
         });
     };
-    Innovation.prototype.addTooltipWithMeldActionToMyArtifactOnDisplay = function (meld_info, city_draw_age, city_draw_type) {
-        var cards = this.selectArtifactOnDisplay();
+    Innovation.prototype.addTooltipWithMeldActionToMyArtifacts = function (meld_info, city_draw_age, city_draw_type) {
+        var cards = this.gamedatas.fourth_edition ? this.selectArtifactsInMuseums() : this.selectArtifactOnDisplay();
         this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, meld_info, city_draw_age, city_draw_type);
         var self = this;
         cards.forEach(function (card) {
@@ -2633,6 +2634,9 @@ var Innovation = /** @class */ (function (_super) {
             cards.pop();
         }
         return cards;
+    };
+    Innovation.prototype.selectArtifactsInMuseums = function () {
+        return dojo.query("#museums_" + this.player_id + " > .card");
     };
     Innovation.prototype.selectAllCardsOnMyBoard = function () {
         return dojo.query("#board_" + this.player_id + " .card");
@@ -3128,7 +3132,6 @@ var Innovation = /** @class */ (function (_super) {
                 visible_card = true;
             }
         }
-        console.log(visible_card + " " + JSON.stringify(card));
         // Create a new card and place it on start position
         var node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
         dojo.place(node, start);

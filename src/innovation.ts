@@ -497,7 +497,6 @@ class Innovation extends BgaGame {
         if (gamedatas.artifacts_expansion_enabled && gamedatas.fourth_edition) {
             for (let i = 0; i < gamedatas.unclaimed_museums.length; i++) {
                 let museum = gamedatas.unclaimed_museums[i];
-                console.log("museum: " + JSON.stringify(museum));
                 this.createAndAddToZone(this.zone["available_museums"]["0"], i, museum.age, museum.type, museum.is_relic, museum.id, dojo.body(), museum);
                 if (this.canShowCardTooltip(museum['id'])) {
                     this.addTooltipForCard(museum);
@@ -1271,10 +1270,10 @@ class Innovation extends BgaGame {
                     this.on(cards_in_hand, 'onclick', 'action_clickMeld');
 
                     // Artifact on display (meld action)
-                    this.addTooltipWithMeldActionToMyArtifactOnDisplay(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
-                    let artifact_on_display = this.selectArtifactOnDisplay();
-                    artifact_on_display.addClass("clickable");
-                    this.on(artifact_on_display, 'onclick', 'action_clickMeld');
+                    this.addTooltipWithMeldActionToMyArtifacts(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
+                    let meldable_artifacts = this.gamedatas.fourth_edition ? this.selectArtifactsInMuseums() : this.selectArtifactOnDisplay();
+                    meldable_artifacts.addClass("clickable");
+                    this.on(meldable_artifacts, 'onclick', 'action_clickMeld');
 
                     // Cards on my board (dogma action)
                     let cards_on_my_board = this.selectTopCardsEligibleForDogma([this.player_id]);
@@ -1432,6 +1431,7 @@ class Innovation extends BgaGame {
                     this.addTooltipsWithoutActionsToMyForecast();
                     break;
                 case 'playerTurn':
+                    this.addTooltipsWithoutActionsToMyArtifacts();
                     this.addTooltipsWithoutActionsToMyHand();
                     this.addTooltipsWithoutActionsToMyBoard();
                 // TODO(LATER): Figure out if this fallthrough is intentional or is a bug. Maybe this is causing https://boardgamearena.com/bug?id=13012.
@@ -2321,8 +2321,9 @@ class Innovation extends BgaGame {
         this.addTooltipsWithoutActionsTo(this.selectAllCardsOnMyBoard());
     }
 
-    addTooltipsWithoutActionsToMyArtifactOnDisplay() {
+    addTooltipsWithoutActionsToMyArtifacts() {
         this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
+        this.addTooltipsWithoutActionsTo(this.selectArtifactsInMuseums());
     }
 
     addTooltipsWithActionsTo(nodes: DojoNodeList, action_text_function: Function, extra_param_1?: any, extra_param_2?: any, extra_param_3?: any) {
@@ -2375,8 +2376,8 @@ class Innovation extends BgaGame {
         });
     }
 
-    addTooltipWithMeldActionToMyArtifactOnDisplay(meld_info, city_draw_age, city_draw_type) {
-        let cards = this.selectArtifactOnDisplay();
+    addTooltipWithMeldActionToMyArtifacts(meld_info, city_draw_age, city_draw_type) {
+        let cards = this.gamedatas.fourth_edition ? this.selectArtifactsInMuseums() : this.selectArtifactOnDisplay();
         this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, meld_info, city_draw_age, city_draw_type);
         let self = this;
         cards.forEach(function (card) {
@@ -2787,6 +2788,10 @@ class Innovation extends BgaGame {
             cards.pop();
         }
         return cards;
+    }
+
+    selectArtifactsInMuseums() {
+        return dojo.query("#museums_" + this.player_id + " > .card");
     }
 
     selectAllCardsOnMyBoard() {
@@ -3319,7 +3324,6 @@ class Innovation extends BgaGame {
                 visible_card = true;
             }
         }
-        console.log(visible_card + " " + JSON.stringify(card));
         // Create a new card and place it on start position
         let node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
         dojo.place(node, start);
