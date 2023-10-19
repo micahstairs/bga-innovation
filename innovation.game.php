@@ -2461,35 +2461,39 @@ class Innovation extends Table
         $to_somewhere_for_others = '';
 
         // Update text based on where the card is coming from
-        if ($location_from === 'deck' && $draw_keyword) {
+        if ($location_from === Locations::DECK && $draw_keyword) {
             $action_for_player = clienttranslate('draw');
             $action_for_others = clienttranslate('draws');
         } else if ($location_from === 'safe') {
             $from_somewhere_for_player = clienttranslate(' from your safe');
             $from_somewhere_for_others = clienttranslate(' from his safe');
-        } else if ($location_from === 'display') {
+        } else if ($location_from === Locations::DISPLAY) {
             $visible_for_player = true;
             $visible_for_others = true;
             $from_somewhere_for_player = clienttranslate(' from your display');
             $from_somewhere_for_others = clienttranslate(' from his display');
-        } else if ($location_from === 'hand') {
+            if ($location_to === Locations::HAND || $location_to === Locations::MUSEUMS) {
+                $action_for_player = clienttranslate('rotate');
+                $action_for_others = clienttranslate('rotates');
+            }
+        } else if ($location_from === Locations::HAND) {
             $visible_for_player = true;
             $from_somewhere_for_player = clienttranslate(' from your hand');
             $from_somewhere_for_others = clienttranslate(' from his hand');
-        } else if ($location_from === 'board' || $location_from === 'pile') {
+        } else if ($location_from === Locations::BOARD || $location_from === Locations::PILE) {
             $visible_for_player = true;
             $visible_for_others = true;
             $from_somewhere_for_player = clienttranslate(' from your board');
             $from_somewhere_for_others = clienttranslate(' from his board');
-        } else if ($location_from === 'forecast') {
+        } else if ($location_from === Locations::FORECAST) {
             $visible_for_player = true;
             $from_somewhere_for_player = clienttranslate(' from your forecast');
             $from_somewhere_for_others = clienttranslate(' from his forecast');
-        } else if ($location_from === 'score') {
+        } else if ($location_from === Locations::SCORE) {
             $visible_for_player = true;
             $from_somewhere_for_player = clienttranslate(' from your score pile');
             $from_somewhere_for_others = clienttranslate(' from his score pile');
-        } else if ($location_from === 'achievements') {
+        } else if ($location_from === Locations::ACHIEVEMENTS) {
             if ($owner_from == 0) {
                 $from_somewhere_for_player = clienttranslate(' from the available achievements');
                 $from_somewhere_for_others = clienttranslate(' from the available achievements');
@@ -2497,13 +2501,13 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from your achievements');
                 $from_somewhere_for_others = clienttranslate(' from his achievements');
             }
-        } else if ($location_from === 'relics') {
+        } else if ($location_from === Locations::RELICS) {
             $action_for_player = clienttranslate('seize');
             $action_for_others = clienttranslate('seizes');
-        } else if ($location_from === 'junk') {
+        } else if ($location_from === Locations::JUNK) {
             $from_somewhere_for_player = clienttranslate(' from the junk');
             $from_somewhere_for_others = clienttranslate(' from the junk');
-        } else if ($location_from === 'revealed') {
+        } else if ($location_from === Locations::REVEALED) {
             $visible_for_player = true;
             $visible_for_others = true;
         } else if ($location_from === 'flags' || $location_from === 'fountains') {
@@ -2548,9 +2552,7 @@ class Innovation extends Table
         } else if ($location_to === Locations::MUSEUMS) {
             $visible_for_player = true;
             $visible_for_others = true;
-            $action_for_player = clienttranslate('rotate');
             $to_somewhere_for_player = clienttranslate(' into a museum');
-            $action_for_others = clienttranslate('rotates');
             $to_somewhere_for_others = clienttranslate(' into a museum');
         } else if ($location_to === 'forecast') {
             $visible_for_player = true;
@@ -8230,9 +8232,13 @@ class Innovation extends Table
 
     function rotateArtifactOnDisplayIntoMuseum($player_id) {
         $artifact = self::getArtifactOnDisplay($player_id);
-        self::transferCardFromTo($artifact, $player_id, Locations::MUSEUMS);
-        $museum = self::getCardsInLocation(0, Locations::MUSEUMS)[0];
-        self::removeCard($museum);
+        $available_museums = self::getCardsInLocation(0, Locations::MUSEUMS);
+        if ($available_museums) {
+            self::removeCard($available_museums[0]);
+            self::transferCardFromTo($artifact, $player_id, Locations::MUSEUMS);
+        } else {
+            self::transferCardFromTo($artifact, $player_id, Locations::HAND);
+        }
     }
 
     function passPromoteCard()
