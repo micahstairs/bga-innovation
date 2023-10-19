@@ -2398,11 +2398,6 @@ class Innovation extends Table
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
 
-        if ($location_from === Locations::MUSEUMS && $location_to === Locations::REMOVED) {
-            // We are already notifying about the artifact being transferred.
-            return;
-        }
-
         // TODO(4E): Revise this.
         switch ($location_from . '->' . $location_to) {
             case 'deck->achievements':
@@ -2447,6 +2442,12 @@ class Innovation extends Table
         $safeguard_keyword = $transferInfo['safeguard_keyword'];
         $return_keyword = $transferInfo['return_keyword'];
         $foreshadow_keyword = $transferInfo['foreshadow_keyword'];
+
+        if ($location_from === Locations::MUSEUMS && $location_to === Locations::MUSEUMS) {
+            $notif_args = array_merge($transferInfo, $progressInfo, $card);
+            self::notifyAllPlayers("transferedCard", "", $notif_args);
+            return;
+        }
 
         // Used for the active player
         $visible_for_player = false;
@@ -8234,7 +8235,7 @@ class Innovation extends Table
         $artifact = self::getArtifactOnDisplay($player_id);
         $available_museums = self::getCardsInLocation(0, Locations::MUSEUMS);
         if ($available_museums) {
-            self::removeCard($available_museums[0]);
+            self::transferCardFromTo($available_museums[0], $player_id, Locations::MUSEUMS);
             self::transferCardFromTo($artifact, $player_id, Locations::MUSEUMS);
         } else {
             self::transferCardFromTo($artifact, $player_id, Locations::HAND);
@@ -8457,6 +8458,13 @@ class Innovation extends Table
             self::throwInvalidChoiceException();
         }
 
+        // Identify the associated museum card (if melding an artifact from a museum)
+        $museum = null;
+        if ($card['location'] === Locations::MUSEUMS) {
+            // The museum is always placed immediately before the associated artifact card
+            $museum = self::getCardsInLocation($player_id, Locations::MUSEUMS)[$card['position'] - 1];
+        }
+
         // Stats
         self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'meld_actions_number', $player_id);
@@ -8464,6 +8472,11 @@ class Innovation extends Table
         // Execute the meld
         try {
             self::meldCard($card, $card['owner']);
+
+            // Make the museum available again
+            if ($museum) {
+                self::transferCardFromTo($museum, 0, Locations::MUSEUMS);
+            }
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::meld');
@@ -9387,7 +9400,9 @@ class Innovation extends Table
         $cards_which_can_be_melded = self::getCardsInLocation($player_id, 'hand');
         if ($this->innovationGameState->usingFourthEditionRules()) {
             foreach (self::getCardsInLocation($player_id, Locations::MUSEUMS) as $card) {
-                $cards_which_can_be_melded[] = $card;
+                if ($card['color'] !== null) { // The museums cannot be melded (only the artifacts)
+                    $cards_which_can_be_melded[] = $card;
+                }
             }
         } else {
             foreach (self::getCardsInLocation($player_id, Locations::DISPLAY) as $card) {

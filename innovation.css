@@ -1511,6 +1511,10 @@
 .card.M.color_4 {
   background-position-x: -738px;
 }
+.card.M.item_1200, .card.M.item_1201, .card.M.item_1202, .card.M.item_1203, .card.M.item_1204 {
+  background-image: none;
+  background-color: black;
+}
 .card.L {
   width: 456px;
   height: 316px;

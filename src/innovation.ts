@@ -431,8 +431,8 @@ class Innovation extends BgaGame {
                 }
 
                 // Creation of the zone
-                this.zone["deck"][type][age] = this.createZone('deck', 0, type, age, null, /*grouped_by_age_type_and_is_relic=*/ false, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ false)
-                this.setPlacementRules(this.zone["deck"][type][age], /*left_to_right=*/ true)
+                this.zone["deck"][type][age] = this.createZone('deck', 0, type, age, null, /*grouped_by_age_type_and_is_relic=*/ false, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ false);
+                this.setPlacementRules(this.zone["deck"][type][age], /*left_to_right=*/ true);
 
                 // Add cards to zone according to the current situation
                 let num_cards = gamedatas.deck_counts[type][age];
@@ -493,7 +493,7 @@ class Innovation extends BgaGame {
         // AVAILABLE MUSEUMS
         this.zone["available_museums"] = {};
         this.zone["available_museums"]["0"] = this.createZone('available_museums', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ false);
-        this.setPlacementRulesForMuseums();
+        this.setPlacementRulesForAvailableMuseums();
         if (gamedatas.artifacts_expansion_enabled && gamedatas.fourth_edition) {
             for (let i = 0; i < gamedatas.unclaimed_museums.length; i++) {
                 let museum = gamedatas.unclaimed_museums[i];
@@ -639,7 +639,7 @@ class Innovation extends BgaGame {
             // Creation of the zone
             let zone = this.createZone('museums', player_id, null, null, null);
             this.zone["museums"][player_id] = zone;
-            this.setPlacementRules(zone, /*left_to_right=*/ true);
+            this.setPlacementRulesForPlayerMuseums(zone);
 
             // Add cards to zone
             let cards = gamedatas.artifacts_in_museums[player_id];
@@ -2206,7 +2206,9 @@ class Innovation extends BgaGame {
         let HTML_class = isFountain(card.id) || isFlag(card.id) ? 'S recto' : zone.HTML_class;
         let HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, HTML_class);
         // Special achievement
-        if (card.age === null) {
+        if (isMuseum(card.id) && card.location === 'museums' && card.owner != 0) {
+            // No tooltip
+        } else if (card.age === null) {
             this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
         } else {
             this.addCustomTooltip(HTML_id, this.getTooltipForCard(card.id), "");
@@ -2791,7 +2793,7 @@ class Innovation extends BgaGame {
     }
 
     selectArtifactsInMuseums() {
-        return dojo.query("#museums_" + this.player_id + " > .card");
+        return dojo.query("#museums_" + this.player_id + " > .card:nth-child(2n)");
     }
 
     selectAllCardsOnMyBoard() {
@@ -2950,7 +2952,7 @@ class Innovation extends BgaGame {
         return zone_HTML_class.split(' ')[1];
     }
 
-    getZone(location: string, owner: number, type: number | null = null, age: number | null = null, color: number | null = null) {
+    getZone(location: string, owner: number, type?: number, age?: number, color?: number) {
         let root = this.zone[location];
         switch (location) {
             case "deck":
@@ -3208,7 +3210,11 @@ class Innovation extends BgaGame {
         } else if (isFlag(card.id)) {
             return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
         } else if (isMuseum(card.id)) {
-            return _("This museum was earned as an achievement.");
+            if (card.location === 'achievements') {
+                return _("This museum was earned as an achievement.");
+            } else {
+                return _("This museum is available.");
+            }
         }
         let card_data = this.cards[card.id];
         let name = _(card_data.name).toUpperCase();
@@ -3504,7 +3510,7 @@ class Innovation extends BgaGame {
         }
     }
 
-    setPlacementRulesForMuseums() {
+    setPlacementRulesForAvailableMuseums() {
         let self = this;
         this.zone["available_museums"]["0"].itemIdToCoordsGrid = function (i: number, control_width: number) {
             let w = self.card_dimensions[this.HTML_class].width;
@@ -3517,6 +3523,26 @@ class Innovation extends BgaGame {
             let y = Math.floor(i / 3) * (h + 5);
 
             return { 'x': x, 'y': y, 'w': w, 'h': h };
+        }
+    }
+    
+    setPlacementRulesForPlayerMuseums(zone: Zone) {
+        let self = this;
+        zone.itemIdToCoordsGrid = function (i: number, control_width: number) {
+            i = Math.floor(i / 2); // Hide the museums under the artifacts
+
+            let w = self.card_dimensions[this.HTML_class].width;
+            let h = self.card_dimensions[this.HTML_class].height;
+
+            let delta = self.delta[this.location];
+            let n = self.num_cards_in_row.get(this.location)!;
+            let x_beginning = 0;
+            let delta_x = delta.x;
+            let delta_y = delta.y;
+            let n_x = i % n;
+            let n_y = Math.floor(i / n);
+
+            return { 'x': x_beginning + delta_x * n_x, 'y': delta_y * n_y, 'w': w, 'h': h }
         }
     }
 
@@ -3918,7 +3944,7 @@ class Innovation extends BgaGame {
         let is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
         let owner = this.player_id;
         let location = 'forecast';
-        let zone = this.getZone(location, owner, null, age);
+        let zone = this.getZone(location, owner, undefined, age);
         let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         let self = this;
         this.ajaxcall("/innovation/innovation/promoteCardBack.html",
@@ -5261,7 +5287,7 @@ class Innovation extends BgaGame {
             this.number_of_scored_cards = card.monument_counters[this.player_id].number_of_scored_cards;
         }
 
-        if (card.location_to == 'removed') {
+        if (card.location_to === 'removed') {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
         } else if (is_fountain_or_flag && card.owner_from == 0) {
             // Make the card appear that it is coming from the card with the fountain/flag icon

@@ -62,10 +62,12 @@ class Card184 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstOrThirdEdition()) {
-      self::selfExecute(self::getCard(self::getAuxiliaryValue2()));
-    } else {
-      self::selfExecute(self::meld(self::getRevealedCard()));
+    if (self::isSecondInteraction()) {
+      if (self::isFirstOrThirdEdition()) {
+        self::selfExecute(self::getCard(self::getAuxiliaryValue2()));
+      } else {
+        self::selfExecute(self::meld(self::getRevealedCard()));
+      }
     }
   }
 

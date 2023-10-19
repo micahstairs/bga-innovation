@@ -1618,6 +1618,15 @@
         box-shadow: 3px 3px grey;
         background-position-y: -2px;
         @include m.generate-color-x-position(0, 4, 2, 184px);
+        
+        &.item_1200,
+        &.item_1201,
+        &.item_1202,
+        &.item_1203,
+        &.item_1204 {
+            background-image: none;
+            background-color: black;
+        }
     }
 
     &.L {
