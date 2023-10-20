@@ -71,7 +71,7 @@ class Innovation extends BgaGame {
         ["my_hand", -1], // Computed dynamically
         ["opponent_hand", -1], // Computed dynamically
         ["display", 1],
-        ["museums", 5], // TODO(4E): Compute this dynamically
+        ["museums", -1], // Computed dynamically
         ["deck", 15],
         ["board", -1], // Computed dynamically
         ["forecast", -1], // Computed dynamically
@@ -1038,12 +1038,12 @@ class Innovation extends BgaGame {
         this.num_cards_in_row.set("forecast", num_forecast_cards_in_row);
         this.num_cards_in_row.set("score", num_score_cards_in_row);
 
-        let safe_container_width = num_safe_cards_in_row * this.delta.safe.x;
-        let forecast_container_width = num_forecast_cards_in_row * this.delta.forecast.x;
-        let achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
-        let score_container_width = main_area_inner_width - forecast_container_width - achievement_container_width - safe_container_width;
+        const safe_container_width = num_safe_cards_in_row * this.delta.safe.x;
+        const forecast_container_width = num_forecast_cards_in_row * this.delta.forecast.x;
+        const achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
+        const score_container_width = main_area_inner_width - forecast_container_width - achievement_container_width - safe_container_width;
         for (let player_id in this.players) {
-            let hand_width = dojo.position('hand_container_' + player_id).w;
+            const hand_width = dojo.position('hand_container_' + player_id).w;
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
             dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
             dojo.setStyle(this.zone["forecast"][player_id].container_div, 'width', forecast_container_width + "px");
@@ -1060,12 +1060,14 @@ class Innovation extends BgaGame {
             dojo.style('artifacts_' + player_id, 'width', hand_width + 'px');
         }
 
-        // Defining the number of cards hand zone can host
+        const player_museums_width = dojo.position('museums_' + this.player_id).w;
+        this.num_cards_in_row.set("museums", Math.floor(player_museums_width / this.delta.museums.x));
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
         this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
 
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
         for (let player_id in this.players) {
+            this.zone["museums"][player_id].updateDisplay();
             this.zone["forecast"][player_id].updateDisplay();
             this.zone["score"][player_id].updateDisplay();
             this.zone["achievements"][player_id].updateDisplay();
@@ -3256,7 +3258,7 @@ class Innovation extends BgaGame {
 
         // Width of the zone
         let zone_width;
-        if (new_location == 'board' || new_location == 'score' || new_location == 'forecast' || new_location == 'safe') {
+        if (['board', 'score', 'forecast', 'safe'].includes(new_location)) {
             zone_width = card_dimensions.width; // Will change dynamically
         } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
             let delta_x = this.delta[new_location].x

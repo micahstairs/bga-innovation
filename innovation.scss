@@ -99,12 +99,12 @@
     background-color: #FFFFFF;
     border: 1px solid black;
     width: 195px;
-    height: 165px;
     margin-bottom: 5px;
+    overflow-y: auto;
 
     >div {
         padding: 5px;
-        height: -webkit-fill-available;
+        height: 100%;
 
         >p {
             font-style: italic;
@@ -123,13 +123,13 @@
     background-color: #FFFFFF;
     border: 1px solid black;
     width: 195px;
-    height: 165px;
     margin-bottom: 5px;
     margin-left: 4px;
+    overflow-y: auto;
 
     >div {
         padding: 5px;
-        height: -webkit-fill-available;
+        height: 100%;
 
         >p {
             font-style: italic;
@@ -1618,7 +1618,7 @@
         box-shadow: 3px 3px grey;
         background-position-y: -2px;
         @include m.generate-color-x-position(0, 4, 2, 184px);
-        
+
         &.item_1200,
         &.item_1201,
         &.item_1202,

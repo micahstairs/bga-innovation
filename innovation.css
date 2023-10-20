@@ -83,12 +83,12 @@
   background-color: #FFFFFF;
   border: 1px solid black;
   width: 195px;
-  height: 165px;
   margin-bottom: 5px;
+  overflow-y: auto;
 }
 .display_container > div {
   padding: 5px;
-  height: -webkit-fill-available;
+  height: 100%;
 }
 .display_container > div > p {
   font-style: italic;
@@ -104,13 +104,13 @@
   background-color: #FFFFFF;
   border: 1px solid black;
   width: 195px;
-  height: 165px;
   margin-bottom: 5px;
   margin-left: 4px;
+  overflow-y: auto;
 }
 .museums_container > div {
   padding: 5px;
-  height: -webkit-fill-available;
+  height: 100%;
 }
 .museums_container > div > p {
   font-style: italic;

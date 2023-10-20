@@ -178,7 +178,7 @@ var Innovation = /** @class */ (function (_super) {
             ["my_hand", -1],
             ["opponent_hand", -1],
             ["display", 1],
-            ["museums", 5],
+            ["museums", -1],
             ["deck", 15],
             ["board", -1],
             ["forecast", -1],
@@ -1063,11 +1063,13 @@ var Innovation = /** @class */ (function (_super) {
             dojo.style('progress_' + player_id, 'width', hand_width + 'px');
             dojo.style('artifacts_' + player_id, 'width', hand_width + 'px');
         }
-        // Defining the number of cards hand zone can host
+        var player_museums_width = dojo.position('museums_' + this.player_id).w;
+        this.num_cards_in_row.set("museums", Math.floor(player_museums_width / this.delta.museums.x));
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
         this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
         for (var player_id in this.players) {
+            this.zone["museums"][player_id].updateDisplay();
             this.zone["forecast"][player_id].updateDisplay();
             this.zone["score"][player_id].updateDisplay();
             this.zone["achievements"][player_id].updateDisplay();
@@ -3064,7 +3066,7 @@ var Innovation = /** @class */ (function (_super) {
         var card_dimensions = this.card_dimensions[HTML_class];
         // Width of the zone
         var zone_width;
-        if (new_location == 'board' || new_location == 'score' || new_location == 'forecast' || new_location == 'safe') {
+        if (['board', 'score', 'forecast', 'safe'].includes(new_location)) {
             zone_width = card_dimensions.width; // Will change dynamically
         }
         else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
