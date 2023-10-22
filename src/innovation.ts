@@ -2795,6 +2795,7 @@ class Innovation extends BgaGame {
     }
 
     selectArtifactsInMuseums() {
+        // TODO(4E): Handle the case when artifacts are beginning to be returned from museums
         return dojo.query("#museums_" + this.player_id + " > .card:nth-child(2n)");
     }
 

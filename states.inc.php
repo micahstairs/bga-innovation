@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Innovation implementation : © Jean Portemer <jportemer@gmail.com>
+ * Innovation implementation : © Jean Portemer <jportemer@gmail.com> and Micah Stairs <micah.stairs@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -47,9 +47,7 @@
                             method).
 */
 
-//    !! It is not a good idea to modify this file when a game is running !!
-
-// Game State Diagram: https://docs.google.com/drawings/d/1oKv79jHr1t2C8VjWJCkfSAN8FoGzT8rkM9hVooFV4S0
+// Game State Diagram (not complete): https://docs.google.com/drawings/d/1oKv79jHr1t2C8VjWJCkfSAN8FoGzT8rkM9hVooFV4S0
 $machinestates = array(
 
     // The initial state. Please do not modify.
@@ -185,6 +183,7 @@ $machinestates = array(
             "interPlayerInvolvedTurn" => 9,
             "interactionStep" => 10,
             "digArtifact" => 17, // The search icons on Cities cards can trigger this transition
+            "finishArtifactPlayerTurn" => 21, // After returning artifacts from museums
             "justBeforeGameEnd" => 98,
         ),
     ),
@@ -204,6 +203,7 @@ $machinestates = array(
     
     13 => array(
         "name" => "selectionMove",
+        // TODO(4E): When returning artifacts from museums, there's no relevant card name to put before the colon.
         "description" => clienttranslate('${card_name}: ${message_for_others}'), // The content is generated in argSelectionMove
         "descriptionmyturn" => clienttranslate('${card_name}: ${message_for_player}') . ' ', // The content is generated in argSelectionMove
         "type" => "activeplayer",
@@ -239,7 +239,25 @@ $machinestates = array(
             "returnArtifactOnDisplay", // Not available in 4th edition
             "passArtifactOnDisplay",
         ),
-        "transitions" => array("playerTurn" => 4, "dogmaEffect" => 6, "justBeforeGameEnd" => 98)
+        // TODO(4E): Remove the unused transitions
+        "transitions" => array(
+            "playerTurn" => 4,
+            "dogmaEffect" => 6,
+            "preSelectionMove" => 12, // Used when returning artifacts after getting the last available museum
+            "finishArtifactPlayerTurn" => 21,
+            "justBeforeGameEnd" => 98,
+        ),
+    ),
+
+    21 => array(
+        "name" => "finishArtifactPlayerTurn",
+        "description" => clienttranslate('Finalising the player action...'),
+        "type" => "game",
+        "action" => "stFinishArtifactPlayerTurn",
+        "transitions" => array(
+            "playerTurn" => 4,
+            "justBeforeGameEnd" => 98,
+        ),
     ),
 
     16 => array(

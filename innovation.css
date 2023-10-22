@@ -84,7 +84,6 @@
   border: 1px solid black;
   width: 195px;
   margin-bottom: 5px;
-  overflow-y: auto;
 }
 .display_container > div {
   padding: 5px;
@@ -106,7 +105,6 @@
   width: 195px;
   margin-bottom: 5px;
   margin-left: 4px;
-  overflow-y: auto;
 }
 .museums_container > div {
   padding: 5px;
@@ -2244,6 +2242,10 @@
   background-size: 175px, auto;
 }
 .recto.S.age_null.item_595, .recto.S.age_null.item_596, .recto.S.age_null.item_597, .recto.S.age_null.item_598, .recto.S.age_null.item_599 {
+  background-image: none;
+  background-color: black;
+}
+.recto.S.age_null.item_1200, .recto.S.age_null.item_1201, .recto.S.age_null.item_1202, .recto.S.age_null.item_1203, .recto.S.age_null.item_1204 {
   background-image: none;
   background-color: black;
 }

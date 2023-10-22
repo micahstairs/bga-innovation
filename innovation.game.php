@@ -2428,6 +2428,7 @@ class Innovation extends Table
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo)
     {
         $is_special_achievement = $card['age'] === null;
+        $is_museum = 1200 <= $card['id'] && $card['id'] <= 1204;
 
         $bulk_transfer = $transferInfo['bulk_transfer'];
         $location_from = $transferInfo['location_from'];
@@ -2477,6 +2478,11 @@ class Innovation extends Table
                 $action_for_player = clienttranslate('rotate');
                 $action_for_others = clienttranslate('rotates');
             }
+        } else if ($location_from === Locations::MUSEUMS) {
+            $visible_for_player = true;
+            $visible_for_others = true;
+            $from_somewhere_for_player = clienttranslate(' from your museum');
+            $from_somewhere_for_others = clienttranslate(' from his museum');
         } else if ($location_from === Locations::HAND) {
             $visible_for_player = true;
             $from_somewhere_for_player = clienttranslate(' from your hand');
@@ -2688,7 +2694,10 @@ class Innovation extends Table
             $notif_args_for_others['action'] = $action_for_others;
             $notif_args_for_others['from_somewhere'] = $from_somewhere_for_others;
             $notif_args_for_others['to_somewhere'] = $to_somewhere_for_others;
-            if ($is_special_achievement) {
+            if ($is_museum) {
+                $message_for_player = clienttranslate('${You} ${action} a museum.');
+                $message_for_others = clienttranslate('${player_name} ${action} a museum.');
+            } else if ($is_special_achievement) {
                 $message_for_player = clienttranslate('${You} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.');
                 $message_for_others = clienttranslate('${player_name} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.');
             } else {
@@ -2721,6 +2730,21 @@ class Innovation extends Table
 
     function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $achieve_keyword, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code)
     {
+
+        if ($location_from === Locations::MUSEUMS) {
+            return [
+                'message_for_player' => [
+                    'i18n' => ['log'],
+                    'log'  => clienttranslate('${You} must return all artifacts from all museums'),
+                    'args' => ['You' => 'You'],
+                ],
+                'message_for_others' => [
+                    'i18n' => ['log'],
+                    'log'  => clienttranslate('${player_name} must return all artifacts from all museums'),
+                    'args' => ['player_name' => $player_name],
+                ],
+            ];
+        }
 
         // TODO(4E): Pass this keyword in.
         $safeguard_keyword = false;
@@ -2788,6 +2812,9 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from the available achievements');
                 $from_somewhere_for_others = clienttranslate(' from the available achievements');
             }
+        } else if ($location_from === Locations::MUSEUMS) {
+            $from_somewhere_for_player = clienttranslate(' from all museums');
+            $from_somewhere_for_others = clienttranslate(' from all museums');
         } else if ($location_from === Locations::HAND_OR_SCORE) {
             $from_somewhere_for_player = clienttranslate(' from your hand and score pile');
             $from_somewhere_for_others = clienttranslate(' from his hand and score pile');
@@ -2944,6 +2971,12 @@ class Innovation extends Table
         $meld_keyword = $transferInfo['meld_keyword'];
         $player_id = $transferInfo['player_id'];
 
+        if ($location_from === Locations::MUSEUMS && $location_to === Locations::MUSEUMS) {
+            $notif_args = array_merge($transferInfo, $progressInfo, $card);
+            self::notifyAllPlayers("transferedCard", "", $notif_args);
+            return;
+        }
+
         // TODO(LATER): Add special cases for seizing relics.
 
         // Used for the active player
@@ -2965,7 +2998,7 @@ class Innovation extends Table
         $to_somewhere_for_others = '';
 
         // Update text based on where the card is coming from
-        if ($location_from === 'hand') {
+        if ($location_from === Locations::HAND) {
             if ($player_id == $owner_from) {
                 $visible_for_player = true;
                 $from_somewhere_for_player = clienttranslate(' from your hand');
@@ -2977,7 +3010,7 @@ class Innovation extends Table
                 $to_somewhere_for_opponent = clienttranslate(' from ${your} hand');
                 $to_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s hand');
             }
-        } else if ($location_from === 'score') {
+        } else if ($location_from === Locations::SCORE) {
             if ($player_id == $owner_from) {
                 $visible_for_player = true;
                 $from_somewhere_for_player = clienttranslate(' from your score pile');
@@ -2989,7 +3022,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} score pile');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s score pile');
             }
-        } else if ($location_from === 'board') {
+        } else if ($location_from === Locations::BOARD) {
             $visible_for_player = true;
             $visible_for_opponent = true;
             $visible_for_others = true;
@@ -3002,7 +3035,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} board');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s board');
             }
-        } else if ($location_from === 'safe') {
+        } else if ($location_from === Locations::SAFE) {
             if ($player_id == $owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your safe');
                 $from_somewhere_for_opponent = clienttranslate(' from his safe');
@@ -3012,7 +3045,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} safe');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s safe');
             }
-        } else if ($location_from === 'achievements') {
+        } else if ($location_from === Locations::ACHIEVEMENTS) {
             if ($player_id == $owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your achievements');
                 $from_somewhere_for_opponent = clienttranslate(' from his achievements');
@@ -3022,7 +3055,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} achievements');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s achievements');
             }
-        } else if ($location_from === 'display') {
+        } else if ($location_from === Locations::DISPLAY) {
             $visible_for_player = true;
             $visible_for_opponent = true;
             $visible_for_others = true;
@@ -3035,7 +3068,14 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} display');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s display');
             }
-        } else if ($location_from === 'revealed') {
+        } else if ($location_from === Locations::MUSEUMS) {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
+            $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s museum');
+            $from_somewhere_for_opponent = clienttranslate(' from ${your} museum');
+            $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s museum');
+        } else if ($location_from === Locations::REVEALED) {
             $visible_for_player = true;
             $visible_for_opponent = true;
             $visible_for_others = true;
@@ -7354,6 +7394,7 @@ class Innovation extends Table
 
         // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
         if ($nested_card_state == null) {
+            // TODO(4E): Handle the other non-dogma interactions (junk achievement, returning artifacts, etc.)
             return array_merge([
                 'qualified_effect' => clienttranslate('search icon'),
                 'card_name'        => 'card_name',
@@ -7412,13 +7453,19 @@ class Innovation extends Table
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
-        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        // There won't be any nested card state if this interaction is a result of special City icons or returning museums
+        // TODO(4E): Handle artifact stealing interaction.
         if ($nesting_index < 0) {
-            return [
-                'card_0'       => self::getCardName($this->innovationGameState->get('melded_card_id')),
-                'ref_player_0' => $player_id,
-                'i18n'         => ['card_0'],
-            ];
+            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+            if ($location_from === Locations::MUSEUMS) {
+                return ['ref_player_0' => $player_id];
+            } else {
+                return [
+                    'card_0'       => self::getCardName($this->innovationGameState->get('melded_card_id')),
+                    'ref_player_0' => $player_id,
+                    'i18n'         => ['card_0'],
+                ];
+            }
         }
 
         $card_names = array();
@@ -8170,25 +8217,8 @@ class Innovation extends Table
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
         self::returnCard($card);
 
-        // Check for special achievements (only necessary in 4th edition)
-        if ($this->innovationGameState->usingFourthEditionRules()) {
-            try {
-                self::checkForSpecialAchievements( /*is_end_of_action_check=*/true);
-            } catch (EndOfGame $e) {
-                // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::returnArtifactOnDisplay');
-                self::trace('artifactPlayerTurn->justBeforeGameEnd');
-                $this->gamestate->nextState('justBeforeGameEnd');
-                return;
-            }
-        }
-
-        self::giveExtraTime($player_id);
-        self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
-        $this->gamestate->nextState('playerTurn');
-        $this->innovationGameState->set('current_action_number', 1);
-
-        self::incStat(1, 'free_action_return_number', $player_id);
+        self::trace('artifactPlayerTurn->finishArtifactPlayerTurn (returnArtifactOnDisplay)');
+        $this->gamestate->nextState('finishArtifactPlayerTurn');
     }
 
     function passArtifactOnDisplay()
@@ -8210,25 +8240,27 @@ class Innovation extends Table
 
         if ($this->innovationGameState->usingFourthEditionRules()) {
             self::rotateArtifactOnDisplayIntoMuseum($player_id);
-
-            // Check for special achievements (only necessary in 4th edition)
-            try {
-                self::checkForSpecialAchievements(/*is_end_of_action_check=*/true);
-            } catch (EndOfGame $e) {
-                // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::passArtifactOnDisplay');
-                self::trace('artifactPlayerTurn->justBeforeGameEnd');
-                $this->gamestate->nextState('justBeforeGameEnd');
+            $card_ids = self::getArtifactIdsIfNoMuseumsAvailable();
+            if ($card_ids) {
+                self::setAuxiliaryArray($card_ids);
+                $options = array(
+                    'player_id'                       => $player_id,
+                    'n'                               => count($card_ids),
+                    'owner_from'                      => 'any player',
+                    'location_from'                   => Locations::MUSEUMS,
+                    'owner_to'                        => 0,
+                    'location_to'                     => Locations::DECK,
+                    'card_ids_are_in_auxiliary_array' => true,
+                );
+                self::setSelectionRange($options);
+                self::trace('artifactPlayerTurn->preSelectionMove');
+                $this->gamestate->nextState('preSelectionMove');
                 return;
             }
         }
 
-        self::giveExtraTime($player_id);
-        self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
-        $this->gamestate->nextState('playerTurn');
-        $this->innovationGameState->set('current_action_number', 1);
-
-        self::incStat(1, 'free_action_pass_number', $player_id);
+        self::trace('artifactPlayerTurn->finishArtifactPlayerTurn (passArtifactOnDisplay)');
+        $this->gamestate->nextState('finishArtifactPlayerTurn');
     }
 
     function rotateArtifactOnDisplayIntoMuseum($player_id) {
@@ -8240,6 +8272,45 @@ class Innovation extends Table
         } else {
             self::transferCardFromTo($artifact, $player_id, Locations::HAND);
         }
+    }
+
+    function getArtifactIdsIfNoMuseumsAvailable(): array {
+        if (self::countCardsInLocation(0, Locations::MUSEUMS)) {
+            return [];
+        }
+        $card_ids = [];
+        foreach (self::getAllActivePlayerIds() as $playerId) {
+            foreach (self::getCardsInLocation($playerId, Locations::MUSEUMS) as $card) {
+                if ($card['color'] !== null) {
+                    $card_ids[] = $card['id'];
+                }
+            }
+        }
+        return $card_ids;
+    }
+
+    function stFinishArtifactPlayerTurn() {
+        $player_id = self::getActivePlayerId();
+
+        // Check for special achievements at end of free action (only necessary in 4th edition)
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            try {
+                self::checkForSpecialAchievements(/*is_end_of_action_check=*/true);
+            } catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::passArtifactOnDisplay');
+                self::trace('finishArtifactPlayerTurn->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        }
+
+        self::giveExtraTime($player_id);
+        $this->innovationGameState->set('current_action_number', 1);
+        self::incStat(1, 'free_action_return_number', $player_id);
+
+        self::trace('finishArtifactPlayerTurn->playerTurn');
+        $this->gamestate->nextState('playerTurn');
     }
 
     function passPromoteCard()
@@ -11112,6 +11183,8 @@ class Innovation extends Table
                 $launcher_id = $nested_card_state['launcher_id'];
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     self::rotateArtifactOnDisplayIntoMuseum($launcher_id);
+                    // TODO(4E): If no more museums are left, we need to prompt the player to return all artifacts.
+                    // TODO(4E): Are we missing a special achievements check?
                 } else {
                     self::returnCard($card);
                 }
@@ -16437,9 +16510,42 @@ class Innovation extends Table
 
         // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
         if ($nested_card_state == null) {
-            self::trace('interInteractionStep->digArtifact');
-            $this->gamestate->nextState('digArtifact');
-            return;
+            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+
+            if ($location_from === Locations::MUSEUMS) {
+
+                // Award a museum to the player with the single most museums
+                $max_count = 0;
+                $player_id_with_max = null;
+                foreach (self::getAllActivePlayerIds() as $playerId) {
+                    $count = self::countCardsInLocation($playerId, Locations::MUSEUMS);
+                    if ($count > $max_count) {
+                        $max_count = $count;
+                        $player_id_with_max = $playerId;
+                    } else if ($count === $max_count) {
+                        $player_id_with_max = null;
+                    }
+                }
+                if ($player_id_with_max) {
+                    $museum = self::getCardsInLocation($player_id_with_max, Locations::MUSEUMS)[0];
+                    $this->transferCardFromTo($museum, $player_id_with_max, Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
+                }
+
+                // Make the remaining museums available again
+                foreach (self::getAllActivePlayerIds() as $playerId) {
+                    foreach (self::getCardsInLocation($playerId, Locations::MUSEUMS) as $museum) {
+                        $this->transferCardFromTo($museum, 0, Locations::MUSEUMS);
+                    }
+                }
+                
+                self::trace('interInteractionStep->finishArtifactPlayerTurn');
+                $this->gamestate->nextState('finishArtifactPlayerTurn');
+                return;
+            } else {
+                self::trace('interInteractionStep->digArtifact');
+                $this->gamestate->nextState('digArtifact');
+                return;
+            }
         }
 
         if ($step == self::getStepMax()) { // The last step has been completed

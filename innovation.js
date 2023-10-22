@@ -2641,6 +2641,7 @@ var Innovation = /** @class */ (function (_super) {
         return cards;
     };
     Innovation.prototype.selectArtifactsInMuseums = function () {
+        // TODO(4E): Handle the case when artifacts are beginning to be returned from museums
         return dojo.query("#museums_" + this.player_id + " > .card:nth-child(2n)");
     };
     Innovation.prototype.selectAllCardsOnMyBoard = function () {
