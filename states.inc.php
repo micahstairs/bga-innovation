@@ -107,6 +107,7 @@ $machinestates = array(
         "updateGameProgression" => true,
         "transitions" => array(
             "playerTurn" => 4,
+            "preSelectionMove" => 12, // Used when returning artifacts after getting the last available museum
             "artifactPlayerTurn" => 15,
             "justBeforeGameEnd" => 98
         )

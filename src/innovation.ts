@@ -2795,7 +2795,6 @@ class Innovation extends BgaGame {
     }
 
     selectArtifactsInMuseums() {
-        // TODO(4E): Handle the case when artifacts are beginning to be returned from museums
         return dojo.query("#museums_" + this.player_id + " > .card:nth-child(2n)");
     }
 
@@ -3532,7 +3531,13 @@ class Innovation extends BgaGame {
     setPlacementRulesForPlayerMuseums(zone: Zone) {
         let self = this;
         zone.itemIdToCoordsGrid = function (i: number, control_width: number) {
-            i = Math.floor(i / 2); // Hide the museums under the artifacts
+            // Hide the museums under the artifacts
+            let num_museums = 0;
+            for (let j = 0; j <= i; j++) {
+                if (isMuseum(self.getCardIdFromHTMLId(this.items[j].id))) {
+                    num_museums++;
+                }
+            }
 
             let w = self.card_dimensions[this.HTML_class].width;
             let h = self.card_dimensions[this.HTML_class].height;
@@ -3542,8 +3547,8 @@ class Innovation extends BgaGame {
             let x_beginning = 0;
             let delta_x = delta.x;
             let delta_y = delta.y;
-            let n_x = i % n;
-            let n_y = Math.floor(i / n);
+            let n_x = (num_museums - 1) % n;
+            let n_y = Math.floor((num_museums - 1) / n);
 
             return { 'x': x_beginning + delta_x * n_x, 'y': delta_y * n_y, 'w': w, 'h': h }
         }

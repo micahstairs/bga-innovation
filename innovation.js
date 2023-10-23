@@ -2641,7 +2641,6 @@ var Innovation = /** @class */ (function (_super) {
         return cards;
     };
     Innovation.prototype.selectArtifactsInMuseums = function () {
-        // TODO(4E): Handle the case when artifacts are beginning to be returned from museums
         return dojo.query("#museums_" + this.player_id + " > .card:nth-child(2n)");
     };
     Innovation.prototype.selectAllCardsOnMyBoard = function () {
@@ -3312,7 +3311,13 @@ var Innovation = /** @class */ (function (_super) {
     Innovation.prototype.setPlacementRulesForPlayerMuseums = function (zone) {
         var self = this;
         zone.itemIdToCoordsGrid = function (i, control_width) {
-            i = Math.floor(i / 2); // Hide the museums under the artifacts
+            // Hide the museums under the artifacts
+            var num_museums = 0;
+            for (var j = 0; j <= i; j++) {
+                if (isMuseum(self.getCardIdFromHTMLId(this.items[j].id))) {
+                    num_museums++;
+                }
+            }
             var w = self.card_dimensions[this.HTML_class].width;
             var h = self.card_dimensions[this.HTML_class].height;
             var delta = self.delta[this.location];
@@ -3320,8 +3325,8 @@ var Innovation = /** @class */ (function (_super) {
             var x_beginning = 0;
             var delta_x = delta.x;
             var delta_y = delta.y;
-            var n_x = i % n;
-            var n_y = Math.floor(i / n);
+            var n_x = (num_museums - 1) % n;
+            var n_y = Math.floor((num_museums - 1) / n);
             return { 'x': x_beginning + delta_x * n_x, 'y': delta_y * n_y, 'w': w, 'h': h };
         };
     };

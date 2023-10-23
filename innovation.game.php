@@ -8263,8 +8263,11 @@ class Innovation extends Table
         $this->gamestate->nextState('finishArtifactPlayerTurn');
     }
 
-    function rotateArtifactOnDisplayIntoMuseum($player_id) {
+    function rotateArtifactOnDisplayIntoMuseum($player_id): bool {
         $artifact = self::getArtifactOnDisplay($player_id);
+        if (!$artifact) {
+            return false;
+        }
         $available_museums = self::getCardsInLocation(0, Locations::MUSEUMS);
         if ($available_museums) {
             self::transferCardFromTo($available_museums[0], $player_id, Locations::MUSEUMS);
@@ -8272,6 +8275,7 @@ class Innovation extends Table
         } else {
             self::transferCardFromTo($artifact, $player_id, Locations::HAND);
         }
+        return true;
     }
 
     function getArtifactIdsIfNoMuseumsAvailable(): array {
@@ -10948,7 +10952,35 @@ class Innovation extends Table
     function stInterPlayerTurn()
     {
         // An action of the player has been fully resolved.
-
+        
+        // Move the Artifact on display if the free dogma action was used
+        $player_id = self::getActivePlayerId();
+        if ($this->innovationGameState->get('current_action_number') == 0) {
+            if ($this->innovationGameState->usingFourthEditionRules()) {
+                if (self::rotateArtifactOnDisplayIntoMuseum($player_id)) {
+                    $card_ids = self::getArtifactIdsIfNoMuseumsAvailable();
+                    if ($card_ids) {
+                        self::setAuxiliaryArray($card_ids);
+                        $options = array(
+                            'player_id'                       => $player_id,
+                            'n'                               => count($card_ids),
+                            'owner_from'                      => 'any player',
+                            'location_from'                   => Locations::MUSEUMS,
+                            'owner_to'                        => 0,
+                            'location_to'                     => Locations::DECK,
+                            'card_ids_are_in_auxiliary_array' => true,
+                        );
+                        self::setSelectionRange($options);
+                        self::trace('interPlayerTurn->preSelectionMove');
+                        $this->gamestate->nextState('preSelectionMove');
+                        return;
+                    }
+                }
+            } else {
+                self::returnCard(self::getArtifactOnDisplay($player_id));
+            }
+        }
+            
         // Check for special achievements (only necessary in 4th edition)
         if ($this->innovationGameState->usingFourthEditionRules()) {
             try {
@@ -11174,21 +11206,6 @@ class Innovation extends Table
                 self::trace('interDogmaEffect->playerInvolvedTurn');
                 $this->gamestate->nextState('playerInvolvedTurn');
                 return;
-            }
-
-            // Move the Artifact on display if the free dogma action was used
-            $this->gamestate->changeActivePlayer($launcher_id);
-            $nested_card_state = self::getNestedCardState(0);
-            if ($nested_card_state['card_location'] === Locations::DISPLAY) {
-                $launcher_id = $nested_card_state['launcher_id'];
-                if ($this->innovationGameState->usingFourthEditionRules()) {
-                    self::rotateArtifactOnDisplayIntoMuseum($launcher_id);
-                    // TODO(4E): If no more museums are left, we need to prompt the player to return all artifacts.
-                    // TODO(4E): Are we missing a special achievements check?
-                } else {
-                    self::returnCard($card);
-                }
-                self::giveExtraTime($launcher_id);
             }
 
             // Update statistics about which opponents shared in the non-demand effects
