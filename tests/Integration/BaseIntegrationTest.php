@@ -64,25 +64,31 @@ abstract class BaseIntegrationTest extends BaseTest
     if (strpos($testName, 'fourthEdition')) {
       $game_rules = 3;
     }
+
     $artifacts = 1; // disabled
-    if (strpos($testName, 'artifacts')) {
+    if (strpos($testName, 'artifactsWithRelics')) {
+      $artifacts = 3; // enabled with relics
+    } else if (strpos($testName, 'artifacts')) {
       $artifacts = 2; // enabled
     }
+    
     $cities = 1; // disabled
     if (strpos($testName, 'cities')) {
       $cities = 2; // enabled
     }
+
     $echoes = 1; // disabled
     if (strpos($testName, 'echoes')) {
       $echoes = 2; // enabled
     }
+
     $unseen = 1; // disabled
     if (strpos($testName, 'unseen')) {
       $unseen = 2; // enabled
     }
 
     return [
-      "game_type"                => 1, // non-2v2
+      "game_type"                => 1, // free-for-all (non-2v2)
       "game_rules"               => $game_rules,
       "artifacts_mode"           => $artifacts,
       "cities_mode"              => $cities,

@@ -14,6 +14,11 @@ class RandomGameTest extends BaseIntegrationTest
     self::executeGame();
   }
 
+  public function test_randomGame_thirdEdition_artifactsWithRelics()
+  {
+    self::executeGame();
+  }
+
   public function test_randomGame_fourthEdition_artifacts_cities_echoes_unseen()
   {
     self::executeGame();
