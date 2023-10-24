@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card544 extends AbstractCard
 {
@@ -13,7 +14,7 @@ class Card544 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::countCards('hand') >= 3) {
+    if (self::countCards(Locations::HAND) >= 3) {
       self::setMaxSteps(3);
     }
   }
@@ -22,23 +23,23 @@ class Card544 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'location_from' => 'hand',
+        'location_from' => Locations::HAND,
         'tuck_keyword'  => true,
       ];
     } else {
       return [
-        'location_from' => 'hand',
-        'location_to'   => 'score',
+        'location_from' => Locations::HAND,
+        'score_keyword' => true,
       ];
     }
   }
 
-  public function handleCardChoice(array $cardId)
+  public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
       self::splayRight(self::getLastSelectedColor());
