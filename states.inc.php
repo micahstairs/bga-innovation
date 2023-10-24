@@ -183,7 +183,9 @@ $machinestates = array(
         "transitions" => array(
             "interPlayerInvolvedTurn" => 9,
             "interactionStep" => 10,
-            "digArtifact" => 17, // The search icons on Cities cards can trigger this transition
+            "relicPlayerTurn" => 16, // After digging/strealing an artifact (when a relic needs to be seized)
+            "digArtifact" => 17, // After interaction from search icon or junk achievement icon
+            "promoteCard" => 18, // After digging/stealing an artifact (when no relic needs to be seized)
             "finishArtifactPlayerTurn" => 21, // After returning artifacts from museums
             "justBeforeGameEnd" => 98,
         ),
@@ -277,7 +279,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stDigArtifact",
         "transitions" => array(
-            "relicPlayerTurn" => 16,
+            "preSelectionMove" => 12,
             "promoteCard" => 18,
             "justBeforeGameEnd" => 98,
         ),

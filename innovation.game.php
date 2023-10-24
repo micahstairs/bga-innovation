@@ -3161,6 +3161,15 @@ class Innovation extends Table
                 $to_somewhere_for_opponent = clienttranslate(' to ${your} achievements');
                 $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s achievements');
             }
+        } else if ($location_to === Locations::DISPLAY) {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
+            if ($player_id == $owner_to) {
+                $to_somewhere_for_player = clienttranslate(' to your display');
+                $to_somewhere_for_opponent = clienttranslate(' to his display');
+                $to_somewhere_for_others = clienttranslate(' to his display');
+            }
         } else if ($location_to === 'deck' || $location_to === 'relics') {
             $action_for_player = clienttranslate('return');
             $action_for_opponent = clienttranslate('returns');
@@ -3279,7 +3288,7 @@ class Innovation extends Table
         $card_qualifier = '';
 
         // Update text based on where the card is coming from
-        if ($location_from === 'hand') {
+        if ($location_from === Locations::HAND) {
             if ($player_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your hand');
                 $from_somewhere_for_opponent = clienttranslate(' from his hand');
@@ -3289,7 +3298,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} hand');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s hand');
             }
-        } else if ($location_from === 'board') {
+        } else if ($location_from === Locations::BOARD) {
             if ($player_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your board');
                 $from_somewhere_for_opponent = clienttranslate(' from his board');
@@ -3299,7 +3308,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} board');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s board');
             }
-        } else if ($location_from === 'score') {
+        } else if ($location_from === Locations::SCORE) {
             if ($player_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your score pile');
                 $from_somewhere_for_opponent = clienttranslate(' from his score pile');
@@ -3309,7 +3318,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} score pile');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s score pile');
             }
-        } else if ($location_from === 'safe') {
+        } else if ($location_from === Locations::SAFE) {
             if ($player_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your safe');
                 $from_somewhere_for_opponent = clienttranslate(' from his safe');
@@ -3319,7 +3328,7 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} safe');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s safe');
             }
-        } else if ($location_from === 'revealed') {
+        } else if ($location_from === Locations::REVEALED) {
             $card_qualifier = clienttranslate('revealed ');
         }
 
@@ -7453,13 +7462,13 @@ class Innovation extends Table
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
-        // There won't be any nested card state if this interaction is a result of special City icons or returning museums
-        // TODO(4E): Handle artifact stealing interaction.
+        // There won't be any nested card state if this interaction is happening outside of the context of a dogma effect
         if ($nesting_index < 0) {
-            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
-            if ($location_from === Locations::MUSEUMS) {
+            if ($this->innovationGameState->get('special_type_of_choice') > 0) { // Digging/stealing artifact
                 return ['ref_player_0' => $player_id];
-            } else {
+            } else if (Locations::decode($this->innovationGameState->get('location_from') === Locations::MUSEUMS)) { // Returning artifacts from museums
+                return ['ref_player_0' => $player_id];
+            } else { // Search icon or Junk Achievement icon
                 return [
                     'card_0'       => self::getCardName($this->innovationGameState->get('melded_card_id')),
                     'ref_player_0' => $player_id,
@@ -7468,8 +7477,8 @@ class Innovation extends Table
             }
         }
 
-        $card_names = array();
-        $i18n = array();
+        $card_names = [];
+        $i18n = [];
         for ($i = 0; $i <= $nesting_index; $i++) {
             $nested_card_state = self::getNestedCardState($i);
             $current_effect_type = $nested_card_state['current_effect_type'];
@@ -8681,13 +8690,59 @@ class Innovation extends Table
             }
         }
 
-        if (self::tryToDigArtifactAndSeizeRelic($melded_card)) {
-            self::trace('digArtifact->relicPlayerTurn');
-            $this->gamestate->nextState('relicPlayerTurn');
+        if (!$this->innovationGameState->artifactsExpansionEnabled() || self::getArtifactOnDisplay($player_id)) {
+            self::trace('digArtifact->promoteCard');
+            $this->gamestate->nextState('promoteCard');
             return;
         }
+
+        $stack = self::getCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
+        if (count($stack) >= 2) {
+            $previous_top_card = $stack[count($stack) - 2];
+        } else {
+            $previous_top_card = null;
+        }
+
+        // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
+        $new_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['faceup_age'] >= $melded_card['faceup_age'];
+        $overlapping_icons = $previous_top_card !== null && self::haveOverlappingHexagonIcons($previous_top_card, $melded_card);
+        $eligible_for_dig = $new_card_has_lower_or_equal_value || $overlapping_icons;
+
+        $card_ids = [];
+        if ($eligible_for_dig) {
+            // You first draw up through any empty ages (base cards) before looking at the relevant artifact deck
+            $age_after_drawing_up = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
+            $top_artifact_card = self::getDeckTopCard($age_after_drawing_up, CardTypes::ARTIFACTS);
+            if ($top_artifact_card) {
+                $card_ids[] = $top_artifact_card['id'];
+            }
+            foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
+                    if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
+                        $card_ids[] = $card['id'];
+                    }
+                }
+            }
+        }
+
+        if ($card_ids) {
+            self::setAuxiliaryArray($card_ids);
+            $options = [
+                'player_id'        => $player_id,
+                'choose_from_list' => true,
+                'choices'          => range(0, count($card_ids) - 1),
+            ];
+            self::setSelectionRange($options);
+            self::trace('digArtifact->preSelectionMove');
+            $this->gamestate->nextState('preSelectionMove');
+            return;
+        } else if ($eligible_for_dig) {
+            self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_after_drawing_up)));
+        }
+
         self::trace('digArtifact->promoteCard');
         $this->gamestate->nextState('promoteCard');
+        return;
     }
 
     function stPromoteCard()
@@ -8722,65 +8777,15 @@ class Innovation extends Table
         }
     }
 
-    /* Returns true if a relic is being seized */
-    function tryToDigArtifactAndSeizeRelic($melded_card)
+    function haveOverlappingHexagonIcons(array $card_1, array $card_2): bool
     {
-        // The Artifacts expansion is not enabled.
-        if (!$this->innovationGameState->artifactsExpansionEnabled()) {
-            return false;
-        }
-
-        $player_id = $melded_card['owner'];
-        $pile = self::getCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
-        if (count($pile) >= 2) {
-            $previous_top_card = $pile[count($pile) - 2];
-        } else {
-            $previous_top_card = null;
-        }
-
-        // An Artifact is already on display.
-        if (self::getArtifactOnDisplay($player_id) !== null) {
-            return false;
-        }
-
-        // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
-        $new_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['faceup_age'] >= $melded_card['faceup_age'];
-        $overlapping_icons = $previous_top_card !== null && self::haveOverlappingHexagonIcons($previous_top_card, $melded_card);
-        if ($new_card_has_lower_or_equal_value || $overlapping_icons) {
-
-            // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
-            $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
-            $top_artifact_card = self::getDeckTopCard($age_draw, CardTypes::ARTIFACTS);
-
-            if ($top_artifact_card == null) {
-                self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
-            } else {
-                self::digCard($top_artifact_card, $player_id);
-                self::incStat(1, 'dig_events_number', $player_id);
-
-                // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
-                if ($this->innovationGameState->artifactsExpansionEnabledWithRelics()) {
-                    $relic = self::getRelicForAge($top_artifact_card['faceup_age']);
-                    // "You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
-                    if ($relic != null && (self::canSeizeRelicToHand($relic, $player_id) || self::canSeizeRelicToAchievements($relic, $player_id))) {
-                        $this->innovationGameState->set('relic_id', $relic['id']);
-                        return true;
-                    }
-                }
+        for ($i = 1; $i <= 6; $i++) {
+            $spot = 'spot_' . $i;
+            if ($card_1[$spot] === '0' && $card_2[$spot] === '0') {
+                return true;
             }
         }
         return false;
-    }
-
-    function haveOverlappingHexagonIcons($card_1, $card_2)
-    {
-        return
-            ($card_1['spot_1'] === '0' && $card_2['spot_1'] === '0') ||
-            ($card_1['spot_2'] === '0' && $card_2['spot_2'] === '0') ||
-            ($card_1['spot_3'] === '0' && $card_2['spot_3'] === '0') ||
-            ($card_1['spot_4'] === '0' && $card_2['spot_4'] === '0') ||
-            ($card_1['spot_5'] === '0' && $card_2['spot_5'] === '0') ||
-            ($card_1['spot_6'] === '0' && $card_2['spot_6'] === '0');
     }
 
     /* Returns null if there is no relic of the specified age */
@@ -10261,9 +10266,9 @@ class Innovation extends Table
 
         $nested_card_state = self::getCurrentNestedCardState();
 
-        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
+        // There won't be any nested card state if a player is doing an interaction outside of the context of a dogma action
         if ($nested_card_state == null) {
-            $card_id = $this->innovationGameState->get('melded_card_id');
+            $card_id = null;
             $code = null;
             $current_effect_type = -1;
             $current_effect_number = -1;
@@ -10279,8 +10284,6 @@ class Innovation extends Table
             $step = self::getStep();
             $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         }
-
-        $card = self::getCardInfo($card_id);
 
         $can_pass = $this->innovationGameState->get('can_pass') == 1;
         $can_stop = $this->innovationGameState->get('n_min') <= 0;
@@ -10481,8 +10484,26 @@ class Innovation extends Table
                     break;
 
                 default:
-                    // This should not happen
-                    if (!self::isInSeparateFile($card_id)) {
+                    if ($card_id === null) { // Digging/stealing artifact
+                        $message_for_player = clienttranslate('${You} must make a choice');
+                        $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to rotate into a museum');
+                        $card_ids = self::getAuxiliaryArray();
+                        $options = [
+                            [
+                                'value' => 0,
+                                'text'  => clienttranslate('Dig from ${age} deck'),
+                                'age' => self::getAgeSquareWithType(self::getCardInfo($card_ids[0])['age'], CardTypes::ARTIFACTS),
+                            ],
+                        ];
+                        for ($i = 1; $i < count($card_ids); $i++) {
+                            $options[] = [
+                                'value' => $i,
+                                'text' => clienttranslate('Rotate ${card} into a museum'),
+                                'card' => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
+                            ];
+                        }
+                        break;
+                    } else if (!self::isInSeparateFile($card_id)) {
                         throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
                     }
             }
@@ -16525,12 +16546,29 @@ class Innovation extends Table
             }
         }
 
-        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
-        if ($nested_card_state == null) {
-            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+        // There won't be any nested card state if a player just performed an interaction outside of the context of a dogma effect
+        if ($nested_card_state === null) {
+            if ($this->innovationGameState->get('special_type_of_choice') > 0) { // Digging/stealing artifact
 
-            if ($location_from === Locations::MUSEUMS) {
+                // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
+                if ($this->innovationGameState->artifactsExpansionEnabledWithRelics()) {
+                    $artifact = self::getArtifactOnDisplay($player_id);
+                    if ($artifact) {
+                        $relic = self::getRelicForAge($artifact['faceup_age']);
+                        // "You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
+                        if ($relic != null && (self::canSeizeRelicToHand($relic, $player_id) || self::canSeizeRelicToAchievements($relic, $player_id))) {
+                            $this->innovationGameState->set('relic_id', $relic['id']);
+                            self::trace('interInteractionStep->relicPlayerTurn');
+                            $this->gamestate->nextState('relicPlayerTurn');
+                            return;
+                        }
+                    }
+                }
 
+                self::trace('interInteractionStep->promoteCard');
+                $this->gamestate->nextState('promoteCard');
+                return;
+            } else if (Locations::decode($this->innovationGameState->get('location_from') === Locations::MUSEUMS)) { // Returning artifacts from museums
                 // Award a museum to the player with the single most museums
                 $max_count = 0;
                 $player_id_with_max = null;
@@ -16558,7 +16596,7 @@ class Innovation extends Table
                 self::trace('interInteractionStep->finishArtifactPlayerTurn');
                 $this->gamestate->nextState('finishArtifactPlayerTurn');
                 return;
-            } else {
+            } else { // Search icon or Junk Achievement icon
                 self::trace('interInteractionStep->digArtifact');
                 $this->gamestate->nextState('digArtifact');
                 return;
@@ -16916,7 +16954,7 @@ class Innovation extends Table
 
         $nested_card_state = self::getCurrentNestedCardState();
 
-        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
+        // There won't be any nested card state if a player is doing an interaction outside of the context of a dogma
         if ($nested_card_state == null) {
             $card_id = null;
             $launcher_id = $player_id;
@@ -17285,6 +17323,18 @@ class Innovation extends Table
                             // Do the splay as stated in B
                             $this->innovationGameState->set("color_last_selected", $card['color']);
                             self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/$splay_direction == 0);
+                        }
+                    } else if ($card_id === null) { // Digging/stealing artifact
+                        $card_ids = self::getAuxiliaryArray();
+                        $chosen_card = self::getCardInfo($card_ids[$choice]);
+                        if ($choice == 0) {
+                            self::digCard($chosen_card, $player_id);
+                            self::incStat(1, 'dig_events_number', $player_id);
+                        } else {
+                            // If an artifact was stolen from an opponent's museum, rotate the museum and the artifact
+                            $museum = self::getCardsInLocation($chosen_card['owner'], Locations::MUSEUMS)[$chosen_card['position'] - 1];
+                            self::transferCardFromTo($museum, $player_id, Locations::MUSEUMS);
+                            self::transferCardFromTo($chosen_card, $player_id, Locations::MUSEUMS);
                         }
                     } else if (!self::isInSeparateFile($card_id)) {
                         throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "stInterSelectionMove()", 'code' => $code)));

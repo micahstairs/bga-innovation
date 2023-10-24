@@ -1131,12 +1131,12 @@ abstract class AbstractCard
   {
     $validChoices = $this->game->innovationGameState->getAsArray('choice_array');
     $options = [];
-    foreach ($choiceMap as $value => $textOrarray) {
+    foreach ($choiceMap as $value => $textOrArray) {
       if (!in_array($value, $validChoices)) {
         continue;
       }
-      $text = is_array($textOrarray) ? reset($textOrarray) : $textOrarray;
-      $args = is_array($textOrarray) ? array_slice($textOrarray, 1) : [];
+      $text = is_array($textOrArray) ? reset($textOrArray) : $textOrArray;
+      $args = is_array($textOrArray) ? array_slice($textOrArray, 1) : [];
       $options[] = array_merge($args, [
         'value' => $value,
         'text'  => $text,
