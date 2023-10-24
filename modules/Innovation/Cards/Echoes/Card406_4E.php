@@ -42,7 +42,9 @@ class Card406_4E extends AbstractCard
         return ['choose_value' => true];
       } else {
         return [
-          'n'                               => self::getAuxiliaryValue(),
+          'can_pass'                        => true,
+          'n_min'                           => 1,
+          'n_max'                           => self::getAuxiliaryValue(),
           'location_from'                   => Locations::HAND,
           'foreshadow_keyword'              => true,
           'card_ids_are_in_auxiliary_array' => true,
