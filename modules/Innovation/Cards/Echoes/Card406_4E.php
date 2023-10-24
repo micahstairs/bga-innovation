@@ -26,7 +26,7 @@ class Card406_4E extends AbstractCard
       $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::HEALTH), 3);
       if ($numCards > 0) {
         self::setAuxiliaryValue($numCards); // Track number of cards to draw
-        self::setMaxSteps(1);
+        self::setMaxSteps(2);
       }
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
