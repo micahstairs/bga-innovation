@@ -103,6 +103,9 @@ class RandomGameTest extends BaseIntegrationTest
       ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
       ->passArtifactOnDisplay();
     $this->tableInstance->advanceGame();
+    
+    // Return artifacts, if prompted
+    self::excecuteInteractions();
   }
 
   private function draw()
@@ -125,7 +128,7 @@ class RandomGameTest extends BaseIntegrationTest
       ->meld();
     $this->tableInstance->advanceGame();
 
-    // Handle executions like those for the Search Icon
+    // Handle interactions like those for the Search Icon
     self::excecuteInteractions();
 
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {

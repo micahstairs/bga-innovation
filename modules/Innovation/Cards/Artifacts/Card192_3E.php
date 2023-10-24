@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
 class Card192_3E extends AbstractCard
@@ -19,12 +21,10 @@ class Card192_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => Locations::BOARD,
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => Locations::BOARD,
-      'with_icon'     => Icons::EFFICIENCY,
-      'color'         => Colors::NON_YELLOW,
+      'location'  => Locations::BOARD,
+      'owner_to'  => self::getLauncherId(),
+      'with_icon' => Icons::EFFICIENCY,
+      'color'     => Colors::NON_YELLOW,
     ];
   }
 
