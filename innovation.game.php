@@ -8716,10 +8716,12 @@ class Innovation extends Table
             if ($top_artifact_card) {
                 $card_ids[] = $top_artifact_card['id'];
             }
-            foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
-                    if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
-                        $card_ids[] = $card['id'];
+            if ($this->innovationGameState->usingFourthEditionRules()) {
+                foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                    foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
+                        if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
+                            $card_ids[] = $card['id'];
+                        }
                     }
                 }
             }
