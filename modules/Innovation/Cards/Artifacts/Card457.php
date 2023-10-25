@@ -25,7 +25,7 @@ class Card457 extends AbstractCard
       return [
         'choose_from' => Locations::BOARD,
         'owner_from'  => 'any player',
-        'color'       => self::getLastSelectedColor(),
+        'color'       => [self::getLastSelectedColor()],
       ];
     } else {
       return [
