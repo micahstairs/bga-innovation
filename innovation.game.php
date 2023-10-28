@@ -7466,7 +7466,7 @@ class Innovation extends Table
         if ($nesting_index < 0) {
             if ($this->innovationGameState->get('special_type_of_choice') > 0) { // Digging/stealing artifact
                 return ['ref_player_0' => $player_id];
-            } else if (Locations::decode($this->innovationGameState->get('location_from') === Locations::MUSEUMS)) { // Returning artifacts from museums
+            } else if (Locations::decode($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
                 return ['ref_player_0' => $player_id];
             } else { // Search icon or Junk Achievement icon
                 return [
@@ -16570,7 +16570,7 @@ class Innovation extends Table
                 self::trace('interInteractionStep->promoteCard');
                 $this->gamestate->nextState('promoteCard');
                 return;
-            } else if (Locations::decode($this->innovationGameState->get('location_from') === Locations::MUSEUMS)) { // Returning artifacts from museums
+            } else if (Locations::decode($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
                 // Award a museum to the player with the single most museums
                 $max_count = 0;
                 $player_id_with_max = null;
