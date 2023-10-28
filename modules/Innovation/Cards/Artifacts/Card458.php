@@ -18,7 +18,7 @@ class Card458 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
-    } else if (self::isSecondInteraction()) {
+    } else if (self::isSecondNonDemand()) {
       do {
         $numPointsScored = 0;
         $junkedCards = self::getCards(Locations::JUNK);
