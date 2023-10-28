@@ -3191,7 +3191,7 @@ class Innovation extends BgaGame {
     }
 
     getIconDiv(card: Card, icon: number | null, icon_location: string, size: string) {
-        if (icon === null) {
+        if (icon === null || Number.isNaN(icon)) {
             return '';
         }
         if (icon == 0) {

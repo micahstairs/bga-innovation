@@ -2997,7 +2997,7 @@ var Innovation = /** @class */ (function (_super) {
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     };
     Innovation.prototype.getIconDiv = function (card, icon, icon_location, size) {
-        if (icon === null) {
+        if (icon === null || Number.isNaN(icon)) {
             return '';
         }
         if (icon == 0) {
