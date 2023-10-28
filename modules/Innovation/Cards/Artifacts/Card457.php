@@ -34,9 +34,9 @@ class Card457 extends AbstractCard
       ];
     } else {
       return [
-        'can_pass'      => true,
-        'n'             => 2,
-        'location_from' => Locations::HAND,
+        'can_pass'       => true,
+        'n'              => 2,
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     }
@@ -52,7 +52,8 @@ class Card457 extends AbstractCard
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isThirdInteraction() && self::getNumChosen() === 2) {
       self::setNextStep(1);
     }

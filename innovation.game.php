@@ -644,10 +644,22 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 269"); // Amsterdam
                 self::DbQuery("UPDATE card SET spot_6 = 8 WHERE id = 282"); // Dublin
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 284"); // New York City
+                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 286"); // Johannesburg
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 288"); // Montreal
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 289"); // London
+                self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 290"); // Toronto
+                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 292"); // Melbourne
+                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 294"); // San Francisco
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 295"); // Chongqing
+                self::DbQuery("UPDATE card SET spot_4 = 5 WHERE id = 298"); // Los Angeles
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 299"); // Hamburg
+                self::DbQuery("UPDATE card SET spot_6 = 2 WHERE id = 300"); // São Paulo
+                self::DbQuery("UPDATE card SET spot_6 = 2 WHERE id = 301"); // Chicago
+                self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 303"); // Buenos Aires
+                self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 305"); // Houston
+                self::DbQuery("UPDATE card SET spot_6 = 5 WHERE id = 308"); // Perth
+                self::DbQuery("UPDATE card SET spot_6 = 3 WHERE id = 309"); // Santiago
+                self::DbQuery("UPDATE card SET spot_6 = 2 WHERE id = 312"); // Miami
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 313"); // Hong Kong
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 314"); // Moscow
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 315"); // Bangalore
@@ -655,6 +667,7 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET spot_1 = 110, spot_6 = 5 WHERE id = 317"); // Singapore
                 self::DbQuery("UPDATE card SET spot_1 = 2, spot_2 = 6, spot_4 = 6, spot_6 = 9 WHERE id = 318"); // Seoul
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 319"); // Tel Aviv
+                self::DbQuery("UPDATE card SET spot_4 = 1 WHERE id = 320"); // Bangkok
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 321"); // Copenhagen
                 self::DbQuery("UPDATE card SET spot_2 = 110, spot_6 = 1 WHERE id = 322"); // Dubai
                 self::DbQuery("UPDATE card SET spot_2 = 6, spot_3 = 9, spot_4 = 5, spot_6 = 9 WHERE id = 323"); // Brussels
