@@ -78,7 +78,12 @@ class RandomGameTest extends BaseIntegrationTest
 
     // Make sure we don't try to dogma Battleship Yamato
     if ($cardId == 188) {
-      self::returnArtifact();
+      $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
+      if ($edition <= 3) {
+        self::returnArtifact();
+      } else {
+        self::passArtifact();
+      }
       return;
     }
 
