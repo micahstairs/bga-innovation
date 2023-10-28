@@ -64,7 +64,7 @@ class Card534 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::getAuxiliaryValue() === 1) {
+    if (self::isFirstInteraction() && self::getAuxiliaryValue() === 1) {
       self::selfExecute(self::getTopCardOfColor(self::getLastSelectedColor()));
     }
   }
