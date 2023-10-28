@@ -623,16 +623,16 @@ abstract class AbstractCard
 
   protected function filterByColor(array $cards, array $colors): array
   {
-    return array_filter($cards, function ($card) use ($colors) {
+    return array_values(array_filter($cards, function ($card) use ($colors) {
       return in_array($card['color'], $colors);
-    });
+    }));
   }
 
   protected function filterByType(array $cards, array $types): array
   {
-    return array_filter($cards, function ($card) use ($types) {
+    return array_values(array_filter($cards, function ($card) use ($types) {
       return in_array($card['type'], $types);
-    });
+    }));
   }
 
   protected function getValues(array $cards): array
@@ -695,9 +695,9 @@ abstract class AbstractCard
   protected function getAvailableStandardAchievements(): array
   {
     $achievements = $this->game->getCardsInLocation(0, Locations::ACHIEVEMENTS);
-    return array_filter($achievements, function ($card) {
+    return array_values(array_filter($achievements, function ($card) {
       return self::isValuedCard($card);
-    });
+    }));
   }
 
   // BULK CARD HELPERS
