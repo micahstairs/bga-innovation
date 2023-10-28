@@ -10,7 +10,7 @@ class Card479 extends AbstractCard
 
   // Meritocracy
   //   - I DEMAND you choose the standard icon of which I have the most among my icon types!
-  //     Transfer all cards with that icon from your board to mine, or if Meritocracy was
+  //     Transfer all cards with that visible icon from your board to mine, or if Meritocracy was
   //     foreseen, to my achievements!
 
   public function initialExecution()

@@ -1137,7 +1137,7 @@ $this->textual_card_infos = array(
     173 => array(
         'name'                                => clienttranslate('Moonlight Sonata'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color on your board having the highest top card. Meld the bottom card on your board of that color. Claim an achievement, ignoring eligibility.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color on your board having the highest top card. Meld your bottom card of that color.  '),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color on your board having the highest top card. Meld your bottom card of that color.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Claim an available standard achievement, ignoring eligibility. Junk an available standard achievement.'),
     ),
 
@@ -2397,7 +2397,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Puzzle Cube'),
         'echo_effect_fourth'                  => clienttranslate('Meld a card from your score pile.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may score the bottom card or two bottom cards of one color from your board. If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may score the bottom card or two bottom cards of one color from your board.  If all colors on your board contain the same number of visible cards, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may score the bottom card or two bottom cards of one color from your board. If all colors on your board contain the same number of visible cards, you win.'),
         'non_demand_effect_2'                 => clienttranslate('Draw and meld a ${age_10}.'),
     ),
 
@@ -2504,7 +2504,7 @@ $this->textual_card_infos = array(
 
     450 => array(
         'name'                => clienttranslate('Great Barrier Reef'),
-        'non_demand_effect_1' => clienttranslate('Junk all cards on your board other than the top three of each color.'),
+        'non_demand_effect_1' => clienttranslate('Junk all cards on your board other than the top five of each color.'),
         'non_demand_effect_2' => clienttranslate('Splay each color on your board aslant.'),
     ),
 
@@ -2525,8 +2525,8 @@ $this->textual_card_infos = array(
 
     454 => array(
         'name'                => clienttranslate('Greenland'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to return all of your top cards with a ${icon_6}!'),
-        'non_demand_effect_1' => clienttranslate('Return all your top cards with a ${icon_1}.'),
+        'i_compel_effect'     => clienttranslate('${I compel} you to return one of your top cards with a ${icon_6}! If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Return one of your top cards with a ${icon_1}. If you do, repeat this effect.'),
     ),
 
     455 => array(
@@ -2541,7 +2541,7 @@ $this->textual_card_infos = array(
 
     457 => array(
         'name'                => clienttranslate('Tasmanian Tiger'),
-        'non_demand_effect_1' => clienttranslate('Choose a card in your score pile. Choose a top card of the same color on any player\'s board. Exchange the two cards, maintaining any splay. You may return two cards from your hand. If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Choose a card in your score pile. Choose a top card of the same color on any player\'s board. Exchange the two cards. You may return two cards from your hand. If you do, repeat this effect.'),
     ),
 
     458 => array(
@@ -2618,7 +2618,7 @@ $this->textual_card_infos = array(
 
     479 => array(
         'name'            => clienttranslate('Meritocracy'),
-        'i_demand_effect' => clienttranslate('${I demand} you choose the standard icon of which I have the most among my icon types!  Transfer all cards with that icon from your board to mine, or if Meritocracy was foreseen, to my achievements!'),
+        'i_demand_effect' => clienttranslate('${I demand} you choose the standard icon of which I have the most among my icon types! Transfer all cards with that visible icon from your board to mine, or if Meritocracy was foreseen, to my achievements!'),
     ),
 
     /* Unseen - Age 1 */

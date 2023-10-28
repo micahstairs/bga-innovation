@@ -9,8 +9,8 @@ class Card457 extends AbstractCard
 {
   // Tasmanian Tiger
   //   - Choose a card in your score pile. Choose a top card of the same color on any player's
-  //     board. Exchange the two cards, maintaining any splay. You may return two cards from your
-  //     hand. If you do, repeat this effect.
+  //     board. Exchange the two cards. You may return two cards from your hand. If you do, repeat
+  //     this effect.
 
   public function initialExecution()
   {

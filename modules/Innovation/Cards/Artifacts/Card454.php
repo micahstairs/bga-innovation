@@ -9,8 +9,8 @@ use Innovation\Enums\Locations;
 class Card454 extends AbstractCard
 {
   // Greenland
-  //   - I COMPEL you to return all your top cards with a [EFFICIENCY]!
-  //   - Return all your top cards with a [PROSPERITY].
+  //   - I COMPEL you to return one of your top cards with a [EFFICIENCY]! If you do, repeat this effect.
+  //   - Return one of your top cards with a [PROSPERITY]. If you do, repeat this effect.
 
   public function initialExecution()
   {
@@ -19,25 +19,16 @@ class Card454 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::isCompel()) {
-      return [
-        'n'                    => 'all',
-        'location_from'        => Locations::BOARD,
-        'return_keyword'       => true,
-        'with_icon'            => Icons::EFFICIENCY,
-        'refresh_selection'    => true,
-        'enable_autoselection' => true,
-      ];
-    } else {
-      return [
-        'n'                    => 'all',
-        'location_from'        => Locations::BOARD,
-        'return_keyword'       => true,
-        'with_icon'            => Icons::PROSPERITY,
-        'refresh_selection'    => true,
-        'enable_autoselection' => true,
-      ];
-    }
+    return [
+      'location_from'        => Locations::BOARD,
+      'return_keyword'       => true,
+      'with_icon'            => self::isCompel() ? Icons::EFFICIENCY : Icons::PROSPERITY,
+    ];
+  }
+
+  public function handleCardChoice(array $card)
+  {
+    self::setNextStep(1);
   }
 
 }
