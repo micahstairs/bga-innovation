@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card138 extends AbstractCard
 {
@@ -18,12 +19,12 @@ class Card138 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choose_from' => 'board'];
+    return ['choose_from' => Locations::BOARD];
   }
 
   public function handleCardChoice(array $card) {
     foreach (array_reverse(self::getStack($card['color'])) as $card) {
-      self::transferToScorePile($card);
+      self::transferToScorePile($card, self::getLauncherId());
     }
   }
 
