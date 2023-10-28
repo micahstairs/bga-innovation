@@ -1475,7 +1475,11 @@ class Innovation extends BgaGame {
                     break;
                 case 'artifactPlayerTurn':
                     if (this.selectArtifactOnDisplayIfEligibleForDogma().length == 1) {
-                        this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
+                        if (this.gamedatas.fourth_edition) {
+                            this.addActionButton("dogma_artifact", _("Dogma"), "action_clicForDogmaArtifact");
+                        } else {
+                            this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
+                        }
                     }
                     if (!this.gamedatas.fourth_edition) {
                         this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
@@ -2531,7 +2535,11 @@ class Innovation extends BgaGame {
         let HTML_action = "<p class='possible_action'>";
         let HTML_endorse_action = "<p class='possible_action'>";
         if (on_display) {
-            HTML_action += _("Click 'Dogma and Return' to execute the dogma effect(s) of this card.");
+            if (this.gamedatas.fourth_edition) {
+                HTML_action += _("Click 'Dogma' to execute the dogma effect(s) of this card.");
+            } else {
+                HTML_action += _("Click 'Dogma and Return' to execute the dogma effect(s) of this card.");
+            }
         } else if (can_endorse) {
             if (self.gamedatas.fourth_edition) {
                 HTML_action += dojo.string.substitute(
