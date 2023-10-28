@@ -103,22 +103,27 @@ $game_options = array(
         )
     ),
 
-    // 102 => array(
-    //     'name' => totranslate('Artifacts of History expansion'),
-    //     'values' => array(
-    //         1 => array('name' => totranslate('Disable')),
-    //         2 => array(
-    //             'name' => totranslate('Enable without Relics'),
-    //             'no_beginner' => true,
-    //             'tmdisplay' => totranslate('Artifacts Expansion'),
-    //         ),
-    //         3 => array(
-    //             'name' => totranslate('Enable with Relics'),
-    //             'no_beginner' => true,
-    //             'tmdisplay' => totranslate('Artifacts Expansion with Relics')
-    //         ),
-    //     )
-    // ),
+    102 => array(
+        'name' => totranslate('Artifacts of History expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array(
+                'name' => totranslate('Enable'),
+                'no_beginner' => true,
+                'tmdisplay' => totranslate('Artifacts Expansion'),
+            ),
+            3 => array(
+                'name' => totranslate('Enable with Relics (3rd edition only)'),
+                'no_beginner' => true,
+                'tmdisplay' => totranslate('Artifacts Expansion with Relics')
+            ),
+        ),
+        'startcondition' => array(
+            1 => array(
+                array('type' => 'otheroptionisnot', 'id' => 102, 'value' => 3, 'message' => totranslate('Relics are not part of the 4th edition rules')),
+            ),
+        ),
+    ),
 
     103 => array(
         'name' => totranslate('Cities of Destiny expansion'),
