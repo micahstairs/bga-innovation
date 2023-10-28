@@ -1,6 +1,7 @@
 <?php
 
 namespace Innovation\Enums;
+
 use Innovation\Utils\Strings;
 
 class Icons
@@ -13,31 +14,32 @@ class Icons
   const INDUSTRY = 5;
   const EFFICIENCY = 6;
   const AVATAR = 7;
+  const FLAG = 8;
   const ECHO_EFFECT = 10;
 
   public static function render(int $icon): string
   {
     $name = '';
     switch ($icon) {
-      case 1:
+      case self::PROSPERITY:
         $name = clienttranslate('prosperity');
         break;
-      case 2:
+      case self::HEALTH:
         $name = clienttranslate('health');
         break;
-      case 3:
+      case self::CONCEPT:
         $name = clienttranslate('concept');
         break;
-      case 4:
+      case self::AUTHORITY:
         $name = clienttranslate('authority');
         break;
-      case 5:
+      case self::INDUSTRY:
         $name = clienttranslate('industry');
         break;
-      case 6:
+      case self::EFFICIENCY:
         $name = clienttranslate('efficiency');
         break;
-      case 7:
+      case self::AVATAR:
         $name = clienttranslate('avatar');
         break;
     }

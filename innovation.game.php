@@ -3786,7 +3786,7 @@ class Innovation extends Table
             $opponent_ids = self::getActiveOpponentIds($player_id);
             foreach (Colors::ALL as $color) {
                 // Flags
-                $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
+                $num_visible_flags = self::countVisibleIconsInPile($player_id, Icons::FLAG, $color);
                 $num_visible_cards = self::countVisibleCards($player_id, $color);
                 $opponent_has_more_visible_cards = false;
                 foreach ($opponent_ids as $opponent_id) {

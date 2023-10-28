@@ -6,7 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card150 extends AbstractCard
+class Card150_4E extends AbstractCard
 {
 
   // Hunt-Lenox Globe (4th edition):
