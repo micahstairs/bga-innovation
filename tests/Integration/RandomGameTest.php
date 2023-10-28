@@ -2,8 +2,6 @@
 
 namespace Integration\Cards\Base;
 
-use Innovation\Enums\Locations;
-use Innovation\Utils\Arrays;
 use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
@@ -138,8 +136,16 @@ class RandomGameTest extends BaseIntegrationTest
       ->meld();
     $this->tableInstance->advanceGame();
 
-    // Handle interactions like those for the Search Icon
+    // Handle search/dig/steal/junk interactions
     self::excecuteInteractions();
+
+    if (self::getCurrentStateName() === 'relicPlayerTurn') {
+      // TODO(LATER): Seize relic instead of passing
+      $this->tableInstance
+        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+        ->passSeizeRelic();
+      $this->tableInstance->advanceGame();
+    }
 
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
       $promotedCardId = self::getRandomCardId(self::getCardsToPromote());
