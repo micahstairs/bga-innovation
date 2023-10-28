@@ -30,11 +30,11 @@ class Card194 extends AbstractCard
           $playerId = $playerIds[0];
           $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
           self::notifyPlayer(clienttranslate('${You} have the highest top ${color} card.'), $args, $playerId);
-          self::notifyOthers(clienttranslate('${You} have the highest top ${color} card.'), $args, $playerId);
+          self::notifyOthers(clienttranslate('${player_name} has the highest top ${color} card.'), $args, $playerId);
           self::achieve($card, $playerId);
-          return;
         } else {
           self::transferToHand($card);
+          return;
         }
       } while (true);
     }

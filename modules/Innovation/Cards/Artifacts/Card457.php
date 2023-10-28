@@ -20,8 +20,13 @@ class Card457 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
+      self::setAuxiliaryValue(-1); // Track card chosen from the score pile
       return ['choose_from' => Locations::SCORE];
     } else if (self::isSecondInteraction()) {
+      if (self::getAuxiliaryValue() === -1) {
+        // Skip this interaction if no card was chosen from the score pile
+        return [];
+      }
       return [
         'choose_from' => Locations::BOARD,
         'owner_from'  => 'any player',
@@ -30,8 +35,9 @@ class Card457 extends AbstractCard
     } else {
       return [
         'can_pass'      => true,
-        'n'             => 'all',
+        'n'             => 2,
         'location_from' => Locations::HAND,
+        'return_keyword' => true,
       ];
     }
   }
@@ -43,7 +49,11 @@ class Card457 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       self::transferToBoard(self::getCard(self::getAuxiliaryValue()), $card['owner']);
       self::transferToScorePile($card, self::getPlayerId());
-    } else if (self::isThirdInteraction()) {
+    }
+  }
+
+  public function afterInteraction() {
+    if (self::isThirdInteraction() && self::getNumChosen() === 2) {
       self::setNextStep(1);
     }
   }

@@ -2,8 +2,6 @@
 
 namespace Integration\Cards\Base;
 
-use Innovation\Enums\Locations;
-use Innovation\Utils\Arrays;
 use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
@@ -11,16 +9,19 @@ class RandomGameTest extends BaseIntegrationTest
 
   public function test_randomGame_thirdEdition_artifacts_cities_echoes()
   {
+    error_log("*** test_randomGame_thirdEdition_artifacts_cities_echoes ***");
     self::executeGame();
   }
 
   public function test_randomGame_thirdEdition_artifactsWithRelics()
   {
+    error_log("*** test_randomGame_thirdEdition_artifactsWithRelics ***");
     self::executeGame();
   }
 
   public function test_randomGame_fourthEdition_artifacts_cities_echoes_unseen()
   {
+    error_log("*** test_randomGame_fourthEdition_artifacts_cities_echoes_unseen ***");
     self::executeGame();
   }
 
@@ -78,7 +79,12 @@ class RandomGameTest extends BaseIntegrationTest
 
     // Make sure we don't try to dogma Battleship Yamato
     if ($cardId == 188) {
-      self::returnArtifact();
+      $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
+      if ($edition <= 3) {
+        self::returnArtifact();
+      } else {
+        self::passArtifact();
+      }
       return;
     }
 
@@ -133,8 +139,16 @@ class RandomGameTest extends BaseIntegrationTest
       ->meld();
     $this->tableInstance->advanceGame();
 
-    // Handle interactions like those for the Search Icon
+    // Handle search/dig/steal/junk interactions
     self::excecuteInteractions();
+
+    if (self::getCurrentStateName() === 'relicPlayerTurn') {
+      // TODO(LATER): Seize relic instead of passing
+      $this->tableInstance
+        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+        ->passSeizeRelic();
+      $this->tableInstance->advanceGame();
+    }
 
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
       $promotedCardId = self::getRandomCardId(self::getCardsToPromote());

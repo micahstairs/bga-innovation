@@ -47,7 +47,7 @@ class Card370_4E extends AbstractCard
   }
 
   public function handleCardChoice(array $card) {
-    if (self::isFirstNonDemand()) {
+    if (self::isFirstNonDemand() && self::getValue($card) == 4) {
       self::incrementAuxiliaryValue();
     }
   }

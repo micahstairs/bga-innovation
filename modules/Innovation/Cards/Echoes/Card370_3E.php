@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card370_3E extends AbstractCard
 {
@@ -24,15 +24,15 @@ class Card370_3E extends AbstractCard
       return [
         'can_pass'     => true,
         'choose_color' => true,
-        'color'        => self::getUniqueColors('hand'),
+        'color'        => self::getUniqueColors(Locations::HAND),
       ];
     } else if (self::isSecondInteraction()) {
       return [
         'can_pass'      => true,
         'n_min'         => 1,
         'n_max'         => 3,
-        'location_from' => 'hand',
-        'location_to'   => 'revealed,deck',
+        'location_from' => Locations::HAND,
+        'location_to'   => Locations::REVEALED_THEN_DECK,
         'color'         => [self::getAuxiliaryValue()],
       ];
     } else {

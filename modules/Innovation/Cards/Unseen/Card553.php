@@ -22,7 +22,8 @@ class Card553 extends AbstractCard
 
     if ($hadSeven) {
       self::drawAndScore(7);
-    } else if ($hadEight) {
+    }
+    if ($hadEight) {
       self::setMaxSteps(1);
       self::setAuxiliaryValue($hadNine ? 1 : 0);
     } else if ($hadNine) {

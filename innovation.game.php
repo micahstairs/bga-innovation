@@ -3786,7 +3786,7 @@ class Innovation extends Table
             $opponent_ids = self::getActiveOpponentIds($player_id);
             foreach (Colors::ALL as $color) {
                 // Flags
-                $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
+                $num_visible_flags = self::countVisibleIconsInPile($player_id, Icons::FLAG, $color);
                 $num_visible_cards = self::countVisibleCards($player_id, $color);
                 $opponent_has_more_visible_cards = false;
                 foreach ($opponent_ids as $opponent_id) {
@@ -8145,14 +8145,18 @@ class Innovation extends Table
         self::checkAction('seizeRelicToHand');
 
         $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($this->innovationGameState->get('relic_id'));
+        $relic = self::getCardInfo($this->innovationGameState->get('relic_id'));
 
-        if ($card['owner'] != 0 && $card['owner'] != $player_id) {
-            self::incStat(1, 'relics_stolen_number', $card['owner']);
+        if (!self::canSeizeRelicToAchievements($relic, $player_id)) {
+            self::throwInvalidChoiceException();
+        }
+
+        if ($relic['owner'] != 0 && $relic['owner'] != $player_id) {
+            self::incStat(1, 'relics_stolen_number', $relic['owner']);
         }
         self::incStat(1, 'relics_seized_number', $player_id);
 
-        self::transferCardFromTo($card, $player_id, 'hand');
+        self::transferCardFromTo($relic, $player_id, 'hand');
         $this->innovationGameState->set('relic_id', -1);
 
         self::trace('relicPlayerTurn->promoteCard (seizeRelicToHand)');
@@ -8165,15 +8169,19 @@ class Innovation extends Table
         self::checkAction('seizeRelicToAchievements');
 
         $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($this->innovationGameState->get('relic_id'));
+        $relic = self::getCardInfo($this->innovationGameState->get('relic_id'));
 
-        if ($card['owner'] != 0 && $card['owner'] != $player_id) {
-            self::incStat(1, 'relics_stolen_number', $card['owner']);
+        if (!self::canSeizeRelicToHand($relic, $player_id)) {
+            self::throwInvalidChoiceException();
+        }
+
+        if ($relic['owner'] != 0 && $relic['owner'] != $player_id) {
+            self::incStat(1, 'relics_stolen_number', $relic['owner']);
         }
         self::incStat(1, 'relics_seized_number', $player_id);
 
         try {
-            self::transferCardFromTo($card, $player_id, "achievements");
+            self::transferCardFromTo($relic, $player_id, "achievements");
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::promoteCard');

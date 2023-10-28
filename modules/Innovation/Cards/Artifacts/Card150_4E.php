@@ -6,14 +6,10 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
-class Card150 extends AbstractCard
+class Card150_4E extends AbstractCard
 {
 
-  // Hunt-Lenox Globe
-  // - 3rd edition:
-  //   - If you have fewer than four cards in your hand, return all non-green top cards from your
-  //     board. Draw a [5] for each card returned. Meld a card from your hand.
-  // - 4th edition:
+  // Hunt-Lenox Globe (4th edition):
   //   - If you have fewer than four cards in your hand, return your top card of each non-green
   //     color. Draw a [5] for each card you return. 
   //   - Meld a card from your hand.
@@ -21,12 +17,12 @@ class Card150 extends AbstractCard
 
   public function initialExecution()
   {
-    self::setMaxSteps(2);
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
+    if (self::isFirstNonDemand()) {
       if (self::countCards(Locations::HAND) < 4) {
         return [
           'n'              => 'all',
@@ -47,7 +43,7 @@ class Card150 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstNonDemand() && self::isFirstInteraction()) {
+    if (self::isFirstNonDemand()) {
       for ($i = 0; $i < self::getNumChosen(); $i++) {
         self::draw(5);
       }

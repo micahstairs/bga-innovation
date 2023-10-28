@@ -2997,7 +2997,7 @@ var Innovation = /** @class */ (function (_super) {
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     };
     Innovation.prototype.getIconDiv = function (card, icon, icon_location, size) {
-        if (icon === null) {
+        if (icon === null || Number.isNaN(icon)) {
             return '';
         }
         if (icon == 0) {
@@ -4621,16 +4621,16 @@ var Innovation = /** @class */ (function (_super) {
         }
         // Add cards to popup
         for (var i = min_id; i <= max_id; i++) {
-            // TODO(4E): Implement Hitchhiking and Teleprompter later.
-            if (i != 560 && i != 570) {
+            // TODO(4E): Implement Martian Internet, Hitchhiking, and Teleprompter later.
+            if (i != 451 && i != 560 && i != 570) {
                 node.innerHTML += this.createCardForCardBrowser(i);
             }
         }
         // NOTE: For some reason the tooltips get removed when we add more HTML to the node, so we need to use a
         // separate loop to add them.
         for (var i = min_id; i <= max_id; i++) {
-            // TODO(4E): Implement Hitchhiking and Teleprompter later.
-            if (i != 560 && i != 570) {
+            // TODO(4E): Implement Martian Internet, Hitchhiking, and Teleprompter later.
+            if (i != 451 && i != 560 && i != 570) {
                 this.addCustomTooltip("browse_card_id_".concat(i), this.getTooltipForCard(i), "");
             }
         }

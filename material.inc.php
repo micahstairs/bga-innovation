@@ -995,6 +995,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
         'non_demand_effect_1_fourth'          => clienttranslate('If you have fewer than four cards in your hand, return your top card of each non-green color. Draw a ${age_5} for each card you return.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Meld a card from your hand.'),
+        'separate_4E_implementation'          => true,
     ),
 
     151 => array(

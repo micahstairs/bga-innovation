@@ -287,7 +287,7 @@ abstract class BaseIntegrationTest extends BaseTest
     }
 
     $state = self::getCurrentStateName();
-    if (!in_array($state, ['playerTurn', 'gameEnd', 'artifactPlayerTurn', 'promoteCardPlayerTurn', 'dogmaPromotedPlayerTurn'])) {
+    if (!in_array($state, ['playerTurn', 'gameEnd', 'artifactPlayerTurn', 'promoteCardPlayerTurn', 'dogmaPromotedPlayerTurn', 'relicPlayerTurn'])) {
       error_log("ERROR: Unexpected state after doing interactions: $state");
     }
   }
