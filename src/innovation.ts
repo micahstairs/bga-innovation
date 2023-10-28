@@ -257,7 +257,7 @@ class Innovation extends BgaGame {
                 main_area.innerHTML = "<button id='debug_safeguard' class='action-button debug_button bgabutton bgabutton_red'>SAFEGUARD</button>" + main_area.innerHTML;
             }
             main_area.innerHTML =
-                "<select id='debug_card_list'></select>"
+                "<input type=\"text\" id=\"search_card_list\" placeholder=\"Search cards...\"></br><select id='debug_card_list'></select>"
                 + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
                 + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
                 + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
@@ -315,6 +315,22 @@ class Innovation extends BgaGame {
             dojo.connect($('debug_splay_right'), 'onclick', (_) => this.debugSplay(2));
             dojo.connect($('debug_splay_up'), 'onclick', (_) => this.debugSplay(3));
             dojo.connect($('debug_splay_aslant'), 'onclick', (_) => this.debugSplay(4));
+
+            // Make drop-down searchable
+            document.getElementById("search_card_list")!.addEventListener("input", function() {
+                const input = this as HTMLInputElement;
+                const filter = input.value.toUpperCase();
+                const select = document.getElementById("debug_card_list")!;
+                const options = select.getElementsByTagName("option");
+                for (let i = 0; i < options.length; i++) {
+                  const option = options[i];
+                  if (option.textContent!.toUpperCase().indexOf(filter) > -1) {
+                    option.style.display = "";
+                  } else {
+                    option.style.display = "none";
+                  }
+                }
+              });
         }
         //******
 
