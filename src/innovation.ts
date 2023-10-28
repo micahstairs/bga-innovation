@@ -631,15 +631,15 @@ class Innovation extends BgaGame {
         // PLAYERS' MUSEUMS
         this.zone["museums"] = {};
         for (let player_id in this.players) {
-            if (!gamedatas.artifacts_expansion_enabled || !gamedatas.fourth_edition) {
-                dojo.byId('museums_container_' + player_id).style.display = 'none';
-                continue;
-            }
-
             // Creation of the zone
             let zone = this.createZone('museums', player_id, null, null, null);
             this.zone["museums"][player_id] = zone;
             this.setPlacementRulesForPlayerMuseums(zone);
+
+            if (!gamedatas.artifacts_expansion_enabled || !gamedatas.fourth_edition) {
+                dojo.byId('museums_container_' + player_id).style.display = 'none';
+                continue;
+            }
 
             // Add cards to zone
             let cards = gamedatas.artifacts_in_museums[player_id];

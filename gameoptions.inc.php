@@ -91,6 +91,8 @@ $game_options = array(
             1 => array(
                 array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
                 array('type' => 'otheroption', 'id' => 106, 'value' => 1, 'message' => totranslate('The Unseen expansion can only be played when using the 4th edition rules')),
+            ),
+            3 => array(
                 array('type' => 'otheroptionisnot', 'id' => 102, 'value' => 3, 'message' => totranslate('Relics are not part of the 4th edition rules')),
             ),
             // 2 => array(

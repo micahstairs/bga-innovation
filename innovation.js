@@ -677,14 +677,14 @@ var Innovation = /** @class */ (function (_super) {
         // PLAYERS' MUSEUMS
         this.zone["museums"] = {};
         for (var player_id in this.players) {
-            if (!gamedatas.artifacts_expansion_enabled || !gamedatas.fourth_edition) {
-                dojo.byId('museums_container_' + player_id).style.display = 'none';
-                continue;
-            }
             // Creation of the zone
             var zone = this.createZone('museums', player_id, null, null, null);
             this.zone["museums"][player_id] = zone;
             this.setPlacementRulesForPlayerMuseums(zone);
+            if (!gamedatas.artifacts_expansion_enabled || !gamedatas.fourth_edition) {
+                dojo.byId('museums_container_' + player_id).style.display = 'none';
+                continue;
+            }
             // Add cards to zone
             var cards = gamedatas.artifacts_in_museums[player_id];
             for (var _i = 0, cards_1 = cards; _i < cards_1.length; _i++) {
