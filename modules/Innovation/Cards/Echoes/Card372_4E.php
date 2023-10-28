@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card372_4E extends AbstractCard
 {
@@ -30,13 +31,13 @@ class Card372_4E extends AbstractCard
         'can_pass'       => true,
         'n_min'          => 1,
         'n_max'          => 3,
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     } else {
       return [
         'n'                               => count(self::getAuxiliaryArray()) - 1,
-        'location_from'                   => 'hand',
+        'location_from'                   => Locations::HAND,
         'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
@@ -46,7 +47,7 @@ class Card372_4E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue(max(self::getAuxiliaryValue(), $card['age']));
+      self::setAuxiliaryValue(max(self::getAuxiliaryValue(), self::getValue($card)));
     } else if (self::isSecondInteraction()) {
       self::removeFromAuxiliaryArray($card['id']);
     }
@@ -56,13 +57,17 @@ class Card372_4E extends AbstractCard
   {
     if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       $valueToDraw = self::getAuxiliaryValue() + 1;
-      $cardIds = [];
-      for ($i = 0; $i < self::getNumChosen(); $i++) {
-        $card = self::draw($valueToDraw);
-        $cardIds[] = $card['id'];
+      if (self::getNumChosen() === 1) {
+        self::foreshadow(self::draw($valueToDraw));
+      } else if (self::getNumChosen() > 1) {
+        $cardIds = [];
+        for ($i = 0; $i < self::getNumChosen(); $i++) {
+          $card = self::draw($valueToDraw);
+          $cardIds[] = $card['id'];
+        }
+        self::setAuxiliaryArray($cardIds); // Track cards to foreshadow/return
+        self::setMaxSteps(2);
       }
-      self::setAuxiliaryArray($cardIds); // Track cards to foreshadow/return
-      self::setMaxSteps(2);
     } else if (self::isSecondInteraction()) {
       // NOTE: There should always be exactly one card in the array at this point
       foreach (self::getAuxiliaryArray() as $cardId) {
