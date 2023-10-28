@@ -2522,9 +2522,10 @@ class Innovation extends BgaGame {
         }
 
         let on_display = card_location == 'display';
-        let exists_i_demand_effect = card.i_demand_effect !== undefined;
-        let exists_i_compel_effect = card.i_compel_effect !== undefined;
-        let exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
+        console.log(JSON.stringify(card));
+        let exists_i_demand_effect = card.i_demand_effect !== null;
+        let exists_i_compel_effect = card.i_compel_effect !== null;
+        let exists_non_demand_effect = card.non_demand_effect_1 !== null;
         let can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment;
         let on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
 
@@ -2535,7 +2536,7 @@ class Innovation extends BgaGame {
         let HTML_action = "<p class='possible_action'>";
         let HTML_endorse_action = "<p class='possible_action'>";
         if (on_display) {
-            if (this.gamedatas.fourth_edition) {
+            if (self.gamedatas.fourth_edition) {
                 HTML_action += _("Click 'Dogma' to execute the dogma effect(s) of this card.");
             } else {
                 HTML_action += _("Click 'Dogma and Return' to execute the dogma effect(s) of this card.");

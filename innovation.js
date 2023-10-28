@@ -2395,9 +2395,10 @@ var Innovation = /** @class */ (function (_super) {
             return "";
         }
         var on_display = card_location == 'display';
-        var exists_i_demand_effect = card.i_demand_effect !== undefined;
-        var exists_i_compel_effect = card.i_compel_effect !== undefined;
-        var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
+        console.log(JSON.stringify(card));
+        var exists_i_demand_effect = card.i_demand_effect !== null;
+        var exists_i_compel_effect = card.i_compel_effect !== null;
+        var exists_non_demand_effect = card.non_demand_effect_1 !== null;
         var can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment;
         var on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
         if (info.no_effect) {
@@ -2406,7 +2407,7 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_action = "<p class='possible_action'>";
         var HTML_endorse_action = "<p class='possible_action'>";
         if (on_display) {
-            if (this.gamedatas.fourth_edition) {
+            if (self.gamedatas.fourth_edition) {
                 HTML_action += _("Click 'Dogma' to execute the dogma effect(s) of this card.");
             }
             else {
