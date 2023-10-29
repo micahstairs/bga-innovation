@@ -7922,7 +7922,7 @@ class Innovation extends Table
         }
 
         // Make sure this player is the same one who executed the current card
-        if (self::getCurrentNestedCardState()['launcher_id'] == $player_id) {
+        if (self::getCurrentNestedCardState()['launcher_id'] != $player_id) {
             return;
         }
         if ($this->innovationGameState->get('current_nesting_index') >= 1) {
