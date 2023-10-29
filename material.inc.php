@@ -2308,6 +2308,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('For each visible bonus on your board, draw and tuck a card of that value, in ascending order.'),
         'non_demand_effect_1_fourth'          => clienttranslate('If Wristwatch was foreseen, return all non-bottom cards from your board.'),
         'non_demand_effect_2_fourth'          => clienttranslate('For each bonus on your board, draw and meld a card of that value, in ascending order.'),
+        'separate_4E_implementation'          => true,
     ),
 
     423 => array(
