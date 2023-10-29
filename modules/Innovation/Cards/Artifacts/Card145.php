@@ -34,11 +34,9 @@ class Card145 extends AbstractCard
     }
     if (self::isCompel()) {
       return [
-        'n'             => $numCardsWithAuthority,
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
+        'n'        => $numCardsWithAuthority,
+        'location' => Locations::SCORE,
+        'owner_to' => self::getLauncherId(),
       ];
     } else {
       return [

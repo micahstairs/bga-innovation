@@ -6593,10 +6593,10 @@ class Innovation extends Table
             return null;
         }
 
-        if (array_key_exists('n', $options) && $options['n'] == 'all') {
+        if (array_key_exists('n', $options) && $options['n'] === 'all') {
             $options['n'] = 999;
         }
-        if (array_key_exists('n_max', $options) && $options['n_max'] == 'all') {
+        if (array_key_exists('n_max', $options) && $options['n_max'] === 'all') {
             $options['n_max'] = 999;
         }
         if (!array_key_exists('can_pass', $options)) {
