@@ -890,7 +890,8 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Cyrus Cylinder'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Splay left a color on any player\'s board.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Choose any other top purple card on any player\'s board. Self-execute it. '),
+        'non_demand_effect_2_fourth'          => clienttranslate('Choose any other top purple card on any player\'s board. Self-execute it.'),
+        'separate_4E_implementation'          => true,
     ),
 
     /* Artifacts - Age 3 */
@@ -1063,7 +1064,7 @@ $this->textual_card_infos = array(
         'name_first_and_third'                => clienttranslate('Gujin Tushu Jinsheng'),
         'name_fourth'                         => clienttranslate('Gujin Tushu Jicheng'),
         'non_demand_effect_1_first_and_third' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and fully execute it. '),
+        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and fully execute it.'),
     ),
 
     162 => array(

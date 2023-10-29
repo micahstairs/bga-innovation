@@ -26,7 +26,7 @@ class Card371 extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       $bonuses = [];
       foreach (self::getPlayerIds() as $playerId) {
-        $bonuses = array_merge($bonuses, self::getBonuses($playerId));
+        $bonuses = array_merge( $bonuses, self::getBonuses($playerId));
       }
       if ($bonuses) {
         $valuesToDraw = [];
@@ -38,7 +38,7 @@ class Card371 extends AbstractCard
       } else if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(2);
       }
-    } else if (self::hasCards('forecast')) {
+    } else if (self::isSecondNonDemand() && self::hasCards('forecast')) {
       $destinyCard = self::getCard(CardIds::DESTINY);
       $destinyIsAvailable = $destinyCard['owner'] == 0 && $destinyCard['location'] == 'achievements';
       self::setAuxiliaryValue($destinyIsAvailable ? 1 : 0); // Track whether to prompt to reveal a blue card
