@@ -43,11 +43,11 @@ class Card123 extends AbstractCard
         }
       }
       if (!$hasTopArtifact) {
-        foreach (array_reverse(self::getStack($color)) as $card) {
+        foreach (array_reverse(self::getStack($color, $playerId)) as $card) {
           if (self::isFirstOrThirdEdition()) {
-            self::transferToScorePile($card);
+            self::transferToScorePile($card, $playerId);
           } else {
-            self::score($card);
+            self::score($card, $playerId);
           }
         }
       }
@@ -56,7 +56,7 @@ class Card123 extends AbstractCard
 
   public function afterInteraction()
   {
-    if ($card = $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT)) {
+    if (self::isFirstOrThirdEdition() && ($card = $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT))) {
       self::transferToHand($card);
     }
   }
