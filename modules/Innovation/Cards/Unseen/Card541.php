@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card541 extends AbstractCard
 {
@@ -15,11 +16,13 @@ class Card541 extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      self::setMaxSteps(2);
+      if (self::countCards(Locations::HAND)) {
+        self::setMaxSteps(1);
+      }
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     } else if (self::isThirdNonDemand()) {
-      if (self::countCards('score') >= 1) {
+      if (self::countCards(Locations::SCORE)) {
         self::setMaxSteps(1);
       } else {
         self::drawAndScore(0);
@@ -33,13 +36,13 @@ class Card541 extends AbstractCard
       return self::getFirstInteractionOptions();
     } else if (self::isSecondNonDemand()) {
       return [
-        'location_from'  => 'score',
+        'location_from'  => Locations::SCORE,
         'return_keyword' => true,
       ];
     } else {
       return [
         'choose_value' => true,
-        'age'          => self::getUniqueValues('score'),
+        'age'          => self::getUniqueValues(Locations::SCORE),
       ];
     }
   }
@@ -54,7 +57,7 @@ class Card541 extends AbstractCard
     } else {
       $keyword = self::getAuxiliaryValue() == 1 ? 'score_keyword' : 'safeguard_keyword';
       return [
-        'location_from' => 'hand',
+        'location_from' => Locations::HAND,
         $keyword        => true,
       ];
     }
@@ -71,6 +74,7 @@ class Card541 extends AbstractCard
   public function handleListChoice(int $choice)
   {
     self::setAuxiliaryValue($choice);
+    self::setMaxSteps(2);
   }
 
   public function handleValueChoice(int $value)
