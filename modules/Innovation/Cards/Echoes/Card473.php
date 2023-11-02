@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card473 extends AbstractCard
 {
@@ -15,9 +16,9 @@ class Card473 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand()) {
-      $lowestValue = self::getMinValueInLocation('hand');
-      foreach (self::getCards('hand') as $card) {
-        if ($card['age'] > $lowestValue) {
+      $lowestValue = self::getMinValueInLocation(Locations::HAND);
+      foreach (self::getCards(Locations::HAND) as $card) {
+        if (self::getValue($card) > $lowestValue) {
           self::transferToScorePile($card, self::getLauncherId());
         }
       }
@@ -29,7 +30,8 @@ class Card473 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
-      'location_from'       => 'hand',
+      'can_pass'            => true,
+      'location_from'       => Locations::HAND,
       'owner_from'          => 'any player',
       'achieve_if_eligible' => true,
     ];
