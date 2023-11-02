@@ -35,4 +35,9 @@ class Card197_4E extends AbstractCard
     ];
   }
 
+  public function handleCardChoice(array $card)
+  {
+    self::draw(10);
+  }
+
 }
