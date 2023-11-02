@@ -260,7 +260,7 @@ abstract class BaseIntegrationTest extends BaseTest
     return $this->tableInstance->getTable()->innovationGameState->getAsArray($name);
   }
 
-  protected function excecuteInteractions()
+  protected function executeInteractions()
   {
     while (self::getCurrentStateName() === 'selectionMove') {
       $choices = [];

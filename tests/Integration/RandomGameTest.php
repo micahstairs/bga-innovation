@@ -63,6 +63,12 @@ class RandomGameTest extends BaseIntegrationTest
       }
       // TODO: Add other actions here (e.g. endorse)
       $actions[array_rand($actions)]();
+
+      foreach (self::getPlayerIds() as $playerId) {
+        if (self::getCards(Locations::REVEALED, $playerId)) {
+          throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+        }
+      }
     }
 
     // TODO: Add better game end info (including the max age dogma'd). Also stop hard-coding the player numbers.
@@ -95,7 +101,7 @@ class RandomGameTest extends BaseIntegrationTest
       ->dogmaArtifactOnDisplay();
     $this->tableInstance->advanceGame();
 
-    self::excecuteInteractions();
+    self::executeInteractions();
   }
 
   private function returnArtifact()
@@ -116,7 +122,7 @@ class RandomGameTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
     
     // Return artifacts, if prompted
-    self::excecuteInteractions();
+    self::executeInteractions();
   }
 
   private function draw()
@@ -140,7 +146,7 @@ class RandomGameTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
 
     // Handle search/dig/steal/junk interactions
-    self::excecuteInteractions();
+    self::executeInteractions();
 
     if (self::getCurrentStateName() === 'relicPlayerTurn') {
       // TODO(LATER): Seize relic instead of passing
@@ -168,7 +174,7 @@ class RandomGameTest extends BaseIntegrationTest
       $this->tableInstance->advanceGame();
     }
 
-    self::excecuteInteractions();
+    self::executeInteractions();
   }
 
   private function dogma()
@@ -182,7 +188,7 @@ class RandomGameTest extends BaseIntegrationTest
       ->dogma();
     $this->tableInstance->advanceGame();
 
-    self::excecuteInteractions();
+    self::executeInteractions();
   }
 
   private function achieveStandardAchievement()
