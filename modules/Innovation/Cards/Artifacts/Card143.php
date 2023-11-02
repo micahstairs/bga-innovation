@@ -39,6 +39,7 @@ class Card143 extends AbstractCard
   {
     $location = self::getAuxiliaryValue() == Colors::YELLOW ? 'hand' : 'score';
     return [
+      'n'              => 'all',
       'location_from'  => $location,
       'return_keyword' => true,
     ];
