@@ -16606,7 +16606,13 @@ class Innovation extends Table
                 }
                 if ($player_id_with_max) {
                     $museum = self::getCardsInLocation($player_id_with_max, Locations::MUSEUMS)[0];
-                    $this->transferCardFromTo($museum, $player_id_with_max, Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
+                    try {
+                        $this->transferCardFromTo($museum, $player_id_with_max, Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
+                    } catch (EndOfGame $e) {
+                        self::trace('interInteractionStep->justBeforeGameEnd');
+                        $this->gamestate->nextState('justBeforeGameEnd');
+                        return;
+                    }
                 }
 
                 // Make the remaining museums available again

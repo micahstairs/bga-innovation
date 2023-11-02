@@ -2,6 +2,7 @@
 
 namespace Integration\Cards\Base;
 
+use Innovation\Enums\Locations;
 use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
