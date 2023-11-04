@@ -26,15 +26,15 @@ class Card145 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $numCardsWithAuthority = 0;
-    foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, Icons::AUTHORITY)) {
-        $numCardsWithAuthority++;
-      }
-    }
     if (self::isCompel()) {
+      $numTopCardsWithAuthority = 0;
+      foreach (self::getTopCards() as $card) {
+        if (self::hasIcon($card, Icons::AUTHORITY)) {
+          $numTopCardsWithAuthority++;
+        }
+      }
       return [
-        'n'        => $numCardsWithAuthority,
+        'n'        => $numTopCardsWithAuthority,
         'location' => Locations::SCORE,
         'owner_to' => self::getLauncherId(),
       ];
@@ -42,7 +42,7 @@ class Card145 extends AbstractCard
       return [
         'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
-        'age'           => $numCardsWithAuthority,
+        'age'           => self::getStandardIconCount(Icons::AUTHORITY),
       ];
     }
   }
