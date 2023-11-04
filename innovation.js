@@ -328,7 +328,7 @@ var Innovation = /** @class */ (function (_super) {
                 main_area.innerHTML = "<button id='debug_safeguard' class='action-button debug_button bgabutton bgabutton_red'>SAFEGUARD</button>" + main_area.innerHTML;
             }
             main_area.innerHTML =
-                "<select id='debug_card_list'></select>"
+                "<input type=\"text\" id=\"search_card_list\" placeholder=\"Search cards...\"></br><select id='debug_card_list'></select>"
                     + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
                     + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
                     + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
@@ -386,6 +386,22 @@ var Innovation = /** @class */ (function (_super) {
             dojo.connect($('debug_splay_right'), 'onclick', function (_) { return _this.debugSplay(2); });
             dojo.connect($('debug_splay_up'), 'onclick', function (_) { return _this.debugSplay(3); });
             dojo.connect($('debug_splay_aslant'), 'onclick', function (_) { return _this.debugSplay(4); });
+            // Make drop-down searchable
+            document.getElementById("search_card_list").addEventListener("input", function () {
+                var input = this;
+                var filter = input.value.toUpperCase();
+                var select = document.getElementById("debug_card_list");
+                var options = select.getElementsByTagName("option");
+                for (var i = 0; i < options.length; i++) {
+                    var option = options[i];
+                    if (option.textContent.toUpperCase().indexOf(filter) > -1) {
+                        option.style.display = "";
+                    }
+                    else {
+                        option.style.display = "none";
+                    }
+                }
+            });
         }
         //******
         this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });

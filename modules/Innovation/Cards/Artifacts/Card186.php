@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card186 extends AbstractCard
 {
@@ -22,7 +23,7 @@ class Card186 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from'  => 'board',
+        'location_from'  => Locations::BOARD,
         'return_keyword' => true,
         'age'            => self::getAuxiliaryValue(),
       ];
@@ -36,15 +37,17 @@ class Card186 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() === 1) {
-      self::incrementAuxiliaryValue2(1); // Increment number of cards returned
-    }
-    if (self::decrementAuxiliaryValue2() >= 0) { // Decrement the value to return next
-      self::setNextStep(1);
-    } else if (self::getAuxiliaryValue() >= 8) {
-      self::win();
-    } else {
-      self::setMaxSteps(2);
+    if (self::isFirstNonDemand()) {
+      if (self::getNumChosen() === 1) {
+        self::incrementAuxiliaryValue2(1); // Increment number of cards returned
+      }
+      if (self::decrementAuxiliaryValue() >= 0) { // Decrement the value to return next
+        self::setNextStep(1);
+      } else if (self::getAuxiliaryValue2() >= 8) {
+        self::win();
+      } else {
+        self::setMaxSteps(2);
+      }
     }
   }
 

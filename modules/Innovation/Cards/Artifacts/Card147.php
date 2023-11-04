@@ -41,11 +41,11 @@ class Card147 extends AbstractCard
           }
         }
       }
-      self::setAuxiliaryValue($numAffectedScorePiles); // Repurpose auxiliary array to track number of cards to draw and score
+      self::setAuxiliaryValue2($numAffectedScorePiles); // Track number of cards to draw and score
       return [
         'n'              => 'all',
         'owner_from'     => 'any player',
-        'location_from'  => 'score',
+        'location_from'  => Locations::SCORE,
         'return_keyword' => true,
         'age'            => $valueToReturn,
       ];
@@ -54,15 +54,22 @@ class Card147 extends AbstractCard
 
   public function handleValueChoice(int $value)
   {
-    self::setAuxiliaryValue($value);
+    self::setAuxiliaryValue($value); // Track value to return from all score piles
   }
 
   public function afterInteraction()
   {
     if (self::isSecondInteraction()) {
-      $numCards = self::getAuxiliaryValue();
+      $numCards = self::getAuxiliaryValue2();
+      $numFivesScored = 0;
       for ($i = 0; $i < $numCards; $i++) {
-        self::drawAndScore(5);
+        $card = self::drawAndScore(5);
+        if (self::getValue($card) === 5) {
+          $numFivesScored++;
+        }
+      }
+      if (self::isFourthEdition() && $numFivesScored) {
+        self::junkBaseDeck(self::getAuxiliaryValue());
       }
     }
   }

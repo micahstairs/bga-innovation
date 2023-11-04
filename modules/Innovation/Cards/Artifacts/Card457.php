@@ -9,8 +9,8 @@ class Card457 extends AbstractCard
 {
   // Tasmanian Tiger
   //   - Choose a card in your score pile. Choose a top card of the same color on any player's
-  //     board. Exchange the two cards, maintaining any splay. You may return two cards from your
-  //     hand. If you do, repeat this effect.
+  //     board. Exchange the two cards. You may return two cards from your hand. If you do, repeat
+  //     this effect.
 
   public function initialExecution()
   {
@@ -34,9 +34,9 @@ class Card457 extends AbstractCard
       ];
     } else {
       return [
-        'can_pass'      => true,
-        'n'             => 2,
-        'location_from' => Locations::HAND,
+        'can_pass'       => true,
+        'n'              => 2,
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     }
@@ -52,7 +52,8 @@ class Card457 extends AbstractCard
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isThirdInteraction() && self::getNumChosen() === 2) {
       self::setNextStep(1);
     }

@@ -32,7 +32,7 @@ class Card122 extends AbstractCard
     } else {
       return [
         'n'              => 'all',
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
         'color'          => [self::getAuxiliaryValue()],
       ];
@@ -45,7 +45,7 @@ class Card122 extends AbstractCard
     $otherPlayerRevealed = false;
     foreach (self::getPlayerIds() as $playerId) {
       self::revealHand($playerId);
-      if (self::countCardsKeyedByColor('hand')[$color] > 0) {
+      if (self::countCardsKeyedByColor(Locations::HAND, $playerId)[$color] > 0) {
         if ($playerId == self::getPlayerId()) {
           $playerRevealed = true;
         } else {

@@ -2,6 +2,7 @@
 
 namespace Integration\Cards\Base;
 
+use Innovation\Enums\Locations;
 use Integration\BaseIntegrationTest;
 
 class CompleteDogmaTest extends BaseIntegrationTest
@@ -57,8 +58,7 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
     self::setGlobalVariable("debug_mode", 2);
 
-    $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
-    error_log("*** STARTING GAME (edition: $edition) ***");
+    error_log("*** STARTING GAME ***");
 
     $numCardsTested = 0;
     foreach ($cardIds as $cardId) {
@@ -103,7 +103,13 @@ class CompleteDogmaTest extends BaseIntegrationTest
       ->dogma();
     $this->tableInstance->advanceGame();
 
-    self::excecuteInteractions();
+    self::executeInteractions();
+
+    foreach (self::getPlayerIds() as $playerId) {
+      if (self::getCards(Locations::REVEALED, $playerId)) {
+        throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+      }
+    }
   }
 
 }

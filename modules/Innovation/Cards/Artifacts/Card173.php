@@ -36,7 +36,7 @@ class Card173 extends AbstractCard
       $topCards = self::getTopCards();
       $maxValue = self::getMaxValue($topCards);
       foreach ($topCards as $card) {
-        if ($card['faceup_age'] == $maxValue) {
+        if (self::getValue($card) == $maxValue) {
           $colors[] = $card['color'];
         }
       }
@@ -44,7 +44,7 @@ class Card173 extends AbstractCard
         'choose_color' => true,
         'color'        => $colors,
       ];
-    } else if (self::isFirstNonDemand()) {
+    } else if (self::isFirstInteraction()) {
       return ['achieve_keyword' => true];
     } else {
       return [

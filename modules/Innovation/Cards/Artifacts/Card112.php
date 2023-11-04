@@ -35,6 +35,7 @@ class Card112 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
+      'n'              => 'all',
       'location_from'  => 'revealed,score',
       'return_keyword' => true,
     ];

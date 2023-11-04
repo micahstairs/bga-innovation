@@ -644,10 +644,22 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 269"); // Amsterdam
                 self::DbQuery("UPDATE card SET spot_6 = 8 WHERE id = 282"); // Dublin
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 284"); // New York City
+                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 286"); // Johannesburg
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 288"); // Montreal
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 289"); // London
+                self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 290"); // Toronto
+                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 292"); // Melbourne
+                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 294"); // San Francisco
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 295"); // Chongqing
+                self::DbQuery("UPDATE card SET spot_4 = 5 WHERE id = 298"); // Los Angeles
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 299"); // Hamburg
+                self::DbQuery("UPDATE card SET spot_6 = 2 WHERE id = 300"); // São Paulo
+                self::DbQuery("UPDATE card SET spot_6 = 2 WHERE id = 301"); // Chicago
+                self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 303"); // Buenos Aires
+                self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 305"); // Houston
+                self::DbQuery("UPDATE card SET spot_6 = 5 WHERE id = 308"); // Perth
+                self::DbQuery("UPDATE card SET spot_6 = 3 WHERE id = 309"); // Santiago
+                self::DbQuery("UPDATE card SET spot_6 = 2 WHERE id = 312"); // Miami
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 313"); // Hong Kong
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 314"); // Moscow
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 315"); // Bangalore
@@ -655,6 +667,7 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET spot_1 = 110, spot_6 = 5 WHERE id = 317"); // Singapore
                 self::DbQuery("UPDATE card SET spot_1 = 2, spot_2 = 6, spot_4 = 6, spot_6 = 9 WHERE id = 318"); // Seoul
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 319"); // Tel Aviv
+                self::DbQuery("UPDATE card SET spot_4 = 1 WHERE id = 320"); // Bangkok
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 321"); // Copenhagen
                 self::DbQuery("UPDATE card SET spot_2 = 110, spot_6 = 1 WHERE id = 322"); // Dubai
                 self::DbQuery("UPDATE card SET spot_2 = 6, spot_3 = 9, spot_4 = 5, spot_6 = 9 WHERE id = 323"); // Brussels
@@ -6580,10 +6593,10 @@ class Innovation extends Table
             return null;
         }
 
-        if (array_key_exists('n', $options) && $options['n'] == 'all') {
+        if (array_key_exists('n', $options) && $options['n'] === 'all') {
             $options['n'] = 999;
         }
-        if (array_key_exists('n_max', $options) && $options['n_max'] == 'all') {
+        if (array_key_exists('n_max', $options) && $options['n_max'] === 'all') {
             $options['n_max'] = 999;
         }
         if (!array_key_exists('can_pass', $options)) {
@@ -7909,7 +7922,7 @@ class Innovation extends Table
         }
 
         // Make sure this player is the same one who executed the current card
-        if (self::getCurrentNestedCardState()['launcher_id'] == $player_id) {
+        if (self::getCurrentNestedCardState()['launcher_id'] != $player_id) {
             return;
         }
         if ($this->innovationGameState->get('current_nesting_index') >= 1) {
@@ -9417,15 +9430,11 @@ class Innovation extends Table
     {
         $player_id = $this->innovationGameState->get('active_player');
         $card = self::getArtifactOnDisplay($player_id);
-        // TODO(4E): Make sure this works with Battleship Yamato
-        return array(
-            '_private' => array(
-                'active' => array(
-                    // "Active" player only
-                    "dogma_effect_info" => array($card['id'] => self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/true)),
-                )
-            )
-        );
+        $effect_info = [];
+        if ($card['dogma_icon']) {
+            $effect_info[$card['id']] = self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/true);
+        }
+        return ['_private' => ['active' => ["dogma_effect_info" => $effect_info]]];
     }
 
     function argPromoteCardPlayerTurn()
@@ -16593,7 +16602,13 @@ class Innovation extends Table
                 }
                 if ($player_id_with_max) {
                     $museum = self::getCardsInLocation($player_id_with_max, Locations::MUSEUMS)[0];
-                    $this->transferCardFromTo($museum, $player_id_with_max, Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
+                    try {
+                        $this->transferCardFromTo($museum, $player_id_with_max, Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
+                    } catch (EndOfGame $e) {
+                        self::trace('interInteractionStep->justBeforeGameEnd');
+                        $this->gamestate->nextState('justBeforeGameEnd');
+                        return;
+                    }
                 }
 
                 // Make the remaining museums available again

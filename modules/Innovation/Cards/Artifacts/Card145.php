@@ -26,25 +26,23 @@ class Card145 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $numCardsWithAuthority = 0;
-    foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, Icons::AUTHORITY)) {
-        $numCardsWithAuthority++;
-      }
-    }
     if (self::isCompel()) {
+      $numTopCardsWithAuthority = 0;
+      foreach (self::getTopCards() as $card) {
+        if (self::hasIcon($card, Icons::AUTHORITY)) {
+          $numTopCardsWithAuthority++;
+        }
+      }
       return [
-        'n'             => $numCardsWithAuthority,
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
+        'n'        => $numTopCardsWithAuthority,
+        'location' => Locations::SCORE,
+        'owner_to' => self::getLauncherId(),
       ];
     } else {
       return [
         'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
-        'age'           => $numCardsWithAuthority,
+        'age'           => self::getStandardIconCount(Icons::AUTHORITY),
       ];
     }
   }
