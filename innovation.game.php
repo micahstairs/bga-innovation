@@ -9430,15 +9430,11 @@ class Innovation extends Table
     {
         $player_id = $this->innovationGameState->get('active_player');
         $card = self::getArtifactOnDisplay($player_id);
-        // TODO(4E): Make sure this works with Battleship Yamato
-        return array(
-            '_private' => array(
-                'active' => array(
-                    // "Active" player only
-                    "dogma_effect_info" => array($card['id'] => self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/true)),
-                )
-            )
-        );
+        $effect_info = [];
+        if ($card['dogma_icon']) {
+            $effect_info[$card['id']] = self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/true);
+        }
+        return ['_private' => ['active' => ["dogma_effect_info" => $effect_info]]];
     }
 
     function argPromoteCardPlayerTurn()

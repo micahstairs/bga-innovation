@@ -53,8 +53,8 @@ class Card331 extends AbstractCard
     }
     return [
       'location' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'color'         => $colors,
+      'owner_to' => self::getLauncherId(),
+      'color'    => $colors,
     ];
   }
 
