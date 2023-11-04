@@ -60,6 +60,7 @@ class Card146 extends AbstractCard
         self::reveal($card1);
         self::reveal($card2);
         self::notifyAll(clienttranslate('Neither card has a icon in common with the returned card.'));
+        self::setAuxiliaryArray([$card1['id'], $card2['id']]);
         self::setMaxSteps(2);
       } else {
         self::setMaxSteps(3);
