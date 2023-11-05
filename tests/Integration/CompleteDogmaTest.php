@@ -77,6 +77,12 @@ class CompleteDogmaTest extends BaseIntegrationTest
         error_log("*** GAME ENDED PREMATURELY ***");
         break;
       }
+
+      foreach (self::getPlayerIds() as $playerId) {
+        if (self::getCards(Locations::REVEALED, $playerId)) {
+          throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+        }
+      }
     }
 
     $totalCards = count($cardIds);
@@ -104,12 +110,6 @@ class CompleteDogmaTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
 
     self::executeInteractions();
-
-    foreach (self::getPlayerIds() as $playerId) {
-      if (self::getCards(Locations::REVEALED, $playerId)) {
-        throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
-      }
-    }
   }
 
 }

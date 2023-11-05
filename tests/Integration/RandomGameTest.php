@@ -32,6 +32,12 @@ class RandomGameTest extends BaseIntegrationTest
     $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
     while (self::getCurrentStateName() !== 'gameEnd') {
 
+      foreach (self::getPlayerIds() as $playerId) {
+        if (self::getCards(Locations::REVEALED, $playerId)) {
+          throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+        }
+      }
+
       // Handle free action at start of turn
       if (self::getCurrentStateName() === 'artifactPlayerTurn') {
         $actions = [
@@ -64,12 +70,6 @@ class RandomGameTest extends BaseIntegrationTest
       }
       // TODO: Add other actions here (e.g. endorse)
       $actions[array_rand($actions)]();
-
-      foreach (self::getPlayerIds() as $playerId) {
-        if (self::getCards(Locations::REVEALED, $playerId)) {
-          throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
-        }
-      }
     }
 
     // TODO: Add better game end info (including the max age dogma'd). Also stop hard-coding the player numbers.
