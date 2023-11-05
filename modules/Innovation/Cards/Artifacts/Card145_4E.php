@@ -3,17 +3,14 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
 class Card145 extends AbstractCard
 {
 
-  // Petition of Right
-  // - 3rd edition:
-  //   - I COMPEL you to transfer a card from your score pile to my score pile for each top card
-  //     with a [AUTHORITY] on your board!
-  // - 4th edition:
+  // Petition of Right (4th edition):
   //   - I COMPEL you to transfer a card from your score pile to my score pile for each color with
   //     a [AUTHORITY] on your board!
   //   - Junk an available achievement of value equal to the number of [AUTHORITY] on your board.
@@ -27,14 +24,14 @@ class Card145 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
-      $numTopCardsWithAuthority = 0;
-      foreach (self::getTopCards() as $card) {
-        if (self::hasIcon($card, Icons::AUTHORITY)) {
-          $numTopCardsWithAuthority++;
+      $numStacksWithAuthority = 0;
+      foreach (Colors::ALL as $color) {
+        if (self::getIconCountInStack($color, Icons::AUTHORITY)) {
+          $numStacksWithAuthority++;
         }
       }
       return [
-        'n'        => $numTopCardsWithAuthority,
+        'n'        => $numStacksWithAuthority,
         'location' => Locations::SCORE,
         'owner_to' => self::getLauncherId(),
       ];
