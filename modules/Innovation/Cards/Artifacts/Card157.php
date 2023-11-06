@@ -28,10 +28,15 @@ class Card157 extends AbstractCard
         $colors[] = $color;
       }
     }
-    return [
-      'choose_color' => true,
-      'color'        => $colors,
-    ];
+    // TODO(LATER): Handle empty array case generally, instead of forcing specific cards to handle it.
+    if ($colors) {
+      return [
+        'choose_color' => true,
+        'color'        => $colors,
+      ];
+    } else {
+      return [];
+    }
   }
 
   public function handleColorChoice(int $color)
