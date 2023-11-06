@@ -23,6 +23,7 @@ class Card471 extends AbstractCard
         case 0:
         case 1:
           $newDirection = null;
+          break;
         case 2:
         case 3:
           $newDirection = Directions::ASLANT;
@@ -39,9 +40,8 @@ class Card471 extends AbstractCard
           $newDirection = Directions::LEFT;
           break;
       }
-      if ($newDirection !== null && self::getSplayDirection($color) !== $newDirection) {
+      if (self::splay($color, $newDirection)) {
         $numColorsSplayed++;
-        self::splay($color, $newDirection);
       }
     }
     if ($numColorsSplayed === 5) {

@@ -7,7 +7,7 @@ use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card145 extends AbstractCard
+class Card145_4E extends AbstractCard
 {
 
   // Petition of Right (4th edition):
