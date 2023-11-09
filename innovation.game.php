@@ -11386,6 +11386,7 @@ class Innovation extends Table
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
+            || $card_id == 100
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
             || $card_id >= 502;

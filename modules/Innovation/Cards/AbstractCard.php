@@ -1465,6 +1465,25 @@ abstract class AbstractCard
     $this->game->notifyAllPlayersBut($playerId, 'log', $log, array_merge($defaultArgs, $args));
   }
 
+  protected function notifyTeam($log, array $args = [], int $playerId = null)
+  {
+    $playerId = self::coercePlayerId($playerId);
+    $teammateId = $this->game->getPlayerTeammate($playerId);
+    self::notifyPlayer($log, $args, $playerId);
+    self::notifyPlayer($log, $args, $teammateId);
+  }
+
+  protected function notifyOtherTeam($log, array $args = [], int $playerId = null)
+  {
+    $playerId = self::coercePlayerId($playerId);
+    $teammateId = $this->game->getPlayerTeammate($playerId);
+    foreach ($this->game->getAllPlayerIds() as $id) {
+      if ($id != $playerId && $id != $teammateId) {
+        self::notifyPlayer($log, $args, $id);
+      }
+    }
+  }
+
   public function notifyValueChoice(int $value, int $playerId = null)
   {
     $args = ['age' => $this->notifications->renderValue($value)];
