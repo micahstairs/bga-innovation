@@ -866,6 +866,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Baghdad Battery'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from hand. If you covered up a card of different type than the melded card, draw a card of matching type and value to the covered card, then score a card from your hand.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Score a card from your hand. If you do both, and the cards have different values, junk all cards in the decks of both values.'),
+        'separate_4E_implementation'          => true,
     ),
 
     131 => array(
