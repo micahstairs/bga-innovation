@@ -40,7 +40,7 @@ class Card471 extends AbstractCard
           $newDirection = Directions::LEFT;
           break;
       }
-      if (self::splay($color, $newDirection)) {
+      if ($newDirection !== null && self::splay($color, $newDirection)) {
         $numColorsSplayed++;
       }
     }
