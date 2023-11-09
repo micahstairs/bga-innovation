@@ -15,10 +15,11 @@ class Card189 extends AbstractCard
 
   public function initialExecution()
   {
-    foreach (Colors::ALL as $color) {
-      self::score(self::getBottomCardOfColor($color));
-    }
-    if (self::isFourthEdition()) {
+    if (self::isFirstNonDemand()) {
+      foreach (Colors::ALL as $color) {
+        self::score(self::getBottomCardOfColor($color));
+      }
+    } else if (self::isSecondNonDemand()) {
       $decks = self::getBaseDecks();
       for ($i = 0; $i <= 11; $i++) {
         if ($decks[$i]) {
