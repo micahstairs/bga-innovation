@@ -12904,95 +12904,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 100, age 10: Self service
-                case "100N1":
-                    if ($this->innovationGameState->usingFourthEditionRules()) {
-                        // "If you have at least twice as many achievements as each opponent, you win."
-                        $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
-                        $twice_the_achievements = true;
-                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                            if ($number_of_achievements < self::getPlayerNumberOfAchievements($opponent_id) * 2) {
-                                $twice_the_achievements = false;
-                            }
-                        }
-                        if ($twice_the_achievements) {
-                            self::notifyAllPlayersBut(
-                                $player_id,
-                                "log",
-                                clienttranslate('${player_name} has at least twice as many achievements as each opponent.'),
-                                array(
-                                    'player_name' => self::getPlayerNameFromId($player_id)
-                                )
-                            );
-                            self::notifyPlayer(
-                                $player_id,
-                                "log",
-                                clienttranslate('${You} have at least twice as many achievements as each opponent.'),
-                                array(
-                                    'You' => 'You'
-                                )
-                            );
-                            // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->innovationGameState->get('debug_mode') != 2) {
-                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                                throw new EndOfGame();
-                            }
-                        }
-                    } else {
-                        $step_max = 1;
-                    }
-                    break;
-
-                case "100N2":
-                    if ($this->innovationGameState->usingFourthEditionRules()) {
-                        $step_max = 1;
-                    } else {
-                        $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
-                        $most_achievements = true;
-                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                            if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
-                                $most_achievements = false;
-                            }
-                        }
-                        if ($most_achievements) { // "If you have more achievements than each other player"
-                            if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                                self::notifyAllPlayersBut(
-                                    $player_id,
-                                    "log",
-                                    clienttranslate('${player_name} has more achievements than each other player.'),
-                                    array(
-                                        'player_name' => self::getPlayerNameFromId($player_id)
-                                    )
-                                );
-
-                                self::notifyPlayer(
-                                    $player_id,
-                                    "log",
-                                    clienttranslate('${You} have more achievements than each other player.'),
-                                    array(
-                                        'You' => 'You'
-                                    )
-                                );
-                            } else { // $this->innovationGameState->get('game_type')) == 'team'
-                                $teammate_id = self::getPlayerTeammate($player_id);
-                                $winning_team = array($player_id, $teammate_id);
-                                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('The other team has more achievements than yours.'), array());
-
-                                self::notifyPlayer($player_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
-
-                                self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
-                            }
-                            // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->innovationGameState->get('debug_mode') != 2) {
-                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                                throw new EndOfGame();
-                            }
-                        }
-                    }
-                    break;
-
                 // id 101, age 10: Globalization
                 case "101D1":
                     $step_max = 1;
@@ -15428,25 +15339,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 100, age 10: Self service
-            case "100N1A": // 3rd edition and earlier
-            case "100N2A": // 4th edition
-                // "Execute each of the non-demand dogma effects of any other top card on your board" (a card with no non-demand effect can be chosen)
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    // Nothing is to be done with that card
-                    'location_to'   => 'none',
-
-                    // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
-                    'not_id'        => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
-                );
-                break;
-
             // id 101, age 10: Globalization
             case "101D1A":
                 // "Return a top card with a ${icon_2} on your board" 
@@ -17244,12 +17136,6 @@ class Innovation extends Table
                     if ($choice == 1) {
                         self::junkBaseDeck(9);
                     }
-                    break;
-
-                // id 100, age 10: Self service
-                case "100N1A": // 3rd edition and earlier
-                case "100N2A": // 4th edition
-                    self::selfExecute($card); // The player chose this card for execution
                     break;
 
                 // id 102, age 10: Stem cells 
