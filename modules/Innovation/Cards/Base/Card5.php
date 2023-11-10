@@ -29,7 +29,7 @@ class Card5 extends AbstractCard
           $cardWasTransferred = false;
           foreach (self::getCards(Locations::HAND) as $card) {
             if (self::hasIcon($card, Icons::PROSPERITY)) {
-              self::transferCardsToScorePile($card, self::getLauncherId());
+              self::transferToScorePile($card, self::getLauncherId());
               self::draw(1);
               $cardWasTransferred = true;
               self::setAuxiliaryValue(1); // Remember that a card was transferred
