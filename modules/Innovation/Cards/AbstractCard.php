@@ -1421,7 +1421,7 @@ abstract class AbstractCard
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
-      if ($icon && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
+      if ($icon !== null && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
         // Bonus icons are normalized to 100 since they are considered to be the same icon type
         $icons[] = min($icon, 100);
       }
