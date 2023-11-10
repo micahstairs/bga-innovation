@@ -208,6 +208,11 @@ abstract class AbstractCard
 
   // EXECUTION HELPERS
 
+  protected function isFirstEdition(): bool
+  {
+    return $this->state->getEdition() == 1;
+  }
+
   protected function isFirstOrThirdEdition(): bool
   {
     return $this->state->getEdition() <= 3;

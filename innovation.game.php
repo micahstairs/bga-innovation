@@ -11382,7 +11382,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 4
+        return $card_id <= 5
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
@@ -11510,48 +11510,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 5, age 1: Oars
-                case "5D1":
-                    // Skip automation entirely if Echoes is being used and there's at least two cards with
-                    // crowns (unless there's at least one Echoes card without a crown). We do this because
-                    // the selection order can often affect which cards are drawn, so automating it is not
-                    // possible.
-                    $num_cards_with_crowns = 0;
-                    $num_echoes_cards_without_crowns = 0;
-                    foreach (self::getCardsInHand($player_id) as $card) {
-                        if (self::hasRessource($card, 1)) {
-                            $num_cards_with_crowns++;
-                        } else if ($card['type'] == 3) {
-                            $num_echoes_cards_without_crowns++;
-                        }
-                    }
-                    if ($this->innovationGameState->echoesExpansionEnabled() && $num_cards_with_crowns >= 2 && $num_echoes_cards_without_crowns == 0) {
-                        $step_max = 1;
-                    } else {
-                        do {
-                            $card_transfered = false;
-                            foreach (self::getCardsInHand($player_id) as $card) {
-                                // "I demand you transfer a card with a crown from your hand to my score pile"
-                                if (self::hasRessource($card, 1)) {
-                                    self::transferCardFromTo($card, $launcher_id, 'score');
-                                    self::executeDraw($player_id, 1); // "If you do, draw a 1"
-                                    $card_transfered = true; // "and repeat this dogma effect"
-                                    self::setAuxiliaryValue(1);
-                                    break;
-                                }
-                            }
-                        } while ($card_transfered && !$this->innovationGameState->usingFirstEditionRules());
-                        // Reveal hand to prove that they have no crowns.
-                        self::revealHand($player_id);
-                    }
-                    break;
-
-                case "5N1":
-                    if (self::getAuxiliaryValue() <= 0) { // "If no cards were transfered due to this demand"
-                        self::executeDraw($player_id, 1); // "Draw a 1"
-                    }
-                    break;
 
                 // id 6, age 1: Clothing
                 case "6N1":
@@ -13392,22 +13350,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 5, age 1: Oars
-            case "5D1A":
-                // "Transfer a card with a crown from your hand to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'with_icon'     => 1
-                );
-                break;
 
             // id 6, age 1: Clothing
             case "6N1A":
@@ -15707,21 +15649,6 @@ class Innovation extends Table
                     // E1 means the first (and single) echo effect
 
                     // The letter indicates the step : A for the first one, B for the second
-
-                    // id 5, age 1: Oars
-                    case "5D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 1); // "Draw a 1"
-                            self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                            if (!$this->innovationGameState->usingFirstEditionRules()) {
-                                $step--;
-                                self::incrementStep(-1); // "Repeat that dogma effect"
-                            }
-                        } else {
-                            // Reveal hand to prove that they have no crowns.
-                            self::revealHand($player_id);
-                        }
-                        break;
 
                     // id 6, age 1: Clothing
                     case "6N1A":
