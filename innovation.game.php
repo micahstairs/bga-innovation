@@ -11382,7 +11382,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 5
+        return $card_id <= 6
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
@@ -11510,42 +11510,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 6, age 1: Clothing
-                case "6N1":
-                    $step_max = 1;
-                    break;
-                case "6N2":
-                    // "Score a 1 for each color present on your board not present on any other player board"
-                    // Compute the number of specific colors
-                    $number_to_be_scored = 0;
-                    $boards = self::getBoards(self::getAllActivePlayerIds());
-                    foreach (Colors::ALL as $color) { // Evaluate each color
-                        if (count($boards[$player_id][$color]) == 0) { // The player does not have this color => no point
-                            continue;
-                        }
-                        // The player has this color, do opponents have?
-                        $color_on_opponent_board = false;
-                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                            if (count($boards[$opponent_id][$color]) > 0) { // This opponent has this color => no point
-                                $color_on_opponent_board = true;
-                                break;
-                            }
-                        }
-                        if (!$color_on_opponent_board) { // The opponents do not have this color => point
-                            $number_to_be_scored++;
-                        }
-                    }
-                    // Indicate this number
-                    $translated_number = self::renderNumber($number_to_be_scored);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color(s) present on your board not present on any opponent\'s board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $translated_number));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color(s) present on his board not present on any of his opponents\' boards.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $translated_number));
-
-                    // Score this number of times
-                    for ($i = 0; $i < $number_to_be_scored; $i++) {
-                        self::executeDraw($player_id, 1, 'score');
-                    }
-                    break;
 
                 // id 7, age 1: Sailing
                 case "7N1":
@@ -13350,30 +13314,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 6, age 1: Clothing
-            case "6N1A":
-                // "Meld a card from your hand of different color of any card on your board"
-                $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                $selectable_colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if (count($board[$color]) == 0) { // This is a color the player does not have
-                        $selectable_colors[] = $color;
-                    }
-                }
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'color'         => $selectable_colors,
-                    'meld_keyword'  => true,
-                );
-                break;
 
             // id 9, age 1: Agriculture
             case "9N1A":
