@@ -11382,7 +11382,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 6
+        return $card_id <= 8
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
@@ -11510,18 +11510,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 7, age 1: Sailing
-                case "7N1":
-                    self::executeDrawAndMeld($player_id, 1); // "Draw and meld a 1"
-                    break;
-
-                // id 8, age 1: The wheel
-                case "8N1":
-                    // "Draw two 1"
-                    self::executeDraw($player_id, 1);
-                    self::executeDraw($player_id, 1);
-                    break;
 
                 // id 9, age 1: Agriculture
                 case "9N1":
