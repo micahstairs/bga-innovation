@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -11,7 +12,7 @@ class Card134_4E extends AbstractCard
 
   // Cyrus Cylinder (4th edition):
   //   - Splay left a color on any player's board.
-  //   - Choose any other top purple card on any player's board. Self-execute it.
+  //   - Choose any top purple card other than Cyrus Cylinder on any player's board. Self-execute it. 
 
   public function initialExecution()
   {
@@ -30,8 +31,7 @@ class Card134_4E extends AbstractCard
         'owner_from'  => 'any player',
         'choose_from' => Locations::BOARD,
         'color'       => [Colors::PURPLE],
-        // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
-        'not_id'      => $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'],
+        'not_id'      => CardIds::CYRUS_CYLINDER,
       ];
     }
 

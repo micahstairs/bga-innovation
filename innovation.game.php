@@ -11382,10 +11382,11 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 4
+        return $card_id <= 6
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
+            || $card_id == 100
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
             || $card_id >= 502;
@@ -11509,84 +11510,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 5, age 1: Oars
-                case "5D1":
-                    // Skip automation entirely if Echoes is being used and there's at least two cards with
-                    // crowns (unless there's at least one Echoes card without a crown). We do this because
-                    // the selection order can often affect which cards are drawn, so automating it is not
-                    // possible.
-                    $num_cards_with_crowns = 0;
-                    $num_echoes_cards_without_crowns = 0;
-                    foreach (self::getCardsInHand($player_id) as $card) {
-                        if (self::hasRessource($card, 1)) {
-                            $num_cards_with_crowns++;
-                        } else if ($card['type'] == 3) {
-                            $num_echoes_cards_without_crowns++;
-                        }
-                    }
-                    if ($this->innovationGameState->echoesExpansionEnabled() && $num_cards_with_crowns >= 2 && $num_echoes_cards_without_crowns == 0) {
-                        $step_max = 1;
-                    } else {
-                        do {
-                            $card_transfered = false;
-                            foreach (self::getCardsInHand($player_id) as $card) {
-                                // "I demand you transfer a card with a crown from your hand to my score pile"
-                                if (self::hasRessource($card, 1)) {
-                                    self::transferCardFromTo($card, $launcher_id, 'score');
-                                    self::executeDraw($player_id, 1); // "If you do, draw a 1"
-                                    $card_transfered = true; // "and repeat this dogma effect"
-                                    self::setAuxiliaryValue(1);
-                                    break;
-                                }
-                            }
-                        } while ($card_transfered && !$this->innovationGameState->usingFirstEditionRules());
-                        // Reveal hand to prove that they have no crowns.
-                        self::revealHand($player_id);
-                    }
-                    break;
-
-                case "5N1":
-                    if (self::getAuxiliaryValue() <= 0) { // "If no cards were transfered due to this demand"
-                        self::executeDraw($player_id, 1); // "Draw a 1"
-                    }
-                    break;
-
-                // id 6, age 1: Clothing
-                case "6N1":
-                    $step_max = 1;
-                    break;
-                case "6N2":
-                    // "Score a 1 for each color present on your board not present on any other player board"
-                    // Compute the number of specific colors
-                    $number_to_be_scored = 0;
-                    $boards = self::getBoards(self::getAllActivePlayerIds());
-                    foreach (Colors::ALL as $color) { // Evaluate each color
-                        if (count($boards[$player_id][$color]) == 0) { // The player does not have this color => no point
-                            continue;
-                        }
-                        // The player has this color, do opponents have?
-                        $color_on_opponent_board = false;
-                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                            if (count($boards[$opponent_id][$color]) > 0) { // This opponent has this color => no point
-                                $color_on_opponent_board = true;
-                                break;
-                            }
-                        }
-                        if (!$color_on_opponent_board) { // The opponents do not have this color => point
-                            $number_to_be_scored++;
-                        }
-                    }
-                    // Indicate this number
-                    $translated_number = self::renderNumber($number_to_be_scored);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color(s) present on your board not present on any opponent\'s board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $translated_number));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color(s) present on his board not present on any of his opponents\' boards.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $translated_number));
-
-                    // Score this number of times
-                    for ($i = 0; $i < $number_to_be_scored; $i++) {
-                        self::executeDraw($player_id, 1, 'score');
-                    }
-                    break;
 
                 // id 7, age 1: Sailing
                 case "7N1":
@@ -12903,95 +12826,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 100, age 10: Self service
-                case "100N1":
-                    if ($this->innovationGameState->usingFourthEditionRules()) {
-                        // "If you have at least twice as many achievements as each opponent, you win."
-                        $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
-                        $twice_the_achievements = true;
-                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                            if ($number_of_achievements < self::getPlayerNumberOfAchievements($opponent_id) * 2) {
-                                $twice_the_achievements = false;
-                            }
-                        }
-                        if ($twice_the_achievements) {
-                            self::notifyAllPlayersBut(
-                                $player_id,
-                                "log",
-                                clienttranslate('${player_name} has at least twice as many achievements as each opponent.'),
-                                array(
-                                    'player_name' => self::getPlayerNameFromId($player_id)
-                                )
-                            );
-                            self::notifyPlayer(
-                                $player_id,
-                                "log",
-                                clienttranslate('${You} have at least twice as many achievements as each opponent.'),
-                                array(
-                                    'You' => 'You'
-                                )
-                            );
-                            // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->innovationGameState->get('debug_mode') != 2) {
-                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                                throw new EndOfGame();
-                            }
-                        }
-                    } else {
-                        $step_max = 1;
-                    }
-                    break;
-
-                case "100N2":
-                    if ($this->innovationGameState->usingFourthEditionRules()) {
-                        $step_max = 1;
-                    } else {
-                        $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
-                        $most_achievements = true;
-                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                            if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
-                                $most_achievements = false;
-                            }
-                        }
-                        if ($most_achievements) { // "If you have more achievements than each other player"
-                            if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                                self::notifyAllPlayersBut(
-                                    $player_id,
-                                    "log",
-                                    clienttranslate('${player_name} has more achievements than each other player.'),
-                                    array(
-                                        'player_name' => self::getPlayerNameFromId($player_id)
-                                    )
-                                );
-
-                                self::notifyPlayer(
-                                    $player_id,
-                                    "log",
-                                    clienttranslate('${You} have more achievements than each other player.'),
-                                    array(
-                                        'You' => 'You'
-                                    )
-                                );
-                            } else { // $this->innovationGameState->get('game_type')) == 'team'
-                                $teammate_id = self::getPlayerTeammate($player_id);
-                                $winning_team = array($player_id, $teammate_id);
-                                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('The other team has more achievements than yours.'), array());
-
-                                self::notifyPlayer($player_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
-
-                                self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
-                            }
-                            // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->innovationGameState->get('debug_mode') != 2) {
-                                $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                                throw new EndOfGame();
-                            }
-                        }
-                    }
-                    break;
-
                 // id 101, age 10: Globalization
                 case "101D1":
                     $step_max = 1;
@@ -13480,46 +13314,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 5, age 1: Oars
-            case "5D1A":
-                // "Transfer a card with a crown from your hand to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'with_icon'     => 1
-                );
-                break;
-
-            // id 6, age 1: Clothing
-            case "6N1A":
-                // "Meld a card from your hand of different color of any card on your board"
-                $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                $selectable_colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if (count($board[$color]) == 0) { // This is a color the player does not have
-                        $selectable_colors[] = $color;
-                    }
-                }
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'color'         => $selectable_colors,
-                    'meld_keyword'  => true,
-                );
-                break;
 
             // id 9, age 1: Agriculture
             case "9N1A":
@@ -15427,25 +15221,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 100, age 10: Self service
-            case "100N1A": // 3rd edition and earlier
-            case "100N2A": // 4th edition
-                // "Execute each of the non-demand dogma effects of any other top card on your board" (a card with no non-demand effect can be chosen)
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    // Nothing is to be done with that card
-                    'location_to'   => 'none',
-
-                    // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
-                    'not_id'        => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
-                );
-                break;
-
             // id 101, age 10: Globalization
             case "101D1A":
                 // "Return a top card with a ${icon_2} on your board" 
@@ -15814,21 +15589,6 @@ class Innovation extends Table
                     // E1 means the first (and single) echo effect
 
                     // The letter indicates the step : A for the first one, B for the second
-
-                    // id 5, age 1: Oars
-                    case "5D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 1); // "Draw a 1"
-                            self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                            if (!$this->innovationGameState->usingFirstEditionRules()) {
-                                $step--;
-                                self::incrementStep(-1); // "Repeat that dogma effect"
-                            }
-                        } else {
-                            // Reveal hand to prove that they have no crowns.
-                            self::revealHand($player_id);
-                        }
-                        break;
 
                     // id 6, age 1: Clothing
                     case "6N1A":
@@ -17243,12 +17003,6 @@ class Innovation extends Table
                     if ($choice == 1) {
                         self::junkBaseDeck(9);
                     }
-                    break;
-
-                // id 100, age 10: Self service
-                case "100N1A": // 3rd edition and earlier
-                case "100N2A": // 4th edition
-                    self::selfExecute($card); // The player chose this card for execution
                     break;
 
                 // id 102, age 10: Stem cells 

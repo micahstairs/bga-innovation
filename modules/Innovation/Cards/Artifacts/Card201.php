@@ -17,12 +17,13 @@ class Card201 extends AbstractCard
 
   public function initialExecution()
   {
-    foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, Icons::EFFICIENCY)) {
-        self::drawAndScore(9);
+    if (self::isFirstNonDemand()) {
+      foreach (self::getTopCards() as $card) {
+        if (self::hasIcon($card, Icons::EFFICIENCY)) {
+          self::drawAndScore(9);
+        }
       }
-    }
-    if (self::isFourthEdition()) {
+    } else if (self::isSecondNonDemand()) {
       self::junkBaseDeck(self::countCards(Locations::SCORE));
     }
   }

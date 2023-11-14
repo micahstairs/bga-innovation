@@ -673,7 +673,8 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('Execute each of the non-demand dogma effects of any other top card on your board. Do not share them.'),
         'non_demand_effect_1_fourth'          => clienttranslate('If you have at least twice as many achievements as each opponent, you win.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('If you have more achievements than each other player, you win.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Self-execute any other top card on your board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Self-execute any top card other than Self Service on your board.'),
+        'separate_4E_implementation'          => true,
     ),
 
     101 => array(
@@ -865,6 +866,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Baghdad Battery'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from hand. If you covered up a card of different type than the melded card, draw a card of matching type and value to the covered card, then score a card from your hand.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Score a card from your hand. If you do both, and the cards have different values, junk all cards in the decks of both values.'),
+        'separate_4E_implementation'          => true,
     ),
 
     131 => array(
@@ -890,7 +892,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Cyrus Cylinder'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Splay left a color on any player\'s board.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Choose any other top purple card on any player\'s board. Self-execute it.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Choose any top purple card other than Cyrus Cylinder on any player\'s board. Self-execute it. '),
         'separate_4E_implementation'          => true,
     ),
 
@@ -962,6 +964,7 @@ $this->textual_card_infos = array(
         'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each top card with a ${icon_4} on your board!'),
         'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer a card from your score pile to my score pile for each color with a ${icon_4} on your board!'),
         'non_demand_effect_1_fourth'      => clienttranslate('Junk an available achievement of value equal to the number of ${icon_4} on your board.'),
+        'separate_4E_implementation'      => true,
     ),
 
     146 => array(

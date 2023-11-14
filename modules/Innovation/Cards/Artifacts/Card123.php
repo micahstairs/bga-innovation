@@ -45,9 +45,9 @@ class Card123 extends AbstractCard
       if (!$hasTopArtifact) {
         foreach (array_reverse(self::getStack($color, $playerId)) as $card) {
           if (self::isFirstOrThirdEdition()) {
-            self::transferToScorePile($card, $playerId);
+            self::transferToScorePile($card);
           } else {
-            self::score($card, $playerId);
+            self::score($card);
           }
         }
       }

@@ -8,11 +8,13 @@ class CardIds
   const DOMESTICATION = 10;
   const FERMENTING = 22;
   const PAPER = 30;
+  const SELF_SERVICE = 100;
   const AI = 103;
   const DANCING_GIRL = 119;
   const ARK_OF_THE_COVENANT = 123;
   const HOLY_GRAIL = 131;
   const TERRACOTTA_ARMY = 132;
+  const CYRUS_CYLINDER = 134;
   const YATA_NO_KAGAMI = 136;
   const GUJIN_TUSHU_JICHENG = 161;
   const BATTLESHIP_YAMATO = 188;

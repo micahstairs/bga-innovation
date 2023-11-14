@@ -208,6 +208,11 @@ abstract class AbstractCard
 
   // EXECUTION HELPERS
 
+  protected function isFirstEdition(): bool
+  {
+    return $this->state->getEdition() == 1;
+  }
+
   protected function isFirstOrThirdEdition(): bool
   {
     return $this->state->getEdition() <= 3;
@@ -1416,7 +1421,7 @@ abstract class AbstractCard
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
-      if ($icon && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
+      if ($icon !== null && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
         // Bonus icons are normalized to 100 since they are considered to be the same icon type
         $icons[] = min($icon, 100);
       }
@@ -1463,6 +1468,25 @@ abstract class AbstractCard
     $playerId = self::coercePlayerId($playerId);
     $defaultArgs = ['player_name' => self::renderPlayerName($playerId)];
     $this->game->notifyAllPlayersBut($playerId, 'log', $log, array_merge($defaultArgs, $args));
+  }
+
+  protected function notifyTeam($log, array $args = [], int $playerId = null)
+  {
+    $playerId = self::coercePlayerId($playerId);
+    $teammateId = $this->game->getPlayerTeammate($playerId);
+    self::notifyPlayer($log, $args, $playerId);
+    self::notifyPlayer($log, $args, $teammateId);
+  }
+
+  protected function notifyOtherTeam($log, array $args = [], int $playerId = null)
+  {
+    $playerId = self::coercePlayerId($playerId);
+    $teammateId = $this->game->getPlayerTeammate($playerId);
+    foreach ($this->game->getAllPlayerIds() as $id) {
+      if ($id != $playerId && $id != $teammateId) {
+        self::notifyPlayer($log, $args, $id);
+      }
+    }
   }
 
   public function notifyValueChoice(int $value, int $playerId = null)
