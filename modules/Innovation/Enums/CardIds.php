@@ -10,6 +10,11 @@ class CardIds
   const PAPER = 30;
   const SELF_SERVICE = 100;
   const AI = 103;
+  const EMPIRE = 105;
+  const MONUMENT = 106;
+  const WONDER = 107;
+  const WORLD = 108;
+  const UNIVERSE = 109;
   const DANCING_GIRL = 119;
   const ARK_OF_THE_COVENANT = 123;
   const HOLY_GRAIL = 131;

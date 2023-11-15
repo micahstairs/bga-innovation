@@ -1422,8 +1422,12 @@ abstract class AbstractCard
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
       if ($icon !== null && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
-        // Bonus icons are normalized to 100 since they are considered to be the same icon type
-        $icons[] = min($icon, 100);
+        // In 4th edition, all bonus icons are normalized to the same value since they are considered to be the same icon type.
+        if (self::isFourthEdition()) {
+          $icons[] = min($icon, 100);
+        } else {
+          $icons[] = $icon;
+        }
       }
     }
     return $icons;

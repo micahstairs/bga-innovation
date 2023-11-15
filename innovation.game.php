@@ -11382,7 +11382,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 8
+        return $card_id <= 12
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
@@ -11510,33 +11510,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 9, age 1: Agriculture
-                case "9N1":
-                    $step_max = 1;
-                    break;
-
-                // id 10, age 1: Domestication
-                case "10N1":
-                    $step_max = 1;
-                    break;
-
-                // id 11, age 1: Masonry
-                case "11N1":
-                    $step_max = 1;
-                    break;
-
-                // id 12, age 1: City states
-                case "12D1":
-                    if (self::getPlayerSingleRessourceCount($player_id, 4) >= 4) { // "If you have at least four towers on your board"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least four ${icon} on his board.'), array('player_name' => self::renderPlayerName($player_id), 'icon' => $tower));
-                        $step_max = 1;
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have less than four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has less than four ${icon} on his board.'), array('player_name' => self::renderPlayerName($player_id), 'icon' => $tower));
-                    }
-                    break;
 
                 // id 13, age 1: Code of laws
                 case "13N1":
@@ -13302,73 +13275,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 9, age 1: Agriculture
-            case "9N1A":
-                // "You may return a card from you hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
-            // id 10, age 1: Domestication
-            case "10N1A":
-                // "Meld the lowest card in your hand"
-                $age = self::getMinAgeInHand($player_id);
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'age'           => $age,
-                    'meld_keyword'  => true,
-                );
-                break;
-
-            // id 11, age 1: Masonry
-            case "11N1A":
-                // "You may meld any number of cards from your hand, each with a tower"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'with_icon'     => 4,
-                    'meld_keyword'  => true,
-                );
-                break;
-
-            // id 12, age 1: City states
-            case "12D1A":
-                // "Transfer a top card with a tower from your board to my board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'board',
-
-                    'with_icon'     => 4
-                );
-                break;
 
             // id 13, age 1: Code of laws
             case "13N1A":
@@ -15592,39 +15498,6 @@ class Innovation extends Table
                                     }
                                 }
                             }
-                        }
-                        break;
-
-                    // id 9, age 1: Agriculture
-                    case "9N1A":
-                        if ($n > 0) { // "If you do"
-                            $age_to_draw_in = $this->innovationGameState->get('age_last_selected') + 1;
-                            self::executeDraw($player_id, $age_to_draw_in, 'score'); // "Draw and score a card of value one higher than the card you returned"
-                        }
-                        break;
-
-                    // id 10, age 1: Domestication
-                    case "10N1A":
-                        self::executeDraw($player_id, 1); // "Draw a 1"
-                        break;
-
-                    // id 11, age 1: Masonry
-                    case "11N1A":
-                        if ($n >= 4) { // "If you melded four or more cards this way"
-                            $achievement = self::getCardInfo(106);
-                            if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
-                                self::notifyGeneralInfo(clienttranslate("At least four cards have been melded."));
-                                self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the Monument achievement"
-                            } else {
-                                self::notifyGeneralInfo(clienttranslate("At least four cards have been melded but the Monument achievement has already been claimed."));
-                            }
-                        }
-                        break;
-
-                    // id 12, age 1: City states
-                    case "12D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 1); // "Draw a 1"
                         }
                         break;
 
