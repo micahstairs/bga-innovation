@@ -9034,7 +9034,9 @@ class Innovation extends Table
         }
 
         $visible_echo_effects = self::getCardsWithVisibleEchoEffects($card);
-        if (!empty($visible_echo_effects)) {
+        // NOTE: In the 4th edition, echo effects are skipped when using the free dogma action on an artifact on display
+        $execute_echo_effects = $this->innovationGameState->getEdition() <= 3 || $extra_icons_from_artifact_on_display === 0;
+        if ($execute_echo_effects && !empty($visible_echo_effects)) {
             $current_effect_type = 3; // echo
             $current_effect_number = count($visible_echo_effects);
             for ($i = count($visible_echo_effects); $i >= 1; $i--) {
