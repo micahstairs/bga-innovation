@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card528 extends AbstractCard
 {
@@ -25,6 +26,7 @@ class Card528 extends AbstractCard
       self::setAuxiliaryValue($returnedCard ? 1 : 0); // Track how many cards were returned
       return [
         'location_from'    => 'hand',
+        'location_to'      => Locations::REVEALED_THEN_DECK,
         'return_keyword'   => true,
         'not_id'           => $card['id'],
         'color'            => [$card['color']],
@@ -33,6 +35,7 @@ class Card528 extends AbstractCard
     } else {
       return [
         'location_from'  => 'score',
+        'location_to'    => Locations::REVEALED_THEN_DECK,
         'return_keyword' => true,
       ];
     }

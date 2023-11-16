@@ -5507,6 +5507,7 @@ class Innovation extends Table
         Gets the list of card IDs with visible echo effects given a specific card being executed (from top to bottom)
         **/
 
+        // TODO(4E): This logic may need to be revised as part of https://github.com/micahstairs/bga-innovation/issues/1426.
         if (!$dogma_card['dogma_icon']) {
             return [];
         }
@@ -6649,7 +6650,7 @@ class Innovation extends Table
         if (array_key_exists('foreshadow_keyword', $options)) {
             $options['location_to'] = 'forecast';
         }
-        if (array_key_exists('return_keyword', $options)) {
+        if (array_key_exists('return_keyword', $options) && !array_key_exists('location_to', $options)) {
             $options['location_to'] = 'deck';
         }
         if (array_key_exists('topdeck_keyword', $options)) {
