@@ -1925,6 +1925,7 @@ $this->textual_card_infos = array(
         'echo_effect'                     => clienttranslate('You may splay your color with the most cards right.'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you draw and reveal three ${age_10}, total the number of ${icon_6} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!'),
         'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer all cards of value equal to the number of visible cards of the color of my choice on my board from your hand and your score pile to my score pile! Junk an available achievement of that value!'),
+        'separate_4E_implementation'      => true,
     ),
 
     374 => array(
