@@ -5507,6 +5507,10 @@ class Innovation extends Table
         Gets the list of card IDs with visible echo effects given a specific card being executed (from top to bottom)
         **/
 
+        if (!$dogma_card['dogma_icon']) {
+            return [];
+        }
+
         $color = $dogma_card['color'];
         $pile = self::getCardsInLocationKeyedByColor($dogma_card['owner'], 'board')[$color];
 
@@ -5514,7 +5518,7 @@ class Innovation extends Table
 
         // Handle the case when the card being executed isn't even in the pile (e.g. Artifact on display)
         if ($dogma_card['location'] != 'board') {
-            if (self::countIconsOnCard($dogma_card, 10 /* echo effect */) > 0) {
+            if (self::countIconsOnCard($dogma_card, Icons::ECHO_EFFECT) > 0) {
                 $visible_echo_effects[] = $dogma_card['id'];
             }
         }
@@ -5524,16 +5528,16 @@ class Innovation extends Table
             $splay_direction = $card['splay_direction'];
 
             $has_visible_echo_efffect = false;
-            if ($i == count($pile) - 1 && self::countIconsOnCard($card, 10 /* echo effect */) > 0) {
+            if ($i == count($pile) - 1 && self::countIconsOnCard($card, Icons::ECHO_EFFECT) > 0) {
                 $has_visible_echo_efffect = true;
             } else if ($splay_direction == 1) { // left
-                $has_visible_echo_efffect = $card['spot_4'] == 10 || $card['spot_5'] == 10;
+                $has_visible_echo_efffect = $card['spot_4'] == Icons::ECHO_EFFECT || $card['spot_5'] == Icons::ECHO_EFFECT;
             } else if ($splay_direction == 2) { // right
-                $has_visible_echo_efffect = $card['spot_1'] == 10 || $card['spot_2'] == 10;
+                $has_visible_echo_efffect = $card['spot_1'] == Icons::ECHO_EFFECT || $card['spot_2'] == Icons::ECHO_EFFECT;
             } else if ($splay_direction == 3) { // up
-                $has_visible_echo_efffect = $card['spot_2'] == 10 || $card['spot_3'] == 10 || $card['spot_4'] == 10;
+                $has_visible_echo_efffect = $card['spot_2'] == Icons::ECHO_EFFECT || $card['spot_3'] == Icons::ECHO_EFFECT || $card['spot_4'] == Icons::ECHO_EFFECT;
             } else if ($splay_direction == 4) { // aslant
-                $has_visible_echo_efffect = $card['spot_1'] == 10 || $card['spot_2'] == 10 || $card['spot_3'] == 10 || $card['spot_4'] == 10;
+                $has_visible_echo_efffect = $card['spot_1'] == Icons::ECHO_EFFECT || $card['spot_2'] == Icons::ECHO_EFFECT || $card['spot_3'] == Icons::ECHO_EFFECT || $card['spot_4'] == Icons::ECHO_EFFECT;
             }
 
             if ($has_visible_echo_efffect) {
@@ -7912,14 +7916,14 @@ class Innovation extends Table
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/true);
     }
 
-    function getCardIdsWithEchoEffectsForNestedExecution($top_card) {
+    function getCardIdsWithEchoEffectsForNestedExecution($card) {
         if ($this->innovationGameState->getEdition() <= 3) {
-            if (self::getEchoEffect($top_card['id'])) {
-                return [$top_card['id']];
+            if (self::getEchoEffect($card['id'])) {
+                return [$card['id']];
             }
             return [];
         } else {
-            return self::getCardIdsWithVisibleEchoEffects($top_card);
+            return self::getCardIdsWithVisibleEchoEffects($card);
         }
     }
 
