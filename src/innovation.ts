@@ -2538,7 +2538,6 @@ class Innovation extends BgaGame {
         }
 
         let on_display = card_location == 'display';
-        console.log(JSON.stringify(card));
         let exists_i_demand_effect = card.i_demand_effect !== null;
         let exists_i_compel_effect = card.i_compel_effect !== null;
         let exists_non_demand_effect = card.non_demand_effect_1 !== null;
@@ -2848,7 +2847,7 @@ class Innovation extends BgaGame {
                 let top_card = pile[pile.length - 1];
                 let card_id = this.getCardIdFromHTMLId(top_card.id);
                 // Only cards with a featured icon can be dogma'd
-                if (Number(this.cards[card_id].dogma_icon) != 0) {
+                if (!Number.isNaN(this.cards[card_id].dogma_icon)) {
                     list.push(dojo.byId(top_card.id));
                 }
             }
