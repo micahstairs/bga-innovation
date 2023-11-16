@@ -5501,10 +5501,10 @@ class Innovation extends Table
         return self::getMinOrMaxAgeInLocation($player_id, 'score', 'MAX');
     }
 
-    function getCardsWithVisibleEchoEffects($dogma_card)
+    function getCardIdsWithVisibleEchoEffects($dogma_card)
     {
         /**
-        Gets the list of cards with visible echo effects given a specific card being executed (from top to bottom)
+        Gets the list of card IDs with visible echo effects given a specific card being executed (from top to bottom)
         **/
 
         $color = $dogma_card['color'];
@@ -7912,6 +7912,17 @@ class Innovation extends Table
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/true);
     }
 
+    function getCardIdsWithEchoEffectsForNestedExecution($top_card) {
+        if ($this->innovationGameState->getEdition() <= 3) {
+            if (self::getEchoEffect($top_card['id'])) {
+                return [$top_card['id']];
+            }
+            return [];
+        } else {
+            return self::getCardIdsWithVisibleEchoEffects($top_card);
+        }
+    }
+
     function checkForChainAchievement(int $player_id)
     {
         // TODO(4E): There may be a bug here if a card calls this which does not actually mention
@@ -7937,34 +7948,64 @@ class Innovation extends Table
     {
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         $nested_card_state = self::getCurrentNestedCardState();
+        
         // Every card that says "execute the effects" also says "as if they were on this card"
         if ($execute_demand_effects) {
             $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
         } else {
             $as_if_on = $card['id'];
         }
+        
         if ($nested_card_state['replace_may_with_must']) {
             $replace_may_with_must = true;
         }
+
         $next_nesting_index = $this->innovationGameState->get('current_nesting_index') + 1;
+
         $has_i_demand = self::getDemandEffect($card['id']) !== null;
         $has_i_compel = self::getCompelEffect($card['id']) !== null;
-        $has_echo_effect = self::getEchoEffect($card['id']) !== null;
-        $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : 1;
-        if ($effect_type == 3) {
-            self::DbQuery(self::format("
+        if ($execute_demand_effects || $this->innovationGameState->usingFourthEditionRules()) {
+            $card_ids_with_echo_effects = self::getCardIdsWithEchoEffectsForNestedExecution($card);
+        } else {
+            $card_ids_with_echo_effects = [];
+        }
+
+        if ($card_ids_with_echo_effects) {
+            $effect_type = 3;
+            $effect_number = count($card_ids_with_echo_effects);
+            for ($i = count($card_ids_with_echo_effects); $i >= 1; $i--) {
+                self::DbQuery(self::format("
                     INSERT INTO echo_execution
                         (nesting_index, execution_index, card_id)
                     VALUES
-                        ({nesting_index}, 1, {card_id})
-                ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'])));
+                        ({nesting_index}, {execution_index}, {card_id})
+                ", ['nesting_index' => $next_nesting_index, 'execution_index' => $i, 'card_id' => $card_ids_with_echo_effects[$i - 1]]));
+            }
+        } else if ($execute_demand_effects && $has_i_demand) {
+            $effect_type = 0;
+            $effect_number = 1;
+        } else if ($execute_demand_effects && $has_i_compel) {
+            $effect_type = 2;
+            $effect_number = 1;
+        } else {
+            $effect_type = 1;
+            $effect_number = 1;
         }
+
         self::DbQuery(self::format("
             INSERT INTO nested_card_execution
                 (nesting_index, card_id, executing_as_if_on_card_id, replace_may_with_must, launcher_id, current_effect_type, current_effect_number, step, step_max)
             VALUES
-                ({nesting_index}, {card_id}, {as_if_on}, {replace_may_with_must}, {launcher_id}, {effect_type}, 1, -1, -1)
-        ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'replace_may_with_must' => $replace_may_with_must ? 'TRUE' : 'FALSE', 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+                ({nesting_index}, {card_id}, {as_if_on}, {replace_may_with_must}, {launcher_id}, {effect_type}, {effect_number}, -1, -1)
+        ", [
+            'nesting_index' => $next_nesting_index,
+            'card_id' => $card['id'],
+            'as_if_on' => $as_if_on,
+            'replace_may_with_must' => $replace_may_with_must ? 'TRUE' : 'FALSE',
+            'launcher_id' => $current_player_id,
+            'effect_type' => $effect_type,
+            'effect_number' => $effect_number,
+        ]));
     }
 
     function popCardFromNestedDogmaStack()
@@ -7975,12 +8016,15 @@ class Innovation extends Table
         self::updateCurrentNestedCardState('post_execution_index', 'post_execution_index + 1');
     }
 
-    function echoEffectWasExecuted()
+    function echoEffectWasExecuted(): bool
     {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            return true;
+        }
+
         $nested_card_state = self::getCurrentNestedCardState();
         // Every card that says "execute the effects" also says "as if they were on this card". However, if the card says
-        // "execute all of the non-demand dogma effects" then the echo effects will be skipped.
-        // TODO(4E): Revise this logic.
+        // "execute all of the non-demand dogma effects" then the echo effects will be skipped in the 3rd edition and earlier.
         return $nested_card_state['nesting_index'] == 0 || $nested_card_state['executing_as_if_on_card_id'] != $nested_card_state['card_id'];
     }
 
@@ -9033,7 +9077,7 @@ class Innovation extends Table
             );
         }
 
-        $visible_echo_effects = self::getCardsWithVisibleEchoEffects($card);
+        $visible_echo_effects = self::getCardIdsWithVisibleEchoEffects($card);
         // NOTE: In the 4th edition, echo effects are skipped when using the free dogma action on an artifact on display
         $execute_echo_effects = $this->innovationGameState->getEdition() <= 3 || $extra_icons_from_artifact_on_display === 0;
         if ($execute_echo_effects && !empty($visible_echo_effects)) {
@@ -9657,7 +9701,7 @@ class Innovation extends Table
                         AND player_eliminated = 0
                         {distance_rule_condition}
                 ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons, 'distance_rule_condition' => $distance_rule_condition)), true);
-        $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($card);
+        $card_ids_with_visible_echo_effects = self::getCardIdsWithVisibleEchoEffects($card);
         $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
         if (self::getNonDemandEffect($card['id'], 1) !== null) {
             $players_executing_non_demand_effects = $sharing_players;
