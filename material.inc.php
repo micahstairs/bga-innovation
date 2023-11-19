@@ -2258,7 +2258,7 @@ $this->textual_card_infos = array(
     415 => array(
         'name'                                => clienttranslate('Calculator'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Score two bottom non-blue cards from your board. If you scored two and they have a total value less than 11, draw a card of that total value and repeat this dogma effect (once only).'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Score two bottom non-blue cards on your board. If you score two and they have a total value less than 12, draw a card of that total value and repeat this effect (once only).'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score two bottom non-blue cards of different color on your board. If you score two and they have a total value less than 12, draw a card of that total value and repeat this effect (once only).'),
         'non_demand_effect_2'                 => clienttranslate('You may splay your blue cards up.'),
         'separate_4E_implementation'          => true,
     ),

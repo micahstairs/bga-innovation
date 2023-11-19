@@ -5,13 +5,15 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card415_4E extends AbstractCard
 {
 
   // Calculator (4th edition):
-  //   - Score two bottom non-blue cards on your board. If you score two and they have a total value
-  //     less than 12, draw a card of that total value and repeat this effect (once only).
+  //   - Score two bottom non-blue cards of different color on your board. If you score two and they
+  //     have a total value less than 12, draw a card of that total value and repeat this effect
+  //     (once only).
   //   - You may splay your blue cards up.
 
   public function initialExecution()
@@ -29,12 +31,10 @@ class Card415_4E extends AbstractCard
     if (self::isFirstNonDemand()) {
       return [
         'n'                 => 2,
-        'location_from'     => 'board',
+        'location_from'     => Locations::BOARD,
         'bottom_from'       => true,
         'score_keyword'     => true,
         'color'             => Colors::NON_BLUE,
-        // Allow same color to be chosen twice
-        'refresh_selection' => true,
       ];
     } else {
       return [
