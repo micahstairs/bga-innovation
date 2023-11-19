@@ -2265,8 +2265,9 @@ $this->textual_card_infos = array(
     416 => array(
         'name'                                => clienttranslate('Laser'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return all unclaimed standard achievements. Then, return half (rounded up) of the cards in your score pile. Draw and meld two ${age_10}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Return half (rounded up) of the cards in your score pile. Return all available standard achievements.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return four cards from your score pile. Return all available standard achievements.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Draw and foreshadow an ${age_11}. Draw and meld a ${age_10}. If Laser was foreseen, draw and meld an ${age_11}.'),
+        'separate_4E_implementation'          => true,
     ),
 
     417 => array(
