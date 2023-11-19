@@ -714,9 +714,10 @@ $this->textual_card_infos = array(
     ),
 
     106 => array(
-        'name'                               => clienttranslate('Monument'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement ${immediately} if you tuck six or score six cards during a single turn.'),
-        'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Masonry.')
+        'name'                                   => clienttranslate('Monument'),
+        'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you tuck six or score six cards during a single turn.'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have at least four top cards with a demand effect.'),
+        'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_1} Masonry.')
     ),
 
     107 => array(

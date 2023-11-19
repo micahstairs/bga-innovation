@@ -2121,14 +2121,14 @@ class Innovation extends Table
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
             // Update counters for the Monument special achievement
-            // TODO(FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
-            // there is a bug here that we need to fix.
-            if ($location_to == 'board' && $bottom_to) { // That's a tuck
-                self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
-            } else if ($transferInfo['score_keyword']) { // That's a score
-                self::incrementFlagForMonument($player_id, 'number_of_scored_cards');
+            if ($this->innovationGameState->getEdition() <= 3) {
+                if ($location_from == 'board' && $bottom_to) { // That's a tuck
+                    self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
+                } else if ($transferInfo['score_keyword']) { // That's a score
+                    self::incrementFlagForMonument($player_id, 'number_of_scored_cards');
+                }
+                $transferInfo['monument_counters'][$player_id] = self::getFlagsForMonument($player_id);
             }
-            $transferInfo['monument_counters'][$player_id] = self::getFlagsForMonument($player_id);
             self::notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo);
         } else {
             $player_id = $active_player_id;
@@ -3551,8 +3551,8 @@ class Innovation extends Table
     function checkForSpecialAchievementsForPlayer($player_id, $is_end_of_action_check)
     {
         // TODO(FIGURES): Update this once there are other special achievements to test for.
-        $achievements_to_test = array(106);
         $edition = $this->innovationGameState->getEdition();
+        $achievements_to_test = $edition <= 3 ? [CardIds::MONUMENT] : [];
         if ($edition <= 3 || $is_end_of_action_check) {
             $achievements_to_test = array_merge($achievements_to_test, [105, 107, 108, 109]);
         }
@@ -3582,9 +3582,19 @@ class Innovation extends Table
                     }
                     $eligible = $num_resources_with_three_or_more >= 6;
                     break;
-                case 106: // Monument: tuck 6 cards or score 6 cards
-                    $flags = self::getFlagsForMonument($player_id);
-                    $eligible = $flags['number_of_tucked_cards'] >= 6 || $flags['number_of_scored_cards'] >= 6;
+                case CardIds::MONUMENT: // Monument: 
+                    if ($edition <= 3) { // tuck 6 cards or score 6 cards
+                        $flags = self::getFlagsForMonument($player_id);
+                        $eligible = $flags['number_of_tucked_cards'] >= 6 || $flags['number_of_scored_cards'] >= 6;
+                    } else { // at least four top cards with a demand effect
+                        $num_cards_with_demand_effect = 0;
+                        foreach (self::getTopCardsOnBoard($player_id) as $card) {
+                            if ($card['has_demand']) {
+                                $num_cards_with_demand_effect++;
+                            }
+                        }
+                        $eligible = $num_cards_with_demand_effect >= 4;
+                    }
                     break;
                 case 107: // Wonder: 5 colors, each being splayed right, up, or aslant
                     $eligible = true;
@@ -4457,9 +4467,8 @@ class Innovation extends Table
         /**
             Get all static information about all cards in the database.
         **/
-        // if 4th edition
         if ($this->innovationGameState->usingFourthEditionRules()) {
-            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM `card` WHERE `location` != 'removed'");
+            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic, has_demand FROM `card` WHERE `location` != 'removed'");
         } else {
             $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM `card`");
         }
@@ -11115,7 +11124,9 @@ class Innovation extends Table
             $this->innovationGameState->set('has_second_action', 1);
         }
         if ($next_player) { // The turn for the current player is over
-            self::resetFlagsForMonument();
+            if (!$this->innovationGameState->usingFirstEditionRules()) {
+                self::resetFlagsForMonument();
+            }
 
             if ($this->innovationGameState->citiesExpansionEnabled()) {
                 $this->innovationGameState->set('endorse_action_state', 1);

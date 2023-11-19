@@ -15,6 +15,7 @@ function parseCard(card) {
         dogma_icon: parseInt(card.dogma_icon),
         is_relic: card.is_relic,
         name: card.name,
+        has_demand: card.has_demand,
         condition_for_claiming: (_a = card.condition_for_claiming) !== null && _a !== void 0 ? _a : null,
         alternative_condition_for_claiming: (_b = card.alternative_condition_for_claiming) !== null && _b !== void 0 ? _b : null,
         echo_effect: (_c = card.echo_effect) !== null && _c !== void 0 ? _c : null,
@@ -1793,9 +1794,26 @@ var Innovation = /** @class */ (function (_super) {
                         }
                         break;
                     case 106:
-                        // Monument: tuck six or score six cards during a single turn
-                        numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
-                        denominator = 6;
+                        // Monument:
+                        if (self.gamedatas.fourth_edition) {
+                            // at least four top cards with a demand effect
+                            for (var i = 0; i < 5; i++) {
+                                var items = self.zone["board"][self.player_id][i].items;
+                                if (items.length > 0) {
+                                    var top_card_id = self.getCardIdFromHTMLId(items[items.length - 1].id);
+                                    var top_card = self.cards[top_card_id];
+                                    if (top_card.has_demand) {
+                                        numerator++;
+                                    }
+                                }
+                            }
+                            denominator = 4;
+                        }
+                        else {
+                            // tuck six or score six cards during a single turn
+                            numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
+                            denominator = 6;
+                        }
                         break;
                     case 107:
                         // Wonder: five colors on your board, and each is splayed either up, right, or aslant
@@ -3052,7 +3070,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         var card_data = this.cards[card.id];
         var name = _(card_data.name).toUpperCase();
-        var is_monument = card.id == 106;
+        var is_monument = card.id == 106 && !this.gamedatas.fourth_edition;
         var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
         var div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
         var div_alternative_condition_for_claiming = "";
