@@ -3187,7 +3187,7 @@ $this->textual_card_infos = array(
 
     575 => array(
         'name'            => clienttranslate('Hacking'),
-        'i_demand_effect' => clienttranslate('${I demand} you transfer your two highest secrets to my safe! Transfer all the highest cards in your score pile to my score pile! Meld all the lowest cards from your score pile!'),
+        'i_demand_effect' => clienttranslate('${I demand} you transfer your two highest secrets to my safe! Transfer the two highest cards in your score pile to my score pile! Meld the two lowest cards from your score pile!'),
     ),
 
     576 => array(
