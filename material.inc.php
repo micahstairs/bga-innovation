@@ -2875,7 +2875,7 @@ $this->textual_card_infos = array(
 
     521 => array(
         'name'                => clienttranslate('April Fool\'s Day'),
-        'non_demand_effect_1' => clienttranslate('Transfer the highest cards from your hand and score pile together to the board of the player on your right. If you don\'t, claim the Folklore achievement.'),
+        'non_demand_effect_1' => clienttranslate('Transfer a card from your hand or score pile to the board of the player on your right. If you don\'t, claim the Folklore achievement.'),
         'non_demand_effect_2' => clienttranslate('Splay your yellow cards right, and unsplay your purple cards, or vice versa.'),
     ),
 
