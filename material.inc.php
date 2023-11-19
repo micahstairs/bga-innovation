@@ -2563,7 +2563,7 @@ $this->textual_card_infos = array(
     458 => array(
         'name'                => clienttranslate('Jumbo Kingdom'),
         'non_demand_effect_1' => clienttranslate('Choose a color on your board. Junk all cards of that color from all boards.'),
-        'non_demand_effect_2' => clienttranslate('Score all valued cards of lowest value in the junk. If you do, and you score fewer than 11 points, repeat this effect.'),
+        'non_demand_effect_2' => clienttranslate('Choose a card in the junk. Score all cards of the chosen card\'s value in the junk. If you do, and you score fewer than eleven points, repeat this effect.'),
     ),
 
     459 => array(
