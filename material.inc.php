@@ -1932,8 +1932,9 @@ $this->textual_card_infos = array(
         'name'                            => clienttranslate('Toilet'),
         'echo_effect'                     => clienttranslate('Draw and tuck a ${age_4}.'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you return all cards from your score pile of value matching the highest bonus on my board!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} you return all cards from your score pile of the highest value matching a bonus on my board!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you return a card from your score pile matching each different bonus value on my board!'),
         'non_demand_effect_1'             => clienttranslate('You may return a card in your hand and draw a card of the same value.'),
+        'separate_4E_implementation'      => true,
     ),
 
     /* Echoes - Age 5 */
