@@ -1226,8 +1226,10 @@ $this->textual_card_infos = array(
     ),
 
     186 => array(
-        'name'                => clienttranslate('Earhart\'s Lockheed Electra 10E'),
-        'non_demand_effect_1' => clienttranslate('For each value below nine, return a top card of that value from your board, in descending order. If you return eight cards, you win. Otherwise, claim an achievement, ignoring eligibility.'),
+        'name'                                => clienttranslate('Earhart\'s Lockheed Electra 10E'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('For each value below nine, return a top card of that value from your board, in descending order. If you return eight cards, you win. Otherwise, claim an achievement, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('For each value below 9, junk a top card of that value from your board, in descending order. Then, if there is a junked card of each value below 9, you win.'),
+        'separate_4E_implementation'          => true,
     ),
 
     187 => array(
