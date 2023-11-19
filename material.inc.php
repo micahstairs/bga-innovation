@@ -2823,7 +2823,7 @@ $this->textual_card_infos = array(
 
     513 => array(
         'name'                => clienttranslate('Masquerade'),
-        'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value equal to the number of cards in your hand. If you do, return all the highest cards from your hand. If you return a ${age_4}, claim the Anonymity achievement.'),
+        'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value equal to the number of cards in your hand. If you do, return all cards of that value from your hand. If you return a ${age_4}, claim the Anonymity achievement.'),
         'non_demand_effect_2' => clienttranslate('You may splay your purple cards left.'),
     ),
 

@@ -12,7 +12,7 @@ class Card513 extends AbstractCard
 {
   // Masquerade
   //   - Safeguard an available achievement of value equal to the number of cards in your hand. If
-  //     you do, return all the highest cards from your hand. If you return a [4], claim the
+  //     you do, return all cards of that value from your hand. If you return a [4], claim the
   //     Anonymity achievement.
   //   - You may splay your purple cards left.
 
@@ -25,17 +25,19 @@ class Card513 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
+        $value = self::countCards(Locations::HAND);
+        self::setAuxiliaryValue($value);
         return [
           'location_from'     => Locations::AVAILABLE_ACHIEVEMENTS,
           'safeguard_keyword' => true,
-          'age'               => self::countCards(Locations::HAND),
+          'age'               => $value,
         ];
       } else {
         return [
           'n'              => 'all',
           'location_from'  => Locations::HAND,
           'return_keyword' => true,
-          'age'            => self::getMaxValueInLocation(Locations::HAND),
+          'age'            => self::getAuxiliaryValue(),
         ];
       }
     } else {
