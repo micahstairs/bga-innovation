@@ -79,7 +79,8 @@ $this->textual_card_infos = array(
     11  => array(
         'name'                                => clienttranslate('Masonry'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may meld any number of cards from your hand, each with a ${icon_4}. If you melded four or more cards in this way, claim the Monument achievement.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may meld any number of cards from your hand, each with a ${icon_4}. If you meld four cards in this way, claim the Monument achievement.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may meld any number of cards from your hand, each with a ${icon_4}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If you have exactly three red cards on your board, claim the Monument achievement.'),
     ),
 
     12  => array(
