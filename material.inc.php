@@ -1683,7 +1683,8 @@ $this->textual_card_infos = array(
     341 => array(
         'name'                                => clienttranslate('Soap'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color. You may tuck any number of cards of that color from your hand. If you tucked at least three, you may achieve (if eligible) a card from your hand.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color. You may tuck any number of cards of that color from your hand. If you tuck three, you may achieve (if eligible) a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color. You may tuck any number of cards of that color from your hand. If you do, and your top card of that color is higher than each opponent\'s, you may achieve (if eligible) a card from your hand.'),
+        'separate_4E_implementation'          => true,
     ),
 
     342 => array(
