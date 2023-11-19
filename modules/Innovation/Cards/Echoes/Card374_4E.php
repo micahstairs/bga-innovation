@@ -5,7 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card374_3E extends AbstractCard
+class Card374_4E extends AbstractCard
 {
 
   // Toilet (3rd edition):

@@ -7,17 +7,12 @@ use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
-class Card409 extends AbstractCard
+class Card409_3E extends AbstractCard
 {
 
-  // Nylon
-  // - 3rd edition
+  // Nylon (3rd edition):
   //   - Draw and tuck an [8] for every three [INDUSTRY] on your board. If any of the tucked cards
   //     are green, repeat this effect.
-  //   - You may splay your red cards up.
-  // - 4th edition
-  //   - Draw and tuck an [8] for every three [INDUSTRY] on your board. If any of the tucked cards
-  //     were green, repeat this dogma effect.
   //   - You may splay your red cards up.
 
   public function initialExecution()
