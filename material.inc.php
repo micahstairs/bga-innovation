@@ -169,8 +169,9 @@ $this->textual_card_infos = array(
     25  => array(
         'name'                                => clienttranslate('Alchemy'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_4} for every three ${icon_4} on your board. If any of the drawn cards are red, return the cards drawn and all cards in your hand. Otherwise, keep them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal a ${age_4} for every three ${icon_4} on your board. If any of the drawn cards are red, return the cards drawn and all cards in your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal a ${age_4} for every color on your board with ${icon_4}. If any of the drawn cards are red, return all cards from your hand.'),
         'non_demand_effect_2'                 => clienttranslate('Meld a card from your hand, then score a card from your hand.'),
+        'separate_4E_implementation'          => true,
     ),
 
     26  => array(

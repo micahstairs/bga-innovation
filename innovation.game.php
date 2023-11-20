@@ -11446,6 +11446,7 @@ class Innovation extends Table
         }
         return $card_id <= 12
             || $card_id == 22
+            || $card_id == 25
             || $card_id == 57
             || $card_id == 65
             || $card_id == 72
@@ -11700,39 +11701,6 @@ class Innovation extends Table
 
                 case "24N2":
                     $step_max = 1;
-                    break;
-
-                // id 25, age 3: Alchemy        
-                case "25N1":
-                    $number_of_towers = self::getPlayerSingleRessourceCount($player_id, 4);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${towers}.'), array('You' => 'You', 'n' => $number_of_towers, 'towers' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${towers}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_towers, 'towers' => $tower));
-                    $any_card_red = false;
-                    $cards = array();
-                    for ($i = 0; $i < self::intDivision($number_of_towers, 3); $i++) { // "For every three towers on your board"
-                        $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                        if ($card['color'] == 1) { // This card is red
-                            $any_card_red = true;
-                        }
-                        $cards[] = $card;
-                    }
-
-                    if ($any_card_red) { // "If any of the drawn cards are red"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} drew a red card.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew a red card.'), array('player_name' => self::renderPlayerName($player_id)));
-
-                        $step_max = 1;
-                    } else { // "Otherwise"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not draw a red card.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not draw a red card.'), array('player_name' => self::renderPlayerName($player_id)));
-                        foreach ($cards as $card) {
-                            self::transferCardFromTo($card, $player_id, 'hand'); // "Keep them" (ie place them in your hand)
-                        }
-                    }
-                    break;
-
-                case "25N2":
-                    $step_max = 2;
                     break;
 
                 // id 26, age 3: Translation        
@@ -13478,49 +13446,6 @@ class Innovation extends Table
                     'player_id'     => $player_id,
                     'n'             => 1,
                     'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true
-                );
-                break;
-
-            // id 25, age 3: Alchemy        
-            case "25N1A":
-                // "Return the drawn cards and all cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'revealed,hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "25N2A":
-                // "Meld a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'meld_keyword'  => true,
-                );
-                break;
-
-            case "25N2B":
-                // "Score a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
 
                     'owner_from'    => $player_id,
                     'location_from' => 'hand',
