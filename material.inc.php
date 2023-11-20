@@ -81,6 +81,7 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('You may meld any number of cards from your hand, each with a ${icon_4}. If you melded four or more cards in this way, claim the Monument achievement.'),
         'non_demand_effect_1_fourth'          => clienttranslate('You may meld any number of cards from your hand, each with a ${icon_4}.'),
         'non_demand_effect_2_fourth'          => clienttranslate('If you have exactly three red cards on your board, claim the Monument achievement.'),
+        'separate_4E_implementation'          => true,
     ),
 
     12  => array(
@@ -2193,7 +2194,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('X-Ray'),
         'echo_effect'                         => clienttranslate('Draw and tuck an ${age_8}.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('For every three ${icon_2} on your board, draw and foreshadow a card of any value.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value. For every three ${icon_2} on your board, draw a card of that value. Foreshadow any number of them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value. For every color on your board with ${icon_2}, draw a card of that value. Foreshadow any number of them.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your yellow cards up.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Return all cards from your hand.'),
         'non_demand_effect_3_fourth'          => clienttranslate('You may splay your yellow cards up.'),
