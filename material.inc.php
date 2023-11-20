@@ -281,8 +281,10 @@ $this->textual_card_infos = array(
     ),
 
     42  => array(
-        'name'                => clienttranslate('Perspective'),
-        'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, score a card from your hand for every two ${icon_3} on your board.'),
+        'name'                                => clienttranslate('Perspective'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return a card from your hand. If you do, score a card from your hand for every two ${icon_3} on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return a card from your hand. If you do, score a card from your hand for every color on your board with ${icon_3}.'),
+        'separate_4E_implementation'          => true,
     ),
 
     43  => array(

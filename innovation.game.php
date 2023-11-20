@@ -11447,6 +11447,7 @@ class Innovation extends Table
         return $card_id <= 12
             || $card_id == 22
             || $card_id == 25
+            || $card_id == 42
             || $card_id == 57
             || $card_id == 65
             || $card_id == 72
@@ -11971,11 +11972,6 @@ class Innovation extends Table
 
                 // id 41, age 4: Anatomy
                 case "41D1":
-                    $step_max = 1;
-                    break;
-
-                // id 42, age 4: Perspective
-                case "42N1":
                     $step_max = 1;
                     break;
 
@@ -13808,39 +13804,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 42, age 4: Perspective
-            case "42N1A":
-                // "You may return a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "42N1B":
-                $number_of_lightbulbs = self::getPlayerSingleRessourceCount($player_id, 3 /* lightbulb */);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${lightbulbs}.'), array('You' => 'You', 'n' => $number_of_lightbulbs, 'lightbulbs' => $lightbulb));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${lightbulbs}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_lightbulbs, 'lightbulbs' => $lightbulb));
-                // "Score a card from your hand for every two lightbulbs on your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => self::intDivision($number_of_lightbulbs, 2),
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true
-                );
-                break;
-
             // id 43, age 4: Enterprise
             case "43D1A":
                 // "Transfer a top non-purple card with a crown from your board to my board"
@@ -15599,13 +15562,6 @@ class Innovation extends Table
                         // "If you do, junk all cards in the 4 deck"
                         if ($n > 0 && $this->innovationGameState->usingFourthEditionRules()) {
                             self::junkBaseDeck(4);
-                        }
-                        break;
-
-                    // id 42, age 4: Perspective
-                    case "42N1A":
-                        if ($n > 0) { // "If you do"
-                            self::incrementStepMax(1);
                         }
                         break;
 
