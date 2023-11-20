@@ -294,9 +294,11 @@ $this->textual_card_infos = array(
     ),
 
     44  => array(
-        'name'                => clienttranslate('Reformation'),
-        'non_demand_effect_1' => clienttranslate('You may tuck a card from your hand for every two ${icon_2} on your board.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your yellow or purple cards right.'),
+        'name'                                => clienttranslate('Reformation'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may tuck a card from your hand for every two ${icon_2} on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may tuck a card from your hand for every color on your board with ${icon_2}.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your yellow or purple cards right.'),
+        'separate_4E_implementation'          => true,
     ),
 
     /* Age 5 */

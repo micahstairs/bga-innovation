@@ -17,12 +17,7 @@ class Card25_4E extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $numCardsToDraw = 0;
-      foreach (Colors::ALL as $color) {
-        if (self::getIconCountInStack($color, Icons::AUTHORITY) > 0) {
-          $numCardsToDraw++;
-        }
-      }
+      $numCardsToDraw = self::countColorsWithIcon(Icons::AUTHORITY);
       $drewRed = false;
       for ($i = 0; $i < $numCardsToDraw; $i++) {
         $card = self::transferToHand(self::drawAndReveal(4));

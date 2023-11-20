@@ -30,11 +30,7 @@ class Card22 extends AbstractCard
         self::notifyOthers(clienttranslate('${player_name} has visible ${n} ${icon} on his board.'), $args);
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
-        foreach (Colors::ALL as $color) {
-          if (self::getIconCountInStack($color, Icons::HEALTH) > 0) {
-            $numToDraw++;
-          }
-        }
+        $numToDraw = self::countColorsWithIcon(Icons::HEALTH);
         $args = ['i18n' => ['n'], 'n' => self::renderNumber($numToDraw), 'icon' => $renderedIcon];
         self::notifyPlayer(clienttranslate('${You} have ${n} color(s) with one or more visible ${icon}.'), $args);
         self::notifyOthers(clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'), $args);

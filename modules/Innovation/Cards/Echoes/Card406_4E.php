@@ -23,12 +23,7 @@ class Card406_4E extends AbstractCard
     if (self::isEcho()) {
       self::drawAndTuck(8);
     } else if (self::isFirstNonDemand()) {
-      $numCardsToDraw = 0;
-      foreach (Colors::ALL as $color) {
-        if (self::getIconCountInStack($color, Icons::HEALTH) > 0) {
-          $numCardsToDraw++;
-        }
-      }
+      $numCardsToDraw = self::countColorsWithIcon(Icons::HEALTH);
       if ($numCardsToDraw > 0) {
         self::setAuxiliaryValue($numCardsToDraw);
         self::setMaxSteps(2);

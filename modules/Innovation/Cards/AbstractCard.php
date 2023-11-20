@@ -1326,6 +1326,17 @@ abstract class AbstractCard
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }
 
+  protected function countColorsWithIcon(int $icon): int
+  {
+    $numColors = 0;
+    foreach (Colors::ALL as $color) {
+      if (self::getIconCountInStack($color, $icon) > 0) {
+        $numColors++;
+      }
+    }
+    return $numColors;
+  }
+
   protected function getStandardIconCount(int $icon, int $playerId = null): int
   {
     return $this->game->getPlayerSingleRessourceCount(self::coercePlayerId($playerId), $icon);

@@ -11448,6 +11448,7 @@ class Innovation extends Table
             || $card_id == 22
             || $card_id == 25
             || $card_id == 42
+            || $card_id == 44
             || $card_id == 57
             || $card_id == 65
             || $card_id == 72
@@ -11981,15 +11982,6 @@ class Innovation extends Table
                     break;
 
                 case "43N1":
-                    $step_max = 1;
-                    break;
-
-                // id 44, age 4: Reformation
-                case "44N1":
-                    $step_max = 1;
-                    break;
-
-                case "44N2":
                     $step_max = 1;
                     break;
 
@@ -13830,38 +13822,6 @@ class Innovation extends Table
 
                     'splay_direction' => Directions::RIGHT,
                     'color'           => array(2) /* green */
-                );
-                break;
-
-            // id 44, age 4: Reformation
-            case "44N1A":
-                $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
-                // "You may tuck a card from your hand for every two leaves on your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => self::intDivision($number_of_leaves, 2),
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'bottom_to'     => true
-                );
-                break;
-
-            case "44N2A":
-                // "You may splay your yellow or purple cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(3, 4) /* yellow, purple */
                 );
                 break;
 
