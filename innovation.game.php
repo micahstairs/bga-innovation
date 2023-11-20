@@ -11446,6 +11446,7 @@ class Innovation extends Table
         }
         return $card_id <= 12
             || $card_id == 22
+            || $card_id == 57
             || $card_id == 65
             || $card_id == 72
             || $card_id == 100
@@ -12218,54 +12219,6 @@ class Innovation extends Table
 
                 case "56N2":
                     $step_max = 1; // 4th edition and beyond only
-                    break;
-
-                // id 57, age 6: Industrialisation
-                case "57N1":
-                    if ($this->innovationGameState->usingFirstEditionRules()) {
-                        // "For every two factories on your board"
-                        $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5 /* factory */);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${factories}.'), array('You' => 'You', 'n' => $number_of_factories, 'factories' => $factory));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${factories}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_factories, 'factories' => $factory));
-                        $number = self::intDivision($number_of_factories, 2);
-                    } else {
-                        // "For each color of your board that have one factory or more"
-                        $number = 0;
-                        for ($color = 0; $color < 5; $color++) {
-                            if (self::boardPileHasRessource($player_id, $color, 5 /* factory */)) { // There is at least one visible factory in that color
-                                $number++;
-                            }
-                        }
-                        if ($number <= 1) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color with one or more visible ${factories}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::renderNumber($number), 'factories' => $factory));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number), 'factories' => $factory));
-                        } else { // $number > 1
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${factories}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::renderNumber($number), 'factories' => $factory));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number), 'factories' => $factory));
-                        }
-                    }
-
-                    $eight_or_ten_tucked = false;
-                    for ($i = 0; $i < $number; $i++) {
-                        $card = self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
-                        if ($card['age'] == 8 || $card['age'] == 10) {
-                            $eight_or_ten_tucked = true;
-                        }
-                    }
-
-                    // "If you tuck an 8 or 10, return Industrialization if it is a top card on any board." (4th edition only)
-                    $industrialization_card = self::getCardInfo(57);
-                    if (
-                        $this->innovationGameState->usingFourthEditionRules()
-                        && self::isTopBoardCard($industrialization_card)
-                        && $eight_or_ten_tucked
-                    ) {
-                        self::returnCard($industrialization_card);
-                    }
-                    break;
-
-                case "57N2":
-                    $step_max = 1;
                     break;
 
                 // id 58, age 6: Machine tools
@@ -14286,19 +14239,6 @@ class Innovation extends Table
 
                     'age_min'       => 5,
                     'age_max'       => 7,
-                );
-                break;
-
-            // id 57, age 6: Industrialisation
-            case "57N2A":
-                // "You may splay your red or purple cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(1, 4) /* red or purple */
                 );
                 break;
 

@@ -381,8 +381,9 @@ $this->textual_card_infos = array(
         'name'                       => clienttranslate('Industrialization'),
         'non_demand_effect_1_first'  => clienttranslate('Draw and tuck a ${age_6} for every two ${icon_5} on your board.'),
         'non_demand_effect_1_third'  => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}.'),
-        'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with a ${icon_5}. If you tuck an ${age_8} or ${age_10}, return Industrialization if it is a top card on any board.'),
+        'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck three ${age_6}. Then, if you are the single player with the most ${icon_6}, return your top red card.'),
         'non_demand_effect_2'        => clienttranslate('You may splay your red or purple cards right.'),
+        'separate_4E_implementation' => true,
     ),
 
     58  => array(
