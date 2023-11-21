@@ -22,12 +22,10 @@ class Card446 extends AbstractCard
     $maxScoreValue = self::getMaxValueInLocation(Locations::SCORE);
     if (self::isDemand()) {
       return [
-        'n'             => 'all',
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'age'           => $maxScoreValue,
+        'n'        => 'all',
+        'location' => Locations::SCORE,
+        'owner_to' => self::getLauncherId(),
+        'age'      => $maxScoreValue,
       ];
     } else {
       return [

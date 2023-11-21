@@ -638,7 +638,8 @@ $this->textual_card_infos = array(
     93  => array(
         'name'                            => clienttranslate('Services'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transfer any cards, transfer a top card without a ${icon_2} from my board to your hand!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer all the cards of the value of my choice from your score pile to my hand! If you transfer any cards, transfer a top card without ${icon_2} from my board to your hand!'),
+        'separate_4E_implementation'      => true,
     ),
 
     94  => array(

@@ -11455,6 +11455,7 @@ class Innovation extends Table
             || $card_id == 65
             || $card_id == 67
             || $card_id == 72
+            || $card_id == 93
             || $card_id == 100
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
@@ -12584,20 +12585,6 @@ class Innovation extends Table
                     // NOTE: This is only in 4th edition and beyond
                     $step_max = 1;
                     break;
-
-                // id 93, age 9: Services
-                case "93D1":
-                    $ids_of_highest_cards_in_score = self::getIdsOfHighestCardsInLocation($player_id, 'score');
-                    foreach ($ids_of_highest_cards_in_score as $id) {
-                        $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $launcher_id, 'hand'); // "Transfer all the highest cards from your score pile to my hand"
-                    }
-
-                    if (count($ids_of_highest_cards_in_score) > 0) { // "If you transferred any cards"
-                        $step_max = 1;
-                    }
-                    break;
-
 
                 // id 94, age 9: Specialization
                 case "94N1":
@@ -14706,22 +14693,6 @@ class Innovation extends Table
                     'player_id'        => $player_id,
                     'can_pass'         => true,
                     'choose_yes_or_no' => true,
-                );
-                break;
-
-            // id 93, age 9: Services
-            case "93D1A":
-                // "Transfer a top card from my board without a leaf to your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $launcher_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'hand',
-
-                    'without_icon'  => 2 /* leaf */
                 );
                 break;
 
