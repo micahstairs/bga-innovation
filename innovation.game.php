@@ -11456,7 +11456,7 @@ class Innovation extends Table
             || $card_id == 67
             || $card_id == 72
             || $card_id == 93
-            || $card_id == 100
+            || (99 <= $card_id && $card_id <= 100)
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
             || $card_id >= 502;
@@ -12667,13 +12667,6 @@ class Innovation extends Table
                     $card = self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10
                     if ($this->innovationGameState->getEdition() <= 3 || self::hasRessource($card, Icons::INDUSTRY) || self::hasRessource($card, Icons::EFFICIENCY)) {
                         self::selfExecute($card); // "Execute each its non-demand dogma effects"
-                    }
-                    break;
-
-                // id 99, age 10: Databases
-                case "99D1":
-                    if (self::countCardsInLocation($player_id, 'score') > 0) { // (Nothing to do if the player has nothing in his score pile)
-                        $step_max = 1;
                     }
                     break;
 
@@ -14754,20 +14747,6 @@ class Innovation extends Table
 
                     'owner_from'    => $player_id,
                     'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
-            // id 99, age 10: Databases
-            case "99D1A":
-                // "Return half (rounded up) of the cards in your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => ceil(self::countCardsInLocation($player_id, 'score') / 2),
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
                     'owner_to'      => 0,
                     'location_to'   => 'deck'
                 );

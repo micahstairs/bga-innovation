@@ -679,8 +679,10 @@ $this->textual_card_infos = array(
     ),
 
     99  => array(
-        'name'            => clienttranslate('Databases'),
-        'i_demand_effect' => clienttranslate('${I demand} you return half (rounded up) of the cards in your score pile!'),
+        'name'                            => clienttranslate('Databases'),
+        'i_demand_effect_first_and_third' => clienttranslate('${I demand} you return half (rounded up) of the cards in your score pile!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you return a number of cards from your score pile equal to the value of your highest achievement!'),
+        'separate_4E_implementation'      => true,
     ),
 
     100 => array(
