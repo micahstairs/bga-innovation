@@ -7549,25 +7549,25 @@ class Innovation extends Table
         }
     }
 
-    function setLauncherId($launcher_id)
+    function setLauncherId(int $launcher_id)
     {
         self::updateCurrentNestedCardState('launcher_id', $launcher_id);
     }
 
-    function getLauncherId()
+    function getLauncherId(): int
     {
         if ($this->innovationGameState->get('current_nesting_index') < 0) {
-            return $this->innovationGameState->get('active_player');
+            return intval($this->innovationGameState->get('active_player'));
         }
-        return self::getCurrentNestedCardState()['launcher_id'];
+        return intval(self::getCurrentNestedCardState()['launcher_id']);
     }
 
-    function incrementStep($delta)
+    function incrementStep(int $delta)
     {
         self::setStep(self::getStep() + $delta);
     }
 
-    function setStep($step)
+    function setStep(int $step)
     {
         self::updateCurrentNestedCardState('step', $step);
     }
@@ -7577,12 +7577,12 @@ class Innovation extends Table
         return self::getCurrentNestedCardState()['step'];
     }
 
-    function incrementStepMax($delta)
+    function incrementStepMax(int $delta)
     {
         self::setStepMax(self::getStepMax() + $delta);
     }
 
-    function setStepMax($step_max)
+    function setStepMax(int $step_max)
     {
         self::updateCurrentNestedCardState('step_max', $step_max);
     }
@@ -7592,7 +7592,7 @@ class Innovation extends Table
         return self::getCurrentNestedCardState()['step_max'];
     }
 
-    function setAuxiliaryValue($auxiliary_value)
+    function setAuxiliaryValue(int $auxiliary_value)
     {
         self::updateCurrentNestedCardState('auxiliary_value', $auxiliary_value);
     }
@@ -7602,9 +7602,9 @@ class Innovation extends Table
         self::setAuxiliaryValue(Arrays::encode($array));
     }
 
-    function getAuxiliaryValue()
+    function getAuxiliaryValue(): int
     {
-        return self::getCurrentNestedCardState()['auxiliary_value'];
+        return intval(self::getCurrentNestedCardState()['auxiliary_value']);
     }
 
     function getAuxiliaryValueAsArray()
@@ -7612,7 +7612,7 @@ class Innovation extends Table
         return Arrays::decode(self::getAuxiliaryValue());
     }
 
-    function setAuxiliaryValue2($auxiliary_value_2)
+    function setAuxiliaryValue2(int $auxiliary_value_2)
     {
         self::updateCurrentNestedCardState('auxiliary_value_2', $auxiliary_value_2);
     }
@@ -7622,9 +7622,9 @@ class Innovation extends Table
         self::setAuxiliaryValue2(Arrays::encode($array));
     }
 
-    function getAuxiliaryValue2()
+    function getAuxiliaryValue2(): int
     {
-        return self::getCurrentNestedCardState()['auxiliary_value_2'];
+        return intval(self::getCurrentNestedCardState()['auxiliary_value_2']);
     }
 
     function getAuxiliaryValue2AsArray()
@@ -11451,6 +11451,7 @@ class Innovation extends Table
             || $card_id == 44
             || $card_id == 51
             || $card_id == 57
+            || $card_id == 62
             || $card_id == 65
             || $card_id == 67
             || $card_id == 72
@@ -12187,21 +12188,6 @@ class Innovation extends Table
 
                 case "61N2":
                     $step_max = 1;
-                    break;
-
-                // id 62, age 6: Vaccination
-                case "62D1":
-                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                        self::setAuxiliaryValue(0);
-                    }
-                    $step_max = 1;
-                    break;
-
-                case "62N1":
-                    // "If any card was returned as a result of the demand, draw and meld a 7."
-                    if (self::getAuxiliaryValue() == 1) {
-                        self::executeDrawAndMeld($player_id, 7);
-                    }
                     break;
 
                 // id 63, age 6: Democracy          
@@ -14093,21 +14079,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 62, age 6: Vaccination
-            case "62D1A":
-                // "Return all the lowest cards in your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => self::getMinAgeInScore($player_id)
-                );
-                break;
-
             // id 63, age 6: Democracy          
             case "63N1A":
                 // "You may return any number of cards from your hand"
@@ -15520,14 +15491,6 @@ class Innovation extends Table
                             }
                             self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Place back the card into player's hand
                             self::incrementStepMax(1);
-                        }
-                        break;
-
-                    // id 62, age 6: Vaccination
-                    case "62D1A":
-                        if ($n > 0) { // "If you returned any"
-                            self::executeDrawAndMeld($player_id, 6); // "Draw and meld a 6"
-                            self::setAuxiliaryValue(1); // Flag that a card has been returned
                         }
                         break;
 

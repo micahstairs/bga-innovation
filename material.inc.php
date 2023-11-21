@@ -419,9 +419,10 @@ $this->textual_card_infos = array(
 
     62  => array(
         'name'                            => clienttranslate('Vaccination'),
-        'i_demand_effect_first_and_third' => clienttranslate('${I demand} your return all the lowest cards in your score pile! If you returnd any, draw and meld a ${age_6}!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} your return all the lowest cards in your score pile! If you return any, draw and meld a ${age_6}!'),
+        'i_demand_effect_first_and_third' => clienttranslate('${I demand} you return all the lowest cards in your score pile! If you returned any, draw and meld a ${age_6}!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you choose a card in your score pile! Return all the cards from your score pile of its value! If you return any, draw and meld a ${age_6}!'),
         'non_demand_effect_1'             => clienttranslate('If any card was returned as a result of the demand, draw and meld a ${age_7}.'),
+        'separate_4E_implementation'      => true,
     ),
 
     63  => array(
