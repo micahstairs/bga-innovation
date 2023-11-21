@@ -11451,6 +11451,7 @@ class Innovation extends Table
             || $card_id == 44
             || $card_id == 57
             || $card_id == 65
+            || $card_id == 67
             || $card_id == 72
             || $card_id == 100
             || (110 <= $card_id && $card_id <= 214)
@@ -12255,33 +12256,6 @@ class Innovation extends Table
 
                 case "66N2_4E":
                     $step_max = 1;
-                    break;
-
-                // id 67, age 7: Combustion
-                case "67D1":
-                    if ($this->innovationGameState->usingFirstEditionRules()) {
-                        $number = 2;
-                    } else {
-                        $number_of_crowns = self::getPlayerSingleRessourceCount($launcher_id, 1 /* crown */);
-                        self::notifyPlayer($launcher_id, 'log', clienttranslate('${You} have ${n} ${crowns}.'), array('You' => 'You', 'n' => $number_of_crowns, 'crowns' => $crown));
-                        self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('${player_name} has ${n} ${crowns}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_crowns, 'crowns' => $crown));
-                        $number = self::intDivision($number_of_crowns, 4);
-                        if ($number == 0) {
-                            self::notifyGeneralInfo(clienttranslate('No card has to be transfered.'));
-                            break;
-                        }
-                    }
-                    self::setAuxiliaryValue($number);
-                    $step_max = 1;
-                    break;
-
-                case "67N1":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
-                        $bottom_red_card = self::getBottomCardOnBoard($player_id, Colors::RED);
-                        if ($bottom_red_card !== null) {
-                            self::returnCard($bottom_red_card); // "Return your bottom red card"
-                        }
-                    }
                     break;
 
                 // id 68, age 7: Explosives
@@ -14254,22 +14228,6 @@ class Innovation extends Table
                     'can_pass'                   => true,
 
                     'choose_special_achievement' => true,
-                );
-                break;
-
-            // id 67, age 7: Combustion
-            case "67D1A":
-                // Last edition => "Transfer one card from your score pile to my score pile for every four crown on my board"
-                // First edition => "Transfer two cards from your score pile to my score pile"
-                // Cf A
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => self::getAuxiliaryValue(),
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score'
                 );
                 break;
 
@@ -16612,7 +16570,7 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 67, age 7: Bicycle         
+                // id 69, age 7: Bicycle         
                 case "69N1A":
                     // $choice is yes or no
                     if ($choice == 0) { // No exchange

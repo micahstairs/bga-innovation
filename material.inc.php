@@ -452,9 +452,11 @@ $this->textual_card_infos = array(
 
     67  => array(
         'name'                                 => clienttranslate('Combustion'),
-        'i_demand_effect_third_and_fourth'     => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every four ${icon_1} on my board!'),
         'i_demand_effect_first'                => clienttranslate('${I demand} you transfer two cards from your score pile to my score pile!'),
+        'i_demand_effect_third'                => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every four ${icon_1} on my board!'),
+        'i_demand_effect_fourth'               => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every color with a ${icon_1} on my board!'),
         'non_demand_effect_1_third_and_fourth' => clienttranslate('Return your bottom red card.'),
+        'separate_4E_implementation'           => true,
     ),
 
     68  => array(

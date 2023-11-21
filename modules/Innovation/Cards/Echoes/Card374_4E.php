@@ -21,7 +21,7 @@ class Card374_4E extends AbstractCard
       $values = array_unique(self::getBonuses());
       if ($values) {
         self::setAuxiliaryArray($values); // Store the values to be returned
-        self::setMaxSteps(1);
+        self::setMaxSteps(2);
       }
     } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
@@ -31,13 +31,21 @@ class Card374_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      $values = self::getAuxiliaryArray();
-      return [
-        'n'                 => count($values),
-        'choose_value'      => true,
-        'age'               => $values,
-        'refresh_selection' => true,
-      ];
+      if (self::isFirstInteraction()) {
+        $values = self::getAuxiliaryArray();
+        return [
+          'n'                 => count($values),
+          'choose_value'      => true,
+          'age'               => $values,
+          'refresh_selection' => true,
+        ];
+      } else {
+        return [
+          'location_from'  => Locations::SCORE,
+          'return_keyword' => true,
+          'age'            => self::getAuxiliaryValue(),
+        ];
+      }
     } else {
       return [
         'can_pass'       => true,
@@ -47,12 +55,18 @@ class Card374_4E extends AbstractCard
     }
   }
 
+  public function handleValueChoice(int $value)
+  {
+    self::removeFromAuxiliaryArray($value);
+    self::setAuxiliaryValue($value);
+  }
+
   public function handleCardChoice(array $card)
   {
-    if (self::isNonDemand()) {
+    if (self::isDemand() && self::getAuxiliaryArray()) {
+      self::setNextStep(1);
+    } if (self::isNonDemand()) {
       self::draw(self::getValue($card));
-    } else if (self::isDemand()) {
-      self::removeFromAuxiliaryArray(self::getValue($card));
     }
   }
 

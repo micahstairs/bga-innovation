@@ -63,11 +63,13 @@ class Card373_3E extends AbstractCard
   {
     if (self::isDemand()) {
       $value = self::getAuxiliaryValue();
-      foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
-        self::transferToScorePile($card, self::getLauncherId());
-      }
-      foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
-        self::transferToScorePile($card, self::getLauncherId());
+      if ($value <= 11) {
+        foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
+          self::transferToScorePile($card, self::getLauncherId());
+        }
+        foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
+          self::transferToScorePile($card, self::getLauncherId());
+        }
       }
     }
   }

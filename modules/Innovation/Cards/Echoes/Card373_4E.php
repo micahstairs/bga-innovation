@@ -58,11 +58,13 @@ class Card373_4E extends AbstractCard
   public function handleColorChoice(int $color)
   {
     $value = self::countVisibleCardsInStack($color, self::getLauncherId());
-    foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
-      self::transferToScorePile($card, self::getLauncherId());
-    }
-    foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
-      self::transferToScorePile($card, self::getLauncherId());
+    if ($value <= 11) {
+      foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
+        self::transferToScorePile($card, self::getLauncherId());
+      }
+      foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
+        self::transferToScorePile($card, self::getLauncherId());
+      }
     }
     self::setAuxiliaryValue($value); // Track value to junk
   }
