@@ -342,10 +342,12 @@ $this->textual_card_infos = array(
     ),
 
     51  => array(
-        'name'                             => clienttranslate('Statistics'),
-        'i_demand_effect_third_and_fourth' => clienttranslate('${I demand} you transfer all the highest cards in your score pile to your hand!'),
-        'i_demand_effect_first'            => clienttranslate('${I demand} you transfer the highest card in your score pile to your hand! If you do, and have only one card in your hand afterwards, repeat this demand!'),
-        'non_demand_effect_1'              => clienttranslate('You may splay your yellow cards right.'),
+        'name'                       => clienttranslate('Statistics'),
+        'i_demand_effect_first'      => clienttranslate('${I demand} you transfer the highest card in your score pile to your hand! If you do, and have only one card in your hand afterwards, repeat this demand!'),
+        'i_demand_effect_third'      => clienttranslate('${I demand} you transfer all the highest cards in your score pile to your hand!'),
+        'i_demand_effect_fourth'     => clienttranslate('${I demand} you transfer all the cards of the value of my choice in your score pile to your hand!'),
+        'non_demand_effect_1'        => clienttranslate('You may splay your yellow cards right.'),
+        'separate_4E_implementation' => true,
     ),
 
     52  => array(

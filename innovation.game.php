@@ -9803,7 +9803,7 @@ class Innovation extends Table
     {
 
         // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == CardTypes::ECHOES || $card['type'] == CardTypes::ARTIFACTS)) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             return false;
         }
 
@@ -10138,7 +10138,7 @@ class Innovation extends Table
     {
 
         // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == CardTypes::ECHOES || $card['type'] == CardTypes::ARTIFACTS)) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             return false;
         }
 
@@ -10265,7 +10265,7 @@ class Innovation extends Table
     {
 
         // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == CardTypes::ECHOES || $card['type'] == CardTypes::ARTIFACTS)) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             return false;
         }
 
@@ -11449,6 +11449,7 @@ class Innovation extends Table
             || $card_id == 25
             || $card_id == 42
             || $card_id == 44
+            || $card_id == 51
             || $card_id == 57
             || $card_id == 65
             || $card_id == 67
@@ -12063,26 +12064,6 @@ class Innovation extends Table
 
                 // id 50, age 5: Measurement
                 case "50N1":
-                    $step_max = 1;
-                    break;
-
-                // id 51, age 5: Statistics
-                case "51D1":
-                    if ($this->innovationGameState->usingFirstEditionRules()) {
-                        $step_max = 1;
-                    } else {
-                        // Get highest cards in score
-                        $ids_of_highest_cards_in_score = self::getIdsOfHighestCardsInLocation($player_id, 'score');
-
-                        // Make the transfers
-                        foreach ($ids_of_highest_cards_in_score as $id) {
-                            $card = self::getCardInfo($id);
-                            self::transferCardFromTo($card, $player_id, 'hand'); // "Transfer all the highest cards in your score pile to your hand"
-                        }
-                    }
-                    break;
-
-                case "51N1":
                     $step_max = 1;
                     break;
 
@@ -13969,35 +13950,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 51, age 5: Statistics
-            case "51D1A":
-                // First edition only
-                // "I demand you transfer the highest card in your score pile to your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'hand',
-
-                    'age'           => self::getMaxAgeInScore($player_id)
-                );
-                break;
-
-            case "51N1A":
-                // "You may splay your yellow cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(3) /* yellow */
-                );
-                break;
-
             // id 54, age 5: Societies
             case "54D1A":
                 // Last edition: "Transfer a card with a lightbulb higher than my top card of the same color from your board to my board"
@@ -15533,17 +15485,6 @@ class Innovation extends Table
                                 }
                                 self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
                             }
-                        }
-                        break;
-
-                    // id 51, age 5: Statistics
-                    case "51D1A":
-                        // First edition only
-                        if ($n > 0 && self::countCardsInLocation($player_id, 'hand') == 1) { // "If you do, and have only one card in hand afterwards"
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have now only one card in your hand.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has now only one card in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
-                            $step--;
-                            self::incrementStep(-1); // --> "Repeat this demand"
                         }
                         break;
 
