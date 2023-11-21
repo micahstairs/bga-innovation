@@ -380,8 +380,9 @@ $this->textual_card_infos = array(
     56  => array(
         'name'                                => clienttranslate('Encyclopedia'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may meld all the highest cards in your score pile. If you meld one of the highest, you must meld all of the highest.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may meld all the highest cards in your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value. You may meld all the cards of that value in your score pile.'),
         'non_demand_effect_2_fourth'          => clienttranslate('You may junk an available achievement of value ${age_5}, ${age_6}, or ${age_7}.'),
+        'separate_4E_implementation'          => true,
     ),
 
     57  => array(

@@ -902,7 +902,7 @@ abstract class AbstractCard
 
   protected function getAuxiliaryValue(): int
   {
-    return $this->game->getAuxiliaryValue();
+    return intval($this->game->getAuxiliaryValue());
   }
 
   protected function setAuxiliaryValue(int $value)

@@ -11450,7 +11450,7 @@ class Innovation extends Table
             || $card_id == 42
             || $card_id == 44
             || $card_id == 51
-            || $card_id == 57
+            || (56 <= $card_id && $card_id <= 57)
             || $card_id == 62
             || $card_id == 65
             || $card_id == 67
@@ -12149,15 +12149,6 @@ class Innovation extends Table
                 case "55N2":
                     // "Draw and meld a 7"
                     self::executeDrawAndMeld($player_id, 7);
-                    break;
-
-                // id 56, age 6: Encyclopedia
-                case "56N1":
-                    $step_max = 1;
-                    break;
-
-                case "56N2":
-                    $step_max = 1; // 4th edition and beyond only
                     break;
 
                 // id 58, age 6: Machine tools
@@ -13964,41 +13955,6 @@ class Innovation extends Table
 
                     'splay_direction' => Directions::RIGHT,
                     'color'           => array(0) /* blue */
-                );
-                break;
-
-            // id 56, age 6: Encyclopedia
-            case "56N1A":
-                // "You may meld all the highest cards on your score pile. If you meld one, you must meld them all"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'meld_keyword'  => true,
-                    'age'           => self::getMaxAgeInScore($player_id),
-                );
-                break;
-
-            case "56N2A":
-                // "You may junk an available achievement of value 5, 6, or 7."
-                // NOTE: This only occurs in the 4th edition and beyond
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => 0,
-                    'location_from' => 'achievements',
-                    'owner_to'      => 0,
-                    'location_to'   => 'junk',
-
-                    'age_min'       => 5,
-                    'age_max'       => 7,
                 );
                 break;
 
