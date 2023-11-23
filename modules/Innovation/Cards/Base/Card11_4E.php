@@ -11,7 +11,7 @@ use Innovation\Enums\Locations;
 class Card11_4E extends AbstractCard
 {
   // Masonry (4th edition):
-  //   - You may meld any number of cards from your hand, each with a [AUTHORITY].
+  //   - You may meld any number of cards from your hand, each with [AUTHORITY].
   //   - If you have exactly three red cards on your board, claim the Monument achievement.
 
   public function initialExecution()

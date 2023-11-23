@@ -6,35 +6,23 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card22 extends AbstractCard
 {
 
   // Fermenting:
   // - 3rd edition:
-  //   - Draw a [2] for every two [HEALTH] on your board.
-  // - 4th edition:
   //   - Draw a [2] for every color on your board with one or more [HEALTH].
+  // - 4th edition:
+  //   - Draw a [2] for every color on your board with [HEALTH].
   //   - You may tuck a green card from your hand. If you don't, junk all cards in the [2] deck,
   //     and junk Fermenting if it is a top card on any board.
 
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $renderedIcon = Icons::render(Icons::HEALTH);
-      $numToDraw = 0;
-      if (self::isFirstOrThirdEdition()) {
-        $iconCount = self::getStandardIconCount(Icons::HEALTH);
-        $args = ['n' => $iconCount, 'icon' => $renderedIcon];
-        self::notifyPlayer(clienttranslate('${You} have ${n} visible ${icon} on your board.'), $args);
-        self::notifyOthers(clienttranslate('${player_name} has visible ${n} ${icon} on his board.'), $args);
-        $numToDraw = $this->game->intDivision($iconCount, 2);
-      } else {
-        $numToDraw = self::countColorsWithIcon(Icons::HEALTH);
-        $args = ['i18n' => ['n'], 'n' => self::renderNumber($numToDraw), 'icon' => $renderedIcon];
-        self::notifyPlayer(clienttranslate('${You} have ${n} color(s) with one or more visible ${icon}.'), $args);
-        self::notifyOthers(clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'), $args);
-      }
+      $numToDraw = self::countColorsWithIcon(Icons::HEALTH);
       for ($i = 0; $i < $numToDraw; $i++) {
         self::draw(2);
       }
@@ -47,7 +35,7 @@ class Card22 extends AbstractCard
   {
     return [
       'can_pass'      => true,
-      'location_from' => 'hand',
+      'location_from' => Locations::HAND,
       'tuck_keyword'  => true,
       'color'         => [Colors::GREEN],
     ];

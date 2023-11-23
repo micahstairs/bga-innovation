@@ -13,7 +13,7 @@ class Card12 extends AbstractCard
   //   - I DEMAND you transfer a top card with a [AUTHORITY] from your board to my board if you
   //     have at least four [AUTHORITY] on your board! If you do, draw a [1]!
   // - 4th edition:
-  //   - I DEMAND you transfer a top card with a [AUTHORITY] from your board to my board if you
+  //   - I DEMAND you transfer a top card with [AUTHORITY] from your board to my board if you
   //     have four [AUTHORITY] on your board! If you do, draw a [1]!
 
   public function initialExecution()
