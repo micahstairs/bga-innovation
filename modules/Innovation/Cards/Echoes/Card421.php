@@ -17,7 +17,7 @@ class Card421 extends AbstractCard
   //   - You may splay your purple cards up.
   // - 4th edition
   //   - ECHO: Draw and score a card of any value.
-  //   - I DEMAND you transfer your highest top non-yellow card without a [PROSPERITY] to my board!
+  //   - I DEMAND you transfer your highest top non-yellow card without [PROSPERITY] to my board!
   //   - You may splay your purple cards up.
   //   - Junk all cards in the [10] deck.
 

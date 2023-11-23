@@ -15,7 +15,7 @@ class Card367 extends AbstractCard
   //   - For every two cards returned as a result of the demand, draw and tuck a [4].
   // - 4th edition:
   //   - ECHO: Splay left one color on any player's board.
-  //   - I DEMAND you return all your top cards with a [AUTHORITY] of each color from your board! Draw and tuck a [4]!
+  //   - I DEMAND you return all your top cards with [AUTHORITY] of each color from your board! Draw and tuck a [4]!
   //   - Draw and tuck a [4].
   //   - If Kobukson was foreseen, draw and meld a [5].
 

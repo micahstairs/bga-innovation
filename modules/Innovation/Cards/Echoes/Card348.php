@@ -15,7 +15,7 @@ class Card348 extends AbstractCard
   //     board! If you do, draw and meld a [2]!
   // - 4th edition:
   //   - ECHO: You may draw and foreshadow a [2] or [3].
-  //   - I DEMAND you transfer a top card without a [AUTHORITY] or [INDUSTRY] from your board to my
+  //   - I DEMAND you transfer a top card without [AUTHORITY] or [INDUSTRY] from your board to my
   //     board! If you do, draw and meld a [2]!
 
   public function initialExecution()

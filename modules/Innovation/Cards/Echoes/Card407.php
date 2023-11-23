@@ -15,9 +15,9 @@ class Card407 extends AbstractCard
   //   - I DEMAND you return the highest card in your score pile for which you do not have a card
   //     of matching value in your hand! Return a top card from you board with a [EFFICIENCY]!
   // - 4th edition
-  //   - ECHO: Meld a card from your hand with a [HEALTH].
-  //   - I DEMAND you return a card with a [EFFICIENCY] from your score pile! Return a top card
-  //     with a [EFFICIENCY] from your board! If you do both, junk an available achievement for
+  //   - ECHO: Meld a card from your hand with [HEALTH].
+  //   - I DEMAND you return a card with [EFFICIENCY] from your score pile! Return a top card
+  //     with [EFFICIENCY] from your board! If you do both, junk an available achievement for
   //     each achievement you have!
 
   public function initialExecution()

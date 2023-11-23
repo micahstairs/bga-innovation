@@ -14,8 +14,8 @@ class Card361 extends AbstractCard
   //   - If you have a top card with a [AUTHORITY], draw and meld a [3]. Otherwise, draw a [4].
   // - 4th edition:
   //   - ECHO: Draw and meld a [3].
-  //   - If you have a top card with a [AUTHORITY], draw and meld a [3]. Otherwise, draw a [4].
-  //   - If you have a top card with a [INDUSTRY], junk all cards in the [4] deck.
+  //   - If you have a top card with [AUTHORITY], draw and meld a [3]. Otherwise, draw a [4].
+  //   - If you have a top card with [INDUSTRY], junk all cards in the [4] deck.
 
   public function initialExecution()
   {

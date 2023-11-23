@@ -17,7 +17,7 @@ class Card368 extends AbstractCard
   //     to my board! If you do, draw a [4]!
   //   - You may splay your purple cards right.
   // - 4th edition:
-  //   - I DEMAND you transfer two non-red top cards with a [AUTHORITY] or [AVATAR] from your board
+  //   - I DEMAND you transfer two non-red top cards with [AUTHORITY] or [AVATAR] from your board
   //     to my board! If you do, and Shuriken was foreseen, transfer them to my achievements!
   //   - You may splay your purple cards right.
 

@@ -11,7 +11,7 @@ class Card374_4E extends AbstractCard
   // Toilet (3rd edition):
   //  - ECHO: Draw and tuck a [4].
   //  - I DEMAND you return a card from your score pile matching each different bonus value on my board!
-  //  - You may return a card in your hand and draw a card of the same value.
+  //  - You may return a card from your hand and draw a card of the same value.
 
   public function initialExecution()
   {

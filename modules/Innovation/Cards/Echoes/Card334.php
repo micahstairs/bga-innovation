@@ -14,7 +14,7 @@ class Card334 extends AbstractCard
   //   - I DEMAND you transfer a card with a [AUTHORITY] from your hand to my hand! If you do, draw a [1]!
   // - 4th edition:
   //   - ECHO: If no player has fewer points than you, draw a [3].
-  //   - I DEMAND you transfer a card with a [AUTHORITY] or [CONCEPT] from your hand to my hand! If you do, draw a [1]!
+  //   - I DEMAND you transfer a card with [AUTHORITY] or [CONCEPT] from your hand to my hand! If you do, draw a [1]!
 
   public function initialExecution()
   {

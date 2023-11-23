@@ -15,7 +15,7 @@ class Card377 extends AbstractCard
   //   - Draw and reveal a [6]. If it has a [INDUSTRY], meld it and repeat this dogma effect. Otherwise, foreshadow it.
   // - 4th edition:
   //   - ECHO: Draw and tuck a [4].
-  //   - Draw and reveal a [6]. If it has a [INDUSTRY], meld it and repeat this effect. Otherwise, foreshadow it.
+  //   - Draw and reveal a [6]. If it has [INDUSTRY], meld it and repeat this effect. Otherwise, foreshadow it.
   //   - If Coke was foreseen, score your top card of each non-red color.
 
   public function initialExecution()

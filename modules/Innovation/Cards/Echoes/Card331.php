@@ -14,7 +14,7 @@ class Card331 extends AbstractCard
   //   - I DEMAND you transfer a top card of different value from any top card on my board from
   //     your board to mine! If you do, draw and meld a card of equal value!
   // - 4th edition:
-  //   - ECHO: Draw and tuck a [1]. If it has a [AUTHORITY], repeat this effect.
+  //   - ECHO: Draw and tuck a [1]. If it has [AUTHORITY], repeat this effect.
   //   - I DEMAND you transfer a top card of different value from any top card on my board from
   //     your board to mine! If you do, draw and meld a card of equal value!
 

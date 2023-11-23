@@ -11,7 +11,7 @@ class Card382 extends AbstractCard
 {
 
   // Stove
-  //   - ECHO: Score a top card from your board without a [INDUSTRY].
+  //   - ECHO: Score a top card from your board without [INDUSTRY].
   //   - Draw and tuck a [4]. If your top card of the tucked card's color has value less than 4,
   //     draw and score a [4].
   //   - You may splay your green cards right.

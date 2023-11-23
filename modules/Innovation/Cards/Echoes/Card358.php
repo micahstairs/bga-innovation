@@ -15,7 +15,7 @@ class Card358 extends AbstractCard
   //     If you transferred any, draw a card of value equal to the total number of [AUTHORITY] on
   //     those cards and transfer it to my forecast!
   // - 4th edition:
-  //   - I DEMAND you transfer two top cards with a [AUTHORITY] from your board to my score pile!
+  //   - I DEMAND you transfer two top cards with [AUTHORITY] from your board to my score pile!
   //     If you transfer exactly one and Katana was foreseen, junk all available standard
   //     achievements!
 

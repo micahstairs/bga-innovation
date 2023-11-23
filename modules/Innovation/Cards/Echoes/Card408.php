@@ -13,7 +13,7 @@ class Card408 extends AbstractCard
   // - 3rd edition
   //   - I DEMAND you transfer all cards without a [EFFICIENCY] in your hand to my hand!
   // - 4th edition
-  //   - I DEMAND you transfer all cards without a [EFFICIENCY] in your hand to my hand!
+  //   - I DEMAND you transfer all cards without [EFFICIENCY] in your hand to my hand!
   //   - If Parachute was foreseen, junk all cards from all boards.
 
   public function initialExecution()

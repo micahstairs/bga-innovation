@@ -21,7 +21,7 @@ class Card379 extends AbstractCard
   //   - Draw and score a card of value equal to a bonus that occurs more than once on your board,
   //     if there is one.
   //   - You may splay your purple cards right.
-  //   - If you have six bonuses on your board, claim the Wealth achievement.
+  //   - If you have at least six bonuses on your board, claim the Wealth achievement.
 
   public function initialExecution()
   {
