@@ -40,7 +40,7 @@ class Card479 extends AbstractCard
       return [
         'n'                               => 'all',
         'location_from'                   => Locations::PILE,
-        'location_to'                     => Locations::BOARD,
+        'location_to'                     => self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD,
         'owner_to'                        => self::getLauncherId(),
         'with_icon'                       => $icon,    
         'card_ids_are_in_auxiliary_array' => true,
