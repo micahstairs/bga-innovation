@@ -11,8 +11,8 @@ class Card520 extends AbstractCard
 {
 
   // El Dorado:
-  //   - Draw and meld a [3], a [2], and a [1]. If all three cards have a PROSPERITY, score all cards
-  //     in the [5] deck. If two have a PROSPERITY, splay your green and blue cards right.
+  //   - Draw and meld a [3], a [2], and a [1]. If all three cards have PROSPERITY, score all cards
+  //     in the [5] deck. If two have PROSPERITY, splay your green and blue cards right.
 
   public function initialExecution()
   {

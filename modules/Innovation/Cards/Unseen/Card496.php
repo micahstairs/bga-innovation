@@ -9,8 +9,8 @@ use Innovation\Enums\Icons;
 class Card496 extends AbstractCard
 {
   // Meteorology
-  //   - Draw and reveal a [3]. If it has a [HEALTH], score it. Otherwise, if it has a
-  //     [PROSPERITY], return it and draw two [3]. Otherwise, tuck it.
+  //   - Draw and reveal a [3]. If it has [HEALTH], score it. Otherwise, if it has [PROSPERITY],
+  //     return it and draw two [3]. Otherwise, tuck it.
   //   - If you have no [AUTHORITY], claim the Zen achievement.
 
   public function initialExecution()

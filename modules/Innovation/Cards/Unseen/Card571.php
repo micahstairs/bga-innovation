@@ -10,7 +10,7 @@ class Card571 extends AbstractCard
 
   // Magic 8-Ball:
   //   - Choose whether you wish to draw two [10], draw and score two [8], or safeguard two
-  //     available standard achievements. Draw and tuck an [8]. If it has a CONCEPT, do as you
+  //     available standard achievements. Draw and tuck an [8]. If it has [CONCEPT], do as you
   //     wish. If it is red or purple, repeat this effect.
 
   public function initialExecution()

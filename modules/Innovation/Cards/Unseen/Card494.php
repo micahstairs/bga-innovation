@@ -8,9 +8,10 @@ class Card494 extends AbstractCard
 {
 
   // Symbology:
-  //   - If you have four each of four icons on your board, draw a [4]. Otherwise, if you have
-  //     three each of three icons on your board, draw a [3]. Otherwise, if you have two each of
-  //     two icons on your board, draw a [2].
+  //   - If you have at least four each of at least four icons on your board, draw a [4].
+  //     Otherwise, if you have at least three each of at least three icons on your board,
+  //     draw a [3]. Otherwise, if you have at least two each of at least two icons on your
+  //     board, draw a [2].
 
   public function initialExecution()
   {

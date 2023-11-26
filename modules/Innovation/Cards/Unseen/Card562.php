@@ -9,7 +9,7 @@ class Card562 extends AbstractCard
 {
 
   // Shangri-La:
-  //   - Draw and tuck an [8]. If it has a [INDUSTRY], score it. Otherwise, draw and meld an [8].
+  //   - Draw and tuck an [8]. If it has [INDUSTRY], score it. Otherwise, draw and meld an [8].
   //     If you do, repeat this effect.
 
   public function initialExecution()

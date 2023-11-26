@@ -9,7 +9,7 @@ class Card545 extends AbstractCard
 {
 
   // Counterintelligence:
-  //   - I demand you tuck a top card on your board with a [CONCEPT]! If you do, transfer your top
+  //   - I demand you tuck a top card on your board with [CONCEPT]! If you do, transfer your top
   //     card of color matching the tucked card to my board, and draw a [7]!
   //   - Draw an [8].
 

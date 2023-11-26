@@ -11,7 +11,7 @@ class Card561 extends AbstractCard
 {
 
   // Jackalope:
-  //   - I DEMAND you transfer the highest card on your board without a [EFFICIENCY] to my board!
+  //   - I DEMAND you transfer the highest card on your board without [EFFICIENCY] to my board!
   //     If you do, unsplay the transferred card's color on your board!
   //   - Unsplay the color on your board with the most visible cards.
 

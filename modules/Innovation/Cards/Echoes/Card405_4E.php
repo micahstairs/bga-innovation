@@ -13,8 +13,8 @@ class Card405_4E extends AbstractCard
 
   // Radio Telescope (4th edition):
   //   - For every color on your board with [CONCEPT], draw a [9], and if Radio Telescope was
-  //     foreseen, draw a [10]. Meld one of the drawn cards and return the rest. If you meld AI due
-  //     to this effect, you win.
+  //     foreseen, for every color also draw a [10]. Meld one of the drawn cards and return the
+  //     rest. If you meld AI due to this effect, you win.
 
   public function initialExecution()
   {
@@ -26,8 +26,12 @@ class Card405_4E extends AbstractCard
       }
     }
     if (self::wasForeseen()) {
-      $card = self::draw(10);
-      $cardIds[] = $card['id'];
+      foreach (Colors::ALL as $color) {
+        if (self::getIconCountInStack($color, Icons::CONCEPT) > 0) {
+          $card = self::draw(10);
+          $cardIds[] = $card['id'];
+        }
+      }
     }
     if ($cardIds) {
       self::setAuxiliaryArray($cardIds);

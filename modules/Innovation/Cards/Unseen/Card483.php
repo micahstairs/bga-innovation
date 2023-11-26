@@ -11,7 +11,7 @@ class Card483 extends AbstractCard
 {
 
   // Assassination:
-  //   - I DEMAND you draw and reveal a [1]! If it has a [AUTHORITY], transfer it and the top card
+  //   - I DEMAND you draw and reveal a [1]! If it has [AUTHORITY], transfer it and the top card
   //     on your board of its color to my score pile!
   //   - If no player has a top green card, claim the Confidence achievement.
 
