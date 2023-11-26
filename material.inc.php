@@ -50,9 +50,11 @@ $this->textual_card_infos = array(
     ),
 
     6   => array(
-        'name'                => clienttranslate('Clothing'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your hand of different color from any card on your board.'),
-        'non_demand_effect_2' => clienttranslate('Draw and score a ${age_1} for each color present on your board not present on any opponent\'s board.'),
+        'name'                                => clienttranslate('Clothing'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from your hand of different color from any card on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand of a color not on your board.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Draw and score a ${age_1} for each color present on your board not present on any opponent\'s board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and score a ${age_1} for each color present on your board that no opponent has on their board.'),
     ),
 
     7   => array(
@@ -431,7 +433,7 @@ $this->textual_card_infos = array(
     62  => array(
         'name'                            => clienttranslate('Vaccination'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you return all the lowest cards in your score pile! If you returned any, draw and meld a ${age_6}!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} you choose a card in your score pile! Return all the cards from your score pile of its value! If you return any, draw and meld a ${age_6}!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you choose a card in your score pile! Return all the cards from your score pile of its value! If you do, draw and meld a ${age_6}!'),
         'non_demand_effect_1'             => clienttranslate('If any card was returned as a result of the demand, draw and meld a ${age_7}.'),
         'separate_4E_implementation'      => true,
     ),
@@ -468,7 +470,7 @@ $this->textual_card_infos = array(
         'name'                                 => clienttranslate('Combustion'),
         'i_demand_effect_first'                => clienttranslate('${I demand} you transfer two cards from your score pile to my score pile!'),
         'i_demand_effect_third'                => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every four ${icon_1} on my board!'),
-        'i_demand_effect_fourth'               => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every color with a ${icon_1} on my board!'),
+        'i_demand_effect_fourth'               => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every color with ${icon_1} on my board!'),
         'non_demand_effect_1_third_and_fourth' => clienttranslate('Return your bottom red card.'),
         'separate_4E_implementation'           => true,
     ),
@@ -649,7 +651,7 @@ $this->textual_card_infos = array(
     93  => array(
         'name'                            => clienttranslate('Services'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer all the cards of the value of my choice from your score pile to my hand! If you transfer any cards, transfer a top card without ${icon_2} from my board to your hand!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer all the cards of the value of my choice from your score pile to my hand! If you do, transfer a top card without ${icon_2} from my board to your hand!'),
         'separate_4E_implementation'      => true,
     ),
 
@@ -2536,7 +2538,7 @@ $this->textual_card_infos = array(
 
     446 => array(
         'name'                => clienttranslate('Near-Field Comm'),
-        'i_demand_effect'     => clienttranslate('${I demand} you transfer all the highest cards in your score pile to my score pile!'),
+        'i_demand_effect'     => clienttranslate('${I demand} you transfer all the cards of the value of my choice from your score pile to my score pile!'),
         'non_demand_effect_1' => clienttranslate('Reveal and self-execute the highest card in your score pile.'),
     ),
 

@@ -10,7 +10,7 @@ class Card4 extends AbstractCard
 
   // Metalworking:
   // - 3rd edition:
-  //   - Draw and reveal a [1]. If it has [AUTHORITY], score it and repeat this effect.
+  //   - Draw and reveal a [1]. If it has a [AUTHORITY], score it and repeat this effect. Otherwise, keep it.
   // - 4th edition:
   //   - Draw and reveal a [1]. If it has [AUTHORITY], score it and repeat this effect.
 

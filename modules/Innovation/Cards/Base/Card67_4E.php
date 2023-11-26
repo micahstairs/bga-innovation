@@ -11,7 +11,7 @@ class Card67_4E extends AbstractCard
 {
   // Combustion (4th edition):
   //   - I DEMAND you transfer one card from your score pile to my score pile for every color with
-  //     a [PROSPERITY] on my board!
+  //     [PROSPERITY] on my board!
   //   - Return your bottom red card.
 
   public function initialExecution()

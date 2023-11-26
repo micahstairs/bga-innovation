@@ -9,7 +9,7 @@ class Card62_4E extends AbstractCard
 {
   // Vaccination (4th edition):
   //   - I DEMAND you choose a card in your score pile! Return all the cards from your score pile
-  //     of its value! If you return any, draw and meld a [6]!
+  //     of its value! If you do, draw and meld a [6]!
   //   - If any card was returned as a result of the demand, draw and meld a [7]!
 
   public function initialExecution()

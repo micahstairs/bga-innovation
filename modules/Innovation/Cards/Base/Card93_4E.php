@@ -10,8 +10,7 @@ class Card93_4E extends AbstractCard
 {
   // Services (4th edition):
   //   - I DEMAND you transfer all the cards of the value of my choice from your score pile to my
-  //     hand! If you transfer any cards, transfer a top card without [HEALTH] from my board to
-  //     your hand!
+  //     hand! If you do, transfer a top card without [HEALTH] from my board to your hand!
 
   public function initialExecution()
   {
