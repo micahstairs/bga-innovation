@@ -16,8 +16,8 @@ class Card122 extends AbstractCard
   //     those cards, ignoring eligibility.
   // - 4th edition:
   //   - Choose a color. Each player reveals their hand. If you are the only player to reveal
-  //     cards of that color, return them and claim all achievements of value matching those
-  //     cards, ignoring eligibility.
+  //     at least one card of that color, return them and claim all achievements of value matching
+  //     those cards, ignoring eligibility.
 
   public function initialExecution()
   {

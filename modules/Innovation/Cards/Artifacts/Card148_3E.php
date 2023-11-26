@@ -10,7 +10,7 @@ class Card148_3E extends AbstractCard
 
   // Tortugas Galleon (3rd edition):
   //   - I COMPEL you to transfer all the highest cards from your score pile to my score pile! If
-  //     you transfered any, transfer a top card on your board of that value to my board!
+  //     you do, transfer a top card on your board of that value to my board!
 
 
   public function initialExecution()

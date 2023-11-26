@@ -14,7 +14,7 @@ class Card113 extends AbstractCard
   //   - I COMPEL you to transfer the highest top card with a [AUTHORITY] on your board to my hand!
   //   - Draw a [2].
   // - 4th edition:
-  //   - I COMPEL you to transfer your highest top card with a [AUTHORITY] to my hand! If you
+  //   - I COMPEL you to transfer your highest top card with [AUTHORITY] to my hand! If you
   //     don't, junk all cards in the deck of value equal to the value of your lowest top card!
   //   - Draw a [2].
 
