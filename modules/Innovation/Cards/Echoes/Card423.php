@@ -15,7 +15,7 @@ class Card423 extends AbstractCard
   //     effect. Do not share them.
   //   - You may take a bottom card from your board into your hand.
   // - 4th edition
-  //   - ECHO: Draw and meld a card of value present in your hand.
+  //   - ECHO: Draw and meld a card of a value present in your hand.
   //   - Transfer your bottom card of each color to your hand.
   //   - Claim an available achievement of value equal to the card you last melded due to Karaoke's
   //     echo effect during this action, regardless of eligibility. If you do, self-execute the

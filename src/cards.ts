@@ -14,6 +14,7 @@ declare type Card = {
     spot_6: number | null;
     dogma_icon: number;
     is_relic: boolean;
+    has_demand: boolean;
 
     // From materials file
     name: string;
@@ -43,6 +44,7 @@ function parseCard(card: any): Card {
         dogma_icon: parseInt(card.dogma_icon),
         is_relic: card.is_relic,
         name: card.name,
+        has_demand: card.has_demand,
         condition_for_claiming: card.condition_for_claiming ?? null,
         alternative_condition_for_claiming: card.alternative_condition_for_claiming ?? null,
         echo_effect: card.echo_effect ?? null,

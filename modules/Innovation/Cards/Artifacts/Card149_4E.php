@@ -46,7 +46,7 @@ class Card149_4E extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isSecondInteraction()) {
+    if (self::isSecondNonDemand()) {
       self::junkBaseDeck(self::getValue(self::getTopCardOfColor(Colors::GREEN)));
     }
   }

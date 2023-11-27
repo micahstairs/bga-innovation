@@ -9,8 +9,8 @@ class Card170 extends AbstractCard
 {
   // Buttonwood Agreement
   //   - Choose three colors. Draw and reveal an [8]. If the drawn card is one of the chosen
-  //     colors, score it and splay up that color. Otherwise, return all cards of the drawn
-  //     card's color from your score pile, and unsplay that color.
+  //     colors, score it and splay up that color on your board. Otherwise, return all cards of
+  //     that color from your score pile, and unsplay that color.
 
   public function initialExecution()
   {

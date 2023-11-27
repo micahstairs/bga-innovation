@@ -10,8 +10,8 @@ class Card441 extends AbstractCard
 
   // Solar Sailing:
   //   - Draw and meld an [11]. If its color is not splayed aslant on your board, return all but
-  ///    your top four cards of that color, and splay that color aslant. If there are six cards of
-  //     that color on your board, you win.
+  ///    your top four cards of that color, and splay that color aslant. If there are at least six
+  //     cards of that color on your board, you win.
 
   public function initialExecution()
   {

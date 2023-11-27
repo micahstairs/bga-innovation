@@ -11,7 +11,7 @@ class Card574 extends AbstractCard
 {
 
   // Urban Legend:
-  //   - For each color on your board with a INDUSTRY, draw a [9]. If you draw five cards, you win.
+  //   - For each color on your board with [INDUSTRY], draw a [9]. If you draw five cards, you win.
   //   - You may splay your yellow or purple cards up.
 
   public function initialExecution()

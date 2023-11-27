@@ -1863,9 +1863,26 @@ class Innovation extends BgaGame {
                         break;
 
                     case 106:
-                        // Monument: tuck six or score six cards during a single turn
-                        numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
-                        denominator = 6;
+                        // Monument:
+                        
+                        if (self.gamedatas.fourth_edition) {
+                            // at least four top cards with a demand effect
+                            for (let i = 0; i < 5; i++) {
+                                let items = self.zone["board"][self.player_id][i].items;
+                                if (items.length > 0) {
+                                    let top_card_id = self.getCardIdFromHTMLId(items[items.length - 1].id);
+                                    let top_card = self.cards[top_card_id];
+                                    if (top_card.has_demand) {
+                                        numerator++;
+                                    }
+                                }
+                            }
+                            denominator = 4;
+                        } else {
+                            // tuck six or score six cards during a single turn
+                            numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
+                            denominator = 6;
+                        }
                         break;
 
                     case 107:
@@ -2538,7 +2555,6 @@ class Innovation extends BgaGame {
         }
 
         let on_display = card_location == 'display';
-        console.log(JSON.stringify(card));
         let exists_i_demand_effect = card.i_demand_effect !== null;
         let exists_i_compel_effect = card.i_compel_effect !== null;
         let exists_non_demand_effect = card.non_demand_effect_1 !== null;
@@ -2848,7 +2864,7 @@ class Innovation extends BgaGame {
                 let top_card = pile[pile.length - 1];
                 let card_id = this.getCardIdFromHTMLId(top_card.id);
                 // Only cards with a featured icon can be dogma'd
-                if (Number(this.cards[card_id].dogma_icon) != 0) {
+                if (!Number.isNaN(this.cards[card_id].dogma_icon)) {
                     list.push(dojo.byId(top_card.id));
                 }
             }
@@ -3245,7 +3261,7 @@ class Innovation extends BgaGame {
         }
         let card_data = this.cards[card.id];
         let name = _(card_data.name).toUpperCase();
-        let is_monument = card.id == 106;
+        let is_monument = card.id == 106 && !this.gamedatas.fourth_edition;
         let note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
         let div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
 

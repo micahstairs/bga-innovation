@@ -10,8 +10,8 @@ class Card370_4E extends AbstractCard
 {
 
   // Globe (4th edition):
-  //   - You may return all cards from your hand. If you return three [4], splay any color on
-  //     your board right, and draw and foreshadow a [6], a [7], and then an [8].
+  //   - You may return all cards from your hand. If you return at least three [4], splay any color
+  //     on your board right, and draw and foreshadow a [6], a [7], and then an [8].
   //   - If Globe was foreseen, foreshadow a top card from any board.
 
   public function initialExecution()

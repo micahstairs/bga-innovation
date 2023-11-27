@@ -10,7 +10,7 @@ class Card192_4E extends AbstractCard
 {
   // Action Comics #1 (4th edition):
   //   - I COMPEL you to draw an [8]! If it is green, achieve Action Comics #1 if it is a top card!
-  //     Otherwise, if it has a [EFFICIENCY], return it, and if your top card of its color has a
+  //     Otherwise, if it has [EFFICIENCY], return it, and if your top card of its color has
   //     [EFFICIENCY], transfer it to my achievements, and repeat this effect!
 
   public function initialExecution()

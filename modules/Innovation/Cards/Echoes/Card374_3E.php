@@ -3,25 +3,21 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
-class Card374 extends AbstractCard
+class Card374_3E extends AbstractCard
 {
 
-  // Toilet
-  // - 3rd edition:
+  // Toilet (3rd edition):
   //  - ECHO: Draw and tuck a [4].
   //  - I DEMAND you return all cards from your score pile of value matching the highest bonus on my board!
-  //  - You may return a card in your hand and draw a card of the same value.
-  // - 4th edition:
-  //  - ECHO: Draw and tuck a [4].
-  //  - I DEMAND you return all cards from your score pile of the highest value matching a bonus on my board!
   //  - You may return a card in your hand and draw a card of the same value.
 
   public function initialExecution()
   {
     if (self::isEcho()) {
       self::drawAndTuck(4);
-    } else {
+    } else if (self::isDemand() || self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     }
   }
@@ -30,26 +26,17 @@ class Card374 extends AbstractCard
   {
     if (self::isDemand()) {
       $bonuses = self::getBonuses(self::getLauncherId());
-      if (self::isFirstOrThirdEdition()) {
-        $value = $bonuses ? max($bonuses) : 0;
-      } else {
-        $scorePileValues = self::getUniqueValues('score');
-        $intersection = array_intersect($bonuses, $scorePileValues);
-        if (!$intersection) {
-          return [];
-        }
-        $value = max($intersection);
-      }
+      $value = $bonuses ? max($bonuses) : 0;
       return [
         'n'              => 'all',
-        'location_from'  => 'score',
+        'location_from'  => Locations::SCORE,
         'return_keyword' => true,
         'age'            => $value,
       ];
     } else {
       return [
         'can_pass'       => true,
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     }
@@ -58,7 +45,7 @@ class Card374 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isNonDemand()) {
-      self::draw($card['age']);
+      self::draw(self::getValue($card));
     }
   }
 

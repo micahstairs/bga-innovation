@@ -11,8 +11,8 @@ class Card554 extends AbstractCard
 
   // Slot Machine:
   //   - Draw and reveal a [1], [2], [3], [4], and [5]. If one drawn card is green, splay your
-  //     green or purple cards right. If two drawn cards are green, score all drawn cards,
-  //     otherwise return them. If three drawn cards are green, you win.
+  //     green or purple cards right. If at least two drawn cards are green, score all drawn cards,
+  //     otherwise return them. If at least three drawn cards are green, you win.
 
   public function initialExecution()
   {

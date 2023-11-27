@@ -39,7 +39,7 @@ class Card534 extends AbstractCard
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => clienttranslate('Splay a non-purple color left and self-execute the top card'),
+      1 => clienttranslate('Splay a non-purple color left and self-execute its top card'),
       2 => clienttranslate('Meld a card from your hand and splay its color right'),
     ]);
   }
@@ -47,8 +47,8 @@ class Card534 extends AbstractCard
   public function handleListChoice(int $choice): void
   {
     if ($choice === 1) {
-      self::notifyPlayer(clienttranslate('${You} have chosen to splay a non-purple color left and self-execute the top card.'));
-      self::notifyOthers(clienttranslate('${player_name} has chosen to splay a non-purple color left and self-execute the top card.'));
+      self::notifyPlayer(clienttranslate('${You} have chosen to splay a non-purple color left and self-execute its top card.'));
+      self::notifyOthers(clienttranslate('${player_name} has chosen to splay a non-purple color left and self-execute its top card.'));
     } else {
       self::notifyPlayer(clienttranslate('${You} have chosen to meld a card from your hand and splay its color right.'));
       self::notifyOthers(clienttranslate('${player_name} has chosen to meld a card from his hand and splay its color right.'));
@@ -64,7 +64,7 @@ class Card534 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstInteraction() && self::getAuxiliaryValue() === 1) {
+    if (self::isSecondInteraction() && self::getAuxiliaryValue() === 1) {
       self::selfExecute(self::getTopCardOfColor(self::getLastSelectedColor()));
     }
   }

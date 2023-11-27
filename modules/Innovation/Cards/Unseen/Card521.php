@@ -11,29 +11,21 @@ class Card521 extends AbstractCard
 {
 
   // April Fool's Day:
-  //   - Transfer the highest cards from your hand and score pile together to the 
-  //     board of the player on your right. If you don't, claim the Folklore achievement.
+  //   - Transfer a card from your hand or score pile to the board of the player on your right. If
+  //     you don't, claim the Folklore achievement.
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
   public function initialExecution()
   {
-    if (self::isFirstNonDemand()) {
-      $value = max(self::getMaxValueInLocation('score'), self::getMaxValueInLocation('hand'));
-      self::setAuxiliaryValue($value);
-      self::setMaxSteps(1);
-    } else {
-      self::setMaxSteps(1);
-    }
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
       return [
-        'n'             => 'all',
         'location_from' => Locations::HAND_OR_SCORE,
         'owner_to'      => $this->game->getActivePlayerIdOnRightOfActingPlayer(),
-        'location_to'   => 'board',
-        'age'           => self::getAuxiliaryValue(),
+        'location_to'   => Locations::BOARD,
       ];
     } else {
       return ['choices' => [0, 1]];

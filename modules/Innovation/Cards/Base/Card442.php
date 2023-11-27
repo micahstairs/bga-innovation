@@ -11,7 +11,7 @@ class Card442 extends AbstractCard
   // Astrogeology:
   //   - Draw and reveal an [11]. Splay its color on your board aslant. If you do, transfer all but
   //     your top four cards of that color into your hand.
-  //   - If you have eight cards in your hand, you win.
+  //   - If you have at least eight cards in your hand, you win.
 
   public function initialExecution()
   {

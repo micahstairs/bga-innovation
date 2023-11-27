@@ -12,7 +12,7 @@ class Card591 extends AbstractCard
   // Escape Room:
   //   - I DEMAND you draw, reveal, and score an [11]! Score a card from your hand of the same
   //     color as the drawn card! If you don't, you lose!
-  //   - Score four top non-yellow cards each with a [EFFICIENCY] of different colors on your board.
+  //   - Score four top non-yellow cards each with [EFFICIENCY] of different colors on your board.
 
   public function initialExecution()
   {

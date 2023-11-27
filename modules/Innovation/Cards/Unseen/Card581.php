@@ -12,7 +12,7 @@ class Card581 extends AbstractCard
 
   // Ride-Hailing:
   //   - You may splay your green cards up.
-  //   - Meld a top non-yellow card with a [EFFICIENCY] from another player's board. If you do, self-execute it. Otherwise, draw an [11].
+  //   - Meld a top non-yellow card with [EFFICIENCY] from another player's board. If you do, self-execute it. Otherwise, draw an [11].
 
   public function initialExecution()
   {

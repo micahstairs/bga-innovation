@@ -9,8 +9,8 @@ use Innovation\Enums\Locations;
 class Card454 extends AbstractCard
 {
   // Greenland
-  //   - I COMPEL you to return one of your top cards with a [EFFICIENCY]! If you do, repeat this effect.
-  //   - Return one of your top cards with a [PROSPERITY]. If you do, repeat this effect.
+  //   - I COMPEL you to return one of your top cards with [EFFICIENCY]! If you do, repeat this effect.
+  //   - Return one of your top cards with [PROSPERITY]. If you do, repeat this effect.
 
   public function initialExecution()
   {

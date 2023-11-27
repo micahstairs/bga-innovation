@@ -17,7 +17,7 @@ class Card386 extends AbstractCard
   // - 4th edition
   //   - ECHO: Meld a blue or yellow card from your hand. 
   //   - Draw a [7]. If you melded a blue card due to Stethoscope's echo effect, draw an [8], and
-  //     if Stethoscope was foreseen, draw a [9].
+  //     if Stethoscope was foreseen, also draw a [9].
   //   - You may splay your yellow cards right.
 
   public function initialExecution()

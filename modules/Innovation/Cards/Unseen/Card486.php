@@ -9,8 +9,8 @@ class Card486 extends AbstractCard
 {
 
   // Dance:
-  //   - Transfer a top card on your board with a [AUTHORITY] to the board of any other player. If
-  //     you do, meld the lowest top card without a [AUTHORITY] from that player's board.
+  //   - Transfer a top card on your board with [AUTHORITY] to the board of any other player. If
+  //     you do, meld the lowest top card without [AUTHORITY] from that player's board.
 
   public function initialExecution()
   {

@@ -14,7 +14,7 @@ class Card5 extends AbstractCard
   //     do, draw a [1], and repeat this dogma effect!
   //   - If no cards were transferred due to this demand, draw a [1].
   // - 4th edition:
-  //   - I DEMAND you transfer a card with a [PROSPERITY] from your hand to my score pile! If you
+  //   - I DEMAND you transfer a card with [PROSPERITY] from your hand to my score pile! If you
   //     do, draw a [1], and repeat this effect!
   //   - If no cards were transferred due to this demand, draw a [1].
 
@@ -36,7 +36,7 @@ class Card5 extends AbstractCard
               break;
             }
           }
-        } while ($cardWasTransferred && !self::isFirstEdition());
+        } while ($cardWasTransferred);
         self::revealHand();
       }
     } else if (self::isFirstNonDemand()) {
@@ -60,9 +60,7 @@ class Card5 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     self::setAuxiliaryValue(1); // Remember that a card was transferred
-    if (!self::isFirstEdition()) {
-      self::setNextStep(1);
-    }
+    self::setNextStep(1);
   }
 
 }

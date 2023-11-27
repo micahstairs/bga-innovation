@@ -9,7 +9,7 @@ class Card523 extends AbstractCard
 {
 
   // Confession:
-  //   - Return a top card with a AUTHORITY of each color from your board. If you return none, meld
+  //   - Return a top card with [AUTHORITY] of each color from your board. If you return none, meld
   //     a card from your score pile, then draw and score a [4].
   //   - Draw a [4] for each [4] in your score pile.
 

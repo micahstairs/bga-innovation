@@ -12,7 +12,7 @@ class Card396 extends AbstractCard
   //   - Return all cards from your hand. Draw a [6]. For each color of card returned, draw a card
   //     of the next higher value.
   // - 4th edition
-  //   - Return all cards from your hand. Draw a [6]. For each color of card you return, draw a
+  //   - Return all cards from your hand, then draw a [6]. For each color of card you return, draw a
   //     card of value one higher than the highest card in your hand.
 
   public function initialExecution()

@@ -902,7 +902,7 @@ abstract class AbstractCard
 
   protected function getAuxiliaryValue(): int
   {
-    return $this->game->getAuxiliaryValue();
+    return intval($this->game->getAuxiliaryValue());
   }
 
   protected function setAuxiliaryValue(int $value)
@@ -1326,6 +1326,17 @@ abstract class AbstractCard
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }
 
+  protected function countColorsWithIcon(int $icon): int
+  {
+    $numColors = 0;
+    foreach (Colors::ALL as $color) {
+      if (self::getIconCountInStack($color, $icon) > 0) {
+        $numColors++;
+      }
+    }
+    return $numColors;
+  }
+
   protected function getStandardIconCount(int $icon, int $playerId = null): int
   {
     return $this->game->getPlayerSingleRessourceCount(self::coercePlayerId($playerId), $icon);
@@ -1422,8 +1433,12 @@ abstract class AbstractCard
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
       if ($icon !== null && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
-        // Bonus icons are normalized to 100 since they are considered to be the same icon type
-        $icons[] = min($icon, 100);
+        // In 4th edition, all bonus icons are normalized to the same value since they are considered to be the same icon type.
+        if (self::isFourthEdition()) {
+          $icons[] = min($icon, 100);
+        } else {
+          $icons[] = $icon;
+        }
       }
     }
     return $icons;

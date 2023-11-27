@@ -12,7 +12,7 @@ class Card195 extends AbstractCard
   //   - Draw and meld a [9]. Execute the effects of the melded card as if they were on this card,
   //     without sharing. If that card has a [EFFICIENCY], repeat this effect.
   // - 4th edition:
-  //   - Draw and meld a [9], and self-execute it. If that card has a [EFFICIENCY], repeat this effect.
+  //   - Draw and meld a [9], and self-execute it. If that card has [EFFICIENCY], repeat this effect.
 
   public function hasPostExecutionLogic(): bool
   {

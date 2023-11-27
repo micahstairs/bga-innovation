@@ -13,7 +13,7 @@ class Card406_4E extends AbstractCard
 
   // X-Ray (4th edition):
   //   - ECHO: Draw and tuck an [8].
-  //   - Choose a value. For every three [HEALTH] on your board, draw a card of that value.
+  //   - Choose a value. For every color on your board with [HEALTH], draw a card of that value.
   //     Foreshadow any number of them.
   //   - Return all cards from your hand.
   //   - You may splay your yellow cards up.
@@ -23,9 +23,9 @@ class Card406_4E extends AbstractCard
     if (self::isEcho()) {
       self::drawAndTuck(8);
     } else if (self::isFirstNonDemand()) {
-      $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::HEALTH), 3);
-      if ($numCards > 0) {
-        self::setAuxiliaryValue($numCards); // Track number of cards to draw
+      $numCardsToDraw = self::countColorsWithIcon(Icons::HEALTH);
+      if ($numCardsToDraw > 0) {
+        self::setAuxiliaryValue($numCardsToDraw);
         self::setMaxSteps(2);
       }
     } else if (self::isSecondNonDemand()) {
@@ -67,9 +67,9 @@ class Card406_4E extends AbstractCard
 
   public function handleValueChoice(int $value)
   {
-    $numCards = self::getAuxiliaryValue();
+    $numCardsToDraw = self::getAuxiliaryValue();
     $cardIds = [];
-    for ($i = 0; $i < $numCards; $i++) {
+    for ($i = 0; $i < $numCardsToDraw; $i++) {
       $card = self::draw($value);
       $cardIds[] = $card['id'];
     }

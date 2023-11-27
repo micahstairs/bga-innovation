@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card471 extends AbstractCard
 {
@@ -17,7 +18,7 @@ class Card471 extends AbstractCard
   public function initialExecution()
   {
     $numColorsSplayed = 0;
-    $countsByColor = self::countCardsKeyedByColor('board');
+    $countsByColor = self::countCardsKeyedByColor(Locations::BOARD);
     foreach (Colors::ALL as $color) {
       switch ($countsByColor[$color]) {
         case 0:
@@ -44,6 +45,9 @@ class Card471 extends AbstractCard
         $numColorsSplayed++;
       }
     }
+    $args = ['i18n' => ['n'], 'n' => self::renderNumber($numColorsSplayed)];
+    self::notifyPlayer(clienttranslate('${You} splayed ${n} colors.'), $args);
+    self::notifyOthers(clienttranslate('${player_name} splayed ${n} colors.'), $args);
     if ($numColorsSplayed === 5) {
       self::win();
     }

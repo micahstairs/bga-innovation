@@ -18,7 +18,7 @@ class Card395 extends AbstractCard
   // - 4th edition
   //   - ECHO: Meld a card from your forecast.
   //   - I DEMAND you transfer your highest top card to your hand!
-  //   - If you have three echo effects in one color, claim the History achievement. If you do,
+  //   - If you have at least three echo effects in one color, claim the History achievement. If you do,
   //     and Photography was foreseen, you win.
 
   public function initialExecution()

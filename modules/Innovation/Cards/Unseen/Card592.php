@@ -10,7 +10,7 @@ class Card592 extends AbstractCard
 {
 
   // Fashion Mask:
-  //   - Tuck a top card with a [PROSPERITY] or [INDUSTRY] of each color on your board. You may
+  //   - Tuck a top card with [PROSPERITY] or [INDUSTRY] of each color on your board. You may
   //     safeguard one of the tucked cards.
   //   - Score all but the top five each of your yellow and purple cards. Splay those colors aslant.
 

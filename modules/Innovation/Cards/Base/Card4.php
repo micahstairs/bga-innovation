@@ -9,7 +9,10 @@ class Card4 extends AbstractCard
 {
 
   // Metalworking:
-  //   - Draw and reveal a [1]. If it has a [AUTHORITY], score it and repeat this effect.
+  // - 3rd edition:
+  //   - Draw and reveal a [1]. If it has a [AUTHORITY], score it and repeat this effect. Otherwise, keep it.
+  // - 4th edition:
+  //   - Draw and reveal a [1]. If it has [AUTHORITY], score it and repeat this effect.
 
   public function initialExecution()
   {

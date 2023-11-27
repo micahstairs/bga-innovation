@@ -10,7 +10,7 @@ class Card128 extends AbstractCard
 {
 
   // Babylonian Chronicles
-  //   - I COMPEL you to transfer a top non-red card with a [AUTHORITY] from your board to my board!
+  //   - I COMPEL you to transfer a top non-red card with [AUTHORITY] from your board to my board!
   //   - Draw and score a [3].
 
   public function initialExecution()

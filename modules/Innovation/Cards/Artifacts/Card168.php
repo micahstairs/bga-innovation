@@ -10,7 +10,7 @@ class Card168 extends AbstractCard
 {
   // U.S. Declaration of Independence
   //   - I COMPEL you to transfer the highest card in your hand to my hand, the highest card in
-  //     your score pile to my score pile, and the highest top card with a [INDUSTRY] from your
+  //     your score pile to my score pile, and the highest top card with [INDUSTRY] from your
   //     board to my board!
 
   public function initialExecution()

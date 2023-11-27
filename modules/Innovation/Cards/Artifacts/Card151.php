@@ -14,8 +14,8 @@ class Card151 extends AbstractCard
   //   - I COMPEL you to transfer all top cards with a [PROSPERITY] from your board to my score pile!
   //   - Score a top card on your board with a [PROSPERITY].
   // - 4th edition:
-  //   - I COMPEL you to transfer a top card with a [PROSPERITY] of each color from your board to my score pile!
-  //   - Score a top card on your board with a [PROSPERITY].
+  //   - I COMPEL you to transfer a top card with [PROSPERITY] of each color from your board to my score pile!
+  //   - Score a top card on your board with [PROSPERITY].
 
 
   public function initialExecution()

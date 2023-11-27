@@ -79,11 +79,11 @@ class Card547 extends AbstractCard
       $cardIds = self::getCardIdsWithDuplicateValuesInLocation('safe');
       if ($cardIds) {
         self::setAuxiliaryArray($cardIds);
-        self::setMaxSteps(2);
+        self::setMaxSteps(3);
       }
     } else {
       if (self::getRepeatedValues(self::getTopCards())) {
-        self::setMaxSteps(2);
+        self::setMaxSteps(3);
       }
     }
     self::setAuxiliaryValue($choice);

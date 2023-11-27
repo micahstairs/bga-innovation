@@ -12,7 +12,7 @@ class Card201 extends AbstractCard
   // - 3rd edition:
   //   - For each top card on your board with a [EFFICIENCY], draw and score a [9].
   // - 4th edition:
-  //   - For each top card on your board with a [EFFICIENCY], draw and score a [9].
+  //   - For each top card on your board with [EFFICIENCY], draw and score a [9].
   //   - Junk all cards in the deck of value equal to the number of cards in your score pile.
 
   public function initialExecution()

@@ -14,8 +14,8 @@ class Card185 extends AbstractCard
   //     melded card has three [EFFICIENCY], you win.
   // - 4th edition:
   //   - Draw and meld a card of value one higher than the highest top card on your board. Junk an
-  //     available standard achievement. If you don't, and the melded card has three [EFFICIENCY],
-  //     you win.
+  //     available standard achievement. If you don't, and the melded card has at least three
+  //     [EFFICIENCY], you win.
 
   public function initialExecution()
   {

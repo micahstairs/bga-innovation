@@ -15,7 +15,7 @@ class Card194 extends AbstractCard
   // - 4th edition:
   //   - I COMPEL you to return one of your claimed standard achievements!
   //   - Draw and reveal an [8]. The single player with the highest top card of the drawn card's
-  //     color achieves the drawn card, ignoring eligibility. If that happens, repeat this effect.
+  //     color achieves the drawn card, ignoring eligibility. If they do, repeat this effect.
 
   public function initialExecution()
   {
