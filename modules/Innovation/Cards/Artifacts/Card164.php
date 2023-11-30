@@ -40,7 +40,7 @@ class Card164 extends AbstractCard
       if (self::getNumChosen() === 1) {
         self::setMaxSteps(2);
       } else if (self::isFourthEdition()) {
-        $achievementsByValue = self::getCardsKeyedByValue(Locations::ACHIEVEMENTS);
+        $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
         foreach ($achievementsByValue as $achievements) {
           if ($achievements) {
             self::junkBaseDeck(self::getValue($achievements[0]));
