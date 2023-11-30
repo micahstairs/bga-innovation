@@ -2174,45 +2174,35 @@ var Innovation = /** @class */ (function (_super) {
         var condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), { 'age': this.square('N', 'age', card.age), 'n': 5 * card.age });
         this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
     };
-    Innovation.prototype.createAdjustedContent = function (content, HTML_class, size, font_max, width_margin, height_margin, div_id) {
-        if (width_margin === void 0) { width_margin = 0; }
-        if (height_margin === void 0) { height_margin = 0; }
-        if (div_id === void 0) { div_id = null; }
-        // Problem: impossible to get suitable text size because it is not possible to get the width and height of an element still unattached
-        // Solution: first create the title hardly attached to the DOM, then destroy it and set the title in tooltip properly
-        // Create temporary title hardly attached on the DOM
+    Innovation.prototype.createAdjustedContent = function (content, HTML_class, size, font_max) {
+        // Create temporary DOM element to experiment with
         var tempParentId = 'temp_parent';
         var tempId = 'temp';
-        var div_title = "<div id='" + tempParentId + "' class='" + HTML_class + " " + size + "'><span id='" + tempId + "' >" + content + "</span></div>";
-        dojo.place(div_title, dojo.body());
-        // Determine the font-size between 1 and 30 which enables to fill the container without overflow
+        var tempDiv = "<div id='".concat(tempParentId, "' class='").concat(HTML_class, " ").concat(size, "'><span id='").concat(tempId, "'>").concat(content, "</span></div>");
+        dojo.place(tempDiv, dojo.body());
+        // Determine the largest possible font without overflowing the container
         var elementParent = $(tempParentId);
         var element = $(tempId);
-        if (HTML_class === 'card_title') {
-            dojo.addClass(elementParent, HTML_class);
-        }
         var font_size = font_max;
         while (font_size >= 2) {
             if (font_size < font_max) {
                 dojo.removeClass(element, 'font_size_' + (font_size + 1));
             }
             dojo.addClass(element, 'font_size_' + font_size);
-            var elementWidth = dojo.position(element).w + width_margin;
+            var elementWidth = dojo.position(element).w;
             var elementParentWidth = dojo.position(elementParent).w;
-            var elementHeight = dojo.position(element).h + height_margin;
+            var elementHeight = dojo.position(element).h;
             var elementParentHeight = dojo.position(elementParent).h;
+            if (content === 'BASUR HOYUK TOKENS') {
+                console.log('font_size: ' + font_size + ', elementWidth: ' + elementWidth + ', elementParentWidth: ' + elementParentWidth + ', elementHeight: ' + elementHeight + ', elementParentHeight: ' + elementParentHeight);
+            }
             if (elementWidth <= elementParentWidth && elementHeight <= elementParentHeight) {
                 break;
             }
             font_size--;
         }
-        // Destroy the piece of HTML used for determination
         dojo.destroy(elementParent);
-        // Create actual HTML which will be added in tooltip
-        if (div_id == null) {
-            return "<div class='".concat(HTML_class, " ").concat(size, "'><span class='font_size_").concat(font_size, "'>").concat(content, "</span></div>");
-        }
-        return "<div id='".concat(div_id, "' class='").concat(HTML_class, " ").concat(size, "'><span class='font_size_").concat(font_size, "'>").concat(content, "</span></div>");
+        return "<div class='".concat(HTML_class, " ").concat(size, "'><span class='font_size_").concat(font_size, "'>").concat(content, "</span></div>");
     };
     Innovation.prototype.createDogmaEffectText = function (text, dogma_symbol, size, color, shade, other_classes) {
         return "<div class='effect ".concat(size, " ").concat(shade, " ").concat(other_classes, "'><span class='dogma_symbol color_").concat(color, " ").concat(size, " icon_").concat(dogma_symbol, "'></span><span class='effect_text ").concat(shade, " ").concat(size, "'>").concat(this.parseForRichedText(text, size), "<span></div>");
@@ -2930,6 +2920,12 @@ var Innovation = /** @class */ (function (_super) {
         if (simplified_card_layout) {
             classes.push("simplified");
         }
+        if (this.gamedatas.fourth_edition && type != 2) {
+            classes.push("fourth");
+        }
+        else {
+            classes.push("third");
+        }
         return classes.join(" ");
     };
     Innovation.prototype.getCardIdFromHTMLId = function (HTML_id) {
@@ -2951,7 +2947,6 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone_HTML_class);
         var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
         var size = this.getCardSizeInZone(zone_HTML_class);
-        // TODO(4E): Use real 4th edition card back
         var simplified_card_back = this.prefs[110].value == 2 || age == 11 || type == 5;
         var HTML_inside = '';
         if (card === null) {
@@ -3003,55 +2998,57 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.createCardForCardBrowser = function (id) {
         var card = this.cards[id];
-        var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, 'M card');
+        var size = 'M';
+        var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, "".concat(size, " card"));
         var HTML_id = "browse_card_id_".concat(id);
-        var HTML_inside = this.writeOverCard(card, 'M', HTML_id);
+        var HTML_inside = this.writeOverCard(card, size, HTML_id);
         var simplified_card_back = this.prefs[110].value == 2;
         var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
         return "<div id='".concat(HTML_id, "' class='").concat(graphics_class, " ").concat(HTML_class, "'>").concat(HTML_inside, "</div>");
     };
     Innovation.prototype.writeOverCard = function (card, size, HTML_id) {
         var card_data = this.cards[card.id];
-        var icon1 = this.getIconDiv(card_data, card_data.spot_1, 'top_left_icon', size);
-        var icon2 = this.getIconDiv(card_data, card_data.spot_2, 'bottom_left_icon', size);
-        var icon3 = this.getIconDiv(card_data, card_data.spot_3, 'bottom_center_icon', size);
-        var icon4 = this.getIconDiv(card_data, card_data.spot_4, 'bottom_right_icon', size);
-        var icon5 = this.getIconDiv(card_data, card_data.spot_5, 'top_right_icon', size);
-        var icon6 = this.getIconDiv(card_data, card_data.spot_6, 'top_center_icon', size);
-        var card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
+        var edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
+        var icon1 = this.getIconDiv(card_data, card_data.spot_1, "top left ".concat(edition), size);
+        var icon2 = this.getIconDiv(card_data, card_data.spot_2, "bottom left ".concat(edition), size);
+        var icon3 = this.getIconDiv(card_data, card_data.spot_3, "bottom center ".concat(edition), size);
+        var icon4 = this.getIconDiv(card_data, card_data.spot_4, "bottom right ".concat(edition), size);
+        var icon5 = this.getIconDiv(card_data, card_data.spot_5, "top right ".concat(edition), size);
+        var icon6 = this.getIconDiv(card_data, card_data.spot_6, "top center ".concat(edition), size);
+        var card_age = this.createAdjustedContent(card.faceup_age, "card_age type_".concat(card_data.type, " color_").concat(card_data.color, " ").concat(edition), size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
         var title = _(card_data.name).toUpperCase();
-        var card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30, /*width_margin=*/ 0, /*height_margin=*/ 0, HTML_id + '_card_title');
+        var card_title = this.createAdjustedContent(title, "card_title type_".concat(card_data.type, " ").concat(edition), size, size == 'M' ? 11 : 30);
         var i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
         var i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
         var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color) : "";
         var non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color) : "";
         var non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color) : "";
-        var dogma_effects = this.createAdjustedContent(i_demand_effect + i_compel_effect + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
+        var dogma_effects = this.createAdjustedContent(i_demand_effect + i_compel_effect + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects ".concat(edition), size, size == 'M' ? 8 : 17);
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     };
-    Innovation.prototype.getIconDiv = function (card, icon, icon_location, size) {
+    Innovation.prototype.getIconDiv = function (card, icon, extra_classes, size) {
         if (icon === null || Number.isNaN(icon)) {
             return '';
         }
         if (icon == 0) {
-            return "<div class=\"hexagon_card_icon ".concat(size, " ").concat(icon_location, " hexagon_icon_").concat(card.id, "\"></div>");
+            return "<div class=\"hexagon_card_icon ".concat(size, " ").concat(extra_classes, " hexagon_icon_").concat(card.id, "\"></div>");
         }
         if (icon <= 7) {
-            var div = "<div class=\"square_card_icon ".concat(size, " color_").concat(card.color, " ").concat(icon_location, " icon_").concat(icon, "\"></div>");
-            if (icon != null && icon_location == 'top_center_icon' && (!this.gamedatas.fourth_edition || card.age <= 5)) {
+            var div = "<div class=\"square_card_icon ".concat(size, " color_").concat(card.color, " ").concat(extra_classes, " icon_").concat(icon, "\"></div>");
+            if (icon != null && extra_classes == 'top_center_icon' && (!this.gamedatas.fourth_edition || card.age <= 5)) {
                 div += "<div class=\"city_search_icon ".concat(size, " color_").concat(card.color, "\"></div>");
             }
             return div;
         }
         if (icon == 10) {
-            var div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + icon, size, size == 'M' ? 11 : 30);
+            var div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + extra_classes + ' icon_' + icon, size, size == 'M' ? 11 : 20);
             // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
             return div.replace("div class", 'div style="display: table;" class');
         }
         if (icon >= 101) {
-            return "<div class=\"bonus_card_icon ".concat(size, " ").concat(icon_location, " bonus_color color_").concat(card.color, "\"></div><div class=\"bonus_card_icon ").concat(size, " ").concat(icon_location, " bonus_value bonus_").concat(icon - 100, "\"></div>");
+            return "<div class=\"bonus_card_icon ".concat(size, " ").concat(extra_classes, " bonus_color color_").concat(card.color, "\"></div><div class=\"bonus_card_icon ").concat(size, " ").concat(extra_classes, " bonus_value bonus_").concat(icon - 100, "\"></div>");
         }
-        return "<div class=\"city_special_icon ".concat(size, " color_").concat(card.color, " ").concat(icon_location, " icon_").concat(icon, "\"></div>");
+        return "<div class=\"city_special_icon ".concat(size, " color_").concat(card.color, " ").concat(extra_classes, " icon_").concat(icon, "\"></div>");
     };
     Innovation.prototype.getSpecialAchievementText = function (card) {
         if (isFountain(card.id)) {
@@ -3570,7 +3567,7 @@ var Innovation = /** @class */ (function (_super) {
     Innovation.prototype.givePlayerActionCard = function (player_id, action_number) {
         dojo.addClass('action_indicator_' + player_id, 'action_card');
         var action_text = action_number == 0 ? _('Free Action') : action_number == 1 ? _('First Action') : _('Second Action');
-        var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12, 2);
+        var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12);
         $('action_indicator_' + player_id).innerHTML = div_action_text;
     };
     Innovation.prototype.destroyActionCard = function () {

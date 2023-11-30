@@ -1238,12 +1238,6 @@ class Innovation extends Table
         return self::getUniqueValueFromDB(self::format("SELECT player_eliminated FROM player WHERE player_id={player_id}", array('player_id' => $player_id)));
     }
 
-    // TODO(LATER): Use this helper more.
-    function isTeamGame()
-    {
-        return self::decodeGameType($this->innovationGameState->get('game_type')) == 'team';
-    }
-
     /** Formatting **/
     // TODO(LATER): Remove this once we are using the function in Strings.php instead.
     static function format($msg, $vars)
