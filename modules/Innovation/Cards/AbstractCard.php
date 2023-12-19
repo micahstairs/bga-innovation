@@ -802,13 +802,13 @@ abstract class AbstractCard
 
   // SPLAY HELPERS
 
-  protected function splay(int $color, int $splayDirection, int $targetPlayerId = null, int $triggeringPlayerId = null)
+  protected function splay(int $color, int $splayDirection, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
     $targetPlayerId = self::coercePlayerId($targetPlayerId);
     if ($triggeringPlayerId === null) {
       $triggeringPlayerId = $targetPlayerId;
     }
-    $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
+    return $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
   }
 
   protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
