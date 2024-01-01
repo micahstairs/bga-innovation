@@ -3546,9 +3546,11 @@ class Innovation extends Table
     {
         // TODO(FIGURES): Update this once there are other special achievements to test for.
         $edition = $this->innovationGameState->getEdition();
-        $achievements_to_test = $edition <= 3 ? [CardIds::MONUMENT] : [];
+        $achievements_to_test = [];
         if ($edition <= 3 || $is_end_of_action_check) {
-            $achievements_to_test = array_merge($achievements_to_test, [105, 107, 108, 109]);
+            $achievements_to_test = array_merge($achievements_to_test, [105, 106, 107, 108, 109]);
+        } else if ($edition <= 3) {
+            array_merge($achievements_to_test, [CardIds::MONUMENT]);
         }
         if ($this->innovationGameState->echoesExpansionEnabled() && ($edition <= 3 || $is_end_of_action_check)) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
