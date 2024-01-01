@@ -1864,9 +1864,9 @@ class Innovation extends BgaGame {
 
                     case 106:
                         // Monument:
-                        
                         if (self.gamedatas.fourth_edition) {
                             // at least four top cards with a demand effect
+                            numerator = 0;
                             for (let i = 0; i < 5; i++) {
                                 let items = self.zone["board"][self.player_id][i].items;
                                 if (items.length > 0) {

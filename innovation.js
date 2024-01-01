@@ -13,9 +13,9 @@ function parseCard(card) {
         spot_5: card.spot_5 ? parseInt(card.spot_5) : null,
         spot_6: card.spot_6 ? parseInt(card.spot_6) : null,
         dogma_icon: parseInt(card.dogma_icon),
-        is_relic: card.is_relic,
+        is_relic: card.is_relic == "1",
         name: card.name,
-        has_demand: card.has_demand,
+        has_demand: card.has_demand == "1",
         condition_for_claiming: (_a = card.condition_for_claiming) !== null && _a !== void 0 ? _a : null,
         alternative_condition_for_claiming: (_b = card.alternative_condition_for_claiming) !== null && _b !== void 0 ? _b : null,
         echo_effect: (_c = card.echo_effect) !== null && _c !== void 0 ? _c : null,
@@ -1797,6 +1797,7 @@ var Innovation = /** @class */ (function (_super) {
                         // Monument:
                         if (self.gamedatas.fourth_edition) {
                             // at least four top cards with a demand effect
+                            numerator = 0;
                             for (var i = 0; i < 5; i++) {
                                 var items = self.zone["board"][self.player_id][i].items;
                                 if (items.length > 0) {
