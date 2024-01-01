@@ -659,16 +659,16 @@
             width: 14px;
             height: 14px;
             line-height: 16px;
-            top: 12px;
-            right: 15px;
+            top: 9px;
+            right: 9px;
         }
 
         &.L {
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
             line-height: 14px;
-            top: 43px;
-            right: 43px;
+            top: 44px;
+            right: 40px;
         }
     }
 }
@@ -721,9 +721,9 @@
         font-family: Futura, "Trebuchet MS", Arial, sans-serif;
         
         &.M {
-            left: 54px;
-            top: 14px;
-            width: 93px;
+            left: 50px;
+            top: 12px;
+            width: 100px;
             height: 11px;
             line-height: 6px;
             &.type_2 {
@@ -735,9 +735,9 @@
 
         &.L {
             left: 143px;
-            top: 31px;
+            top: 34px;
             width: 230px;
-            height: 37px;
+            height: 33px;
             &.type_2 {
                 left: 126px;
                 top: 142px;
@@ -786,19 +786,22 @@
         &:nth-of-type(n+2) {
             margin-top: 2px;
         }
-
         padding-left: 9px;
-        line-height: 8px;
     }
 
     &.L {
         &:nth-of-type(n+2) {
             margin-top: 10px;
         }
-
         padding-left: 19px;
-        line-height: 22px;
     }
+
+    @for $i from 1 through 30 {
+        .font_size_#{$i} & {
+            line-height: #{$i}px;
+        }
+    }
+    
 }
 
 .card_effects {
@@ -813,9 +816,9 @@
         }
         &.fourth {
             right: 2px;
-            top: 31px;
-            width: 125px;
-            height: 46px;
+            top: 28px;
+            width: 128px;
+            height: 55px;
         }
 
         >.font_size_1,
@@ -849,10 +852,10 @@
             height: 151px;
         }
         &.fourth {
-            left: 125px;
-            top: 75px;
-            width: 325px;
-            height: 151px;
+            left: 129px;
+            top: 77px;
+            width: 321px;
+            height: 125px;
         }
     }
 }
@@ -1642,7 +1645,9 @@
             @include m.generate-color-x-position(0, 4, 2, 184px);
         }
         &.fourth {
-            background-size: 180px 124px;
+            background-size: 195.5px 136.5px;
+            background-position-x: -7px;
+            background-position-y: -5px;
         }
         border-radius: 6px;
         box-shadow: 3px 3px grey;
@@ -1851,27 +1856,27 @@
         }
         &.fourth {
             &.top {
-                top: 10px;
+                top: 7px;
             }
             &.bottom {
-                bottom: 10px;
+                bottom: 5px;
             }
             &.left {
-                left: 14px;
+                left: 10px;
             }
             &.center {
                 left: 72px;
             }
             &.right {
-                right: 15px;
+                right: 9px;
             }
         }
     }
 
     &.L {
         width: 75px;
-        background-size: 470px auto;
         height: 75px;
+        background-size: 470px auto;
 
         &.icon_1 {
             background-position-x: -1.5px;
@@ -2227,7 +2232,6 @@
                 }
             }
 
-            // TODO(4E): Finish positioning these once we've settled on the positioning of the background.
             &.fourth {
                 &.top {
                     top: 15px;
@@ -2236,13 +2240,13 @@
                     bottom: 12px;
                 }
                 &.left {
-                    left: 14px;
+                    left: 17px;
                 }
                 &.center {
                     left: 80px;
                 }
                 &.right {
-                    right: 16px;
+                    right: 19px;
                 }
             }
         }
@@ -2273,7 +2277,6 @@
                 }
             }
 
-            // TODO(4E): Finish positioning these once we've settled on the positioning of the background.
             &.fourth {
                 &.top {
                     top: 7px;
@@ -2282,13 +2285,13 @@
                     bottom: 7px;
                 }
                 &.left {
-                    left: 7px;
+                    left: 10px;
                 }
                 &.center {
                     left: 73px;
                 }
                 &.right {
-                    right: 7px;
+                    right: 10px;
                 }
             }
         }
@@ -2303,7 +2306,7 @@
             height: 43px;
             background-position-y: -82px;
 
-            // TODO(4E): Add positioning for 'fourth' once we've settled on the positioning of the background.
+            // TODO(4E): Add positioning for 'fourth'.
             &.top {
                 top: 44px;
             }
@@ -2329,7 +2332,7 @@
             background-size: 470px auto;
             background-position-y: -1px;
 
-            // TODO(4E): Add positioning for 'fourth' once we've settled on the positioning of the background.
+            // TODO(4E): Add positioning for 'fourth'.
             &.top {
                 top: 25px;
             }
@@ -2380,19 +2383,19 @@
 
         &.fourth {
             &.top {
-                top: 7px;
+                top: 5px;
             }
             &.bottom {
-                bottom: 4px;
+                bottom: 0px;
             }
             &.left {
-                left: 11px;
+                left: 7px;
             }
             &.center {
                 left: 69px;
             }
             &.right {
-                right: 9px;
+                right: 4px;
             }
         }
     }

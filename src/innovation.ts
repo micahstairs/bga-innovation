@@ -2292,9 +2292,6 @@ class Innovation extends BgaGame {
             const elementParentWidth = dojo.position(elementParent).w;
             const elementHeight = dojo.position(element).h;
             const elementParentHeight = dojo.position(elementParent).h;
-            if (content === 'BASUR HOYUK TOKENS') {
-                console.log('font_size: ' + font_size + ', elementWidth: ' + elementWidth + ', elementParentWidth: ' + elementParentWidth + ', elementHeight: ' + elementHeight + ', elementParentHeight: ' + elementParentHeight);
-            }
             if (elementWidth <= elementParentWidth && elementHeight <= elementParentHeight) {
                 break;
             }

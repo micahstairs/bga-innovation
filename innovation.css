@@ -596,15 +596,15 @@
   width: 14px;
   height: 14px;
   line-height: 16px;
-  top: 12px;
-  right: 15px;
+  top: 9px;
+  right: 9px;
 }
 .card_age.fourth.L {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   line-height: 14px;
-  top: 43px;
-  right: 43px;
+  top: 44px;
+  right: 40px;
 }
 
 .card_type {
@@ -651,9 +651,9 @@
   font-family: Futura, "Trebuchet MS", Arial, sans-serif;
 }
 .card_title.fourth.M {
-  left: 54px;
-  top: 14px;
-  width: 93px;
+  left: 50px;
+  top: 12px;
+  width: 100px;
   height: 11px;
   line-height: 6px;
 }
@@ -664,9 +664,9 @@
 }
 .card_title.fourth.L {
   left: 143px;
-  top: 31px;
+  top: 34px;
   width: 230px;
-  height: 37px;
+  height: 33px;
 }
 .card_title.fourth.L.type_2 {
   left: 126px;
@@ -710,17 +710,105 @@
 }
 .effect.M {
   padding-left: 9px;
-  line-height: 8px;
 }
 .effect.M:nth-of-type(n+2) {
   margin-top: 2px;
 }
 .effect.L {
   padding-left: 19px;
-  line-height: 22px;
 }
 .effect.L:nth-of-type(n+2) {
   margin-top: 10px;
+}
+.font_size_1 .effect {
+  line-height: 1px;
+}
+.font_size_2 .effect {
+  line-height: 2px;
+}
+.font_size_3 .effect {
+  line-height: 3px;
+}
+.font_size_4 .effect {
+  line-height: 4px;
+}
+.font_size_5 .effect {
+  line-height: 5px;
+}
+.font_size_6 .effect {
+  line-height: 6px;
+}
+.font_size_7 .effect {
+  line-height: 7px;
+}
+.font_size_8 .effect {
+  line-height: 8px;
+}
+.font_size_9 .effect {
+  line-height: 9px;
+}
+.font_size_10 .effect {
+  line-height: 10px;
+}
+.font_size_11 .effect {
+  line-height: 11px;
+}
+.font_size_12 .effect {
+  line-height: 12px;
+}
+.font_size_13 .effect {
+  line-height: 13px;
+}
+.font_size_14 .effect {
+  line-height: 14px;
+}
+.font_size_15 .effect {
+  line-height: 15px;
+}
+.font_size_16 .effect {
+  line-height: 16px;
+}
+.font_size_17 .effect {
+  line-height: 17px;
+}
+.font_size_18 .effect {
+  line-height: 18px;
+}
+.font_size_19 .effect {
+  line-height: 19px;
+}
+.font_size_20 .effect {
+  line-height: 20px;
+}
+.font_size_21 .effect {
+  line-height: 21px;
+}
+.font_size_22 .effect {
+  line-height: 22px;
+}
+.font_size_23 .effect {
+  line-height: 23px;
+}
+.font_size_24 .effect {
+  line-height: 24px;
+}
+.font_size_25 .effect {
+  line-height: 25px;
+}
+.font_size_26 .effect {
+  line-height: 26px;
+}
+.font_size_27 .effect {
+  line-height: 27px;
+}
+.font_size_28 .effect {
+  line-height: 28px;
+}
+.font_size_29 .effect {
+  line-height: 29px;
+}
+.font_size_30 .effect {
+  line-height: 30px;
 }
 
 .card_effects {
@@ -734,9 +822,9 @@
 }
 .card_effects.M.fourth {
   right: 2px;
-  top: 31px;
-  width: 125px;
-  height: 46px;
+  top: 28px;
+  width: 128px;
+  height: 55px;
 }
 .card_effects.M > .font_size_1 > .effect.M,
 .card_effects.M > .font_size_2 > .effect.M,
@@ -758,10 +846,10 @@
   height: 151px;
 }
 .card_effects.L.fourth {
-  left: 125px;
-  top: 75px;
-  width: 325px;
-  height: 151px;
+  left: 129px;
+  top: 77px;
+  width: 321px;
+  height: 125px;
 }
 
 .echo_effect {
@@ -1561,7 +1649,9 @@
   background-position-x: -738px;
 }
 .card.M.fourth {
-  background-size: 180px 124px;
+  background-size: 195.5px 136.5px;
+  background-position-x: -7px;
+  background-position-y: -5px;
 }
 .card.M.item_1200, .card.M.item_1201, .card.M.item_1202, .card.M.item_1203, .card.M.item_1204 {
   background-image: none;
@@ -1711,24 +1801,24 @@
   right: 7px;
 }
 .square_card_icon.M.fourth.top {
-  top: 10px;
+  top: 7px;
 }
 .square_card_icon.M.fourth.bottom {
-  bottom: 10px;
+  bottom: 5px;
 }
 .square_card_icon.M.fourth.left {
-  left: 14px;
+  left: 10px;
 }
 .square_card_icon.M.fourth.center {
   left: 72px;
 }
 .square_card_icon.M.fourth.right {
-  right: 15px;
+  right: 9px;
 }
 .square_card_icon.L {
   width: 75px;
-  background-size: 470px auto;
   height: 75px;
+  background-size: 470px auto;
 }
 .square_card_icon.L.icon_1 {
   background-position-x: -1.5px;
@@ -2025,13 +2115,13 @@
   bottom: 12px;
 }
 .bonus_card_icon.M.bonus_value.fourth.left {
-  left: 14px;
+  left: 17px;
 }
 .bonus_card_icon.M.bonus_value.fourth.center {
   left: 80px;
 }
 .bonus_card_icon.M.bonus_value.fourth.right {
-  right: 16px;
+  right: 19px;
 }
 .bonus_card_icon.M.bonus_1 {
   background-position-x: 1px;
@@ -2097,13 +2187,13 @@
   bottom: 7px;
 }
 .bonus_card_icon.M.bonus_color.fourth.left {
-  left: 7px;
+  left: 10px;
 }
 .bonus_card_icon.M.bonus_color.fourth.center {
   left: 73px;
 }
 .bonus_card_icon.M.bonus_color.fourth.right {
-  right: 7px;
+  right: 10px;
 }
 .bonus_card_icon.M.color_0 {
   background-position-x: -1px;
@@ -2239,19 +2329,19 @@
   right: 2px;
 }
 .hexagon_card_icon.M.fourth.top {
-  top: 7px;
+  top: 5px;
 }
 .hexagon_card_icon.M.fourth.bottom {
-  bottom: 4px;
+  bottom: 0px;
 }
 .hexagon_card_icon.M.fourth.left {
-  left: 11px;
+  left: 7px;
 }
 .hexagon_card_icon.M.fourth.center {
   left: 69px;
 }
 .hexagon_card_icon.M.fourth.right {
-  right: 9px;
+  right: 4px;
 }
 .hexagon_card_icon.L {
   background-size: 1511px, auto;

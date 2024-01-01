@@ -2193,9 +2193,6 @@ var Innovation = /** @class */ (function (_super) {
             var elementParentWidth = dojo.position(elementParent).w;
             var elementHeight = dojo.position(element).h;
             var elementParentHeight = dojo.position(elementParent).h;
-            if (content === 'BASUR HOYUK TOKENS') {
-                console.log('font_size: ' + font_size + ', elementWidth: ' + elementWidth + ', elementParentWidth: ' + elementParentWidth + ', elementHeight: ' + elementHeight + ', elementParentHeight: ' + elementParentHeight);
-            }
             if (elementWidth <= elementParentWidth && elementHeight <= elementParentHeight) {
                 break;
             }
