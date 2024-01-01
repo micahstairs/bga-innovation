@@ -1326,11 +1326,11 @@ abstract class AbstractCard
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }
 
-  protected function countColorsWithIcon(int $icon): int
+  protected function countColorsWithIcon(int $icon, int $playerId = null): int
   {
     $numColors = 0;
     foreach (Colors::ALL as $color) {
-      if (self::getIconCountInStack($color, $icon) > 0) {
+      if (self::getIconCountInStack($color, $icon, $playerId) > 0) {
         $numColors++;
       }
     }
@@ -1398,7 +1398,7 @@ abstract class AbstractCard
 
   protected function getIconCountInStack(int $color, int $icon, int $playerId = null): int
   {
-    $countsByIcon = self::getAllIconCountsInStack($color);
+    $countsByIcon = self::getAllIconCountsInStack($color, $playerId);
     if (key_exists($icon, $countsByIcon)) {
       return $countsByIcon[$icon];
     }
