@@ -36,7 +36,7 @@ class Card167 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      if (in_array($card['faceup_age'], self::getValues(self::getTopCards()))) {
+      if (in_array(self::getValue($card), self::getValues(self::getTopCards()))) {
         self::return($card);
         self::setMaxSteps(2);
       } else {
