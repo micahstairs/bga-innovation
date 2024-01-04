@@ -8,7 +8,7 @@ use Innovation\Enums\Locations;
 class Card374_4E extends AbstractCard
 {
 
-  // Toilet (3rd edition):
+  // Toilet (4th edition):
   //  - ECHO: Draw and tuck a [4].
   //  - I DEMAND you return a card from your score pile matching each different bonus value on my board!
   //  - You may return a card from your hand and draw a card of the same value.
@@ -18,7 +18,7 @@ class Card374_4E extends AbstractCard
     if (self::isEcho()) {
       self::drawAndTuck(4);
     } else if (self::isDemand()) {
-      $values = array_unique(self::getBonuses());
+      $values = array_unique(self::getBonuses(self::getLauncherId()));
       if ($values) {
         self::setAuxiliaryArray($values); // Store the values to be returned
         self::setMaxSteps(2);
