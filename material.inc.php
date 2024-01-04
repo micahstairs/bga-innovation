@@ -1815,7 +1815,7 @@ $this->textual_card_infos = array(
     354 => array(
         'name'                                => clienttranslate('Chaturanga'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card with a bonus from your hand. If you do, draw two cards of value equal to that card\'s bonus. Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Draw and foreshadow a card of lowest value not on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Draw and foreshadow a card of value equal to the melded card.'),
         'non_demand_effect_2_fourth'          => clienttranslate('If Chaturanga was foreseen, draw and foreshadow a card of value equal to the number of colors on your board.'),
     ),
 
