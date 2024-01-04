@@ -27,9 +27,9 @@ class Card186_4E extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-        'age'            => self::getAuxiliaryValue(),
+        'location_from' => Locations::BOARD,
+        'junk_keyword'  => true,
+        'age'           => self::getAuxiliaryValue(),
       ];
     } else {
       return [
