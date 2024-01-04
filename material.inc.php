@@ -1121,6 +1121,7 @@ $this->textual_card_infos = array(
         'name_fourth'                         => clienttranslate('Almira, Queen of Castile'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. If you do, claim an achievement of matching value, ignoring eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available achievement, if there is one.'),
+        'separate_4E_implementation'          => true,
     ),
 
     /* Artifacts - Age 6 */
