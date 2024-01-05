@@ -17,10 +17,15 @@ class Card123 extends AbstractCard
   // - 4th edition:
   //   - Return a card from your hand. Score all cards of the same color on the boards of all
   //     players with no top Artifacts.
+  //  - If Ark of the Covenant is a top card on any board, transfer it to your hand.
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isSecondNonDemand()) {
+      self::tryToTransferArkOfTheCovenantToHand();
+    } else {
+      self::setMaxSteps(1);
+    }
   }
 
   public function getInteractionOptions(): array
@@ -56,7 +61,14 @@ class Card123 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstOrThirdEdition() && ($card = $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT))) {
+    if (self::isFirstOrThirdEdition()) {
+      self::tryToTransferArkOfTheCovenantToHand();
+    }
+  }
+
+  private function tryToTransferArkOfTheCovenantToHand()
+  {
+    if ($card = $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT)) {
       self::transferToHand($card);
     }
   }
