@@ -1372,9 +1372,9 @@ abstract class AbstractCard
       foreach ($stack as $card) {
         if ($card['position'] == count($stack) - 1) {
           // All icons are visible on the top card in the stack
-          $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], true));
+          $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6]));
         } else {
-          $icons = array_merge($icons, self::getIcons($card, $spots, true));
+          $icons = array_merge($icons, self::getIcons($card, $spots));
         }
       }
     }
@@ -1392,9 +1392,9 @@ abstract class AbstractCard
     foreach ($stack as $card) {
       if ($card['position'] == count($stack) - 1) {
         // All icons are visible on the top card in the stack
-        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], true));
+        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6]));
       } else {
-        $icons = array_merge($icons, self::getIcons($card, $spots, true));
+        $icons = array_merge($icons, self::getIcons($card, $spots));
       }
     }
     // Convert array of icons to array of counts
@@ -1431,13 +1431,13 @@ abstract class AbstractCard
     }
   }
 
-  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6], $includeEchoEffects = false): array
+  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6]): array
   {
     $icons = [];
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
-      // Echo effects don't actually count as an icon type
-      if ($icon !== null && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
+      // Hex images and echo effects don't actually count as icons
+      if ($icon !== null && $icon != Icons::ECHO_EFFECT && $icon != Icons::HEX_IMAGE) {
         // In 4th edition, all bonus icons are normalized to the same value since they are considered to be the same icon type.
         if (self::isFourthEdition()) {
           $icons[] = min($icon, 100);
