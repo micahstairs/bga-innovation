@@ -13,7 +13,7 @@ class Card161 extends AbstractCard
   //   - If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board.
   //     Execute the effects on the chosen card as if they were on this card. Do not share them.
   // Gujin Tushu Jicheng (4th edition):
-  //   - If it is your turn, choose any other top card on any other board and fully execute it.
+  //   - If it is your turn, choose any other top card on any other board and super-execute it.
 
   public function initialExecution()
   {

@@ -3,44 +3,40 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card456 extends AbstractCard
 {
   // What Does The Fox Say
-  //   - If it is your turn, draw and meld an [11]. Fully execute the melded card. If any player is
-  //     eligible to share an effect of the dogma, repeat this effect.
-
-  public function hasPostExecutionLogic(): bool
-  {
-    return true;
-  }
+  //   - Draw two [11]s. Meld one of them, then meld the other and if it is your turn, super-execute
+  //     it, otherwise self-execute it.
 
   public function initialExecution()
   {
-    // No player shared, so do not repeat this effect.
-    if (self::isPostExecution() && self::getAuxiliaryValue() === 0) {
-      return;
-    }
-
-    self::setAuxiliaryValue(0); // By default, we do not want to repeat the effect
-    if (self::isTheirTurn()) {
-      $card = self::drawAndMeld(11);
-      if (self::willShareEffect($card['dogma_icon'])) {
-        self::setAuxiliaryValue(1); // Indicate that we should repeat the effect
-      }
-      self::fullyExecute($card);
-    }
+    $card1 = self::draw(11);
+    $card2 = self::draw(11);
+    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+    self::setMaxSteps(1);
   }
 
-  private function willShareEffect(int $icon): bool
+  public function getInteractionOptions(): array
   {
-    $iconCount = self::getStandardIconCount($icon);
-    foreach (self::getOtherPlayerIds() as $playerId) {
-      if (self::getStandardIconCount($icon, $playerId) >= $iconCount) {
-        return true;
-      }
+    return [
+      'meld_keyword'                    => true,
+      'card_ids_are_in_auxiliary_array' => true,
+    ];
+  }
+
+  public function handleCardChoice(array $card)
+  {
+    self::removeFromAuxiliaryArray($card['id']);
+    $other_card_id = self::getAuxiliaryArray()[0];
+    $other_card = self::meld(self::getCard($other_card_id));
+    if (self::isTheirTurn()) {
+      self::fullyExecute($other_card);
+    } else {
+      self::selfExecute($other_card);
     }
-    return false;
   }
 
 }

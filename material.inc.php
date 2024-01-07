@@ -811,7 +811,7 @@ $this->textual_card_infos = array(
     116 => array(
         'name'                                => clienttranslate('Priest-King'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non-demand dogma effects. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand. If you have a top card matching its color, fully execute it if it is your turn, otherwise self-execute it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand. If you have a top card matching its color, super-execute it if it is your turn, otherwise self-execute it.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('Claim an achievement, if eligible.'),
     ),
 
@@ -916,7 +916,7 @@ $this->textual_card_infos = array(
 
     133 => array(
         'name'                       => clienttranslate('Dead Sea Scrolls'),
-        'non_demand_effect_1'        => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
+        'non_demand_effect_1'        => clienttranslate('Draw an Artifact of value equal to the value of your highest top card. Junk the Artifact deck of that value'),
         'non_demand_effect_2_fourth' => clienttranslate('Choose a player. Junk an available achievement of value equal to the highest top card on that player\'s board.')
     ),
 
@@ -1008,7 +1008,7 @@ $this->textual_card_infos = array(
     147 => array(
         'name'                                => clienttranslate('East India Company Charter'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each score pile from which cards are returned, draw and score a ${age_5}. If you do, junk all cards in the deck of the chosen value.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each score pile from which cards are returned, draw and score a ${age_5}. If you score only ${age_5}s, junk all cards in the deck of the chosen value.'),
     ),
 
     148 => array(
@@ -1101,7 +1101,7 @@ $this->textual_card_infos = array(
         'name_first_and_third'                => clienttranslate('Gujin Tushu Jinsheng'),
         'name_fourth'                         => clienttranslate('Gujin Tushu Jicheng'),
         'non_demand_effect_1_first_and_third' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and fully execute it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and super-execute it.'),
     ),
 
     162 => array(
@@ -1208,7 +1208,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and score an ${age_8}.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld an ${age_8}. If you do, choose a value, and junk all cards in the deck of that value.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld an ${age_8}. If it is an ${age_8}, choose a value, and junk all cards in the deck of that value.'),
         'separate_4E_implementation'          => true,
     ),
 
@@ -2596,7 +2596,7 @@ $this->textual_card_infos = array(
 
     456 => array(
         'name'                => clienttranslate('What Does The Fox Say'),
-        'non_demand_effect_1' => clienttranslate('If it is your turn, draw and meld an ${age_11}. Fully execute the melded card. If any player is eligible to share an effect of the dogma, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw two ${age_11}s. Meld one of them, then meld the other and if it is your turn, super-execute it, otherwise self-execute it.'),
     ),
 
     457 => array(

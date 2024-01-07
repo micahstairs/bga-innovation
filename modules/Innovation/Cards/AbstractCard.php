@@ -712,6 +712,11 @@ abstract class AbstractCard
     return $this->game->junkBaseDeck($age);
   }
 
+  protected function junkDeck(int $age, int $type): bool
+  {
+    return $this->game->junkDeck($age, $type);
+  }
+
   protected function revealHand(int $playerId = null): void
   {
     $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');

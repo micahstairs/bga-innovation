@@ -14,8 +14,8 @@ class Card147 extends AbstractCard
   //     each player that returned cards, draw and score a [5].
   // - 4th edition:
   //   - Choose a value other than [5]. Return all cards of that value from all score piles. For
-  //     each score pile from which cards are returned, draw and score a [5]. If you do, junk all
-  //     cards in the deck of the chosen value.
+  //     each score pile from which cards are returned, draw and score a [5]. If you score only
+  //     [5]s, junk all cards in the deck of the chosen value.
 
 
   public function initialExecution()

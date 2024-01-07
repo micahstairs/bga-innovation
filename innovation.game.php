@@ -6586,19 +6586,24 @@ class Innovation extends Table
 
     function junkBaseDeck($age): bool
     {
+        return self::junkDeck($age, CardTypes::BASE);
+    }
+
+    function junkDeck($age, $type): bool
+    {
         if ($age == 0 || $age >= 12) {
             // TODO(FIGURES): Handle junking the age 0 deck
             return false;
         }
-        $cards = self::getCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE)[$age];
+        $cards = self::getCardsInLocationKeyedByAge( /*owner=*/0, 'deck', $type)[$age];
         if (empty($cards)) {
-            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, CardTypes::BASE)]);
+            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, $type)]);
             return false;
         }
         self::bulkTransferCards($cards, 0, Locations::JUNK);
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
-            ['age' => self::getAgeSquareWithType($age, CardTypes::BASE), 'n' => self::renderNumber(count($cards))]
+            ['age' => self::getAgeSquareWithType($age, $type), 'n' => self::renderNumber(count($cards))]
         );
         return true;
     }
