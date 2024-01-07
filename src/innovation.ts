@@ -522,7 +522,7 @@ class Innovation extends BgaGame {
             dojo.byId('available_museums_container').style.display = 'none';
         }
 
-        // AVAILABLE ACHIEVEMENTS
+        // AVAILABLE STANDARD ACHIEVEMENTS
         // Creation of the zone
         this.zone["achievements"] = {};
 

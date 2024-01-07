@@ -577,7 +577,7 @@ var Innovation = /** @class */ (function (_super) {
         else {
             dojo.byId('available_museums_container').style.display = 'none';
         }
-        // AVAILABLE ACHIEVEMENTS
+        // AVAILABLE STANDARD ACHIEVEMENTS
         // Creation of the zone
         this.zone["achievements"] = {};
         // Add cards to zone according to the current situation

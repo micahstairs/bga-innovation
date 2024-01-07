@@ -153,8 +153,8 @@
                 <p class="text_center"><!-- BEGIN available_relics -->{AVAILABLE_RELICS}<!-- END available_relics --></p>
                 <div id="relics"></div>
             </div>
-            <div id="available_achievements_container">
-                <p class="text_center"><!-- BEGIN available_achievements -->{AVAILABLE_ACHIEVEMENTS}<!-- END available_achievements --></p>
+            <div id="available_standard_achievements_container">
+                <p class="text_center"><!-- BEGIN standard_achievements -->{STANDARD_ACHIEVEMENTS}<!-- END standard_achievements --></p>
                 <div id="achievements"></div>
             </div>
             <div id="available_special_achievements_container">
