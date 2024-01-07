@@ -2851,7 +2851,7 @@ $this->textual_card_infos = array(
 
     509 => array(
         'name'                => clienttranslate('Cliffhanger'),
-        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. If you cannot, safeguard the top card of the ${age_4} deck.'),
+        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. Otherwise, safeguard the top card of the ${age_4} deck.'),
     ),
 
     510 => array(
@@ -3090,7 +3090,7 @@ $this->textual_card_infos = array(
 
     550 => array(
         'name'                => clienttranslate('Plot Voucher'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, fully execute the melded card if it is your turn, or if it is not your turn self-execute it.'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, super-execute the melded card if it is your turn, or if it is not your turn self-execute it.'),
     ),
 
     551 => array(
@@ -3157,7 +3157,7 @@ $this->textual_card_infos = array(
 
     562 => array(
         'name'                => clienttranslate('Shangri-La'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If it is an ${age_8}, repeat this effect.'),
     ),
 
     563 => array(
@@ -3201,7 +3201,7 @@ $this->textual_card_infos = array(
         'name'                => clienttranslate('Area 51'),
         'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
         'non_demand_effect_2' => clienttranslate('Choose to either draw an ${age_11}, or safeguard an available standard achievement.'),
-        'non_demand_effect_3' => clienttranslate('Reveal one of your secrets, and fully execute it if it is your turn.'),
+        'non_demand_effect_3' => clienttranslate('Reveal one of your secrets, and super-execute it if it is your turn.'),
     ),
 
     570 => array(

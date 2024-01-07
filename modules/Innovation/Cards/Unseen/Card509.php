@@ -11,7 +11,7 @@ class Card509 extends AbstractCard
 
   // Cliffhanger:
   //   - Reveal a [4] in your safe. If it is: green, tuck it; purple, meld it; red, achieve it
-  //     regardless of eligibility; yellow, score it; blue, draw a [5]. If you cannot, safeguard
+  //     regardless of eligibility; yellow, score it; blue, draw a [5]. Otherwise, safeguard
   //     the top card of the [4] deck.
 
   public function initialExecution()

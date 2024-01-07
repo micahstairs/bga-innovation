@@ -12,7 +12,7 @@ class Card569 extends AbstractCard
   // Area 51:
   //   - You may splay your green cards up.
   //   - Choose to either draw an [11], or safeguard an available standard achievement.
-  //   - Reveal one of your secrets, and fully execute it if it is your turn.
+  //   - Reveal one of your secrets, and super-execute it if it is your turn.
 
   public function initialExecution()
   {
