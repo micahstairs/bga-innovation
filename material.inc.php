@@ -2756,7 +2756,8 @@ $this->textual_card_infos = array(
 
     493 => array(
         'name'                => clienttranslate('Polytheism'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect. Otherwise, draw and tuck a ${age_1}.'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.'),
+        'non_demand_effect_2' => clienttranslate('Draw and tuck a ${age_1}.'),
     ),
 
     494 => array(

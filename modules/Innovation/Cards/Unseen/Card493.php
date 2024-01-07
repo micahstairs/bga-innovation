@@ -10,11 +10,16 @@ class Card493 extends AbstractCard
 
   // Polytheism:
   //   - Meld a card from your hand with no icon on a card already melded by you during this action
-  //     due to Polytheism. If you do, repeat this effect. Otherwise, draw and tuck a [1].
+  //     due to Polytheism. If you do, repeat this effect.
+  //   - Draw and tuck a [1].
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isFirstNonDemand()) {
+      self::setMaxSteps(1);
+    } else if (self::isSecondNonDemand()) {
+      self::drawAndTuck(1);
+    }
   }
 
   public function getInteractionOptions(): array
@@ -41,16 +46,11 @@ class Card493 extends AbstractCard
     ];
   }
 
-  public function afterInteraction()
+  public function handleCardChoice(array $card)
   {
-    if (self::getNumChosen() === 1) {
-      $card = self::getLastSelectedCard();
-      $iconsMelded = array_unique(array_merge(self::getActionScopedAuxiliaryArray(self::getPlayerId()), self::getIcons($card)));
-      self::setActionScopedAuxiliaryArray($iconsMelded, self::getPlayerId());
-      self::setNextStep(1);
-    } else {
-      self::drawAndTuck(1);
-    }
+    $iconsMelded = array_unique(array_merge(self::getActionScopedAuxiliaryArray(self::getPlayerId()), self::getIcons($card)));
+    self::setActionScopedAuxiliaryArray($iconsMelded, self::getPlayerId());
+    self::setNextStep(1);
   }
 
 }
