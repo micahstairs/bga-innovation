@@ -1063,6 +1063,7 @@ var Innovation = /** @class */ (function (_super) {
         var forecast_container_width = num_forecast_cards_in_row * this.delta.forecast.x;
         var achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
         var score_container_width = main_area_inner_width - forecast_container_width - achievement_container_width - safe_container_width;
+        var museum_container_width = 0;
         for (var player_id in this.players) {
             var hand_width = dojo.position('hand_container_' + player_id).w;
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
@@ -1079,9 +1080,9 @@ var Innovation = /** @class */ (function (_super) {
             dojo.setStyle(this.zone["safe"][player_id].container_div, 'width', safe_container_width + "px");
             dojo.style('progress_' + player_id, 'width', hand_width + 'px');
             dojo.style('artifacts_' + player_id, 'width', hand_width + 'px');
+            museum_container_width = dojo.position('museums_' + player_id).w; // This value will be the same for all players
         }
-        var player_museums_width = dojo.position('museums_' + this.player_id).w;
-        this.num_cards_in_row.set("museums", Math.floor(player_museums_width / this.delta.museums.x));
+        this.num_cards_in_row.set("museums", Math.floor(museum_container_width / this.delta.museums.x));
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
         this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
