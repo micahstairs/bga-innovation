@@ -28,8 +28,7 @@ class Card395 extends AbstractCard
     } else {
       foreach (Colors::ALL as $color) {
         if (self::getIconCountInStack($color, Icons::ECHO_EFFECT) >= 3) {
-          self::claim(CardIds::HISTORY);
-          if (self::wasForeseen()) {
+          if (self::claim(CardIds::HISTORY) && self::wasForeseen()) {
             self::win();
           }
           return;

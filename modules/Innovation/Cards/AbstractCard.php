@@ -1381,8 +1381,16 @@ abstract class AbstractCard
     // Convert array of icons to array of counts
     return array_count_values($icons);
   }
+  protected function getIconCountInStack(int $color, int $icon, int $playerId = null): int
+  {
+    $countsByIcon = self::getAllIconCountsInStack($color, $playerId, []); // Deliberately include echo effects and hex images
+    if (key_exists($icon, $countsByIcon)) {
+      return $countsByIcon[$icon];
+    }
+    return 0;
+  }
 
-  protected function getAllIconCountsInStack(int $color, int $playerId = null): array
+  protected function getAllIconCountsInStack(int $color, int $playerId = null, array $excluded_icons = [Icons::ECHO_EFFECT, Icons::HEX_IMAGE]): array
   {
     $icons = [];
     $stack = self::getStack($color, $playerId);
@@ -1392,22 +1400,13 @@ abstract class AbstractCard
     foreach ($stack as $card) {
       if ($card['position'] == count($stack) - 1) {
         // All icons are visible on the top card in the stack
-        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6]));
+        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], $excluded_icons));
       } else {
-        $icons = array_merge($icons, self::getIcons($card, $spots));
+        $icons = array_merge($icons, self::getIcons($card, $spots, $excluded_icons));
       }
     }
     // Convert array of icons to array of counts
     return array_count_values($icons);
-  }
-
-  protected function getIconCountInStack(int $color, int $icon, int $playerId = null): int
-  {
-    $countsByIcon = self::getAllIconCountsInStack($color, $playerId);
-    if (key_exists($icon, $countsByIcon)) {
-      return $countsByIcon[$icon];
-    }
-    return 0;
   }
 
   protected function hasIconInCommon(array $card1, array $card2): bool
@@ -1431,13 +1430,13 @@ abstract class AbstractCard
     }
   }
 
-  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6]): array
+  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6], array $excluded_icons = [Icons::ECHO_EFFECT, Icons::HEX_IMAGE]): array
   {
     $icons = [];
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
       // Hex images and echo effects don't actually count as icons
-      if ($icon !== null && $icon != Icons::ECHO_EFFECT && $icon != Icons::HEX_IMAGE) {
+      if ($icon !== null && !in_array($icon, $excluded_icons)) {
         // In 4th edition, all bonus icons are normalized to the same value since they are considered to be the same icon type.
         if (self::isFourthEdition()) {
           $icons[] = min($icon, 100);
