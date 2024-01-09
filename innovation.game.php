@@ -16581,6 +16581,11 @@ class Innovation extends Table
                             // Do the splay as stated in B
                             $this->innovationGameState->set("color_last_selected", $card['color']);
                             self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/$splay_direction == 0);
+                            if ($code !== null && self::isInSeparateFile($card_id)) {
+                                self::getCardInstance($card_id, $executionState)->handleSplayChoice(self::getCardInfo($selected_card_id));
+                                self::setStepMax($executionState->getMaxSteps());
+                                self::setStep($executionState->getNextStep() - 1);
+                            }
                         }
                     } else if ($card_id === null) { // Digging/stealing artifact
                         $card_ids = self::getAuxiliaryArray();

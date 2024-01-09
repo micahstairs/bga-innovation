@@ -96,6 +96,11 @@ abstract class AbstractCard
     // Subclasses can optionally override this function if any extra handling is needed after each individual card is chosen.
   }
 
+  public function handleSplayChoice(array $card)
+  {
+    // Subclasses can optionally override this function if any extra handling is needed after a splay is chosen.
+  }
+
   public function handleSpecialChoice(int $choice)
   {
     $choiceType = $this->game->innovationGameState->get('special_type_of_choice');
