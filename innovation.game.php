@@ -16522,24 +16522,25 @@ class Innovation extends Table
 
                 default:
                     if ($special_type_of_choice == 0) {
-                        if ($splay_direction == -1) {
+                        if ($code !== null) {
+                            $executionState = (new ExecutionState($this))
+                                ->setEdition($this->innovationGameState->getEdition())
+                                ->setLauncherId($launcher_id)
+                                ->setPlayerId($player_id)
+                                ->setEffectType($current_effect_type)
+                                ->setEffectNumber($current_effect_number)
+                                ->setCurrentStep(self::getStep())
+                                ->setNextStep(self::getStep() + 1)
+                                ->setMaxSteps(self::getStepMax())
+                                ->setNumChosen($this->innovationGameState->get('n') + 1);
+                        }
 
+                        if ($splay_direction == -1) {
                             if ($code !== null) {
                                 $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
                                 $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
                                 $this->innovationGameState->set("owner_last_selected", $card['owner']);
-                                $executionState = (new ExecutionState($this))
-                                    ->setEdition($this->innovationGameState->getEdition())
-                                    ->setLauncherId($launcher_id)
-                                    ->setPlayerId($player_id)
-                                    ->setEffectType($current_effect_type)
-                                    ->setEffectNumber($current_effect_number)
-                                    ->setCurrentStep(self::getStep())
-                                    ->setNextStep(self::getStep() + 1)
-                                    ->setMaxSteps(self::getStepMax())
-                                    ->setNumChosen($this->innovationGameState->get('n') + 1);
                             }
-
                             if ($code !== null && self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
                                 // Do nothing since the card transfer was overridden
                             } else if ($location_to == 'revealed,hand') {
