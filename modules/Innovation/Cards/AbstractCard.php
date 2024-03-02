@@ -344,7 +344,11 @@ abstract class AbstractCard
   protected function fullyExecute($card)
   {
     if ($card) {
-      $this->game->fullyExecute($card);
+      if (self::isFourthEdition()) {
+        $this->game->superExecute($card);
+      } else {
+        $this->game->executeAsIfOnCurrentCard($card);
+      }
     }
   }
 
