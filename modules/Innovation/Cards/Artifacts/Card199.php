@@ -19,7 +19,7 @@ class Card199 extends AbstractCard
         self::unsplay($color);
       }
     } else if (self::isFirstNonDemand()) {
-      self::setMaxSteps(2);
+      self::setMaxSteps(1);
     }
   }
 

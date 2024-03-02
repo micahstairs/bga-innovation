@@ -23,6 +23,7 @@ class Card44_4E extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       return [
+        'can_pass'      => true,
         'n'             => self::countColorsWithIcon(Icons::HEALTH),
         'location_from' => Locations::HAND,
         'tuck_keyword'  => true,

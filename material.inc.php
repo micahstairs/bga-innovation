@@ -811,7 +811,7 @@ $this->textual_card_infos = array(
     116 => array(
         'name'                                => clienttranslate('Priest-King'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non-demand dogma effects. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand. If you have a top card matching its color, fully execute it if it is your turn, otherwise self-execute it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand. If you have a top card matching its color, super-execute it if it is your turn, otherwise self-execute it.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('Claim an achievement, if eligible.'),
     ),
 
@@ -853,6 +853,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Ark of the Covenant'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Score all cards of the same color on the boards of all players with no top Artifacts.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
     ),
 
     124 => array(
@@ -915,7 +916,7 @@ $this->textual_card_infos = array(
 
     133 => array(
         'name'                       => clienttranslate('Dead Sea Scrolls'),
-        'non_demand_effect_1'        => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
+        'non_demand_effect_1'        => clienttranslate('Draw an Artifact of value equal to the value of your highest top card. Junk the Artifact deck of that value'),
         'non_demand_effect_2_fourth' => clienttranslate('Choose a player. Junk an available achievement of value equal to the highest top card on that player\'s board.')
     ),
 
@@ -1007,7 +1008,7 @@ $this->textual_card_infos = array(
     147 => array(
         'name'                                => clienttranslate('East India Company Charter'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each score pile from which cards are returned, draw and score a ${age_5}. If you do, junk all cards in the deck of the chosen value.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each score pile from which cards are returned, draw and score a ${age_5}. If you score only ${age_5}s, junk all cards in the deck of the chosen value.'),
     ),
 
     148 => array(
@@ -1100,7 +1101,7 @@ $this->textual_card_infos = array(
         'name_first_and_third'                => clienttranslate('Gujin Tushu Jinsheng'),
         'name_fourth'                         => clienttranslate('Gujin Tushu Jicheng'),
         'non_demand_effect_1_first_and_third' => clienttranslate('If Gujin Tushu Jinsheng is on your board, choose any other top card on any other board. Execute the effects on the chosen card as if they were on this card. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and fully execute it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If it is your turn, choose any other top card on any other board and super-execute it.'),
     ),
 
     162 => array(
@@ -1121,6 +1122,7 @@ $this->textual_card_infos = array(
         'name_fourth'                         => clienttranslate('Almira, Queen of Castile'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. If you do, claim an achievement of matching value, ignoring eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available achievement, if there is one.'),
+        'separate_4E_implementation'          => true,
     ),
 
     /* Artifacts - Age 6 */
@@ -1206,7 +1208,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and score an ${age_8}.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld an ${age_8}. If you do, choose a value, and junk all cards in the deck of that value.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld an ${age_8}. If it is an ${age_8}, choose a value, and junk all cards in the deck of that value.'),
         'separate_4E_implementation'          => true,
     ),
 
@@ -1815,7 +1817,7 @@ $this->textual_card_infos = array(
     354 => array(
         'name'                                => clienttranslate('Chaturanga'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card with a bonus from your hand. If you do, draw two cards of value equal to that card\'s bonus. Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Draw and foreshadow a card of lowest value not on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Draw and foreshadow a card of value equal to the melded card.'),
         'non_demand_effect_2_fourth'          => clienttranslate('If Chaturanga was foreseen, draw and foreshadow a card of value equal to the number of colors on your board.'),
     ),
 
@@ -1939,7 +1941,7 @@ $this->textual_card_infos = array(
     370 => array(
         'name'                                => clienttranslate('Globe'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may return up to three cards from hand of the same color. If you return one, splay any color left; two, right; three, up. If you returned at least one card, draw and foreshadow a ${age_6}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may return all cards from your hand. If you return at least three ${age_4}, splay any color on your board right, and draw and foreshadow a ${age_6}, a ${age_7}, and then an ${age_8}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return all cards from your hand. If you return blue, green, and yellow cards, draw and foreshadow a ${age_6}, ${age_7}, and ${age_8}, then splay any color on your board right.'),
         'non_demand_effect_2_fourth'          => clienttranslate('If Globe was foreseen, foreshadow a top card from any board.'),
         'separate_4E_implementation'          => true,
     ),
@@ -2032,7 +2034,8 @@ $this->textual_card_infos = array(
     381 => array(
         'name'                                => clienttranslate('Pressure Cooker'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. For each top card on your board with a bonus, draw a card of value equal to that bonus.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand. For each top card of different color on your board with a bonus, both draw a card and junk an available achievement of value equal to that bonus.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If Pressure Cooker was foreseen, meld all cards from your hand.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Return all cards from your hand. For each top card of different color on your board with a bonus, both draw a card and junk an available achievement of value equal to that bonus.'),
         'separate_4E_implementation'          => true,
     ),
 
@@ -2593,7 +2596,7 @@ $this->textual_card_infos = array(
 
     456 => array(
         'name'                => clienttranslate('What Does The Fox Say'),
-        'non_demand_effect_1' => clienttranslate('If it is your turn, draw and meld an ${age_11}. Fully execute the melded card. If any player is eligible to share an effect of the dogma, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw two ${age_11}s. Meld one of them, then meld the other and if it is your turn, super-execute it, otherwise self-execute it.'),
     ),
 
     457 => array(
@@ -2753,7 +2756,8 @@ $this->textual_card_infos = array(
 
     493 => array(
         'name'                => clienttranslate('Polytheism'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect. Otherwise, draw and tuck a ${age_1}.'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.'),
+        'non_demand_effect_2' => clienttranslate('Draw and tuck a ${age_1}.'),
     ),
 
     494 => array(
@@ -2847,7 +2851,7 @@ $this->textual_card_infos = array(
 
     509 => array(
         'name'                => clienttranslate('Cliffhanger'),
-        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. If you cannot, safeguard the top card of the ${age_4} deck.'),
+        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. Otherwise, safeguard the top card of the ${age_4} deck.'),
     ),
 
     510 => array(
@@ -3086,7 +3090,7 @@ $this->textual_card_infos = array(
 
     550 => array(
         'name'                => clienttranslate('Plot Voucher'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, fully execute the melded card if it is your turn, or if it is not your turn self-execute it.'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, super-execute the melded card if it is your turn, or if it is not your turn self-execute it.'),
     ),
 
     551 => array(
@@ -3153,7 +3157,7 @@ $this->textual_card_infos = array(
 
     562 => array(
         'name'                => clienttranslate('Shangri-La'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If it is an ${age_8}, repeat this effect.'),
     ),
 
     563 => array(
@@ -3197,7 +3201,7 @@ $this->textual_card_infos = array(
         'name'                => clienttranslate('Area 51'),
         'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
         'non_demand_effect_2' => clienttranslate('Choose to either draw an ${age_11}, or safeguard an available standard achievement.'),
-        'non_demand_effect_3' => clienttranslate('Reveal one of your secrets, and fully execute it if it is your turn.'),
+        'non_demand_effect_3' => clienttranslate('Reveal one of your secrets, and super-execute it if it is your turn.'),
     ),
 
     570 => array(

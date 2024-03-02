@@ -522,7 +522,7 @@ class Innovation extends BgaGame {
             dojo.byId('available_museums_container').style.display = 'none';
         }
 
-        // AVAILABLE ACHIEVEMENTS
+        // AVAILABLE STANDARD ACHIEVEMENTS
         // Creation of the zone
         this.zone["achievements"] = {};
 
@@ -1058,6 +1058,7 @@ class Innovation extends BgaGame {
         const forecast_container_width = num_forecast_cards_in_row * this.delta.forecast.x;
         const achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
         const score_container_width = main_area_inner_width - forecast_container_width - achievement_container_width - safe_container_width;
+        let museum_container_width = 0;
         for (let player_id in this.players) {
             const hand_width = dojo.position('hand_container_' + player_id).w;
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
@@ -1074,10 +1075,10 @@ class Innovation extends BgaGame {
             dojo.setStyle(this.zone["safe"][player_id].container_div, 'width', safe_container_width + "px");
             dojo.style('progress_' + player_id, 'width', hand_width + 'px');
             dojo.style('artifacts_' + player_id, 'width', hand_width + 'px');
+            museum_container_width = dojo.position('museums_' + player_id).w; // This value will be the same for all players
         }
 
-        const player_museums_width = dojo.position('museums_' + this.player_id).w;
-        this.num_cards_in_row.set("museums", Math.floor(player_museums_width / this.delta.museums.x));
+        this.num_cards_in_row.set("museums", Math.floor(museum_container_width / this.delta.museums.x));
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
         this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
 
@@ -1864,9 +1865,9 @@ class Innovation extends BgaGame {
 
                     case 106:
                         // Monument:
-                        
                         if (self.gamedatas.fourth_edition) {
                             // at least four top cards with a demand effect
+                            numerator = 0;
                             for (let i = 0; i < 5; i++) {
                                 let items = self.zone["board"][self.player_id][i].items;
                                 if (items.length > 0) {
@@ -2272,46 +2273,34 @@ class Innovation extends BgaGame {
         this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
     }
 
-    createAdjustedContent(content: string, HTML_class: string, size: string, font_max: number, width_margin = 0, height_margin = 0, div_id: string | null = null): string {
-        // Problem: impossible to get suitable text size because it is not possible to get the width and height of an element still unattached
-        // Solution: first create the title hardly attached to the DOM, then destroy it and set the title in tooltip properly
-        // Create temporary title hardly attached on the DOM
-        let tempParentId = 'temp_parent';
-        let tempId = 'temp';
-        let div_title = "<div id='" + tempParentId + "' class='" + HTML_class + " " + size + "'><span id='" + tempId + "' >" + content + "</span></div>";
+    createAdjustedContent(content: string, HTML_class: string, size: string, font_max: number): string {
+        // Create temporary DOM element to experiment with
+        const tempParentId = 'temp_parent';
+        const tempId = 'temp';
+        const tempDiv = `<div id='${tempParentId}' class='${HTML_class} ${size}'><span id='${tempId}'>${content}</span></div>`;
+        dojo.place(tempDiv, dojo.body());
 
-        dojo.place(div_title, dojo.body());
-
-        // Determine the font-size between 1 and 30 which enables to fill the container without overflow
-        let elementParent = $(tempParentId);
-        let element = $(tempId);
-        if (HTML_class === 'card_title') {
-            dojo.addClass(elementParent, HTML_class);
-        }
+        // Determine the largest possible font without overflowing the container
+        const elementParent = $(tempParentId);
+        const element = $(tempId);
         let font_size = font_max;
         while (font_size >= 2) {
             if (font_size < font_max) {
                 dojo.removeClass(element, 'font_size_' + (font_size + 1));
             }
             dojo.addClass(element, 'font_size_' + font_size);
-            let elementWidth = dojo.position(element).w + width_margin;
-            let elementParentWidth = dojo.position(elementParent).w;
-            let elementHeight = dojo.position(element).h + height_margin;
-            let elementParentHeight = dojo.position(elementParent).h;
+            const elementWidth = dojo.position(element).w;
+            const elementParentWidth = dojo.position(elementParent).w;
+            const elementHeight = dojo.position(element).h;
+            const elementParentHeight = dojo.position(elementParent).h;
             if (elementWidth <= elementParentWidth && elementHeight <= elementParentHeight) {
                 break;
             }
             font_size--;
         }
-
-        // Destroy the piece of HTML used for determination
         dojo.destroy(elementParent);
 
-        // Create actual HTML which will be added in tooltip
-        if (div_id == null) {
-            return `<div class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
-        }
-        return `<div id='${div_id}' class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
+        return `<div class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
     }
 
     createDogmaEffectText(text: string, dogma_symbol: number, size: string, color: number, shade: string, other_classes: string) {
@@ -3111,6 +3100,11 @@ class Innovation extends BgaGame {
         if (simplified_card_layout) {
             classes.push("simplified");
         }
+        if (this.gamedatas.fourth_edition && type != 2) {
+            classes.push("fourth");
+        } else {
+            classes.push("third");
+        }
         return classes.join(" ");
     }
 
@@ -3138,7 +3132,6 @@ class Innovation extends BgaGame {
         let HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
         let size = this.getCardSizeInZone(zone_HTML_class);
 
-        // TODO(4E): Use real 4th edition card back
         let simplified_card_back = this.prefs[110].value == 2 || age == 11 || type == 5;
 
         let HTML_inside = '';
@@ -3183,68 +3176,72 @@ class Innovation extends BgaGame {
             }
         }
 
-        let graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
+        const graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
         return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
     }
 
     createCardForCardBrowser(id: number) {
-        let card = this.cards[id];
-        let HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, 'M card');
-        let HTML_id = `browse_card_id_${id}`;
-        let HTML_inside = this.writeOverCard(card, 'M', HTML_id);
-        let simplified_card_back = this.prefs[110].value == 2;
-        let graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
+        const card = this.cards[id];
+        const size = 'M';
+        const HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, `${size} card`);
+        const HTML_id = `browse_card_id_${id}`;
+        const HTML_inside = this.writeOverCard(card, size, HTML_id);
+        const simplified_card_back = this.prefs[110].value == 2;
+        const graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
         return `<div id='${HTML_id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
     }
 
     writeOverCard(card, size: string, HTML_id: string): string {
-        let card_data: Card = this.cards[card.id];
-        let icon1 = this.getIconDiv(card_data, card_data.spot_1, 'top_left_icon', size);
-        let icon2 = this.getIconDiv(card_data, card_data.spot_2, 'bottom_left_icon', size);
-        let icon3 = this.getIconDiv(card_data, card_data.spot_3, 'bottom_center_icon', size);
-        let icon4 = this.getIconDiv(card_data, card_data.spot_4, 'bottom_right_icon', size);
-        let icon5 = this.getIconDiv(card_data, card_data.spot_5, 'top_right_icon', size);
-        let icon6 = this.getIconDiv(card_data, card_data.spot_6, 'top_center_icon', size);
+        const card_data: Card = this.cards[card.id];
 
-        let card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
+        const edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
 
-        let title = _(card_data.name).toUpperCase();
-        let card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30, /*width_margin=*/ 0, /*height_margin=*/ 0, HTML_id + '_card_title');
+        const icon1 = this.getIconDiv(card_data, card_data.spot_1, `top left ${edition}`, size);
+        const icon2 = this.getIconDiv(card_data, card_data.spot_2, `bottom left ${edition}`, size);
+        const icon3 = this.getIconDiv(card_data, card_data.spot_3, `bottom center ${edition}`, size);
+        const icon4 = this.getIconDiv(card_data, card_data.spot_4, `bottom right ${edition}`, size);
+        const icon5 = this.getIconDiv(card_data, card_data.spot_5, `top right ${edition}`, size);
+        const icon6 = this.getIconDiv(card_data, card_data.spot_6, `top center ${edition}`, size);
 
-        let i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
-        let i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
-        let non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color) : "";
-        let non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color) : "";
-        let non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color) : "";
+        const card_age = this.createAdjustedContent(card.faceup_age, `card_age type_${card_data.type} color_${card_data.color} ${edition}`, size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
 
-        let dogma_effects = this.createAdjustedContent(i_demand_effect + i_compel_effect + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
+        const title = _(card_data.name).toUpperCase();
+        const card_title = this.createAdjustedContent(title, `card_title type_${card_data.type} ${edition}`, size, size == 'M' ? 11 : 30);
+
+        const i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
+        const i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
+        const non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color) : "";
+        const non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color) : "";
+        const non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color) : "";
+
+        const dogma_effects = this.createAdjustedContent(i_demand_effect + i_compel_effect + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, `card_effects ${edition}`, size, size == 'M' ? 10 : 17);
 
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     }
 
-    getIconDiv(card: Card, icon: number | null, icon_location: string, size: string) {
+    getIconDiv(card: Card, icon: number | null, extra_classes: string, size: string) {
         if (icon === null || Number.isNaN(icon)) {
             return '';
         }
         if (icon == 0) {
-            return `<div class="hexagon_card_icon ${size} ${icon_location} hexagon_icon_${card.id}"></div>`;
+            return `<div class="hexagon_card_icon ${size} ${extra_classes} hexagon_icon_${card.id}"></div>`;
         }
         if (icon <= 7) {
-            let div = `<div class="square_card_icon ${size} color_${card.color} ${icon_location} icon_${icon}"></div>`;
-            if (icon != null && icon_location == 'top_center_icon' && (!this.gamedatas.fourth_edition || card.age <= 5)) {
+            let div = `<div class="square_card_icon ${size} color_${card.color} ${extra_classes} icon_${icon}"></div>`;
+            if (icon != null && extra_classes == 'top_center_icon' && (!this.gamedatas.fourth_edition || card.age <= 5)) {
                 div += `<div class="city_search_icon ${size} color_${card.color}"></div>`;
             }
             return div;
         }
         if (icon == 10) {
-            let div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + icon, size, size == 'M' ? 11 : 30);
+            let div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + extra_classes + ' icon_' + icon, size, size == 'M' ? 11 : 20);
             // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
             return div.replace("div class", 'div style="display: table;" class');
         }
         if (icon >= 101) {
-            return `<div class="bonus_card_icon ${size} ${icon_location} bonus_color color_${card.color}"></div><div class="bonus_card_icon ${size} ${icon_location} bonus_value bonus_${icon - 100}"></div>`;
+            return `<div class="bonus_card_icon ${size} ${extra_classes} bonus_color color_${card.color}"></div><div class="bonus_card_icon ${size} ${extra_classes} bonus_value bonus_${icon - 100}"></div>`;
         }
-        return `<div class="city_special_icon ${size} color_${card.color} ${icon_location} icon_${icon}"></div>`;
+        return `<div class="city_special_icon ${size} color_${card.color} ${extra_classes} icon_${icon}"></div>`;
     }
 
     getSpecialAchievementText(card) {
@@ -3259,11 +3256,11 @@ class Innovation extends BgaGame {
                 return _("This museum is available.");
             }
         }
-        let card_data = this.cards[card.id];
-        let name = _(card_data.name).toUpperCase();
-        let is_monument = card.id == 106 && !this.gamedatas.fourth_edition;
-        let note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
-        let div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
+        const card_data = this.cards[card.id];
+        const name = _(card_data.name).toUpperCase();
+        const is_monument = card.id == 106 && !this.gamedatas.fourth_edition;
+        const note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
+        const div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
 
         let div_alternative_condition_for_claiming = "";
         if (card_data.alternative_condition_for_claiming != null) {
@@ -3792,7 +3789,7 @@ class Innovation extends BgaGame {
     givePlayerActionCard(player_id: number, action_number: number) {
         dojo.addClass('action_indicator_' + player_id, 'action_card');
         let action_text = action_number == 0 ? _('Free Action') : action_number == 1 ? _('First Action') : _('Second Action');
-        let div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12, 2);
+        let div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12);
         $('action_indicator_' + player_id).innerHTML = div_action_text;
     }
 

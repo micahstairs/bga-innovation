@@ -5,10 +5,8 @@ namespace Innovation\Cards\Artifacts;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 
-class Card164 extends AbstractCard
+class Card164_4E extends AbstractCard
 {
-  // Almira, Queen of the Castle (3rd edition):
-  //   - Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.
   // Almira, Queen of Castile (4th edition):
   //   - Meld a card from your hand. If you do, claim an achievement of matching value, ignoring
   //     eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available
@@ -39,8 +37,8 @@ class Card164 extends AbstractCard
     if (self::isFirstInteraction()) {
       if (self::getNumChosen() === 1) {
         self::setMaxSteps(2);
-      } else if (self::isFourthEdition()) {
-        $achievementsByValue = self::getCardsKeyedByValue(Locations::ACHIEVEMENTS);
+      } else {
+        $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
         foreach ($achievementsByValue as $achievements) {
           if ($achievements) {
             self::junkBaseDeck(self::getValue($achievements[0]));

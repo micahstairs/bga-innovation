@@ -23,7 +23,7 @@ class Card418_4E extends AbstractCard
       if ($cardIds) {
         // NOTE: The array will contain at most one element.
         $meldedCard = self::getCard($cardIds[0]);
-        $returnedCard = self::getTopCardOfColor($meldedCard['color']);
+        $returnedCard = self::return(self::getTopCardOfColor($meldedCard['color']));
         $values = [self::getValue($meldedCard), self::getValue($returnedCard)];
         foreach (self::getAvailableStandardAchievements() as $card) {
           if (in_array(self::getValue($card), $values)) {

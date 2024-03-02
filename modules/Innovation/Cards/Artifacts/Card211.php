@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -49,7 +50,7 @@ class Card211 extends AbstractCard
       ];
     } else {
       return [
-        'location_from' => 'hand',
+        'location_from' => Locations::HAND,
         'meld_keyword'  => true,
         'age'           => self::getMaxValueInLocation(Locations::HAND),
       ];

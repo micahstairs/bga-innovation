@@ -96,6 +96,11 @@ abstract class AbstractCard
     // Subclasses can optionally override this function if any extra handling is needed after each individual card is chosen.
   }
 
+  public function handleSplayChoice(array $card)
+  {
+    // Subclasses can optionally override this function if any extra handling is needed after a splay is chosen.
+  }
+
   public function handleSpecialChoice(int $choice)
   {
     $choiceType = $this->game->innovationGameState->get('special_type_of_choice');
@@ -712,6 +717,11 @@ abstract class AbstractCard
     return $this->game->junkBaseDeck($age);
   }
 
+  protected function junkDeck(int $age, int $type): bool
+  {
+    return $this->game->junkDeck($age, $type);
+  }
+
   protected function revealHand(int $playerId = null): void
   {
     $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');
@@ -802,13 +812,13 @@ abstract class AbstractCard
 
   // SPLAY HELPERS
 
-  protected function splay(int $color, int $splayDirection, int $targetPlayerId = null, int $triggeringPlayerId = null)
+  protected function splay(int $color, int $splayDirection, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
   {
     $targetPlayerId = self::coercePlayerId($targetPlayerId);
     if ($triggeringPlayerId === null) {
       $triggeringPlayerId = $targetPlayerId;
     }
-    $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
+    return $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
   }
 
   protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null): bool
@@ -1326,11 +1336,11 @@ abstract class AbstractCard
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }
 
-  protected function countColorsWithIcon(int $icon): int
+  protected function countColorsWithIcon(int $icon, int $playerId = null): int
   {
     $numColors = 0;
     foreach (Colors::ALL as $color) {
-      if (self::getIconCountInStack($color, $icon) > 0) {
+      if (self::getIconCountInStack($color, $icon, $playerId) > 0) {
         $numColors++;
       }
     }
@@ -1367,17 +1377,25 @@ abstract class AbstractCard
       foreach ($stack as $card) {
         if ($card['position'] == count($stack) - 1) {
           // All icons are visible on the top card in the stack
-          $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], true));
+          $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6]));
         } else {
-          $icons = array_merge($icons, self::getIcons($card, $spots, true));
+          $icons = array_merge($icons, self::getIcons($card, $spots));
         }
       }
     }
     // Convert array of icons to array of counts
     return array_count_values($icons);
   }
+  protected function getIconCountInStack(int $color, int $icon, int $playerId = null): int
+  {
+    $countsByIcon = self::getAllIconCountsInStack($color, $playerId, []); // Deliberately include echo effects and hex images
+    if (key_exists($icon, $countsByIcon)) {
+      return $countsByIcon[$icon];
+    }
+    return 0;
+  }
 
-  protected function getAllIconCountsInStack(int $color, int $playerId = null): array
+  protected function getAllIconCountsInStack(int $color, int $playerId = null, array $excluded_icons = [Icons::ECHO_EFFECT, Icons::HEX_IMAGE]): array
   {
     $icons = [];
     $stack = self::getStack($color, $playerId);
@@ -1387,22 +1405,13 @@ abstract class AbstractCard
     foreach ($stack as $card) {
       if ($card['position'] == count($stack) - 1) {
         // All icons are visible on the top card in the stack
-        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], true));
+        $icons = array_merge($icons, self::getIcons($card, [1, 2, 3, 4, 5, 6], $excluded_icons));
       } else {
-        $icons = array_merge($icons, self::getIcons($card, $spots, true));
+        $icons = array_merge($icons, self::getIcons($card, $spots, $excluded_icons));
       }
     }
     // Convert array of icons to array of counts
     return array_count_values($icons);
-  }
-
-  protected function getIconCountInStack(int $color, int $icon, int $playerId = null): int
-  {
-    $countsByIcon = self::getAllIconCountsInStack($color);
-    if (key_exists($icon, $countsByIcon)) {
-      return $countsByIcon[$icon];
-    }
-    return 0;
   }
 
   protected function hasIconInCommon(array $card1, array $card2): bool
@@ -1426,13 +1435,13 @@ abstract class AbstractCard
     }
   }
 
-  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6], $includeEchoEffects = false): array
+  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6], array $excluded_icons = [Icons::ECHO_EFFECT, Icons::HEX_IMAGE]): array
   {
     $icons = [];
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
-      // Echo effects don't actually count as an icon type
-      if ($icon !== null && ($includeEchoEffects || $icon != Icons::ECHO_EFFECT)) {
+      // Hex images and echo effects don't actually count as icons
+      if ($icon !== null && !in_array($icon, $excluded_icons)) {
         // In 4th edition, all bonus icons are normalized to the same value since they are considered to be the same icon type.
         if (self::isFourthEdition()) {
           $icons[] = min($icon, 100);

@@ -414,7 +414,7 @@
 }
 
 #available_relics_container,
-#available_achievements_container,
+#available_standard_achievements_container,
 #available_special_achievements_container,
 #available_museums_container,
 #junk_container {
@@ -586,131 +586,89 @@
 }
 
 .card_age {
-    color: #e8e8e8;
     text-align: center;
-    font-family: Times New Roman;
     font-weight: bold;
     position: absolute;
 
-    &.M {
-        width: 14px;
-        height: 14px;
-        top: 4px;
-        line-height: 16px;
+    &.third {
+        font-family: Times New Roman;
+        color: #e8e8e8;
 
-        &.type_2 {
-            top: 54px;
-        }
-    }
-
-    &.L {
-        width: 25px;
-        height: 25px;
-        top: 26px;
-        line-height: 14px;
-
-        &.type_2 {
-            top: 154px;
-        }
-    }
-}
-
-.color_0 {
-    &.card_age {
         &.M {
-            right: 6.5px;
+            width: 14px;
+            height: 14px;
+            top: 4px;
+            line-height: 16px;
+
+            &.color_0 {
+                right: 6.5px;
+            }
+            &.color_1 {
+                right: 6px;
+            }
+            &.color_2 {
+                right: 6.5px;
+            }
+            &.color_3 {
+                right: 6px;
+            }
+            &.color_4 {
+                right: 6.5px;
+            }
 
             &.type_2 {
+                top: 54px;
                 right: 18px;
             }
         }
 
         &.L {
-            right: 21px;
+            width: 25px;
+            height: 25px;
+            top: 26px;
+            line-height: 14px;
+
+            &.color_0 {
+                right: 21px;
+            }
+            &.color_1 {
+                right: 21px;
+            }
+            &.color_2 {
+                right: 20px;
+            }
+            &.color_3 {
+                right: 22px;
+            }
+            &.color_4 {
+                right: 22px;
+            }
 
             &.type_2 {
+                top: 154px;
                 right: 50px;
             }
         }
     }
-}
 
-.color_1 {
-    &.card_age {
+    &.fourth {
+        font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+        color: black;
+
         &.M {
-            right: 6px;
-
-            &.type_2 {
-                right: 18px;
-            }
+            width: 14px;
+            height: 14px;
+            line-height: 16px;
+            top: 9px;
+            right: 9px;
         }
 
         &.L {
-            right: 21px;
-
-            &.type_2 {
-                right: 50px;
-            }
-        }
-    }
-}
-
-.color_2 {
-    &.card_age {
-        &.M {
-            right: 6.5px;
-
-            &.type_2 {
-                right: 18px;
-            }
-        }
-
-        &.L {
-            right: 20px;
-
-            &.type_2 {
-                right: 50px;
-            }
-        }
-    }
-}
-
-.color_3 {
-    &.card_age {
-        &.M {
-            right: 6px;
-
-            &.type_2 {
-                right: 18px;
-            }
-        }
-
-        &.L {
-            right: 22px;
-
-            &.type_2 {
-                right: 50px;
-            }
-        }
-    }
-}
-
-.color_4 {
-    &.card_age {
-        &.M {
-            right: 6.5px;
-
-            &.type_2 {
-                right: 18px;
-            }
-        }
-
-        &.L {
-            right: 22px;
-
-            &.type_2 {
-                right: 50px;
-            }
+            width: 30px;
+            height: 30px;
+            line-height: 14px;
+            top: 44px;
+            right: 40px;
         }
     }
 }
@@ -722,38 +680,71 @@
 }
 
 .card_title {
-    color: #e8e8e8;
-    font-family: Times New Roman;
     position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
 
-    &.M {
-        left: 54px;
-        top: 5px;
-        width: 93px;
-        height: 15px;
+    &.third {
+        color: #e8e8e8;
+        font-family: Times New Roman;
 
-        &.type_2 {
-            left: 50px;
-            top: 54.5px;
-            width: 80px;
+        &.M {
+            left: 54px;
+            top: 5px;
+            width: 93px;
+            height: 15px;
+            &.type_2 {
+                left: 50px;
+                top: 54.5px;
+                width: 80px;
+            }
         }
+
+        &.L {
+            left: 143px;
+            top: 18px;
+            width: 230px;
+            height: 37px;
+            &.type_2 {
+                left: 126px;
+                top: 142px;
+                width: 210px;
+            }
+        }
+
     }
 
-    &.L {
-        left: 143px;
-        top: 18px;
-        width: 230px;
-        height: 37px;
-
-        &.type_2 {
-            left: 126px;
-            top: 142px;
-            width: 210px;
+    &.fourth {
+        color: white;
+        font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+        
+        &.M {
+            left: 50px;
+            top: 12px;
+            width: 100px;
+            height: 11px;
+            line-height: 6px;
+            &.type_2 {
+                left: 50px;
+                top: 54.5px;
+                width: 80px;
+            }
         }
+
+        &.L {
+            left: 143px;
+            top: 34px;
+            width: 230px;
+            height: 33px;
+            &.type_2 {
+                left: 126px;
+                top: 142px;
+                width: 210px;
+            }
+        }
+
     }
 }
 
@@ -769,20 +760,19 @@
     font-weight: bold;
 }
 
-.card_effects {
-    position: absolute;
-}
-
 .effect_text {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
-
     &.light {
         color: black;
     }
-
     &.dark {
         color: #e8e8e8;
     }
+}
+
+.fourth .effect.light {
+    border-color: transparent !important;
+    background-color: transparent !important;
 }
 
 .effect {
@@ -796,27 +786,40 @@
         &:nth-of-type(n+2) {
             margin-top: 2px;
         }
-
         padding-left: 9px;
-        line-height: 8px;
     }
 
     &.L {
         &:nth-of-type(n+2) {
             margin-top: 10px;
         }
-
         padding-left: 19px;
-        line-height: 22px;
     }
+
+    @for $i from 1 through 30 {
+        .font_size_#{$i} & {
+            line-height: #{$i}px;
+        }
+    }
+    
 }
 
 .card_effects {
+    position: absolute;
+
     &.M {
-        right: 2px;
-        top: 23px;
-        width: 129px;
-        height: 56px;
+        &.third {
+            right: 2px;
+            top: 23px;
+            width: 129px;
+            height: 56px;
+        }
+        &.fourth {
+            right: 2px;
+            top: 28px;
+            width: 128px;
+            height: 55px;
+        }
 
         >.font_size_1,
         >.font_size_2,
@@ -842,10 +845,18 @@
     }
 
     &.L {
-        left: 116px;
-        top: 63px;
-        width: 334px;
-        height: 151px;
+        &.third {
+            left: 116px;
+            top: 63px;
+            width: 334px;
+            height: 151px;
+        }
+        &.fourth {
+            left: 129px;
+            top: 77px;
+            width: 321px;
+            height: 125px;
+        }
     }
 }
 
@@ -1591,31 +1602,55 @@
 
 .card {
     display: inline-block;
-    background-image: url('img/card_backgrounds.jpg');
-
-    &.type_2 {
-        background-image: url('img/card_backgrounds_cities.jpg');
-
-        &.simplified {
-            background-image: url('img/simplified_card_backgrounds_cities.jpg');
-        }
-    }
-
     position: relative;
     border: solid 1px #ffffff;
 
-    &.simplified {
-        background-image: url('img/simplified_card_backgrounds.jpg');
+    &.fourth {
+        &.color_0 {
+            background-image: url('img/ultimate_blue_background.png');
+        }
+        &.color_1 {
+            background-image: url('img/ultimate_red_background.png');
+        }
+        &.color_2 {
+            background-image: url('img/ultimate_green_background.png');
+        }
+        &.color_3 {
+            background-image: url('img/ultimate_yellow_background.png');
+        }
+        &.color_4 {
+            background-image: url('img/ultimate_purple_background.png');
+        }
+    }
+
+    &.third {
+        background-image: url('img/card_backgrounds.jpg');
+        &.type_2 {
+            background-image: url('img/card_backgrounds_cities.jpg');
+            &.simplified {
+                background-image: url('img/simplified_card_backgrounds_cities.jpg');
+            }
+        }
+        &.simplified {
+            background-image: url('img/simplified_card_backgrounds.jpg');
+        }
     }
 
     &.M {
         width: 180px;
         height: 124px;
-        background-size: 920px 128px;
+        &.third {
+            background-size: 920px 128px;
+            background-position-y: -2px;
+            @include m.generate-color-x-position(0, 4, 2, 184px);
+        }
+        &.fourth {
+            background-size: 195.5px 136.5px;
+            background-position-x: -7px;
+            background-position-y: -5px;
+        }
         border-radius: 6px;
         box-shadow: 3px 3px grey;
-        background-position-y: -2px;
-        @include m.generate-color-x-position(0, 4, 2, 184px);
 
         &.item_1200,
         &.item_1201,
@@ -1631,10 +1666,15 @@
         width: 456px;
         height: 316px;
         border-radius: 16px;
-        background-size: 2308px 323px;
         box-shadow: 5px 5px grey;
-        background-position-y: -2px;
-        @include m.generate-color-x-position(0, 4, 0, 462px);
+        &.third {
+            background-size: 2308px 323px;
+            background-position-y: -2px;
+            @include m.generate-color-x-position(0, 4, 0, 462px);
+        }
+        &.fourth {
+            background-size: 456px 316px;
+        }
     }
 
     &.S {
@@ -1720,21 +1760,7 @@
     }
 }
 
-/* Locations where the square and hexagon icons go on each card 
-*
-*  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
-*  Square icons should be ~6% of the card width away from the top edge. it is currently 7px
-* 
-*  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
-*
-*  The Hex icons do not fill their entire box so we have to fudge some of the offsets
-*/
-
-/* Square card icons (most cards have 3 large resource icons on them) 
-*
-*  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
-*  { Background-size, width, height, background-position-x, background-position-y }
-*/
+/* Square card icons (most cards have 3 large resource icons on them) */
 .square_card_icon {
     @include m.icon-background;
     position: absolute;
@@ -1811,41 +1837,46 @@
             background-position-y: -154.5px;
         }
 
-        &.top_left_icon {
-            top: 7px;
-            left: 7px;
+        &.third {
+            &.top {
+                top: 7px;
+            }
+            &.bottom {
+                bottom: 7px;
+            }
+            &.left {
+                left: 7px;
+            }
+            &.center {
+                left: 72px;
+            }
+            &.right {
+                right: 7px;
+            }
         }
-
-        &.bottom_left_icon {
-            bottom: 7px;
-            left: 7px;
-        }
-
-        &.bottom_center_icon {
-            bottom: 7px;
-            left: 72px;
-        }
-
-        &.bottom_right_icon {
-            bottom: 7px;
-            right: 7px;
-        }
-
-        &.top_right_icon {
-            top: 7px;
-            right: 7px;
-        }
-
-        &.top_center_icon {
-            top: 7px;
-            left: 72px;
+        &.fourth {
+            &.top {
+                top: 7px;
+            }
+            &.bottom {
+                bottom: 5px;
+            }
+            &.left {
+                left: 10px;
+            }
+            &.center {
+                left: 72px;
+            }
+            &.right {
+                right: 9px;
+            }
         }
     }
 
     &.L {
         width: 75px;
-        background-size: 470px auto;
         height: 75px;
+        background-size: 470px auto;
 
         &.icon_1 {
             background-position-x: -1.5px;
@@ -1910,34 +1941,40 @@
             background-position-y: -315px;
         }
 
-        &.top_left_icon {
-            top: 25px;
-            left: 30px;
+        &.third {
+            &.top {
+                top: 25px;
+            }
+            &.bottom {
+                bottom: 23px;
+            }
+            &.left {
+                left: 30px;
+            }
+            &.center {
+                left: 195px;
+            }
+            &.right {
+                right: 26px;
+            }
         }
 
-        &.bottom_left_icon {
-            bottom: 23px;
-            left: 30px;
-        }
-
-        &.bottom_center_icon {
-            bottom: 23px;
-            left: 195px;
-        }
-
-        &.bottom_right_icon {
-            bottom: 23px;
-            right: 26px;
-        }
-
-        &.top_right_icon {
-            top: 25px;
-            right: 26px;
-        }
-
-        &.top_center_icon {
-            top: 25px;
-            left: 195px;
+        &.fourth {
+            &.top {
+                top: 34px;
+            }
+            &.bottom {
+                bottom: 34px;
+            }
+            &.left {
+                left: 45px;
+            }
+            &.center {
+                left: 190px;
+            }
+            &.right {
+                right: 45px;
+            }
         }
     }
 }
@@ -2073,30 +2110,26 @@
         &.color_0 {
             background-position-x: -1px;
         }
-
         &.color_1 {
             background-position-x: -42px;
         }
-
         &.color_2 {
             background-position-x: -83px;
         }
-
         &.color_3 {
             background-position-x: -124px;
         }
-
         &.color_4 {
             background-position-x: -165px;
         }
 
-        &.bottom_center_icon {
+        &.bottom {
             bottom: 5px;
-            left: 70px;
         }
-
-        &.top_center_icon {
+        &.top {
             top: 5px;
+        }
+        &.center {
             left: 70px;
         }
     }
@@ -2145,30 +2178,26 @@
         &.color_0 {
             background-position-x: -1px;
         }
-
         &.color_1 {
             background-position-x: -83px;
         }
-
         &.color_2 {
             background-position-x: -165px;
         }
-
         &.color_3 {
             background-position-x: -247px;
         }
-
         &.color_4 {
             background-position-x: -331px;
         }
 
-        &.bottom_center_icon {
+        &.bottom {
             bottom: 22px;
-            left: 192px;
         }
-
-        &.top_center_icon {
+        &.top {
             top: 22px;
+        }
+        &.center {
             left: 192px;
         }
     }
@@ -2185,34 +2214,40 @@
             background-size: 235px auto;
             background-position-y: -40px;
 
-            &.top_left_icon {
-                top: 15px;
-                left: 14px;
+            &.third {
+                &.top {
+                    top: 15px;
+                }
+                &.bottom {
+                    bottom: 12px;
+                }
+                &.left {
+                    left: 14px;
+                }
+                &.center {
+                    left: 80px;
+                }
+                &.right {
+                    right: 16px;
+                }
             }
 
-            &.bottom_left_icon {
-                bottom: 12px;
-                left: 14px;
-            }
-
-            &.bottom_center_icon {
-                bottom: 12px;
-                left: 80px;
-            }
-
-            &.bottom_right_icon {
-                bottom: 12px;
-                right: 16px;
-            }
-
-            &.top_right_icon {
-                top: 15px;
-                right: 16px;
-            }
-
-            &.top_center_icon {
-                top: 15px;
-                left: 80px;
+            &.fourth {
+                &.top {
+                    top: 15px;
+                }
+                &.bottom {
+                    bottom: 12px;
+                }
+                &.left {
+                    left: 17px;
+                }
+                &.center {
+                    left: 80px;
+                }
+                &.right {
+                    right: 19px;
+                }
             }
         }
 
@@ -2224,34 +2259,40 @@
             background-size: 235px auto;
             background-position-y: -1px;
 
-            &.top_left_icon {
-                top: 7px;
-                left: 7px;
+            &.third {
+                &.top {
+                    top: 7px;
+                }
+                &.bottom {
+                    bottom: 7px;
+                }
+                &.left {
+                    left: 7px;
+                }
+                &.center {
+                    left: 73px;
+                }
+                &.right {
+                    right: 7px;
+                }
             }
 
-            &.bottom_left_icon {
-                bottom: 7px;
-                left: 7px;
-            }
-
-            &.bottom_center_icon {
-                bottom: 7px;
-                left: 73px;
-            }
-
-            &.bottom_right_icon {
-                bottom: 7px;
-                right: 7px;
-            }
-
-            &.top_right_icon {
-                top: 7px;
-                right: 7px;
-            }
-
-            &.top_center_icon {
-                top: 7px;
-                left: 73px;
+            &.fourth {
+                &.top {
+                    top: 7px;
+                }
+                &.bottom {
+                    bottom: 7px;
+                }
+                &.left {
+                    left: 10px;
+                }
+                &.center {
+                    left: 73px;
+                }
+                &.right {
+                    right: 10px;
+                }
             }
         }
 
@@ -2265,34 +2306,21 @@
             height: 43px;
             background-position-y: -82px;
 
-            &.top_left_icon {
+            // TODO(4E): Add positioning for 'fourth'.
+            &.top {
                 top: 44px;
+            }
+            &.bottom {
+                bottom: 35px;
+            }
+            &.left {
                 left: 48px;
             }
-
-            &.bottom_left_icon {
-                bottom: 35px;
-                left: 48px;
-            }
-
-            &.bottom_center_icon {
-                bottom: 35px;
+            &.center {
                 left: 211px;
             }
-
-            &.bottom_right_icon {
-                bottom: 35px;
+            &.right {
                 right: 41px;
-            }
-
-            &.top_right_icon {
-                top: 44px;
-                right: 43px;
-            }
-
-            &.top_center_icon {
-                top: 44px;
-                left: 211px;
             }
         }
 
@@ -2304,34 +2332,21 @@
             background-size: 470px auto;
             background-position-y: -1px;
 
-            &.top_left_icon {
+            // TODO(4E): Add positioning for 'fourth'.
+            &.top {
                 top: 25px;
+            }
+            &.bottom {
+                bottom: 23px;
+            }
+            &.left {
                 left: 30px;
             }
-
-            &.bottom_left_icon {
-                bottom: 23px;
-                left: 30px;
-            }
-
-            &.bottom_center_icon {
-                bottom: 23px;
+            &.center {
                 left: 193px;
             }
-
-            &.bottom_right_icon {
-                bottom: 23px;
+            &.right {
                 right: 26px;
-            }
-
-            &.top_right_icon {
-                top: 25px;
-                right: 26px;
-            }
-
-            &.top_center_icon {
-                top: 25px;
-                left: 193px;
             }
         }
 
@@ -2339,9 +2354,6 @@
     }
 }
 
-/* Hexagon icons take up ~27 % of a real cards width. 
-*  Our cards will shoot for 25 % ->  M.45px
-*/
 .hexagon_card_icon {
     background-image: url("img/hexagon_icons.png");
     position: absolute;
@@ -2351,34 +2363,40 @@
         width: 45px;
         height: 45px;
 
-        &.top_left_icon {
-            top: 2px;
-            left: 4px;
+        &.third {
+            &.top {
+                top: 2px;
+            }
+            &.bottom {
+                bottom: 1px;
+            }
+            &.left {
+                left: 4px;
+            }
+            &.center {
+                left: 69px;
+            }
+            &.right {
+                right: 2px;
+            }
         }
 
-        &.bottom_left_icon {
-            bottom: 1px;
-            left: 4px;
-        }
-
-        &.bottom_center_icon {
-            bottom: 1px;
-            left: 69px;
-        }
-
-        &.bottom_right_icon {
-            bottom: 1px;
-            right: 2px;
-        }
-
-        &.top_right_icon {
-            top: 2px;
-            right: 2px;
-        }
-
-        &.top_center_icon {
-            top: 2px;
-            left: 69px;
+        &.fourth {
+            &.top {
+                top: 5px;
+            }
+            &.bottom {
+                bottom: 0px;
+            }
+            &.left {
+                left: 7px;
+            }
+            &.center {
+                left: 69px;
+            }
+            &.right {
+                right: 4px;
+            }
         }
     }
 
@@ -2387,34 +2405,40 @@
         width: 90px;
         height: 90px;
 
-        &.top_left_icon {
-            top: 17px;
-            left: 26px;
+        &.third {
+            &.top {
+                top: 17px;
+            }
+            &.bottom {
+                bottom: 11px;
+            }
+            &.left {
+                left: 26px;
+            }
+            &.center {
+                left: 192px;
+            }
+            &.right {
+                right: 15px;
+            }
         }
 
-        &.bottom_left_icon {
-            bottom: 11px;
-            left: 26px;
-        }
-
-        &.bottom_center_icon {
-            bottom: 11px;
-            left: 192px;
-        }
-
-        &.bottom_right_icon {
-            bottom: 11px;
-            right: 15px;
-        }
-
-        &.top_right_icon {
-            top: 17px;
-            right: 15px;
-        }
-
-        &.top_center_icon {
-            top: 17px;
-            left: 192px;
+        &.fourth {
+            &.top {
+                top: 30px;
+            }
+            &.bottom {
+                bottom: 24px;
+            }
+            &.left {
+                left: 37px;
+            }
+            &.center {
+                left: 182px;
+            }
+            &.right {
+                right: 34px;
+            }
         }
     }
 }

@@ -9,17 +9,28 @@ class Card381_4E extends AbstractCard
 {
 
   // Pressure Cooker (4th edition):
+  //   - If Pressure Cooker was foreseen, meld all cards from your hand.
   //   - Return all cards from your hand. For each top card of different color on your board with a
   //     bonus, both draw a card and junk an available achievement of value equal to that bonus.
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isFirstNonDemand() && self::wasForeseen()) {
+      self::setMaxSteps(1);
+    } else if (self::isSecondNonDemand()) {
+      self::setMaxSteps(1);
+    }
   }
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
+    if (self::isFirstNonDemand()) {
+      return [
+        'n'              => 'all',
+        'location_from'  => Locations::HAND,
+        'meld_keyword' => true,
+      ];
+    } else if (self::isFirstInteraction()) {
       return [
         'n'              => 'all',
         'location_from'  => Locations::HAND,
@@ -48,15 +59,17 @@ class Card381_4E extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstInteraction()) {
-      $bonuses = self::getTopBonuses();
-      if ($bonuses) {
-        self::setAuxiliaryArray($bonuses);
-        self::setMaxSteps(3);
-      }
-    } else if (self::isThirdInteraction()) {
-      if (self::getAuxiliaryArray()) {
-        self::setNextStep(2);
+    if (self::isSecondNonDemand()) {
+      if (self::isFirstInteraction()) {
+        $bonuses = self::getTopBonuses();
+        if ($bonuses) {
+          self::setAuxiliaryArray($bonuses);
+          self::setMaxSteps(3);
+        }
+      } else if (self::isThirdInteraction()) {
+        if (self::getAuxiliaryArray()) {
+          self::setNextStep(2);
+        }
       }
     }
   }

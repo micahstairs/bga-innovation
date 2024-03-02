@@ -382,7 +382,7 @@
 }
 
 #available_relics_container,
-#available_achievements_container,
+#available_standard_achievements_container,
 #available_special_achievements_container,
 #available_museums_container,
 #junk_container {
@@ -530,94 +530,81 @@
 }
 
 .card_age {
-  color: #e8e8e8;
   text-align: center;
-  font-family: Times New Roman;
   font-weight: bold;
   position: absolute;
 }
-.card_age.M {
+.card_age.third {
+  font-family: Times New Roman;
+  color: #e8e8e8;
+}
+.card_age.third.M {
   width: 14px;
   height: 14px;
   top: 4px;
   line-height: 16px;
 }
-.card_age.M.type_2 {
-  top: 54px;
+.card_age.third.M.color_0 {
+  right: 6.5px;
 }
-.card_age.L {
+.card_age.third.M.color_1 {
+  right: 6px;
+}
+.card_age.third.M.color_2 {
+  right: 6.5px;
+}
+.card_age.third.M.color_3 {
+  right: 6px;
+}
+.card_age.third.M.color_4 {
+  right: 6.5px;
+}
+.card_age.third.M.type_2 {
+  top: 54px;
+  right: 18px;
+}
+.card_age.third.L {
   width: 25px;
   height: 25px;
   top: 26px;
   line-height: 14px;
 }
-.card_age.L.type_2 {
-  top: 154px;
-}
-
-.color_0.card_age.M {
-  right: 6.5px;
-}
-.color_0.card_age.M.type_2 {
-  right: 18px;
-}
-.color_0.card_age.L {
+.card_age.third.L.color_0 {
   right: 21px;
 }
-.color_0.card_age.L.type_2 {
-  right: 50px;
-}
-
-.color_1.card_age.M {
-  right: 6px;
-}
-.color_1.card_age.M.type_2 {
-  right: 18px;
-}
-.color_1.card_age.L {
+.card_age.third.L.color_1 {
   right: 21px;
 }
-.color_1.card_age.L.type_2 {
-  right: 50px;
-}
-
-.color_2.card_age.M {
-  right: 6.5px;
-}
-.color_2.card_age.M.type_2 {
-  right: 18px;
-}
-.color_2.card_age.L {
+.card_age.third.L.color_2 {
   right: 20px;
 }
-.color_2.card_age.L.type_2 {
-  right: 50px;
-}
-
-.color_3.card_age.M {
-  right: 6px;
-}
-.color_3.card_age.M.type_2 {
-  right: 18px;
-}
-.color_3.card_age.L {
+.card_age.third.L.color_3 {
   right: 22px;
 }
-.color_3.card_age.L.type_2 {
-  right: 50px;
-}
-
-.color_4.card_age.M {
-  right: 6.5px;
-}
-.color_4.card_age.M.type_2 {
-  right: 18px;
-}
-.color_4.card_age.L {
+.card_age.third.L.color_4 {
   right: 22px;
 }
-.color_4.card_age.L.type_2 {
+.card_age.third.L.type_2 {
+  top: 154px;
   right: 50px;
+}
+.card_age.fourth {
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+  color: black;
+}
+.card_age.fourth.M {
+  width: 14px;
+  height: 14px;
+  line-height: 16px;
+  top: 9px;
+  right: 9px;
+}
+.card_age.fourth.L {
+  width: 30px;
+  height: 30px;
+  line-height: 14px;
+  top: 44px;
+  right: 40px;
 }
 
 .card_type {
@@ -627,32 +614,61 @@
 }
 
 .card_title {
-  color: #e8e8e8;
-  font-family: Times New Roman;
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
-.card_title.M {
+.card_title.third {
+  color: #e8e8e8;
+  font-family: Times New Roman;
+}
+.card_title.third.M {
   left: 54px;
   top: 5px;
   width: 93px;
   height: 15px;
 }
-.card_title.M.type_2 {
+.card_title.third.M.type_2 {
   left: 50px;
   top: 54.5px;
   width: 80px;
 }
-.card_title.L {
+.card_title.third.L {
   left: 143px;
   top: 18px;
   width: 230px;
   height: 37px;
 }
-.card_title.L.type_2 {
+.card_title.third.L.type_2 {
+  left: 126px;
+  top: 142px;
+  width: 210px;
+}
+.card_title.fourth {
+  color: white;
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+}
+.card_title.fourth.M {
+  left: 50px;
+  top: 12px;
+  width: 100px;
+  height: 11px;
+  line-height: 6px;
+}
+.card_title.fourth.M.type_2 {
+  left: 50px;
+  top: 54.5px;
+  width: 80px;
+}
+.card_title.fourth.L {
+  left: 143px;
+  top: 34px;
+  width: 230px;
+  height: 33px;
+}
+.card_title.fourth.L.type_2 {
   left: 126px;
   top: 142px;
   width: 210px;
@@ -670,10 +686,6 @@
   font-weight: bold;
 }
 
-.card_effects {
-  position: absolute;
-}
-
 .effect_text {
   font-family: "tradegothiclt-condeighteen", Arial, sans-serif;
 }
@@ -682,6 +694,11 @@
 }
 .effect_text.dark {
   color: #e8e8e8;
+}
+
+.fourth .effect.light {
+  border-color: transparent !important;
+  background-color: transparent !important;
 }
 
 .effect {
@@ -693,24 +710,121 @@
 }
 .effect.M {
   padding-left: 9px;
-  line-height: 8px;
 }
 .effect.M:nth-of-type(n+2) {
   margin-top: 2px;
 }
 .effect.L {
   padding-left: 19px;
-  line-height: 22px;
 }
 .effect.L:nth-of-type(n+2) {
   margin-top: 10px;
 }
+.font_size_1 .effect {
+  line-height: 1px;
+}
+.font_size_2 .effect {
+  line-height: 2px;
+}
+.font_size_3 .effect {
+  line-height: 3px;
+}
+.font_size_4 .effect {
+  line-height: 4px;
+}
+.font_size_5 .effect {
+  line-height: 5px;
+}
+.font_size_6 .effect {
+  line-height: 6px;
+}
+.font_size_7 .effect {
+  line-height: 7px;
+}
+.font_size_8 .effect {
+  line-height: 8px;
+}
+.font_size_9 .effect {
+  line-height: 9px;
+}
+.font_size_10 .effect {
+  line-height: 10px;
+}
+.font_size_11 .effect {
+  line-height: 11px;
+}
+.font_size_12 .effect {
+  line-height: 12px;
+}
+.font_size_13 .effect {
+  line-height: 13px;
+}
+.font_size_14 .effect {
+  line-height: 14px;
+}
+.font_size_15 .effect {
+  line-height: 15px;
+}
+.font_size_16 .effect {
+  line-height: 16px;
+}
+.font_size_17 .effect {
+  line-height: 17px;
+}
+.font_size_18 .effect {
+  line-height: 18px;
+}
+.font_size_19 .effect {
+  line-height: 19px;
+}
+.font_size_20 .effect {
+  line-height: 20px;
+}
+.font_size_21 .effect {
+  line-height: 21px;
+}
+.font_size_22 .effect {
+  line-height: 22px;
+}
+.font_size_23 .effect {
+  line-height: 23px;
+}
+.font_size_24 .effect {
+  line-height: 24px;
+}
+.font_size_25 .effect {
+  line-height: 25px;
+}
+.font_size_26 .effect {
+  line-height: 26px;
+}
+.font_size_27 .effect {
+  line-height: 27px;
+}
+.font_size_28 .effect {
+  line-height: 28px;
+}
+.font_size_29 .effect {
+  line-height: 29px;
+}
+.font_size_30 .effect {
+  line-height: 30px;
+}
 
-.card_effects.M {
+.card_effects {
+  position: absolute;
+}
+.card_effects.M.third {
   right: 2px;
   top: 23px;
   width: 129px;
   height: 56px;
+}
+.card_effects.M.fourth {
+  right: 2px;
+  top: 28px;
+  width: 128px;
+  height: 55px;
 }
 .card_effects.M > .font_size_1 > .effect.M,
 .card_effects.M > .font_size_2 > .effect.M,
@@ -725,11 +839,17 @@
 .card_effects.M > .font_size_7 > .effect.M {
   line-height: 7px;
 }
-.card_effects.L {
+.card_effects.L.third {
   left: 116px;
   top: 63px;
   width: 334px;
   height: 151px;
+}
+.card_effects.L.fourth {
+  left: 129px;
+  top: 77px;
+  width: 321px;
+  height: 125px;
 }
 
 .echo_effect {
@@ -1473,41 +1593,65 @@
 
 .card {
   display: inline-block;
-  background-image: url("img/card_backgrounds.jpg");
   position: relative;
   border: solid 1px #ffffff;
 }
-.card.type_2 {
+.card.fourth.color_0 {
+  background-image: url("img/ultimate_blue_background.png");
+}
+.card.fourth.color_1 {
+  background-image: url("img/ultimate_red_background.png");
+}
+.card.fourth.color_2 {
+  background-image: url("img/ultimate_green_background.png");
+}
+.card.fourth.color_3 {
+  background-image: url("img/ultimate_yellow_background.png");
+}
+.card.fourth.color_4 {
+  background-image: url("img/ultimate_purple_background.png");
+}
+.card.third {
+  background-image: url("img/card_backgrounds.jpg");
+}
+.card.third.type_2 {
   background-image: url("img/card_backgrounds_cities.jpg");
 }
-.card.type_2.simplified {
+.card.third.type_2.simplified {
   background-image: url("img/simplified_card_backgrounds_cities.jpg");
 }
-.card.simplified {
+.card.third.simplified {
   background-image: url("img/simplified_card_backgrounds.jpg");
 }
 .card.M {
   width: 180px;
   height: 124px;
-  background-size: 920px 128px;
   border-radius: 6px;
   box-shadow: 3px 3px grey;
+}
+.card.M.third {
+  background-size: 920px 128px;
   background-position-y: -2px;
 }
-.card.M.color_0 {
+.card.M.third.color_0 {
   background-position-x: -2px;
 }
-.card.M.color_1 {
+.card.M.third.color_1 {
   background-position-x: -186px;
 }
-.card.M.color_2 {
+.card.M.third.color_2 {
   background-position-x: -370px;
 }
-.card.M.color_3 {
+.card.M.third.color_3 {
   background-position-x: -554px;
 }
-.card.M.color_4 {
+.card.M.third.color_4 {
   background-position-x: -738px;
+}
+.card.M.fourth {
+  background-size: 195.5px 136.5px;
+  background-position-x: -7px;
+  background-position-y: -5px;
 }
 .card.M.item_1200, .card.M.item_1201, .card.M.item_1202, .card.M.item_1203, .card.M.item_1204 {
   background-image: none;
@@ -1517,24 +1661,29 @@
   width: 456px;
   height: 316px;
   border-radius: 16px;
-  background-size: 2308px 323px;
   box-shadow: 5px 5px grey;
+}
+.card.L.third {
+  background-size: 2308px 323px;
   background-position-y: -2px;
 }
-.card.L.color_0 {
+.card.L.third.color_0 {
   background-position-x: 0px;
 }
-.card.L.color_1 {
+.card.L.third.color_1 {
   background-position-x: -462px;
 }
-.card.L.color_2 {
+.card.L.third.color_2 {
   background-position-x: -924px;
 }
-.card.L.color_3 {
+.card.L.third.color_3 {
   background-position-x: -1386px;
 }
-.card.L.color_4 {
+.card.L.third.color_4 {
   background-position-x: -1848px;
+}
+.card.L.fourth {
+  background-size: 456px 316px;
 }
 .card.S.age_null {
   background-image: url("img/special_achievements_landscape.jpg");
@@ -1576,20 +1725,7 @@
   background-position-x: -186px;
 }
 
-/* Locations where the square and hexagon icons go on each card 
-*
-*  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
-*  Square icons should be ~6% of the card width away from the top edge. it is currently 7px
-* 
-*  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
-*
-*  The Hex icons do not fill their entire box so we have to fudge some of the offsets
-*/
-/* Square card icons (most cards have 3 large resource icons on them) 
-*
-*  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
-*  { Background-size, width, height, background-position-x, background-position-y }
-*/
+/* Square card icons (most cards have 3 large resource icons on them) */
 .square_card_icon {
   background-image: url("img/resource_icons.jpg");
   position: absolute;
@@ -1649,34 +1785,40 @@
 .square_card_icon.M.color_4 {
   background-position-y: -154.5px;
 }
-.square_card_icon.M.top_left_icon {
+.square_card_icon.M.third.top {
   top: 7px;
+}
+.square_card_icon.M.third.bottom {
+  bottom: 7px;
+}
+.square_card_icon.M.third.left {
   left: 7px;
 }
-.square_card_icon.M.bottom_left_icon {
-  bottom: 7px;
-  left: 7px;
-}
-.square_card_icon.M.bottom_center_icon {
-  bottom: 7px;
+.square_card_icon.M.third.center {
   left: 72px;
 }
-.square_card_icon.M.bottom_right_icon {
-  bottom: 7px;
+.square_card_icon.M.third.right {
   right: 7px;
 }
-.square_card_icon.M.top_right_icon {
+.square_card_icon.M.fourth.top {
   top: 7px;
-  right: 7px;
 }
-.square_card_icon.M.top_center_icon {
-  top: 7px;
+.square_card_icon.M.fourth.bottom {
+  bottom: 5px;
+}
+.square_card_icon.M.fourth.left {
+  left: 10px;
+}
+.square_card_icon.M.fourth.center {
   left: 72px;
+}
+.square_card_icon.M.fourth.right {
+  right: 9px;
 }
 .square_card_icon.L {
   width: 75px;
-  background-size: 470px auto;
   height: 75px;
+  background-size: 470px auto;
 }
 .square_card_icon.L.icon_1 {
   background-position-x: -1.5px;
@@ -1725,29 +1867,35 @@
 .square_card_icon.L.color_4 {
   background-position-y: -315px;
 }
-.square_card_icon.L.top_left_icon {
+.square_card_icon.L.third.top {
   top: 25px;
+}
+.square_card_icon.L.third.bottom {
+  bottom: 23px;
+}
+.square_card_icon.L.third.left {
   left: 30px;
 }
-.square_card_icon.L.bottom_left_icon {
-  bottom: 23px;
-  left: 30px;
-}
-.square_card_icon.L.bottom_center_icon {
-  bottom: 23px;
+.square_card_icon.L.third.center {
   left: 195px;
 }
-.square_card_icon.L.bottom_right_icon {
-  bottom: 23px;
+.square_card_icon.L.third.right {
   right: 26px;
 }
-.square_card_icon.L.top_right_icon {
-  top: 25px;
-  right: 26px;
+.square_card_icon.L.fourth.top {
+  top: 34px;
 }
-.square_card_icon.L.top_center_icon {
-  top: 25px;
-  left: 195px;
+.square_card_icon.L.fourth.bottom {
+  bottom: 34px;
+}
+.square_card_icon.L.fourth.left {
+  left: 45px;
+}
+.square_card_icon.L.fourth.center {
+  left: 190px;
+}
+.square_card_icon.L.fourth.right {
+  right: 45px;
 }
 
 .city_search_icon {
@@ -1869,12 +2017,13 @@
 .city_special_icon.M.color_4 {
   background-position-x: -165px;
 }
-.city_special_icon.M.bottom_center_icon {
+.city_special_icon.M.bottom {
   bottom: 5px;
-  left: 70px;
 }
-.city_special_icon.M.top_center_icon {
+.city_special_icon.M.top {
   top: 5px;
+}
+.city_special_icon.M.center {
   left: 70px;
 }
 .city_special_icon.L {
@@ -1924,12 +2073,13 @@
 .city_special_icon.L.color_4 {
   background-position-x: -331px;
 }
-.city_special_icon.L.bottom_center_icon {
+.city_special_icon.L.bottom {
   bottom: 22px;
-  left: 192px;
 }
-.city_special_icon.L.top_center_icon {
+.city_special_icon.L.top {
   top: 22px;
+}
+.city_special_icon.L.center {
   left: 192px;
 }
 
@@ -1943,29 +2093,35 @@
   background-size: 235px auto;
   background-position-y: -40px;
 }
-.bonus_card_icon.M.bonus_value.top_left_icon {
+.bonus_card_icon.M.bonus_value.third.top {
   top: 15px;
+}
+.bonus_card_icon.M.bonus_value.third.bottom {
+  bottom: 12px;
+}
+.bonus_card_icon.M.bonus_value.third.left {
   left: 14px;
 }
-.bonus_card_icon.M.bonus_value.bottom_left_icon {
-  bottom: 12px;
-  left: 14px;
-}
-.bonus_card_icon.M.bonus_value.bottom_center_icon {
-  bottom: 12px;
+.bonus_card_icon.M.bonus_value.third.center {
   left: 80px;
 }
-.bonus_card_icon.M.bonus_value.bottom_right_icon {
+.bonus_card_icon.M.bonus_value.third.right {
+  right: 16px;
+}
+.bonus_card_icon.M.bonus_value.fourth.top {
+  top: 15px;
+}
+.bonus_card_icon.M.bonus_value.fourth.bottom {
   bottom: 12px;
-  right: 16px;
 }
-.bonus_card_icon.M.bonus_value.top_right_icon {
-  top: 15px;
-  right: 16px;
+.bonus_card_icon.M.bonus_value.fourth.left {
+  left: 17px;
 }
-.bonus_card_icon.M.bonus_value.top_center_icon {
-  top: 15px;
+.bonus_card_icon.M.bonus_value.fourth.center {
   left: 80px;
+}
+.bonus_card_icon.M.bonus_value.fourth.right {
+  right: 19px;
 }
 .bonus_card_icon.M.bonus_1 {
   background-position-x: 1px;
@@ -2009,29 +2165,35 @@
   background-size: 235px auto;
   background-position-y: -1px;
 }
-.bonus_card_icon.M.bonus_color.top_left_icon {
+.bonus_card_icon.M.bonus_color.third.top {
   top: 7px;
+}
+.bonus_card_icon.M.bonus_color.third.bottom {
+  bottom: 7px;
+}
+.bonus_card_icon.M.bonus_color.third.left {
   left: 7px;
 }
-.bonus_card_icon.M.bonus_color.bottom_left_icon {
-  bottom: 7px;
-  left: 7px;
-}
-.bonus_card_icon.M.bonus_color.bottom_center_icon {
-  bottom: 7px;
+.bonus_card_icon.M.bonus_color.third.center {
   left: 73px;
 }
-.bonus_card_icon.M.bonus_color.bottom_right_icon {
+.bonus_card_icon.M.bonus_color.third.right {
+  right: 7px;
+}
+.bonus_card_icon.M.bonus_color.fourth.top {
+  top: 7px;
+}
+.bonus_card_icon.M.bonus_color.fourth.bottom {
   bottom: 7px;
-  right: 7px;
 }
-.bonus_card_icon.M.bonus_color.top_right_icon {
-  top: 7px;
-  right: 7px;
+.bonus_card_icon.M.bonus_color.fourth.left {
+  left: 10px;
 }
-.bonus_card_icon.M.bonus_color.top_center_icon {
-  top: 7px;
+.bonus_card_icon.M.bonus_color.fourth.center {
   left: 73px;
+}
+.bonus_card_icon.M.bonus_color.fourth.right {
+  right: 10px;
 }
 .bonus_card_icon.M.color_0 {
   background-position-x: -1px;
@@ -2054,29 +2216,20 @@
   height: 43px;
   background-position-y: -82px;
 }
-.bonus_card_icon.L.bonus_value.top_left_icon {
+.bonus_card_icon.L.bonus_value.top {
   top: 44px;
+}
+.bonus_card_icon.L.bonus_value.bottom {
+  bottom: 35px;
+}
+.bonus_card_icon.L.bonus_value.left {
   left: 48px;
 }
-.bonus_card_icon.L.bonus_value.bottom_left_icon {
-  bottom: 35px;
-  left: 48px;
-}
-.bonus_card_icon.L.bonus_value.bottom_center_icon {
-  bottom: 35px;
+.bonus_card_icon.L.bonus_value.center {
   left: 211px;
 }
-.bonus_card_icon.L.bonus_value.bottom_right_icon {
-  bottom: 35px;
+.bonus_card_icon.L.bonus_value.right {
   right: 41px;
-}
-.bonus_card_icon.L.bonus_value.top_right_icon {
-  top: 44px;
-  right: 43px;
-}
-.bonus_card_icon.L.bonus_value.top_center_icon {
-  top: 44px;
-  left: 211px;
 }
 .bonus_card_icon.L.bonus_1 {
   background-position-x: 1px;
@@ -2120,29 +2273,20 @@
   background-size: 470px auto;
   background-position-y: -1px;
 }
-.bonus_card_icon.L.bonus_color.top_left_icon {
+.bonus_card_icon.L.bonus_color.top {
   top: 25px;
+}
+.bonus_card_icon.L.bonus_color.bottom {
+  bottom: 23px;
+}
+.bonus_card_icon.L.bonus_color.left {
   left: 30px;
 }
-.bonus_card_icon.L.bonus_color.bottom_left_icon {
-  bottom: 23px;
-  left: 30px;
-}
-.bonus_card_icon.L.bonus_color.bottom_center_icon {
-  bottom: 23px;
+.bonus_card_icon.L.bonus_color.center {
   left: 193px;
 }
-.bonus_card_icon.L.bonus_color.bottom_right_icon {
-  bottom: 23px;
+.bonus_card_icon.L.bonus_color.right {
   right: 26px;
-}
-.bonus_card_icon.L.bonus_color.top_right_icon {
-  top: 25px;
-  right: 26px;
-}
-.bonus_card_icon.L.bonus_color.top_center_icon {
-  top: 25px;
-  left: 193px;
 }
 .bonus_card_icon.L.color_0 {
   background-position-x: 1px;
@@ -2160,9 +2304,6 @@
   background-position-x: -303px;
 }
 
-/* Hexagon icons take up ~27 % of a real cards width. 
-*  Our cards will shoot for 25 % ->  M.45px
-*/
 .hexagon_card_icon {
   background-image: url("img/hexagon_icons.png");
   position: absolute;
@@ -2172,58 +2313,70 @@
   width: 45px;
   height: 45px;
 }
-.hexagon_card_icon.M.top_left_icon {
+.hexagon_card_icon.M.third.top {
   top: 2px;
+}
+.hexagon_card_icon.M.third.bottom {
+  bottom: 1px;
+}
+.hexagon_card_icon.M.third.left {
   left: 4px;
 }
-.hexagon_card_icon.M.bottom_left_icon {
-  bottom: 1px;
-  left: 4px;
-}
-.hexagon_card_icon.M.bottom_center_icon {
-  bottom: 1px;
+.hexagon_card_icon.M.third.center {
   left: 69px;
 }
-.hexagon_card_icon.M.bottom_right_icon {
-  bottom: 1px;
+.hexagon_card_icon.M.third.right {
   right: 2px;
 }
-.hexagon_card_icon.M.top_right_icon {
-  top: 2px;
-  right: 2px;
+.hexagon_card_icon.M.fourth.top {
+  top: 5px;
 }
-.hexagon_card_icon.M.top_center_icon {
-  top: 2px;
+.hexagon_card_icon.M.fourth.bottom {
+  bottom: 0px;
+}
+.hexagon_card_icon.M.fourth.left {
+  left: 7px;
+}
+.hexagon_card_icon.M.fourth.center {
   left: 69px;
+}
+.hexagon_card_icon.M.fourth.right {
+  right: 4px;
 }
 .hexagon_card_icon.L {
   background-size: 1511px, auto;
   width: 90px;
   height: 90px;
 }
-.hexagon_card_icon.L.top_left_icon {
+.hexagon_card_icon.L.third.top {
   top: 17px;
+}
+.hexagon_card_icon.L.third.bottom {
+  bottom: 11px;
+}
+.hexagon_card_icon.L.third.left {
   left: 26px;
 }
-.hexagon_card_icon.L.bottom_left_icon {
-  bottom: 11px;
-  left: 26px;
-}
-.hexagon_card_icon.L.bottom_center_icon {
-  bottom: 11px;
+.hexagon_card_icon.L.third.center {
   left: 192px;
 }
-.hexagon_card_icon.L.bottom_right_icon {
-  bottom: 11px;
+.hexagon_card_icon.L.third.right {
   right: 15px;
 }
-.hexagon_card_icon.L.top_right_icon {
-  top: 17px;
-  right: 15px;
+.hexagon_card_icon.L.fourth.top {
+  top: 30px;
 }
-.hexagon_card_icon.L.top_center_icon {
-  top: 17px;
-  left: 192px;
+.hexagon_card_icon.L.fourth.bottom {
+  bottom: 24px;
+}
+.hexagon_card_icon.L.fourth.left {
+  left: 37px;
+}
+.hexagon_card_icon.L.fourth.center {
+  left: 182px;
+}
+.hexagon_card_icon.L.fourth.right {
+  right: 34px;
 }
 
 .recto {

@@ -75,7 +75,7 @@
         $this->page->begin_block( "innovation_innovation", "decks_group_6_2" );
         $this->page->begin_block( "innovation_innovation", "decks" );
         $this->page->begin_block( "innovation_innovation", "available_relics" );
-        $this->page->begin_block( "innovation_innovation", "available_achievements" );
+        $this->page->begin_block( "innovation_innovation", "standard_achievements" );
         $this->page->begin_block( "innovation_innovation", "special_achievements" );
         $this->page->begin_block( "innovation_innovation", "available_museums" );
         $this->page->begin_block( "innovation_innovation", "junk" );
@@ -202,7 +202,7 @@
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
         $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );
-        $this->page->insert_block( "available_achievements", array("AVAILABLE_ACHIEVEMENTS" => self::_("Available achievements")) );
+        $this->page->insert_block( "standard_achievements", array("STANDARD_ACHIEVEMENTS" => self::_("Standard achievements")) );
         $this->page->insert_block( "special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")) );
         $this->page->insert_block( "available_museums", array("AVAILABLE_MUSEUMS" => self::_("Available museums")) );
         $this->page->insert_block( "junk", array("JUNK" => self::_("Junk")) );

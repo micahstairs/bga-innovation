@@ -40,10 +40,12 @@ class Card200 extends AbstractCard
 
     if ($numColors === 5) {
       self::win();
-    } else {
-      foreach (self::getCards(Locations::REVEALED) as $card) {
-        self::transferToHand($card);
-      }
+    }
+
+    // This code is only reachable if the win condition isn't triggered (but it's also hit during certain
+    // integration tests, even when the win condition is triggered).
+    foreach (self::getCards(Locations::REVEALED) as $card) {
+      self::transferToHand($card);
     }
   }
 

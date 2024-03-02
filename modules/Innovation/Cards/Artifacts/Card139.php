@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card139 extends AbstractCard
 {
@@ -26,15 +27,22 @@ class Card139 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from'  => 'hand',
+        'location_from'  => Locations::HAND,
         'return_keyword' => true,
       ];
     } else {
       return [
         'n'             => self::getLastSelectedAge(),
-        'location_from' => 'hand',
+        'location_from' => Locations::HAND,
         'score_keyword' => true,
       ];
+    }
+  }
+
+  public function handleCardChoice(array $card)
+  {
+    if (self::isSecondInteraction()) {
+      self::incrementAuxiliaryValue(self::getValue($card)); // Add value of card to sum
     }
   }
 
@@ -43,7 +51,7 @@ class Card139 extends AbstractCard
     if (self::isFirstInteraction()) {
       $valueReturned = self::getNumChosen() === 1 ? self::getLastSelectedAge() : 0;
       if ($valueReturned > 0) {
-        self::setAuxiliaryValue($valueReturned); // Track deck to junk
+        self::setAuxiliaryValue(0); // Track sum of cards scored
         self::setMaxSteps(2);
       } else {
         self::junkBaseDeck($valueReturned);

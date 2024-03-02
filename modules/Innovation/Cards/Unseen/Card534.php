@@ -54,19 +54,16 @@ class Card534 extends AbstractCard
       self::notifyOthers(clienttranslate('${player_name} has chosen to meld a card from his hand and splay its color right.'));
     }
     self::setAuxiliaryValue($choice);
-    
+  }
+
+  public function handleSplayChoice(array $card)
+  {
+    self::selfExecute(self::getTopCardOfColor($card['color']));
   }
 
   public function handleCardChoice(array $card)
   {
     self::splayRight($card['color']);
-  }
-
-  public function afterInteraction()
-  {
-    if (self::isSecondInteraction() && self::getAuxiliaryValue() === 1) {
-      self::selfExecute(self::getTopCardOfColor(self::getLastSelectedColor()));
-    }
   }
 
 }

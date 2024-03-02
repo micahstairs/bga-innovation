@@ -9,7 +9,7 @@ class Card550 extends AbstractCard
 
   // Plot Voucher
   //   - Meld a card from your score pile. Safeguard the lowest available standard achievement. 
-  //     If you do, fully execute the melded card if it is your turn, or if it is not your turn
+  //     If you do, super-execute the melded card if it is your turn, or if it is not your turn
   //     self-execute it.
 
   public function initialExecution()

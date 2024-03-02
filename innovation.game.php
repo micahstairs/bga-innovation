@@ -3552,9 +3552,11 @@ class Innovation extends Table
     {
         // TODO(FIGURES): Update this once there are other special achievements to test for.
         $edition = $this->innovationGameState->getEdition();
-        $achievements_to_test = $edition <= 3 ? [CardIds::MONUMENT] : [];
+        $achievements_to_test = [];
         if ($edition <= 3 || $is_end_of_action_check) {
-            $achievements_to_test = array_merge($achievements_to_test, [105, 107, 108, 109]);
+            $achievements_to_test = array_merge($achievements_to_test, [105, 106, 107, 108, 109]);
+        } else if ($edition <= 3) {
+            array_merge($achievements_to_test, [CardIds::MONUMENT]);
         }
         if ($this->innovationGameState->echoesExpansionEnabled() && ($edition <= 3 || $is_end_of_action_check)) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
@@ -3589,7 +3591,7 @@ class Innovation extends Table
                     } else { // at least four top cards with a demand effect
                         $num_cards_with_demand_effect = 0;
                         foreach (self::getTopCardsOnBoard($player_id) as $card) {
-                            if ($card['has_demand']) {
+                            if ($card['has_demand'] === true) {
                                 $num_cards_with_demand_effect++;
                             }
                         }
@@ -6584,19 +6586,24 @@ class Innovation extends Table
 
     function junkBaseDeck($age): bool
     {
+        return self::junkDeck($age, CardTypes::BASE);
+    }
+
+    function junkDeck($age, $type): bool
+    {
         if ($age == 0 || $age >= 12) {
             // TODO(FIGURES): Handle junking the age 0 deck
             return false;
         }
-        $cards = self::getCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE)[$age];
+        $cards = self::getCardsInLocationKeyedByAge( /*owner=*/0, 'deck', $type)[$age];
         if (empty($cards)) {
-            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, CardTypes::BASE)]);
+            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, $type)]);
             return false;
         }
         self::bulkTransferCards($cards, 0, Locations::JUNK);
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
-            ['age' => self::getAgeSquareWithType($age, CardTypes::BASE), 'n' => self::renderNumber(count($cards))]
+            ['age' => self::getAgeSquareWithType($age, $type), 'n' => self::renderNumber(count($cards))]
         );
         return true;
     }
@@ -16515,24 +16522,25 @@ class Innovation extends Table
 
                 default:
                     if ($special_type_of_choice == 0) {
-                        if ($splay_direction == -1) {
+                        if ($code !== null) {
+                            $executionState = (new ExecutionState($this))
+                                ->setEdition($this->innovationGameState->getEdition())
+                                ->setLauncherId($launcher_id)
+                                ->setPlayerId($player_id)
+                                ->setEffectType($current_effect_type)
+                                ->setEffectNumber($current_effect_number)
+                                ->setCurrentStep(self::getStep())
+                                ->setNextStep(self::getStep() + 1)
+                                ->setMaxSteps(self::getStepMax())
+                                ->setNumChosen($this->innovationGameState->get('n') + 1);
+                        }
 
+                        if ($splay_direction == -1) {
                             if ($code !== null) {
                                 $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
                                 $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
                                 $this->innovationGameState->set("owner_last_selected", $card['owner']);
-                                $executionState = (new ExecutionState($this))
-                                    ->setEdition($this->innovationGameState->getEdition())
-                                    ->setLauncherId($launcher_id)
-                                    ->setPlayerId($player_id)
-                                    ->setEffectType($current_effect_type)
-                                    ->setEffectNumber($current_effect_number)
-                                    ->setCurrentStep(self::getStep())
-                                    ->setNextStep(self::getStep() + 1)
-                                    ->setMaxSteps(self::getStepMax())
-                                    ->setNumChosen($this->innovationGameState->get('n') + 1);
                             }
-
                             if ($code !== null && self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
                                 // Do nothing since the card transfer was overridden
                             } else if ($location_to == 'revealed,hand') {
@@ -16574,6 +16582,11 @@ class Innovation extends Table
                             // Do the splay as stated in B
                             $this->innovationGameState->set("color_last_selected", $card['color']);
                             self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/$splay_direction == 0);
+                            if ($code !== null && self::isInSeparateFile($card_id)) {
+                                self::getCardInstance($card_id, $executionState)->handleSplayChoice(self::getCardInfo($selected_card_id));
+                                self::setStepMax($executionState->getMaxSteps());
+                                self::setStep($executionState->getNextStep() - 1);
+                            }
                         }
                     } else if ($card_id === null) { // Digging/stealing artifact
                         $card_ids = self::getAuxiliaryArray();

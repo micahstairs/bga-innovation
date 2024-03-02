@@ -8,7 +8,7 @@ class Card178_4E extends AbstractCard
 {
   // Jedlik's Electromagnetic Self-Rotor (4th edition):
   //   - Draw and score an [8]. 
-  //   - Draw and meld an [8]. If you do, choose a value, and junk all cards in the deck of that value.
+  //   - Draw and meld an [8]. If it is an [8], choose a value, and junk all cards in the deck of that value.
 
   public function initialExecution()
   {

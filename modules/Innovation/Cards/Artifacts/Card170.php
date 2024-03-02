@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card170 extends AbstractCard
 {
@@ -24,7 +25,7 @@ class Card170 extends AbstractCard
     } else {
       return [
         'n'              => 'all',
-        'location_from'  => 'score',
+        'location_from'  => Locations::SCORE,
         'return_keyword' => true,
         'color'          => [self::getAuxiliaryValue()],
       ];
@@ -52,7 +53,13 @@ class Card170 extends AbstractCard
       self::transferToHand($card);
       self::setAuxiliaryValue($card['color']); // Track the color to return
     }
+  }
 
+  public function afterInteraction()
+  {
+    if (self::isSecondInteraction()) {
+      self::unsplay(self::getAuxiliaryValue());
+    }
   }
 
 }
