@@ -9,7 +9,7 @@ class Card478 extends AbstractCard
 {
 
   // Deepfake
-  //   - If it is your turn, transfer a top card from any board to your board, then fully execute
+  //   - If it is your turn, transfer a top card from any board to your board, then super-execute
   //     a top card on your board other than Deepfake. If the transferred card is still a top card,
   //     transfer it to its original board.
 
