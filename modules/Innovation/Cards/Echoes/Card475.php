@@ -45,7 +45,9 @@ class Card475 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isTheirTurn()) {
-      self::selfExecute($card);
+      if (!self::selfExecute($card)) {
+        self::setNextStep(1);
+      }
     }
   }
 
