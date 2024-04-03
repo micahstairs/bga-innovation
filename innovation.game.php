@@ -394,7 +394,7 @@ class Innovation extends Table
                 $t = ($t+1)%2;
             }
         }
-        $sql .= implode($values, ',');
+        $sql .= implode(',', $values);
         self::DbQuery($sql);
         if ($individual_game) { // We can take into account the preferences of players on colors
             self::reattributeColorsBasedOnPreferences($players, $default_colors);
@@ -1026,17 +1026,6 @@ class Innovation extends Table
     function isEliminated($player_id) {
         return self::getUniqueValueFromDB(self::format("SELECT player_eliminated FROM player WHERE player_id={player_id}", array('player_id' => $player_id)));
     }
-    
-    /** log for debugging **/
-    function log() {
-        $args = func_get_args();
-        $line = Array();
-        foreach ($args as $arg) {
-            $line[] = is_string($arg) ? $arg : var_export($arg, true);
-        }
-        self::DbQuery("INSERT INTO logs (line) VALUE ('".mysql_escape_string(implode("\n\n", $line))."')");
-    }
-    
     
     /** Formatting **/
     function format($msg, $vars)
@@ -7007,7 +6996,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Mark it as selected
-        self::markAsSelected($card_id, $player_id);
+        self::markAsSelected($card_id);
         
         // Notify
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array(
@@ -7037,9 +7026,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $cards = self::getCardsInHand($player_id);
         foreach($cards as $card_in_hand) {
             if ($card_in_hand['id'] == $card_id) {
-                self::markAsSelected($card_in_hand['id'], $player_id);
+                self::markAsSelected($card_in_hand['id']);
             } else {
-                self::unmarkAsSelected($card_in_hand['id'], $player_id);
+                self::unmarkAsSelected($card_in_hand['id']);
             }
         }
         
@@ -23332,17 +23321,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Unsplay that color"
                     self::unsplay($player_id, $player_id, self::getAuxiliaryValue());
                     break;
-
-                // id 171, Artifacts age 6: Stamp Act
-                case "171C1A":
-                    if ($n > 0) { // "If you do"
-                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card !== null) {
-                            self::setAuxiliaryValue($top_green_card['age']);
-                            self::incrementStepMax(1);
-                        }
-                    }
-                    break;
             
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
@@ -24932,8 +24910,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $without_icon = $this->innovationGameState->get('without_icon');
             $with_bonus = $this->innovationGameState->get('with_bonus');
             $without_bonus = $this->innovationGameState->get('without_bonus');
-            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
-            $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
+            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile() : null;
+            $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor() : null;
 
             $nested_card_state = self::getCurrentNestedCardState();
 
