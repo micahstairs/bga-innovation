@@ -22,6 +22,7 @@ class Card456 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
+      'location_from'                   => Locations::HAND,
       'meld_keyword'                    => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];

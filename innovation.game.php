@@ -13143,8 +13143,6 @@ class Innovation extends Table
 
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
 
-        $leaf = Icons::render(2);
-        $lightbulb = Icons::render(3);
         $clock = Icons::render(6);
 
         if (self::isInSeparateFile($card_id)) {
