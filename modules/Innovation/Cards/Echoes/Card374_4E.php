@@ -18,9 +18,11 @@ class Card374_4E extends AbstractCard
     if (self::isEcho()) {
       self::drawAndTuck(4);
     } else if (self::isDemand()) {
-      $values = array_unique(self::getBonuses(self::getLauncherId()));
-      if ($values) {
-        self::setAuxiliaryArray($values); // Store the values to be returned
+      $bonus_values = array_unique(self::getBonuses(self::getLauncherId()));
+      $score_values = array_unique(self::getValues(self::getCards(Locations::SCORE)));
+      $common_values = array_intersect($bonus_values, $score_values);
+      if ($common_values) {
+        self::setAuxiliaryArray($common_values); // Store the values to be returned
         self::setMaxSteps(2);
       }
     } else if (self::isFirstNonDemand()) {

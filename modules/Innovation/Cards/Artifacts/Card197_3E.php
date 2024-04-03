@@ -17,7 +17,7 @@ class Card197_3E extends AbstractCard
       self::setMaxSteps(1);
     } else {
       foreach (self::getTopCards() as $card) {
-        if ($card['has_demand'] === true) {
+        if ($card['has_demand'] == true) {
           self::draw(10);
           return;
         }

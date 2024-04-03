@@ -3591,7 +3591,7 @@ class Innovation extends Table
                     } else { // at least four top cards with a demand effect
                         $num_cards_with_demand_effect = 0;
                         foreach (self::getTopCardsOnBoard($player_id) as $card) {
-                            if ($card['has_demand'] === true) {
+                            if ($card['has_demand'] == true) {
                                 $num_cards_with_demand_effect++;
                             }
                         }
@@ -13143,8 +13143,6 @@ class Innovation extends Table
 
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
 
-        $leaf = Icons::render(2);
-        $lightbulb = Icons::render(3);
         $clock = Icons::render(6);
 
         if (self::isInSeparateFile($card_id)) {
