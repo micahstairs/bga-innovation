@@ -4163,7 +4163,7 @@ class Innovation extends Table
             $owner_condition = "owner != 0 AND";
         } else if ($owner == -3) { // any opponent
             $opponent_ids = self::getActiveOpponentIds(self::getActivePlayerId());
-            $owner_condition = self::format("owner IN ({owners}) AND", array('owners' => join($opponent_ids, ',')));
+            $owner_condition = self::format("owner IN ({owners}) AND", array('owners' => join(',', $opponent_ids)));
         } else if ($owner == -4) { // any other player
             $owner_condition = self::format("owner != 0 AND owner != {player_id} AND", array('player_id' => self::getActivePlayerId()));
         } else {
@@ -4675,7 +4675,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.color IN ({colors}) AND
                 a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon}
         ",
-            array('player_id' => $player_id, 'colors' => join($colors, ','), 'icon' => $icon)
+            array('player_id' => $player_id, 'colors' => join(',', $colors), 'icon' => $icon)
         ));
     }
     
@@ -6142,7 +6142,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ",
                 array('player_id' => $player_id)), true
             );
-            $condition_for_owner = self::format("owner IN ({opponents})", array('opponents' => join($opponents, ',')));
+            $condition_for_owner = self::format("owner IN ({opponents})", array('opponents' => join(',', $opponents)));
         } else if ($owner_from == -4) { // Any other player
             $other_players = self::getObjectListFromDB(self::format("
                 SELECT
@@ -6154,7 +6154,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ",
                 array('player_id' => $player_id)), true
             );
-            $condition_for_owner = self::format("owner IN ({other_players})", array('other_players' => join($other_players, ',')));
+            $condition_for_owner = self::format("owner IN ({other_players})", array('other_players' => join(',', $other_players)));
         } else {
             $condition_for_owner = self::format("owner = {owner_from}", array('owner_from' => $owner_from));
         }
@@ -6186,7 +6186,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $claimable_ages[] = -1;
             }
         }
-        $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", array('claimable_ages' => join($claimable_ages, ',')));
+        $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", array('claimable_ages' => join(',', $claimable_ages)));
 
         // Condition for whether it has a demand effect
         $condition_for_demand_effect = "TRUE";
@@ -6196,11 +6196,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Condition for color
         $color_array = $this->innovationGameState->getAsArray('color_array');
-        $condition_for_color = count($color_array) == 0 ? "FALSE" : "color IN (".join($color_array, ',').")";
+        $condition_for_color = count($color_array) == 0 ? "FALSE" : "color IN (".join(',', $color_array).")";
 
         // Condition for type
         $type_array = $this->innovationGameState->getAsArray('type_array');
-        $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join($type_array, ',').")";
+        $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join(',', $type_array).")";
         
         // Condition for icon
         $with_icon = $this->innovationGameState->get('with_icon');
@@ -6247,7 +6247,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (count($splay_directions) == 0) {
             $condition_for_splay = "AND FALSE";
         } else if (count($splay_directions) < 4) {
-            $condition_for_splay = "AND splay_direction IN (".join($splay_directions, ',').")";
+            $condition_for_splay = "AND splay_direction IN (".join(',', $splay_directions).")";
         }
 
         // Condition for requiring ID
@@ -8875,7 +8875,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     WHERE
                         player_no IN ({player_nos})
                 ",
-                    array('player_nos' => join($this->innovationGameState->getAsArray('player_array'), ','))
+                    array('player_nos' => join(',', $this->innovationGameState->getAsArray('player_array')))
                 ));
                 break;
             case 'choose_rearrange':
