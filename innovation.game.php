@@ -118,6 +118,7 @@ class Innovation extends Table
             'echoes_mode' => 104, // 1 for "Disabled", 2 for "Enabled"
             'extra_achievement_to_win' => 110 // 1 for "Disabled", 2 for "Enabled"
         ));
+        $this->bSelectGlobalsForUpdate = true; // Solves deadlock issues
     }
     
     protected function getGameName()
