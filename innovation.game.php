@@ -11736,7 +11736,7 @@ class Innovation extends Table
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown}.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
                             self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the World achievement"
                         } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the Empire achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
+                            self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the World achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown} but the World achievement has already been claimed.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
                         }
                     }
