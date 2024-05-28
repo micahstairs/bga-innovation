@@ -2778,8 +2778,13 @@ class Innovation extends Table
 
         // Update text based on where the card is coming from
         if ($location_from === 'hand') {
+            if ($targetable_players === null) {
             $from_somewhere_for_player = clienttranslate(' from your hand');
             $from_somewhere_for_others = clienttranslate(' from his hand');
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from the hand of ${targetable_players}');
+                $from_somewhere_for_others = clienttranslate(' from the hand of ${targetable_players}');
+            }
         } else if ($location_from === 'score') {
             if ($targetable_players === null) {
                 $from_somewhere_for_player = clienttranslate(' from your score pile');
@@ -11736,7 +11741,7 @@ class Innovation extends Table
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown}.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
                             self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the World achievement"
                         } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the Empire achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
+                            self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the World achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown} but the World achievement has already been claimed.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
                         }
                     }

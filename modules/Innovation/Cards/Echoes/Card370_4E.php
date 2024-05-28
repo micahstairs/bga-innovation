@@ -55,7 +55,7 @@ class Card370_4E extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isFirstInteraction()) {
+    if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $colors = self::getAuxiliaryArray();
       if (in_array(Colors::BLUE, $colors) && in_array(Colors::GREEN, $colors) && in_array(Colors::YELLOW, $colors)) {
         self::drawAndForeshadow(6);

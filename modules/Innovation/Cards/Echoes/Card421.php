@@ -41,6 +41,7 @@ class Card421 extends AbstractCard
         'location_to'   => 'board',
         'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::NON_YELLOW, Icons::PROSPERITY),
         'color'         => Colors::NON_YELLOW,
+        'without_icon'  => Icons::PROSPERITY,
       ];
     } else {
       return [

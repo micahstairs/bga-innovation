@@ -17,7 +17,7 @@ class Card192_4E extends AbstractCard
   {
     do {
       $repeat = false;
-      $card = self::draw(8);
+      $card = self::drawAndReveal(8);
       if (self::isGreen($card)) {
         self::achieve($this->game->getIfTopCardOnBoard(CardIds::ACTION_COMICS));
       } else if (self::hasIcon($card, Icons::EFFICIENCY)) {
@@ -27,6 +27,8 @@ class Card192_4E extends AbstractCard
           self::transferToAchievements($topCard, self::getLauncherId());
           $repeat = true;
         }
+      } else {
+        self::transferToHand($card);
       }
     } while ($repeat);
   }

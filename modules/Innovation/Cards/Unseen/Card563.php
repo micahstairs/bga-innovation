@@ -40,7 +40,7 @@ class Card563 extends AbstractCard
 
   public function handleValueChoice(int $value) {
     $didScore = false;
-    foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
+    foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
       self::score($card);
       $didScore = true;
     }
