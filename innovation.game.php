@@ -2778,8 +2778,13 @@ class Innovation extends Table
 
         // Update text based on where the card is coming from
         if ($location_from === 'hand') {
+            if ($targetable_players === null) {
             $from_somewhere_for_player = clienttranslate(' from your hand');
             $from_somewhere_for_others = clienttranslate(' from his hand');
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from the hand of ${targetable_players}');
+                $from_somewhere_for_others = clienttranslate(' from the hand of ${targetable_players}');
+            }
         } else if ($location_from === 'score') {
             if ($targetable_players === null) {
                 $from_somewhere_for_player = clienttranslate(' from your score pile');
