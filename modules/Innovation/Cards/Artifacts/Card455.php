@@ -49,15 +49,15 @@ class Card455 extends AbstractCard
   }
 
   public function handlePlayerChoice(int $playerId) {
-    self::removeFromAuxiliaryArray($this->game->playerIdToPlayerIndex($playerId));
+    self::removeFromAuxiliaryArray($playerId);
     self::setAuxiliaryValue($playerId); // Track chosen player
   }
 
-  public function handleChoice(array $card) {
+  public function handleCardChoice(array $card) {
     $playerId = self::getAuxiliaryValue();
     foreach (self::getTopCards($playerId) as $topCard) {
       if ($topCard['color'] != $card['color']) {
-        self::transferToScorePile($card, $playerId);
+        self::transferToScorePile($topCard, $playerId);
       }
     }
 
