@@ -1347,6 +1347,17 @@ abstract class AbstractCard
     return $numColors;
   }
 
+  protected function countSplayedColors(int $playerId = null): int
+  {
+    $numColors = 0;
+    foreach (Colors::ALL as $color) {
+      if (self::isSplayed($color, $playerId)) {
+        $numColors++;
+      }
+    }
+    return $numColors;
+  }
+
   protected function getStandardIconCount(int $icon, int $playerId = null): int
   {
     return $this->game->getPlayerSingleRessourceCount(self::coercePlayerId($playerId), $icon);

@@ -11459,6 +11459,7 @@ class Innovation extends Table
         return $card_id <= 12
             || $card_id == 22
             || $card_id == 25
+            || $card_id == 29
             || $card_id == 42
             || $card_id == 44
             || $card_id == 51
@@ -11467,8 +11468,10 @@ class Innovation extends Table
             || $card_id == 65
             || $card_id == 67
             || $card_id == 72
+            || $card_id == 76
             || $card_id == 93
             || (99 <= $card_id && $card_id <= 100)
+            || $card_id == 104
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
             || $card_id >= 502;
@@ -11783,11 +11786,6 @@ class Innovation extends Table
                             $step_max = 2;
                         }
                     }
-                    break;
-
-                // id 29, age 3: Compass
-                case "29D1":
-                    $step_max = 2;
                     break;
 
                 // id 30, age 3: Paper        
@@ -12917,24 +12915,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 104, age 10: The internet.
-                case "104N1":
-                    $step_max = 1;
-                    break;
-
-                case "104N2":
-                    self::executeDraw($player_id, 10, 'score'); // "Draw and score a 10"
-                    break;
-
-                case "104N3":
-                    $number_of_clocks = self::getPlayerSingleRessourceCount($player_id, 6 /* clock */);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${clocks}.'), array('You' => 'You', 'n' => $number_of_clocks, 'clocks' => $clock));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
-                    for ($i = 0; $i < self::intDivision($number_of_clocks, 2); $i++) { // "For every two clocks on your board"
-                        self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                    }
-                    break;
-
                 // id 216, Relic age 4: Complex Numbers
                 case "216N1":
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
@@ -13417,38 +13397,6 @@ class Innovation extends Table
                     'owner_to'      => $this->innovationGameState->get('choice'),
                     // ie the opponent chosen on the previous step
                     'location_to'   => 'score'
-                );
-                break;
-
-            // id 29, age 3: Compass        
-            case "29D1A":
-                // "Transfer a top non-green card with a leaf from your board to my board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'board',
-
-                    'color'         => array(0, 1, 3, 4) /* non-green */,
-                    'with_icon'     => 2 /* with a leaf */
-                );
-                break;
-
-            case "29D1B":
-                // "Transfer a top card without a leaf from my board to your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $launcher_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'without_icon'  => 2 /* without a leaf */
                 );
                 break;
 
@@ -14249,23 +14197,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 76, age 8: Rocketry       
-            case "76N1A":
-                $number_of_clocks = self::getPlayerSingleRessourceCount($player_id, 6 /* clock */);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${clocks}.'), array('You' => 'You', 'n' => $number_of_clocks, 'clocks' => $clock));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
-                // "Return a card in any opponent's score pile for every two clocks on your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => self::intDivision($number_of_clocks, 2),
-
-                    'owner_from'    => 'any opponent',
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
             // id 77, age 8: Flight
             case "77N1A":
                 // "You may splay any one color of your cards up"
@@ -14785,20 +14716,6 @@ class Innovation extends Table
                     'player_id'        => $player_id,
 
                     'choose_yes_or_no' => true
-                );
-                break;
-
-            // id 104, age 10: The internet.
-            case "104N1A":
-                // "You may splay your green cards up"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 3,
-                    /* up */
-                    'color'           => array(2) /* green */
                 );
                 break;
 

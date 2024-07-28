@@ -8,7 +8,7 @@ use Innovation\Enums\Locations;
 class Card444 extends AbstractCard
 {
   // Hypersonics
-  //   - I DEMAND you return exactly two top cards of different color from your board of the same
+  //   - I DEMAND you return exactly two top cards of different colors from your board of the same
   //     value! If you do, return all cards of that value or less in your hand and score pile!
 
   public function initialExecution()
