@@ -6,7 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card72 extends AbstractCard
+class Card76 extends AbstractCard
 {
 
   // Rocketry:
