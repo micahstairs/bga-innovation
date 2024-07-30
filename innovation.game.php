@@ -652,7 +652,7 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 289"); // London
                 self::DbQuery("UPDATE card SET spot_6 = 6 WHERE id = 290"); // Toronto
                 self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 292"); // Melbourne
-                self::DbQuery("UPDATE card SET spot_6 = 1 WHERE id = 294"); // San Francisco
+                self::DbQuery("UPDATE card SET spot_4 = 1, spot_6 = 1 WHERE id = 294"); // San Francisco
                 self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 295"); // Chongqing
                 self::DbQuery("UPDATE card SET spot_4 = 5 WHERE id = 298"); // Los Angeles
                 self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 299"); // Hamburg
