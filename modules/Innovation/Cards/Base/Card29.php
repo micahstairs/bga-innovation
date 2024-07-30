@@ -3,12 +3,11 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
-class Card22 extends AbstractCard
+class Card29 extends AbstractCard
 {
 
   // Compass:

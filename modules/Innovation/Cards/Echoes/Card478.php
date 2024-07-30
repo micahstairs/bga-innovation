@@ -63,7 +63,7 @@ class Card478 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isSecondInteraction()) {
-      self::fullyExecute($card);
+      self::superExecute($card);
     }
   }
 

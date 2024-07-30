@@ -211,6 +211,9 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'replace_may_with_must'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `replace_may_with_must` BOOLEAN DEFAULT FALSE;");
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'super_execute'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `super_execute` BOOLEAN DEFAULT FALSE;");
+        }
 
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2310040231) {
@@ -2779,8 +2782,8 @@ class Innovation extends Table
         // Update text based on where the card is coming from
         if ($location_from === 'hand') {
             if ($targetable_players === null) {
-            $from_somewhere_for_player = clienttranslate(' from your hand');
-            $from_somewhere_for_others = clienttranslate(' from his hand');
+                $from_somewhere_for_player = clienttranslate(' from your hand');
+                $from_somewhere_for_others = clienttranslate(' from his hand');
             } else {
                 $from_somewhere_for_player = clienttranslate(' from the hand of ${targetable_players}');
                 $from_somewhere_for_others = clienttranslate(' from the hand of ${targetable_players}');
@@ -6335,6 +6338,9 @@ class Innovation extends Table
     /* Returns the ID of the next player under effect, or null */
     function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id)
     {
+        $current_nested_state = self::getCurrentNestedCardState();
+        $is_being_super_executed = $current_nested_state['super_execute'];
+
         // I demand
         $launcher_icon_count = self::getUniqueValueFromDB(
             self::format("
@@ -6350,16 +6356,27 @@ class Innovation extends Table
         );
         // I demand
         if ($dogma_effect_type == 0) {
-            $player_query = self::format(
-                "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
-                array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
-            );
+            if ($is_being_super_executed) {
+                $player_query = self::format(
+                    "player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
+                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                );
+            } else {
+                $player_query = self::format(
+                    "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
+                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                );
+            }
             // I compel
         } else if ($dogma_effect_type == 2) {
-            $player_query = self::format(
-                "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
-                array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
-            );
+            if ($is_being_super_executed) {
+                $player_query = "FALSE";
+            } else {
+                $player_query = self::format(
+                    "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
+                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                );
+            }
             // Non-demand or echo effect
         } else {
             $player_query = self::format(
@@ -7911,30 +7928,47 @@ class Innovation extends Table
         return true;
     }
 
-    function fullyExecute($card)
+    function superExecute($card)
     {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        $current_nested_state = self::getCurrentNestedCardState();
-
+        
         self::checkForChainAchievement($player_id);
 
-        $current_card = self::getCardInfo($current_nested_state['card_id']);
-        $card_1_args = self::getNotificationArgsForCardList([$current_card]);
-        $card_2_args = self::getNotificationArgsForCardList([$card]);
-        $initially_executed_card = self::getCardInfo($current_nested_state['executing_as_if_on_card_id']);
-        $icon = Icons::render($initially_executed_card['dogma_icon']);
-        self::notifyPlayer(
-            $player_id,
-            'logWithCardTooltips',
-            clienttranslate('${You} fully execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
-            ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]
-        );
-        self::notifyAllPlayersBut(
-            $player_id,
-            'logWithCardTooltips',
-            clienttranslate('${player_name} fully executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
-            ['player_name' => self::renderPlayerName($player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]
-        );
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            $card_args = self::getNotificationArgsForCardList([$card]);
+            self::notifyPlayer(
+                $player_id,
+                'logWithCardTooltips',
+                clienttranslate('${You} super-execute the effects of ${card}.'),
+                ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]
+            );
+            self::notifyAllPlayersBut(
+                $player_id,
+                'logWithCardTooltips',
+                clienttranslate('${player_name} super-executes the effects of ${card}.'),
+                ['player_name' => self::renderPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]
+            );
+        } else {
+            $current_nested_state = self::getCurrentNestedCardState();
+            $current_card = self::getCardInfo($current_nested_state['card_id']);
+            $card_1_args = self::getNotificationArgsForCardList([$current_card]);
+            $card_2_args = self::getNotificationArgsForCardList([$card]);
+            $initially_executed_card = self::getCardInfo($current_nested_state['executing_as_if_on_card_id']);
+            $icon = Icons::render($initially_executed_card['dogma_icon']);
+            self::notifyPlayer(
+                $player_id,
+                'logWithCardTooltips',
+                clienttranslate('${You} fully execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
+                ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]
+            );
+            self::notifyAllPlayersBut(
+                $player_id,
+                'logWithCardTooltips',
+                clienttranslate('${player_name} fully executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
+                ['player_name' => self::renderPlayerName($player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]
+            );
+        }
+
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/true);
     }
 
@@ -7954,6 +7988,9 @@ class Innovation extends Table
         // TODO(4E): There may be a bug here if a card calls this which does not actually mention
         // "self-execute" or "fully execute".
 
+        // TODO(4E): Update the implementation to match the new rule: "If, while self-executing or
+        // super-executing a card’s non-demand effect, you would perform the keyword “self-execute”
+        // or “super-execute”, first draw and achieve an 11, awarding yourself a Chain Achievement."
         if (!$this->innovationGameState->usingFourthEditionRules()) {
             return;
         }
@@ -7975,13 +8012,16 @@ class Innovation extends Table
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         $nested_card_state = self::getCurrentNestedCardState();
         
-        // Every card that says "execute the effects" also says "as if they were on this card"
+        $super_execute = false;
+        $as_if_on = $card['id'];
         if ($execute_demand_effects) {
-            $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
-        } else {
-            $as_if_on = $card['id'];
+            if ($this->innovationGameState->usingFourthEditionRules()) {
+                $super_execute = $nested_card_state['super_execute'];
+            } else {
+                // Every 1st/3rd edition card that says "execute the effects" also says "as if they were on this card"
+                $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
+            }
         }
-        
         if ($nested_card_state['replace_may_with_must']) {
             $replace_may_with_must = true;
         }
@@ -8020,13 +8060,14 @@ class Innovation extends Table
 
         self::DbQuery(self::format("
             INSERT INTO nested_card_execution
-                (nesting_index, card_id, executing_as_if_on_card_id, replace_may_with_must, launcher_id, current_effect_type, current_effect_number, step, step_max)
+                (nesting_index, card_id, executing_as_if_on_card_id, super_execute, replace_may_with_must, launcher_id, current_effect_type, current_effect_number, step, step_max)
             VALUES
-                ({nesting_index}, {card_id}, {as_if_on}, {replace_may_with_must}, {launcher_id}, {effect_type}, {effect_number}, -1, -1)
+                ({nesting_index}, {card_id}, {as_if_on}, {super_execute}, {replace_may_with_must}, {launcher_id}, {effect_type}, {effect_number}, -1, -1)
         ", [
             'nesting_index' => $next_nesting_index,
             'card_id' => $card['id'],
             'as_if_on' => $as_if_on,
+            'super_execute' => $super_execute ? 'TRUE' : 'FALSE',
             'replace_may_with_must' => $replace_may_with_must ? 'TRUE' : 'FALSE',
             'launcher_id' => $current_player_id,
             'effect_type' => $effect_type,
@@ -8062,6 +8103,7 @@ class Innovation extends Table
                     nesting_index,
                     card_id,
                     executing_as_if_on_card_id,
+                    super_execute,
                     replace_may_with_must,
                     card_location,
                     launcher_id,
@@ -11259,13 +11301,16 @@ class Innovation extends Table
                 $next_effect_type = 3;
             } else {
                 // The last echo effect is complete, so move onto the next non-echo effect
-                $next_effect_number = 1;
-                if (self::getCompelEffect($card_id)) {
+                $next_effect_number = 1; // non-demand
+                if ($nesting_index == 0 && self::getCompelEffect($card_id)) {
                     $next_effect_type = 2; // I compel
                 } else if (self::getDemandEffect($card_id)) {
-                    $next_effect_type = 0; // I demand
-                } else {
-                    $next_effect_type = 1; // non-demand
+                    // NOTE: In the 4th edition, demands on nested cards only happen if the card is being
+                    // super-executed. We don't need to handle the nested case for earlier editions, since
+                    // echo effects are not executed in that situation.
+                    if ($nesting_index == 0 || $nested_card_state['super_execute']) {
+                        $next_effect_type = 0; // I demand
+                    }
                 }
             }
 

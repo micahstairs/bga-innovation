@@ -47,7 +47,7 @@ class Card162_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isThirdInteraction()) {
-      self::fullyExecute($card);
+      self::superExecute($card);
     }
   }
 

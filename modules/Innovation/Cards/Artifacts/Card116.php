@@ -38,7 +38,7 @@ class Card116 extends AbstractCard
   {
     $topCard = self::getTopCardOfColor($card['color']);
     if (self::isFourthEdition() && self::isTheirTurn()) {
-      self::fullyExecute($topCard);
+      self::superExecute($topCard);
     } else {
       self::selfExecute($topCard);
     }

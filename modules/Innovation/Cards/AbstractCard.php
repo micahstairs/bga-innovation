@@ -341,10 +341,10 @@ abstract class AbstractCard
     return $this->game->selfExecute($card);
   }
 
-  protected function fullyExecute($card)
+  protected function superExecute($card)
   {
     if ($card) {
-      $this->game->fullyExecute($card);
+      $this->game->superExecute($card);
     }
   }
 

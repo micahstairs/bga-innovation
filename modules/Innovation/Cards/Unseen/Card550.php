@@ -44,7 +44,7 @@ class Card550 extends AbstractCard
       if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
         $meldedCard = self::getCard(self::getAuxiliaryValue());
         if (self::getPlayerId() === self::getLauncherId()) {
-          self::fullyExecute($meldedCard);
+          self::superExecute($meldedCard);
         } else {
           self::selfExecute($meldedCard);
         }

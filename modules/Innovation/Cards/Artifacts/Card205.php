@@ -18,7 +18,7 @@ class Card205 extends AbstractCard
   {
     $card = self::drawAndMeldType(10, CardTypes::ARTIFACTS);
     if (self::isFirstOrThirdEdition()) {
-      self::fullyExecute($card);
+      self::superExecute($card);
     } else {
       self::selfExecute($card);
     }
