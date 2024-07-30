@@ -3,8 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
 class Card104 extends AbstractCard
@@ -28,7 +26,7 @@ class Card104 extends AbstractCard
     } else {
       $numCardsToDrawAndMeld = 2;
       if (self::isFirstOrThirdEdition()) {
-      	$numCardsToDrawAndMeld = $this->game->intDivision(self::countColorsWithIcon(Icons::EFFICIENCY), 2);
+      	$numCardsToDrawAndMeld = $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2);
       }
       for ($i = 0; $i < $numCardsToDrawAndMeld; $i++) {
         self::drawAndMeld(10);

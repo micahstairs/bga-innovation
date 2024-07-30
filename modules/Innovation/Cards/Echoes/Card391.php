@@ -16,7 +16,7 @@ class Card391 extends AbstractCard
   //     Dentures. If there are none to score, draw and tuck a [6], then repeat this dogma effect.
   // - 4th edition
   //   - ECHO: Draw and tuck a [6].
-  //   - Score the top two non-bottom cards of the color of the last card you tucked due to
+  //   - Score your top two non-bottom cards of the color of the last card you tucked due to
   //     Dentures. If there are none to score, draw and tuck a [6], then repeat this effect.
   //   - You may splay your blue cards right.
 

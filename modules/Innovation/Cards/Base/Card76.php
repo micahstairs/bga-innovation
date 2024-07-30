@@ -22,12 +22,12 @@ class Card76 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
+    if (self::isFirstOrThirdEdition()) {
       return [
         'owner_from'     => 'any opponent',
         'location_from'  => Locations::SCORE,
         'return_keyword' => true,
-        'n'              => $this->game->intDivision(self::countColorsWithIcon(Icons::EFFICIENCY), 2),
+        'n'              => $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2),
       ];
     } else {
       return [

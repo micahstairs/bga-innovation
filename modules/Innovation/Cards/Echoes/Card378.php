@@ -15,8 +15,9 @@ class Card378 extends AbstractCard
   //     my board! If you do, draw and foreshadow a [6]!
   //   - Draw and foreshadow a [6].
   // - 4th edition:
-  //   - I DEMAND you transfer your top card with [HEALTH] or [INDUSTRY] of each non-red color to
-  //     my board! If you do, and Octant wasn't foreseen, draw and foreshadow a [6]!
+  //   - I DEMAND you transfer a top card with [HEALTH] or [INDUSTRY] of each non-red color from your
+  //     board to mine! If you transfer at least one, and Octant wasn't foreseen, draw and foreshadow
+  //     a [6]!
   //   - Draw and foreshadow a [6].
 
   public function initialExecution()

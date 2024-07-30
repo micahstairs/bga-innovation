@@ -13,8 +13,8 @@ class Card425 extends AbstractCard
   //   - Claim one standard achievement, if eligible. Your current score is doubled for the purpose
   //     of checking eligibility.
   // - 4th edition
-  //   - Claim one standard achievement, if eligible, doubling your current score for the purpose of
-  //     checking eligibility. If you do, and Artifical Heart was foreseen, repeat this effect.
+  //   - Claim one available standard achievement, if eligible, doubling your current score for the
+  //     purpose of checking eligibility. If you do, and Artifical Heart was foreseen, repeat this effect.
 
   public function initialExecution()
   {
