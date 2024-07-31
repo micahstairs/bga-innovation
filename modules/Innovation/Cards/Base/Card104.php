@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
 class Card104 extends AbstractCard
@@ -32,6 +34,15 @@ class Card104 extends AbstractCard
         self::drawAndMeld(10);
       }
     }
+  }
+
+  public function getInteractionOptions(): array
+  {
+    return [
+      'can_pass'        => true,
+      'splay_direction' => Directions::UP,
+      'color'           => [Colors::GREEN],
+    ];
   }
 
 }
