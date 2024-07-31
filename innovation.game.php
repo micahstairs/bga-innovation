@@ -11301,7 +11301,8 @@ class Innovation extends Table
                 $next_effect_type = 3;
             } else {
                 // The last echo effect is complete, so move onto the next non-echo effect
-                $next_effect_number = 1; // non-demand
+                $next_effect_number = 1;
+                $next_effect_type = 1; // non-demand
                 if ($nesting_index == 0 && self::getCompelEffect($card_id)) {
                     $next_effect_type = 2; // I compel
                 } else if (self::getDemandEffect($card_id)) {
