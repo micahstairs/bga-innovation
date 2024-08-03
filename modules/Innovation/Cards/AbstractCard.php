@@ -29,7 +29,7 @@ abstract class AbstractCard
   public function oneTimeSetup()
   {
     // Subclasses are expected to override this method if the card need to do any one-time setup before any player executes anything.
-    // TODO(LATER): This method isn't actually called from the game logic yet. We need to wire it up if we want to use this method.
+    // Even if the card is endorsed, this method will still only be called once.
   }
 
   public abstract function initialExecution();
@@ -481,7 +481,7 @@ abstract class AbstractCard
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
   }
 
-  protected function return (?array $card): ?array
+  protected function return(?array $card): ?array
   {
     if (!$card) {
       return null;

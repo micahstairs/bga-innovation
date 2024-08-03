@@ -8,8 +8,8 @@ class Card535 extends AbstractCard
 {
 
   // Placebo:
-  //   - Return at least one card of one color from your board, from the top. Draw a [7] for
-  //     each card you return. If you return exactly one [7], draw an [8].
+  //   - Return a top card on your board, then you may repeat as many times as you want with the
+  //     same color. Draw a [7] for each card you return. If you return exactly one [7], draw an [8].
 
   public function initialExecution()
   {

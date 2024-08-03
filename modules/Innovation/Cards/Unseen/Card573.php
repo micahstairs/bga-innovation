@@ -9,7 +9,7 @@ class Card573 extends AbstractCard
 {
 
   // Clown Car:
-  //   - I demand you transfer a card from my score pile to your board! If the transferred card has
+  //   - I demand you meld a card from my score pile! If the melded card has
   //     no [PROSPERITY], repeat this effect!
 
   public function initialExecution()
@@ -23,7 +23,7 @@ class Card573 extends AbstractCard
       'owner_from'    => self::getLauncherId(),
       'location_from' => 'score',
       'owner_to'      => self::getPlayerId(),
-      'location_to'   => 'board',
+      'meld_keyword'  => true,
     ];
   }
 

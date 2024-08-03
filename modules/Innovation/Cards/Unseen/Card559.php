@@ -9,9 +9,8 @@ class Card559 extends AbstractCard
 {
 
   // Handbag:
-  //   - You may choose to either transfer the bottom card of each color from your board to your
-  //     hand, or tuck all cards from your score pile, or choose a value and score all cards from
-  //     your hand of that value.
+  //   - You may choose to either transfer your bottom card of each color to your hand, or tuck all
+  //     cards from your score pile, or choose a value and score all cards from your hand of that value.
 
   public function initialExecution()
   {

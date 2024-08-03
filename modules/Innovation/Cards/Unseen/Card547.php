@@ -9,7 +9,7 @@ class Card547 extends AbstractCard
 {
 
   // Camouflage:
-  //   - Choose to either junk exactly two top cards of different color and equal value on your
+  //   - Choose to either junk exactly two top cards of different colors and equal value on your
   //     board, then safeguard them, or score exactly two of your secrets of equal value.
   //   - Draw a [7] for each special achievement you have.
 

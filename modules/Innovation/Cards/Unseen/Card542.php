@@ -9,8 +9,8 @@ class Card542 extends AbstractCard
 
   // Sabotage:
   //   - I DEMAND you draw a [6]! Reveal the cards in your hand! Return the card of my choice from
-  //     your hand! Tuck the top card from your board and all cards from your score pile of the
-  //     same color as the returned card!
+  //     your hand! Tuck your top card and all cards from your score pile of the same color as the
+  //     returned card!
 
   public function initialExecution()
   {

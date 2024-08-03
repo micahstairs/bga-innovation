@@ -214,6 +214,9 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'super_execute'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `super_execute` BOOLEAN DEFAULT FALSE;");
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'performed_one_time_setup'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `performed_one_time_setup` INT DEFAULT NULL;");
+        }
 
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2310040231) {
@@ -8113,6 +8116,7 @@ class Innovation extends Table
                     step,
                     step_max,
                     post_execution_index,
+                    performed_one_time_setup,
                     auxiliary_value,
                     auxiliary_value_2
                 FROM
@@ -9184,7 +9188,8 @@ class Innovation extends Table
                     launcher_id = {launcher_id},
                     current_effect_type = {effect_type},
                     current_effect_number = {effect_number},
-                    post_execution_index = 0
+                    post_execution_index = 0,
+                    performed_one_time_setup = FALSE
                 WHERE
                     nesting_index = 0",
                 array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number)
@@ -11226,13 +11231,24 @@ class Innovation extends Table
         $current_effect_number = $nested_card_state['current_effect_number'];
         $card = self::getCardInfo($card_id);
         $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, $card);
+        $launcher_id = self::getLauncherId();
+
+        // Perform one-time setup for the effect
+        if (!$nested_card_state['performed_one_time_setup']) {
+            if (self::isInSeparateFile($card_id)) {
+                $executionState = (new ExecutionState($this))
+                    ->setEdition($this->innovationGameState->getEdition())
+                    ->setLauncherId($launcher_id);
+                $cardInstance = self::getCardInstance($card_id, $executionState);
+                $cardInstance->oneTimeSetup();
+            }
+            self::updateCurrentNestedCardState('performed_one_time_setup', true);
+        }
 
         // Search for the first player who will undergo/share the effects, if any
-        $launcher_id = self::getLauncherId();
-        // During nested execution echo/non-demand effects are not shared with other players.
+        // NOTE: During nested execution echo/non-demand effects are not shared with other players.
         $first_player = $nested_card_state['nesting_index'] > 0 && ($current_effect_type == 1 || $current_effect_type == 3) ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
         if ($first_player === null) {
-            // There is no player affected by the effect
             self::notifyGeneralInfo(
                 "<span class='minor_information'>" . clienttranslate('Nobody is affected by the ${qualified_effect} of the card.') . "</span>",
                 array(
@@ -11520,7 +11536,7 @@ class Innovation extends Table
             || $card_id == 104
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
-            || $card_id >= 502;
+            || $card_id >= 501;
     }
 
     function getCardInstance($card_id, $execution_state)
@@ -11617,7 +11633,6 @@ class Innovation extends Table
         $lightbulb = Icons::render(3);
         $tower = Icons::render(4);
         $factory = Icons::render(5);
-        $clock = Icons::render(6);
 
         $using_execution_status_object = false;
 
@@ -13015,24 +13030,6 @@ class Innovation extends Table
 
                 case "500N2":
                     $step_max = 1;
-                    break;
-
-                // id 501, Unseen age 2: Exile
-                case "501D1":
-                    $step_max = 2;
-                    self::setAuxiliaryValue(0);
-                    break;
-
-                case "501N1":
-                    if (self::getAuxiliaryValue() == 1) {
-                        // "If exactly one card was returned due to the demand, return Exile and draw a 3."
-                        $exile_card = self::getCardInfo(501);
-                        if ($exile_card['location'] != 'deck') {
-                            // don't return this multiple times
-                            self::returnCard(self::getCardInfo(501));
-                        }
-                        self::executeDraw($player_id, 3);
-                    }
                     break;
 
                 default:
@@ -14927,36 +14924,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 501, Unseen age 2: Exile
-            case "501D1A":
-                // "I demand you return a top card without a leaf from your board!"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'without_icon'  => 2,
-                );
-                break;
-
-            case "501D1B":
-                // "Return all cards of the returned card's value from your score pile!"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => $this->innovationGameState->get('age_last_selected'),
-                );
-                break;
-
             default:
                 if (!self::isInSeparateFile($card_id)) {
                     // This should not happen
@@ -15748,15 +15715,6 @@ class Innovation extends Table
                                 self::setAuxiliaryArray($card_id_array);
                             }
                         }
-                        break;
-
-                    // id 501, Unseen age 2: Exile
-                    case "501D1A":
-                        self::setAuxiliaryValue($n);
-                        break;
-
-                    case "501D1B":
-                        self::setAuxiliaryValue($n + self::getAuxiliaryValue());
                         break;
 
                 }

@@ -2418,6 +2418,7 @@ $this->textual_card_infos = array(
         'i_demand_effect_fourth'              => clienttranslate('${I demand} you choose a standard icon type! Transfer all top cards without that icon from your board to my score pile!'),
         'non_demand_effect_1_first_and_third' => clienttranslate('If you have fewer ${icon_5}, fewer ${icon_1}, and fewer ${icon_4} than each other player, you win.'),
         'non_demand_effect_1_fourth'          => clienttranslate('If you have fewer ${icon_5}, fewer ${icon_1}, and fewer ${icon_4} than each opponent, you win.'),
+        'separate_4E_implementation'          => true,
     ),
 
     429 => array(
@@ -2717,7 +2718,7 @@ $this->textual_card_infos = array(
 
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
-        'non_demand_effect_1' => clienttranslate('You may return a ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using a value one higher.'),
+        'non_demand_effect_1' => clienttranslate('You may return a card of value ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using a value one higher.'),
         'non_demand_effect_2' => clienttranslate('You may junk all cards in the ${age_1} deck.'),
     ),
 
@@ -2810,7 +2811,7 @@ $this->textual_card_infos = array(
     501 => array(
         'name'                => clienttranslate('Exile'),
         'i_demand_effect'     => clienttranslate('${I demand} you return a top card without ${icon_2} from your board! Return all cards of the returned card\'s value from your score pile!'),
-        'non_demand_effect_1' => clienttranslate('If exactly one card was returned due to the demand, return Exile and draw a ${age_3}.'),
+        'non_demand_effect_1' => clienttranslate('If exactly one card was returned due to the demand, return Exile if it is a top card on any board and draw a ${age_3}.'),
     ),
 
     502 => array(
@@ -3009,7 +3010,7 @@ $this->textual_card_infos = array(
 
     535 => array(
         'name'                => clienttranslate('Placebo'),
-        'non_demand_effect_1' => clienttranslate('Return at least one card of one color from your board, from the top. Draw a ${age_7} for each card you return. If you return exactly one ${age_7}, draw an ${age_8}.'),
+        'non_demand_effect_1' => clienttranslate('Return a top card on your board, then you may repeat as many times as you want with the same color. Draw a ${age_7} for each card you return. If you return exactly one ${age_7}, draw an ${age_8}.'),
     ),
 
     536 => array(
@@ -3049,7 +3050,7 @@ $this->textual_card_infos = array(
 
     542 => array(
         'name'            => clienttranslate('Sabotage'),
-        'i_demand_effect' => clienttranslate('${I demand} you draw a ${age_6}! Reveal the cards in your hand! Return the card of my choice from your hand! Tuck the top card from your board and all cards from your score pile of the same color as the returned card!'),
+        'i_demand_effect' => clienttranslate('${I demand} you draw a ${age_6}! Reveal the cards in your hand! Return the card of my choice from your hand! Tuck your top card and all cards from your score pile of the same color as the returned card!'),
     ),
 
     543 => array(
@@ -3079,7 +3080,7 @@ $this->textual_card_infos = array(
 
     547 => array(
         'name'                => clienttranslate('Camouflage'),
-        'non_demand_effect_1' => clienttranslate('Choose to either junk exactly two top cards of different color and equal value on your board, then safeguard them, or score exactly two of your secrets of equal value.'),
+        'non_demand_effect_1' => clienttranslate('Choose to either junk exactly two top cards of different colors and equal value on your board, then safeguard them, or score exactly two of your secrets of equal value.'),
         'non_demand_effect_2' => clienttranslate('Draw a ${age_7} for each special achievement you have.'),
     ),
 
@@ -3146,12 +3147,12 @@ $this->textual_card_infos = array(
 
     559 => array(
         'name'                => clienttranslate('Handbag'),
-        'non_demand_effect_1' => clienttranslate('You may choose to either transfer the bottom card of each color from your board to your hand, or tuck all cards from your score pile, or choose a value and score all cards from your hand of that value.'),
+        'non_demand_effect_1' => clienttranslate('You may choose to either transfer your bottom card of each color to your hand, or tuck all cards from your score pile, or choose a value and score all cards from your hand of that value.'),
     ),
 
     560 => array(
         'name'                => clienttranslate('Hitchhiking'),
-        'non_demand_effect_1' => clienttranslate('Choose another player. That player chooses and transfers a card from their hand to your board. Self-execute the card, with that player making all decisions for you with visibility of your cards.'),
+        'non_demand_effect_1' => clienttranslate('Choose another player. They transfer a card from their hand to your board. If they do, self-execute the card, with that player making all decisions and allowed to look at any card that you can.'),
     ),
 
     561 => array(
@@ -3174,7 +3175,7 @@ $this->textual_card_infos = array(
     564 => array(
         'name'                => clienttranslate('Opus Dei'),
         'non_demand_effect_1' => clienttranslate('Reveal the highest card in your score pile. If you do, splay your cards of the revealed card\'s color up, and safeguard the revealed card.'),
-        'non_demand_effect_2' => clienttranslate('Draw an ${age_8} for each color on your board splayed up.'),
+        'non_demand_effect_2' => clienttranslate('Draw an ${age_8} for every color on your board splayed up.'),
     ),
 
     /* Unseen - Age 9 */
@@ -3211,7 +3212,7 @@ $this->textual_card_infos = array(
 
     570 => array(
         'name'                => clienttranslate('Teleprompter'),
-        'non_demand_effect_1' => clienttranslate('Reveal the top card of any value deck of any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.'),
+        'non_demand_effect_1' => clienttranslate('Reveal the top card of any value deck from any set. Execute the first sentence of non-demand dogma effect text on the card. If you do, return the revealed card and repeat this effect using the next sentence.'),
     ),
 
     571 => array(
@@ -3227,12 +3228,12 @@ $this->textual_card_infos = array(
 
     573 => array(
         'name'            => clienttranslate('Clown Car'),
-        'i_demand_effect' => clienttranslate('${I demand} you transfer a card from my score pile to your board! If the transferred card has no ${icon_1}, repeat this effect!'),
+        'i_demand_effect' => clienttranslate('${I demand} you meld a card from my score pile! If the melded card has no ${icon_1}, repeat this effect!'),
     ),
 
     574 => array(
         'name'                => clienttranslate('Urban Legend'),
-        'non_demand_effect_1' => clienttranslate('For each color on your board with ${icon_5}, draw a ${age_9}. If you draw five cards, you win.'),
+        'non_demand_effect_1' => clienttranslate('For every color on your board with ${icon_5}, draw a ${age_9}. If you draw five cards, you win.'),
         'non_demand_effect_2' => clienttranslate('You may splay your yellow or purple cards up.'),
     ),
 
@@ -3344,7 +3345,7 @@ $this->textual_card_infos = array(
 
     593 => array(
         'name'                => clienttranslate('Holography'),
-        'non_demand_effect_1' => clienttranslate('Choose red, blue, or green. Score all but your top five cards of that color, then splay it aslant. If you do both, exchange all lowest cards in your score pile with all your claimed standard achievements of lower value.'),
+        'non_demand_effect_1' => clienttranslate('Choose red, blue, or green. Score all but your top five cards of that color, then splay it aslant. If you do both, exchange all the lowest cards in your score pile with all your claimed standard achievements of lower value.'),
     ),
 
     594 => array(
@@ -3356,7 +3357,7 @@ $this->textual_card_infos = array(
 
     595 => array(
         'name'                               => clienttranslate('Confidence'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 5 or higher and four secrets.'),
+        'condition_for_claiming'             => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 5 or higher and four or more secrets.'),
         'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Assassination.')
     ),
 
