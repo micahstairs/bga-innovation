@@ -37,9 +37,10 @@ class Card149_4E extends AbstractCard
       ];
     } else {
       return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-        'color'         => [Colors::GREEN],
+        'location_from'    => Locations::HAND,
+        'meld_keyword'     => true,
+        'color'            => [Colors::GREEN],
+        'reveal_if_unable' => true,
       ];
     }
   }
