@@ -23,7 +23,7 @@ class Card133 extends AbstractCard
     if (self::isFirstNonDemand()) {
       $value = self::getMaxValue(self::getTopCards());
       self::drawType($value, CardTypes::ARTIFACTS);
-      if (self::isFourthEdition()()) {
+      if (self::isFourthEdition()) {
         self::junkDeck($value, CardTypes::ARTIFACTS);
       }
     } else if (self::isSecondNonDemand()) {

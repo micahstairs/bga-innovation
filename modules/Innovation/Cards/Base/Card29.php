@@ -32,7 +32,7 @@ class Card29 extends AbstractCard
         'location_to'   => Locations::BOARD,
         'owner_to'      => self::getLauncherId(),
         'color'         => Colors::NON_GREEN,
-        'icon'          => Icons::HEALTH,
+        'with_icon'     => Icons::HEALTH,
       ];
     } else {
       return [
