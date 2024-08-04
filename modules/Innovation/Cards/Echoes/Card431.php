@@ -51,12 +51,13 @@ class Card431 extends AbstractCard
       ];
     } else {
       return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'with_icon'     => Icons::EFFICIENCY,
+        'can_pass'          => true,
+        'n_min'             => 1,
+        'n_max'             => 'all',
+        'location_from'     => 'hand',
+        'tuck_keyword'      => true,
+        'with_icon'         => Icons::EFFICIENCY,
+        'refresh_selection' => self::isFourthEdition(), // In 4th edition, need to refresh in case a splay causes a City to be drawn
       ];
     }
   }
