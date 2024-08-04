@@ -11,10 +11,10 @@ class Card133 extends AbstractCard
 
   // Dead Sea Scrolls
   // - 3rd edition:
+  //   - Draw an Artifact of value equal to the value of your highest top card.
+  // - 4th edition:
   //   - Draw an Artifact of value equal to the value of your highest top card. Junk the Artifact
   //     deck of that value.
-  // - 4th edition:
-  //   - Draw an Artifact of value equal to the value of your highest top card.
   //   - Choose a player. Junk an available achievement of value equal to the highest top card on
   //    that player's board.
 
@@ -23,7 +23,9 @@ class Card133 extends AbstractCard
     if (self::isFirstNonDemand()) {
       $value = self::getMaxValue(self::getTopCards());
       self::drawType($value, CardTypes::ARTIFACTS);
-      self::junkDeck($value, CardTypes::ARTIFACTS);
+      if (self::isFourthEdition()()) {
+        self::junkDeck($value, CardTypes::ARTIFACTS);
+      }
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(2);
     }

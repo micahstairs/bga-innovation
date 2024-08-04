@@ -15,7 +15,7 @@ class Card144 extends AbstractCard
   // - 4th edition:
   //   - Return a card from your hand. If you do, return a top card of the same color from your
   //     board and a card of the same color from your score pile. If you do all three, claim an
-  //     achievement ignoring eligibility.
+  //     available achievement ignoring eligibility.
 
 
   public function initialExecution()

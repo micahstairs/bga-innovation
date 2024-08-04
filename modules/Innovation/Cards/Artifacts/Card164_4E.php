@@ -8,7 +8,7 @@ use Innovation\Enums\Locations;
 class Card164_4E extends AbstractCard
 {
   // Almira, Queen of Castile (4th edition):
-  //   - Meld a card from your hand. If you do, claim an achievement of matching value, ignoring
+  //   - Meld a card from your hand. If you do, claim an available achievement of matching value, ignoring
   //     eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available
   //     achievement, if there is one.
 

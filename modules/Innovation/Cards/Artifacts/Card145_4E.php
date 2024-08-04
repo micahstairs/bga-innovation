@@ -11,10 +11,9 @@ class Card145_4E extends AbstractCard
 {
 
   // Petition of Right (4th edition):
-  //   - I COMPEL you to transfer a card from your score pile to my score pile for each color with
+  //   - I COMPEL you to transfer a card from your score pile to my score pile for every color with
   //     [AUTHORITY] on your board!
   //   - Junk an available achievement of value equal to the number of [AUTHORITY] on your board.
-
 
   public function initialExecution()
   {

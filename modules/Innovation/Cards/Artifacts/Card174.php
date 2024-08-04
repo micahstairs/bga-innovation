@@ -7,9 +7,14 @@ use Innovation\Enums\Locations;
 
 class Card174 extends AbstractCard
 {
-  // Marcha Real
+  // Marcha Real:
+  // - 3rd edition:
   //   - Reveal and return two cards from your hand. If they have the same value, draw a card of
   //     value one higher. If they have the same color, claim an achievement, ignoring eligibility.
+  // - 4th edition:
+  //   - Reveal and return two cards from your hand. If they have the same value, draw a card of
+  //     value one higher. If they have the same color, claim an available achievement, ignoring
+  //     eligibility.
 
   public function initialExecution()
   {
