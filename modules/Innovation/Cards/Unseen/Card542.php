@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card542 extends AbstractCard
 {
@@ -47,6 +48,9 @@ class Card542 extends AbstractCard
       foreach (self::getCards('revealed') as $card) {
         self::transferToHand($card);
       }
+    }
+    if (self::isSecondInteraction() && self::countCards(Locations::SCORE) > 0) {
+      self::revealScorePile();
     }
   }
 
