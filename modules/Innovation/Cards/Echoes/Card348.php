@@ -39,7 +39,7 @@ class Card348 extends AbstractCard
     if (self::isEcho()) {
       return [
         'can_pass' => true,
-        'choices'  => [1, 2],
+        'choices'  => [2, 3],
       ];
     } else {
       return [
