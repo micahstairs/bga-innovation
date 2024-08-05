@@ -69,7 +69,7 @@ class Card380 extends AbstractCard
 
   public function handleValueChoice($value)
   {
-    if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE) > 0) {
+    if (self::getBaseDeckCount($value) > 0) {
       self::setAuxiliaryValue2($value); // Track which deck was chosen
       self::setMaxSteps(2);
     }

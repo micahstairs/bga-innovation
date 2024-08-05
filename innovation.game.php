@@ -10605,15 +10605,6 @@ class Innovation extends Table
                     $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                     break;
 
-                // id 92, age 9: Suburbia
-                case "92N2A":
-                    $message_args_for_player['age_9'] = self::getAgeSquareWithType(9, 0);
-                    $message_args_for_others['age_9'] = self::getAgeSquareWithType(9, 0);
-                    $message_for_player = clienttranslate('Do ${you} want to junk the ${age_9} pile?');
-                    $message_for_others = clienttranslate('${player_name} may junk the ${age_9} pile');
-                    $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                    break;
-
                 // id 102, age 10: Stem cells 
                 case "102N1A":
                     $message_for_player = clienttranslate('Do ${you} want to score all the cards from your hand?');
@@ -11531,6 +11522,7 @@ class Innovation extends Table
             || $card_id == 67
             || $card_id == 72
             || $card_id == 76
+            || $card_id == 92
             || $card_id == 93
             || (99 <= $card_id && $card_id <= 100)
             || $card_id == 104
@@ -12643,16 +12635,6 @@ class Innovation extends Table
                     break;
 
                 case "91N2":
-                    // NOTE: This is only in 4th edition and beyond
-                    $step_max = 1;
-                    break;
-
-                // id 92, age 9: Suburbia
-                case "92N1":
-                    $step_max = 1;
-                    break;
-
-                case "92N2":
                     // NOTE: This is only in 4th edition and beyond
                     $step_max = 1;
                     break;
@@ -14647,32 +14629,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 92, age 9: Suburbia
-            case "92N1A":
-                // "You may tuck any number of cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'bottom_to'     => true
-                );
-                break;
-
-            case "92N2A":
-                // "You may junk all cards in the 9 deck."
-                $options = array(
-                    'player_id'        => $player_id,
-                    'can_pass'         => true,
-                    'choose_yes_or_no' => true,
-                );
-                break;
-
             // id 94, age 9: Specialization
             case "94N1A":
                 // "Reveal a card from your hand"
@@ -15562,13 +15518,6 @@ class Innovation extends Table
                         self::executeDraw($player_id, 10); //
                         break;
 
-                    // id 92, age 9: Suburbia
-                    case "92N1A":
-                        for ($i = 0; $i < $n; $i++) { // "For each card you tucked"
-                            self::executeDraw($player_id, 1, 'score'); // "Draw and score a 1"
-                        }
-                        break;
-
                     // id 94, age 9: Specialization
                     case "94N1A":
                         if ($n > 0) { // Unsaid rule: the player must have at least one card to show from his hand, else, the effect cant' continue
@@ -16398,13 +16347,6 @@ class Innovation extends Table
                 case "91N2A":
                     if ($choice == 1) {
                         self::junkBaseDeck(10);
-                    }
-                    break;
-
-                // id 92, age 9: Suburbia
-                case "92N2A":
-                    if ($choice == 1) {
-                        self::junkBaseDeck(9);
                     }
                     break;
 

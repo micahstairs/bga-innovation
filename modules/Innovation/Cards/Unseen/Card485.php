@@ -20,7 +20,7 @@ class Card485 extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
       self::setAuxiliaryValue(1); // Track the value to return next
-    } else {
+    } else if (self::getBaseDeckCount(1) > 0) {
       self::setMaxSteps(1);
     }
   }
