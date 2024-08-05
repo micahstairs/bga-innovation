@@ -11,7 +11,8 @@ class Card422_4E extends AbstractCard
   // Wristwatch (4th edition):
   //   - ECHO: Tuck a top card from your board.
   //   - If Wristwatch was foreseen, return all non-bottom cards from your board.
-  //   - For each bonus on your board, draw and meld a card of that value, in ascending order.
+  //   - For each value in ascending order, if you have a bonus on your board of that
+  //     value, draw and meld a card of that value.
 
   public function initialExecution()
   {

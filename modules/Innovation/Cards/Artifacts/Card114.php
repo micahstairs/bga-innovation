@@ -14,7 +14,7 @@ class Card114 extends AbstractCard
   //     value two higher. If the drawn card is purple, meld it and execute each of its non-demand
   //     dogma effects. Do not share them.
   // - 4th edition:
-  //   - Return a purple card from your hand. If you do, draw and reveal a card of any type of
+  //   - Return a purple card from your hand. If you do, draw and reveal a card from any set of
   //     value two higher. If the drawn card is purple, meld it and self-execute it.
 
   public function initialExecution()

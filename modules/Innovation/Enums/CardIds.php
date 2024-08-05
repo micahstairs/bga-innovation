@@ -37,6 +37,7 @@ class CardIds
   const HISTORY = 438;
   const SUPREMACY = 439;
   const DEEPFAKE = 478;
+  const EXILE = 501;
   const SPANISH_INQUISITION = 518;
   const CONFIDENCE = 595;
   const ZEN = 596;

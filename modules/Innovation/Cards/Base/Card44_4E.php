@@ -11,8 +11,8 @@ use Innovation\Enums\Locations;
 class Card44_4E extends AbstractCard
 {
   // Reformation (4th edition):
-  //   - You may tuck a card from your hand for every color on your board with [HEALTH].
   //   - You may splay your yellow or purple cards right.
+  //   - You may tuck a card from your hand for every splayed color on your board.
 
   public function initialExecution()
   {
@@ -23,16 +23,16 @@ class Card44_4E extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       return [
-        'can_pass'      => true,
-        'n'             => self::countColorsWithIcon(Icons::HEALTH),
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-      ];
-    } else {
-      return [
         'can_pass'        => true,
         'splay_direction' => Directions::RIGHT,
         'color'           => [Colors::YELLOW, Colors::PURPLE],
+      ];
+    } else {
+      return [
+        'can_pass'      => true,
+        'n'             => self::countSplayedColors(),
+        'location_from' => Locations::HAND,
+        'tuck_keyword'  => true,
       ];
     }
   }

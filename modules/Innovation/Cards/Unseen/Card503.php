@@ -43,6 +43,7 @@ class Card503 extends AbstractCard
 
   public function handleColorChoice(int $color)
   {
+    self::notifyColorChoice($color);
     self::setAuxiliaryValue($color); // Track color to meld
   }
 

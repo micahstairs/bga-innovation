@@ -8,7 +8,7 @@ class Card126 extends AbstractCard
 {
 
   // Rosetta Stone
-  //   - Choose a card type. Draw two [2] of that type. Meld one and transfer the other to an
+  //   - Choose a set. Draw two [2] from that set. Meld one and transfer the other to an
   //     opponent's board.
 
   public function initialExecution()

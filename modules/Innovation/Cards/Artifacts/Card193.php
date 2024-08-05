@@ -37,7 +37,7 @@ class Card193 extends AbstractCard
       self::notifyOthers(clienttranslate('${player_name} melded a card with no effects.'));
       self::win();
     } else if (self::isFirstOrThirdEdition()) {
-      self::fullyExecute($card);
+      self::superExecute($card);
     } else if (self::isFourthEdition()) {
       self::selfExecute($card);
     }

@@ -34,7 +34,7 @@ class Card456 extends AbstractCard
     $other_card_id = self::getAuxiliaryArray()[0];
     $other_card = self::meld(self::getCard($other_card_id));
     if (self::isTheirTurn()) {
-      self::fullyExecute($other_card);
+      self::superExecute($other_card);
     } else {
       self::selfExecute($other_card);
     }

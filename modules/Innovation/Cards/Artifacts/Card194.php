@@ -15,7 +15,7 @@ class Card194 extends AbstractCard
   // - 4th edition:
   //   - I COMPEL you to return one of your claimed standard achievements!
   //   - Draw and reveal an [8]. The single player with the highest top card of the drawn card's
-  //     color achieves the drawn card, ignoring eligibility. If they do, repeat this effect.
+  //     color achieves the top card, ignoring eligibility. If they do, repeat this effect.
 
   public function initialExecution()
   {
@@ -31,7 +31,11 @@ class Card194 extends AbstractCard
           $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
           self::notifyPlayer(clienttranslate('${You} have the highest top ${color} card.'), $args, $playerId);
           self::notifyOthers(clienttranslate('${player_name} has the highest top ${color} card.'), $args, $playerId);
-          self::achieve($card, $playerId);
+          if (self::isFirstOrThirdEdition()) {
+            self::achieve($card, $playerId);
+          } else {
+            self::achieve(self::getTopCardOfColor($color), $playerId);
+          }
         } else {
           self::transferToHand($card);
           return;

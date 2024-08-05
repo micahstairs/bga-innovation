@@ -11,7 +11,7 @@ class Card415_4E extends AbstractCard
 {
 
   // Calculator (4th edition):
-  //   - Score two bottom non-blue cards of different color on your board. If you score two and they
+  //   - Score two bottom non-blue cards of different colors on your board. If you score two and they
   //     have a total value less than 12, draw a card of that total value and repeat this effect
   //     (once only).
   //   - You may splay your blue cards up.

@@ -11,7 +11,7 @@ class Card458 extends AbstractCard
 
   // Jumbo Kingdom
   //   - Choose a color on your board. Junk all cards of that color from all boards.
-  //   - Choose a card in the junk. Score all cards of the chosen card's value in the junk. If you
+  //   - Choose a valued card in the junk. Score all cards of the chosen card's value in the junk. If you
   //     do, and you score fewer than eleven points, repeat this effect.
 
   public function initialExecution()

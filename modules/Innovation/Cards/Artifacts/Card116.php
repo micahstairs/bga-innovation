@@ -13,8 +13,8 @@ class Card116 extends AbstractCard
   //     the top card's non-demand dogma effects. Do not share them.
   //   - Claim an achievement, if eligible.
   // - 4th edition:
-  //   - Score a card from your hand. If you have a top card matching its color, super-execute it
-  //     if it is your turn, otherwise self-execute it.
+  //   - Score a card from your hand. If you have a top card matching its color, super-execute
+  //     that top card it is your turn, otherwise self-execute it.
 
   public function initialExecution()
   {
@@ -38,7 +38,7 @@ class Card116 extends AbstractCard
   {
     $topCard = self::getTopCardOfColor($card['color']);
     if (self::isFourthEdition() && self::isTheirTurn()) {
-      self::fullyExecute($topCard);
+      self::superExecute($topCard);
     } else {
       self::selfExecute($topCard);
     }

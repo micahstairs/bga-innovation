@@ -10,7 +10,7 @@ class Card593 extends AbstractCard
 
   // Holography:
   //   - Choose red, blue, or green. Score all but your top five cards of that color, then splay it
-  //     aslant. If you do both, exchange all lowest cards in your score pile with all your
+  //     aslant. If you do both, exchange all the lowest cards in your score pile with all your
   //     claimed standard achievements of lower value.
 
   public function initialExecution()

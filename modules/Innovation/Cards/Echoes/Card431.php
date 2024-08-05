@@ -18,9 +18,9 @@ class Card431 extends AbstractCard
   //     color you tucked into.
   // - 4th edition
   //   - ECHO: Draw and foreshadow an [11].
-  //   - Draw a [10] for every two [EFFICIENCY] on your board.
+  //   - Draw a [10] for every color on your board with [EFFICIENCY].
   //   - You may splay your green cards up.
-  //   - You may tuck any number of cards with a [EFFICIENCY] from your hand, splaying up each
+  //   - You may tuck any number of cards with [EFFICIENCY] from your hand, splaying up each
   //     color into which you tuck.
 
   public function initialExecution()
@@ -28,7 +28,11 @@ class Card431 extends AbstractCard
     if (self::isEcho()) {
       self::drawAndForeshadow(11);
     } else if (self::isFirstNonDemand()) {
-      $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2);
+      if (self::isFirstOrThirdEdition()) {
+        $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2);
+      } else {
+        $numCards = self::countColorsWithIcon(Icons::EFFICIENCY);
+      }
       for ($i = 0; $i < $numCards; $i++) {
         self::draw(10);
       }
@@ -47,12 +51,13 @@ class Card431 extends AbstractCard
       ];
     } else {
       return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'with_icon'     => Icons::EFFICIENCY,
+        'can_pass'          => true,
+        'n_min'             => 1,
+        'n_max'             => 'all',
+        'location_from'     => 'hand',
+        'tuck_keyword'      => true,
+        'with_icon'         => Icons::EFFICIENCY,
+        'refresh_selection' => self::isFourthEdition(), // In 4th edition, need to refresh in case a splay causes a City to be drawn
       ];
     }
   }

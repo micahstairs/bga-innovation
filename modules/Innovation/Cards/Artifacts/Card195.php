@@ -33,7 +33,7 @@ class Card195 extends AbstractCard
     }
 
     if (self::isFirstOrThirdEdition())  {
-      self::fullyExecute($card);
+      self::superExecute($card);
     } else {
       self::selfExecute($card);
     }

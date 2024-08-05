@@ -10,7 +10,7 @@ class Card186_4E extends AbstractCard
   // Earhart's Lockheed Electra 10E (4th edition):
   //   - For each value below 9, junk a top card of that value from your board, in descending order.
   //     Then, if there is a junked card of each value below 9, you win.
-  //   - Claim an achievement, ignoring eligibility.
+  //   - Claim an available achievement, ignoring eligibility.
 
   public function initialExecution()
   {

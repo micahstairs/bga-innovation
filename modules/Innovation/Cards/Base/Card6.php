@@ -14,7 +14,7 @@ class Card6 extends AbstractCard
   //   - Draw and score a [1] for each color present on your board not present on any opponent's board.
   // - 4th edition:
   //   - Meld a card from your hand of a color not on your board.
-  //   - Draw and score a [1] for each color present on your board that no opponent has on their board.
+  //   - Draw and score a [1] for every color present on your board that no opponent has on their board.
 
   public function initialExecution()
   {

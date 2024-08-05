@@ -11,7 +11,7 @@ class Card564 extends AbstractCard
   // Opus Dei:
   //   - Reveal the highest card in your score pile. If you do, splay your cards of the revealed
   //     card's color up, and safeguard the revealed card.
-  //   - Draw an [8] for each color on your board splayed up.
+  //   - Draw an [8] for every color on your board splayed up.
 
   public function initialExecution()
   {

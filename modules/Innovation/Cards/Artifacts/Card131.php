@@ -8,7 +8,7 @@ class Card131 extends AbstractCard
 {
 
   // Holy Grail
-  //   - Return a card from your hand. Claim an achievement of matching value ignoring eligibility.
+  //   - Return a card from your hand. Claim an available achievement of matching value ignoring eligibility.
 
   public function initialExecution()
   {

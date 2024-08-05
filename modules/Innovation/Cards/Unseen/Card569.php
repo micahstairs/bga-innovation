@@ -46,7 +46,7 @@ class Card569 extends AbstractCard
   {
     if (self::isThirdNonDemand() && self::getNumChosen() > 0) {
       if (self::isTheirTurn()) {
-        self::fullyExecute(self::getLastSelectedCard());
+        self::superExecute(self::getLastSelectedCard());
       }
       self::putBackInSafe(self::getLastSelectedCard());
     }

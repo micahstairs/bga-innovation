@@ -8,7 +8,7 @@ class Card472 extends AbstractCard
 {
 
   // Drone
-  //   - Draw and reveal a [10]. If you have fewer than six cards of that color on your board,
+  //   - Draw and reveal a [10]. If you have fewer than six cards of its color on your board,
   //     splay that color aslant on your board. Otherwise, return the bottom five cards of that
   //     color from all boards. If you do, repeat this effect.
 

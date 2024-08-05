@@ -24,6 +24,9 @@ class Card408 extends AbstractCard
           self::transferToHand($card, self::getLauncherId());
         }
       }
+      if (self::countCards(Locations::HAND) > 0) {
+        self::revealHand();
+      }
     } else if (self::wasForeseen()) {
       $cards = [];
       foreach (self::getPlayerIds() as $playerId) {

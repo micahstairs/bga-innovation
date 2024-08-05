@@ -10,8 +10,9 @@ class Card485 extends AbstractCard
 {
 
   // Pilgrimage:
-  //   - You may return a [1] from your hand. If you do, safeguard an available achievement of
-  //     value equal to the returned card, then repeat this effect using a value one higher.
+  //   - You may return a card of value [1] from your hand. If you do, safeguard an available
+  //     achievement of value equal to the returned card, then repeat this effect using a value
+  //     one higher.
   //   - You may junk all cards in the [1] deck.
 
   public function initialExecution()

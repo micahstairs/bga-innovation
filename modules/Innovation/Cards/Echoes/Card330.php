@@ -40,6 +40,7 @@ class Card330 extends AbstractCard
       if (count($opponents) > 0) {
         self::setAuxiliaryArray($opponents); // Track which opponents can be chosen to receive the card
         self::setAuxiliaryValue2($card['id']); // Track which card needs to be transferred to an opponent's hand
+        self::setMaxSteps(1);
       }
     }
   }

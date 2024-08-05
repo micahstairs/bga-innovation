@@ -38,7 +38,7 @@ class Card161 extends AbstractCard
   }
 
   public function handleCardChoice(array $card) {
-    self::fullyExecute($card);
+    self::superExecute($card);
   }
 
 }

@@ -14,7 +14,7 @@ class Card405_4E extends AbstractCard
   // Radio Telescope (4th edition):
   //   - For every color on your board with [CONCEPT], draw a [9], and if Radio Telescope was
   //     foreseen, for every color also draw a [10]. Meld one of the drawn cards and return the
-  //     rest. If you meld AI due to this effect, you win.
+  //     rest. If you meld A. I. due to this effect, you win.
 
   public function initialExecution()
   {

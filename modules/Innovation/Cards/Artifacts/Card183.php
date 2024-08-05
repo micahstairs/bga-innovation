@@ -40,7 +40,7 @@ class Card183 extends AbstractCard
     self::drawAndScore($value);
     if (self::getNumChosen() > 0) {
       if (self::isFirstOrThirdEdition()) {
-        self::fullyExecute(self::getLastSelectedCard());
+        self::superExecute(self::getLastSelectedCard());
       } else {
         self::selfExecute(self::getLastSelectedCard());
       }
