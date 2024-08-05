@@ -21,20 +21,17 @@ class Card171_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
       return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'age'           => $topYellowCard ? $topYellowCard['faceup_age'] : 0,
+        'location'   => Locations::SCORE,
+        'owner_from' => self::getPlayerId(),
+        'owner_to'   => self::getLauncherId(),
+        'age'        => self::getValue(self::getTopCardOfColor(Colors::YELLOW)),
       ];
     } else {
-      $topGreenCard = self::getTopCardOfColor(Colors::YELLOW);
       return [
         'location_from'  => Locations::SCORE,
         'return_keyword' => true,
-        'age'            => $topGreenCard['faceup_age'],
+        'age'            => self::getValue(self::getTopCardOfColor(Colors::GREEN))
       ];
     }
   }
@@ -44,6 +41,12 @@ class Card171_3E extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setMaxSteps(2);
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW));
+    return self::countCardsKeyedByValue(Locations::SCORE)[$value] > 0;
   }
 
 }

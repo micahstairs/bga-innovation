@@ -31,4 +31,9 @@ class Card199 extends AbstractCard
     ];
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    return self::countSplayedColors() > 0;
+  }
+
 }

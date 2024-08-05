@@ -43,4 +43,17 @@ class Card145_4E extends AbstractCard
     }
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    $hasIcon = false;
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, Icons::AUTHORITY)) {
+        $hasIcon = true;
+        break;
+      }
+    }
+
+    return $hasIcon && self::countCards(Locations::HAND) > 0;
+  }
+
 }

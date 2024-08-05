@@ -37,4 +37,14 @@ class Card197_3E extends AbstractCard
     ];
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if ($card['has_demand'] == true) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

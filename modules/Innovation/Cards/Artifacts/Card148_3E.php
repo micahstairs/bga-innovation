@@ -33,5 +33,10 @@ class Card148_3E extends AbstractCard
       'age'      => self::getAuxiliaryValue(),
     ];
   }
+  
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
+  }
 
 }

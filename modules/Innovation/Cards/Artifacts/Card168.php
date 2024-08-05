@@ -22,30 +22,37 @@ class Card168 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::HAND,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::HAND,
-        'age'           => self::getMaxValueInLocation(Locations::HAND),
+        'location'   => Locations::HAND,
+        'owner_from' => self::getPlayerId(),
+        'owner_to'   => self::getLauncherId(),
+        'age'        => self::getMaxValueInLocation(Locations::HAND),
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'age'           => self::getMaxValueInLocation(Locations::SCORE),
+        'location'   => Locations::SCORE,
+        'owner_from' => self::getPlayerId(),
+        'owner_to'   => self::getLauncherId(),
+        'age'        => self::getMaxValueInLocation(Locations::SCORE),
       ];
     } else {
       return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::BOARD,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::BOARD,
-        'age'           => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::INDUSTRY),
-        'with_icon'     => Icons::INDUSTRY,
+        'location'   => Locations::BOARD,
+        'owner_from' => self::getPlayerId(),
+        'owner_to'   => self::getLauncherId(),
+        'age'        => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::INDUSTRY),
+        'with_icon'  => Icons::INDUSTRY,
       ];
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, Icons::INDUSTRY)) {
+        return true;
+      }
+    }
+    return self::countCards(Locations::HAND) > 0 || self::countCards(Locations::SCORE) > 0;
   }
 
 }

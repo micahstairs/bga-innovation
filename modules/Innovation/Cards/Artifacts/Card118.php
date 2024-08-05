@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card118 extends AbstractCard
 {
@@ -24,16 +25,15 @@ class Card118 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from'  => 'score',
+        'location_from'  => Locations::SCORE,
         'return_keyword' => true,
       ];
     } else {
       return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'achievements',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'achievements',
-        'age'           => self::getLastSelectedAge(),
+        'location'   => Locations::ACHIEVEMENTS,
+        'owner_from' => self::getPlayerId(),
+        'owner_to'   => self::getLauncherId(),
+        'age'        => self::getLastSelectedAge(),
       ];
     }
   }
@@ -41,7 +41,7 @@ class Card118 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($card['age']);
+      self::setAuxiliaryValue(self::getValue($card));
       self::setMaxSteps(2);
     }
   }
@@ -51,6 +51,11 @@ class Card118 extends AbstractCard
     if (self::isFourthEdition() && self::isSecondInteraction()) {
       self::junkBaseDeck(self::getAuxiliaryValue());
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
   }
 
 }

@@ -41,4 +41,15 @@ class Card151 extends AbstractCard
     ];
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, Icons::PROSPERITY)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }

@@ -53,4 +53,10 @@ class Card171_4E extends AbstractCard
     }
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    // NOTE: The launcher cannot know what colors are in the player's score pile.
+    return self::getTopCardOfColor(Colors::RED) || self::getTopCardOfColor(Colors::GREEN) || self::countCards(Locations::SCORE);
+  }
+
 }

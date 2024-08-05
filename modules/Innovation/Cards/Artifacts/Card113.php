@@ -45,4 +45,23 @@ class Card113 extends AbstractCard
     }
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    $topCards = self::getTopCards();
+    foreach ($topCards as $card) {
+      if (self::hasIcon($card, Icons::AUTHORITY)) {
+        return true;
+      }
+    }
+
+    if (self::isFourthEdition()) {
+      $valueToJunk = self::getMinValue(self::getTopCards());
+      if (self::getBaseDeckCount($valueToJunk) > 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }

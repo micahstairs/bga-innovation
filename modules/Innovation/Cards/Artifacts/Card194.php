@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card194 extends AbstractCard
 {
@@ -47,10 +48,15 @@ class Card194 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
-      'location_from' => 'achievements',
-        'return_keyword' => true,
-        'include_relics' => false,
+      'location_from'  => Locations::ACHIEVEMENTS,
+      'return_keyword' => true,
+      'include_relics' => false,
     ];
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::ACHIEVEMENTS) > 0;
   }
 
 }

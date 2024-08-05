@@ -105,4 +105,26 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
 
 We use [phpunit](https://phpunit.de/) for testing, and you can view those tests in the `tests/` folder.
 
-To run the tests, simply run: `./vendor/bin/phpunit`
+To run the unit tests, simply run: `./vendor/bin/phpunit`
+
+### Integration Tests
+
+For integration tests, extra setup is needed:
+```
+brew install mysql
+mysqld --initialize --user=root
+mysql -u root -p
+```
+
+Enter the temporary password then run:
+```
+ALTER USER 'root'@'localhost' IDENTIFIED BY '';
+FLUSH PRIVILEGES;
+```
+
+Now you should be able to run `mysql -u root` and get in without typing the password.
+
+NOTE: To delete the database, run `rm -rf /opt/homebrew/var/mysql/`
+
+Example of how to run the integration tests: `./vendor/bin/phpunit tests/Integration/CompleteDogmaTest.php`
+

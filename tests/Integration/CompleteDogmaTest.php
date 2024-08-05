@@ -101,7 +101,10 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   private function dogma($cardId)
   {
+    $card = $this->tableInstance->getTable()->getCardInfo($cardId);
     $cardName = $this->tableInstance->getTable()->getCardName($cardId);
+    $dogmaEffectInfo = $this->tableInstance->getTable()->getDogmaEffectInfo($card, self::getActivePlayerId());
+    $expecting_no_effect = $dogmaEffectInfo['no_effect'];
     error_log("* DOGMA $cardName");
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
@@ -110,6 +113,10 @@ class CompleteDogmaTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
 
     self::executeInteractions();
+
+    if ($expecting_no_effect && self::getGlobalVariable('dogma_had_impact') == 1) {
+      throw new \RuntimeException("Expected " . $cardName . " to have no effect, but it had an impact");
+    }
   }
 
 }

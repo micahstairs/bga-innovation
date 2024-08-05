@@ -66,7 +66,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 61-67, 91-92
+        // NOTE: The following values are unused and safe to use: 21-22, 24-25, 61-67, 91-92
         self::initGameStateLabels(
             [
                 'number_of_achievements_needed_to_win' => 10,
@@ -80,6 +80,8 @@ class Innovation extends Table
                 'active_player'                        => 18,
                 // 0 = not allowed to do an endorse action, 1 = allowed to do an endorse action, 2 = currently executing an effect for the 1st time, 3 = currently executing an effect for the 2nd time
                 'endorse_action_state'                 => 19,
+                // 0 = dogma has not yet had an impact, 1 = dogma has had an impact
+                'dogma_had_impact'                     => 20,
                 'sharing_bonus'                        => 23,
                 'special_type_of_choice'               => 26,
                 'choice'                               => 27,
@@ -216,6 +218,12 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'performed_one_time_setup'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `performed_one_time_setup` INT DEFAULT NULL;");
+        }
+
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2408050353) {
+            self::initGameStateLabels(['dogma_had_impact' => 20]);
+            $this->innovationGameState->set('dogma_had_impact', 0);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -494,6 +502,7 @@ class Innovation extends Table
 
         // Flags used in dogma to remember player roles and which card it is, which effect (yet -1 as default value since there are not currently in use)
         $this->innovationGameState->setInitial('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
+        $this->innovationGameState->setInitial('dogma_had_impact', -1);
         $this->innovationGameState->setInitial('current_nesting_index', -1);
         self::DbQuery("
             INSERT INTO nested_card_execution (
@@ -4218,6 +4227,9 @@ class Innovation extends Table
 
         // Mark that the player under effect made a change in the game
         self::markExecutingPlayer($current_player_under_dogma_effect);
+
+        // Remember that part of the dogma had an impact
+        $this->innovationGameState->set('dogma_had_impact', 1);
 
         // We only need to check for sharing bonuses for the initially triggered card (otherwise Blackmail can incorrectly trigger the bonus)
         if ($nested_card_state['nesting_index'] > 0) {
@@ -9196,6 +9208,7 @@ class Innovation extends Table
             )
         );
         $this->innovationGameState->set('sharing_bonus', 0);
+        $this->innovationGameState->set('dogma_had_impact', 0);
         self::DbQuery("UPDATE player SET distance_rule_share_state = 0");
         self::DbQuery("UPDATE player SET distance_rule_demand_state = 0");
     }
@@ -9861,7 +9874,7 @@ class Innovation extends Table
     function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects)
     {
 
-        // TODO(4E): Add proper no-op detection for 4th edition cards.
+        // TODO(4E): Add proper no-op detection for 4th edition cards (refactor this in the card classes).
         if ($this->innovationGameState->usingFourthEditionRules()) {
             return false;
         }
@@ -10322,38 +10335,23 @@ class Innovation extends Table
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the compel effect (without revealing hidden info to the launching player). */
     function compelHasNoEffect($card, $launcher_id, $executing_player_id)
     {
-
-        // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules()) {
-            return false;
-        }
+        $card_id = $card['id'];
 
         // Many cards do not have a compel effect on them
-        if (self::getCompelEffect($card['id']) === null) {
+        if (self::getCompelEffect($card_id) === null) {
             return true;
         }
 
-        // Check the card's compel effect
-        switch ($card['id']) {
-
-            /*** Basic cases involving empty hands and/or empty score piles ***/
-
-            case 141: // Moylough Belt Shrine
-                // This demand has no effect if the player has an empty hand.
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
-
-            case 118: // Jiskairumoko Necklace
-            case 145: // Petition of Right
-            case 148: // Tortugas Galleon
-            case 167: // Frigate Constitution
-                // This demand has no effect if the player has an empty score pile.
-                return self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            default:
-                // All other cards with compel effects are assumed to have an effect.
-                return false;
-
+        if (self::isInSeparateFile($card_id)) {
+            $executionState = (new ExecutionState($this))
+                ->setEdition($this->innovationGameState->getEdition())
+                ->setLauncherId($launcher_id)
+                ->setPlayerId($executing_player_id);
+            return !self::getCardInstance($card_id, $executionState)->compelMightBeEffective();
         }
+
+        // Otherwise, we assume the compel effect will have an effect
+        return false;
     }
 
     function argDogmaEffect()
@@ -14915,9 +14913,9 @@ class Innovation extends Table
             $options == null
             || (array_key_exists('n', $options) && $options['n'] <= 0)
             || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)
-            || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age']))
+            || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age'])))
             || (array_key_exists('choices', $options) && empty($options['choices']))
-            || (array_key_exists('splay_direction', $options) && array_key_exists('color', $options) && empty($options['color'])))
+            || (array_key_exists('color', $options) && empty($options['color']))
         ) {
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());

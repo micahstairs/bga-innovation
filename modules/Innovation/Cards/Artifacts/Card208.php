@@ -45,4 +45,9 @@ class Card208 extends AbstractCard
     }
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::HAND) > 2 || self::countCards(Locations::SCORE) > 2;
+  }
+
 }

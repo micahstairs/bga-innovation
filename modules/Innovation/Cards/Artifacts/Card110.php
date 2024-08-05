@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card110 extends AbstractCard
 {
@@ -26,18 +27,28 @@ class Card110 extends AbstractCard
     if (self::isCompel()) {
       return [
         'n'                 => 'all',
-        'location_from'     => 'board',
+        'location_from'     => Locations::BOARD,
         'return_keyword'    => true,
         'has_demand_effect' => true,
       ];
     } else {
       return [
-        'location_from'     => 'board',
+        'location_from'     => Locations::BOARD,
         'score_keyword'     => true,
         'color'             => Colors::NON_BLUE,
         'has_demand_effect' => true,
       ];
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if ($card['has_demand'] == true) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

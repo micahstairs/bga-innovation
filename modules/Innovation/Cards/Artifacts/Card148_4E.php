@@ -49,4 +49,9 @@ class Card148_4E extends AbstractCard
     }
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
+  }
+
 }

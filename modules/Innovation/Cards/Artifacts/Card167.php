@@ -44,4 +44,10 @@ class Card167 extends AbstractCard
       }
     }
   }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::HAND) > 0;
+  }
+
 }

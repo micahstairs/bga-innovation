@@ -40,4 +40,14 @@ class Card197_4E extends AbstractCard
     self::draw(10);
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if ($card['has_demand'] == true) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

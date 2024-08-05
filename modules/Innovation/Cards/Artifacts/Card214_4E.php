@@ -47,13 +47,24 @@ class Card214_4E extends AbstractCard
 
   private function junkTopCardOfEachDeck()
   {
+    self::junkCards(self::geyCardsToJunk());
+    self::notifyPlayer(clienttranslate('${You} junk the top card of each base deck'));
+    self::notifyOthers(clienttranslate('${player_name} junks the top card of each base deck'));
+  }
+
+  private function geyCardsToJunk(): array
+  {
     $cards = [];
+    # TODO(FIGURES): Handle age 0 cards
     for ($i = 1; $i <= 11; $i++) {
       $cards[] = $this->game->getDeckTopCard($i, CardTypes::BASE);
     }
-    self::junkCards($cards);
-    self::notifyPlayer(clienttranslate('${You} junk the top card of each base deck'));
-    self::notifyOthers(clienttranslate('${player_name} junks the top card of each base deck'));
+    return $cards;
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0 || self::geyCardsToJunk();
   }
 
 }

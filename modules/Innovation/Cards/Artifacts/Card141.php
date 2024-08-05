@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card141 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card141 extends AbstractCard
 
   public function initialExecution()
   {
-    foreach (self::getCards('hand') as $card) {
+    foreach (self::getCards(Locations::HAND) as $card) {
       self::reveal($card);
     }
     self::setMaxSteps(1);
@@ -29,21 +30,26 @@ class Card141 extends AbstractCard
     return [
       'player_id'     => self::getLauncherId(),
       'owner_from'    => self::getPlayerId(),
-      'location_from' => 'revealed',
+      'location_from' => Locations::REVEALED,
       'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'board',
+      'location_to'   => Locations::BOARD,
     ];
   }
 
   public function afterInteraction()
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    foreach (self::getCards('revealed') as $card) {
+    foreach (self::getCards(Locations::REVEALED) as $card) {
       self::transferToHand($card);
     }
     if (self::isFourthEdition() && self::getNumChosen() === 1) {
       self::junkBaseDeck(self::getLastSelectedAge());
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::HAND) > 0;
   }
 
 }

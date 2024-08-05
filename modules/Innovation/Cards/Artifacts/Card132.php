@@ -5,6 +5,7 @@ namespace Innovation\Cards\Artifacts;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card132 extends AbstractCard
 {
@@ -27,13 +28,13 @@ class Card132 extends AbstractCard
   {
     if (self::isCompel()) {
       return [
-        'location_from'  => 'board',
+        'location_from'  => Locations::BOARD,
         'return_keyword' => true,
         'without_icon'   => Icons::AUTHORITY,
       ];
     } else {
       return [
-        'location_from'    => 'hand',
+        'location_from'    => Locations::HAND,
         'score_keyword'    => true,
         'without_icon'     => Icons::AUTHORITY,
         'reveal_if_unable' => true,
@@ -50,6 +51,16 @@ class Card132 extends AbstractCard
         self::tuck(self::getCard(CardIds::TERRACOTTA_ARMY));
       }
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::hasIcon($card, Icons::AUTHORITY)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

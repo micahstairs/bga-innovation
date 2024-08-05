@@ -22,21 +22,10 @@ class Card157 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $colors = [];
-    foreach (Colors::ALL as $color) {
-      if (self::countVisibleCardsInStack($color, self::getPlayerId()) > self::countVisibleCardsInStack($color, self::getLauncherId())) {
-        $colors[] = $color;
-      }
-    }
-    // TODO(LATER): Handle empty array case generally, instead of forcing specific cards to handle it.
-    if ($colors) {
-      return [
-        'choose_color' => true,
-        'color'        => $colors,
-      ];
-    } else {
-      return [];
-    }
+    return [
+      'choose_color' => true,
+      'color'        => self::getEligibleColors(),
+    ];
   }
 
   public function handleColorChoice(int $color)
@@ -50,4 +39,21 @@ class Card157 extends AbstractCard
       self::transferToBoard($card, self::getLauncherId());
     }
   }
+
+  private function getEligibleColors(): array
+  {
+    $colors = [];
+    foreach (Colors::ALL as $color) {
+      if (self::countVisibleCardsInStack($color, self::getPlayerId()) > self::countVisibleCardsInStack($color, self::getLauncherId())) {
+        $colors[] = $color;
+      }
+    }
+    return $colors;
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return count($this->getEligibleColors()) > 0;
+  }
+
 }

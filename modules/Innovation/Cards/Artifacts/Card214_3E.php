@@ -36,4 +36,9 @@ class Card214_3E extends AbstractCard
     self::setNextStep(1);
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
+  }
+
 }

@@ -28,4 +28,9 @@ class Card138 extends AbstractCard
     }
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::BOARD) > 0;
+  }
+
 }

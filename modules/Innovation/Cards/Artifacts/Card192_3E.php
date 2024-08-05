@@ -33,4 +33,14 @@ class Card192_3E extends AbstractCard
     self::setNextStep(1);
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::isYellow($card) && self::hasIcon($card, Icons::EFFICIENCY)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

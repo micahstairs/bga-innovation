@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card137 extends AbstractCard
 {
@@ -18,20 +19,29 @@ class Card137 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
+    return [
+      'location'      => Locations::BOARD,
+      'owner_from'    => self::getPlayerId(),
+      'owner_to'      => self::getLauncherId(),
+      'color'         => self::getEligibleColors(),
+    ];
+  }
+
+  private function getEligibleColors(): array
+  {
     $colors = [];
     foreach (self::getTopCards() as $playerCard) {
-      $launcherCard = self::getTopCardOfColor($playerCard['color'], self::getLauncherId());
-      if ($launcherCard === null || $playerCard['faceup_age'] > $launcherCard['faceup_age']) {
-        $colors[] = $playerCard['color'];
+      $launcherCard = self::getTopCardOfColor(self::getColor($playerCard), self::getLauncherId());
+      if ($launcherCard === null || self::getValue($playerCard) > self::getValue($launcherCard)) {
+        $colors[] = self::getColor($playerCard);
       }
     }
-    return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'board',
-      'color'         => $colors,
-    ];
+    return $colors;
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return count($this->getEligibleColors()) > 0;
   }
 
 }

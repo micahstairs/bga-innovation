@@ -211,6 +211,12 @@ abstract class AbstractCard
     return false;
   }
 
+  public function compelMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when compelled.
+    return true;
+  }
+
   // EXECUTION HELPERS
 
   protected function isFirstEdition(): bool
@@ -634,7 +640,7 @@ abstract class AbstractCard
   protected function filterByColor(array $cards, array $colors): array
   {
     return array_values(array_filter($cards, function ($card) use ($colors) {
-      return in_array($card['color'], $colors);
+      return in_array(self::getColor($card), $colors);
     }));
   }
 
@@ -662,7 +668,7 @@ abstract class AbstractCard
     $colors = [];
     foreach ($cards as $card) {
       if (in_array(self::getValue($card), $values)) {
-        $colors[] = $card['color'];
+        $colors[] = self::getColor($card);
       }
     }
     return $colors;
@@ -772,29 +778,34 @@ abstract class AbstractCard
     return $card && $card['age'] === null && $card['id'] < 1000;
   }
 
+  protected static function getColor(array $card): int
+  {
+    return $card['color'];
+  }
+
   protected static function isBlue(?array $card): bool
   {
-    return $card && $card['color'] == Colors::BLUE;
+    return $card && self::getColor($card) == Colors::BLUE;
   }
 
   protected static function isRed(?array $card): bool
   {
-    return $card && $card['color'] == Colors::RED;
+    return $card && self::getColor($card) == Colors::RED;
   }
 
   protected static function isGreen(?array $card): bool
   {
-    return $card && $card['color'] == Colors::GREEN;
+    return $card && self::getColor($card) == Colors::GREEN;
   }
 
   protected static function isYellow(?array $card): bool
   {
-    return $card && $card['color'] == Colors::YELLOW;
+    return $card && self::getColor($card) == Colors::YELLOW;
   }
 
   protected static function isPurple(?array $card): bool
   {
-    return $card && $card['color'] == Colors::PURPLE;
+    return $card && self::getColor($card) == Colors::PURPLE;
   }
 
   protected static function getValue(?array $card): int

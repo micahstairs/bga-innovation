@@ -6,6 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card129 extends AbstractCard
 {
@@ -29,12 +30,21 @@ class Card129 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'board',
-      'type'          => [CardTypes::ARTIFACTS],
+      'location'   => Locations::BOARD,
+      'owner_from' => self::getPlayerId(),
+      'owner_to'   => self::getLauncherId(),
+      'type'       => [CardTypes::ARTIFACTS],
     ];
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if ($card['type'] == CardTypes::ARTIFACTS) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
