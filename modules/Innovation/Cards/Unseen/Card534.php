@@ -56,9 +56,9 @@ class Card534 extends AbstractCard
     self::setAuxiliaryValue($choice);
   }
 
-  public function handleSplayChoice(array $card)
+  public function handleSplayChoice(int $color, bool $splayChanged)
   {
-    self::selfExecute(self::getTopCardOfColor($card['color']));
+    self::selfExecute(self::getTopCardOfColor($color));
   }
 
   public function handleCardChoice(array $card)

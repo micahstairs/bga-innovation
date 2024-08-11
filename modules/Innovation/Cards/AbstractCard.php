@@ -96,7 +96,7 @@ abstract class AbstractCard
     // Subclasses can optionally override this function if any extra handling is needed after each individual card is chosen.
   }
 
-  public function handleSplayChoice(array $card)
+  public function handleSplayChoice(int $color, bool $splayChanged)
   {
     // Subclasses can optionally override this function if any extra handling is needed after a splay is chosen.
   }
@@ -211,9 +211,15 @@ abstract class AbstractCard
     return false;
   }
 
+  public function demandMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when "I demand" is executed.
+    return true;
+  }
+
   public function compelMightBeEffective(): bool
   {
-    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when compelled.
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when "I compel" is executed.
     return true;
   }
 
@@ -363,7 +369,7 @@ abstract class AbstractCard
 
   protected function drawType(int $age, int $type, int $playerId = null)
   {
-    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
+    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, Locations::HAND, /*bottom_to=*/false, /*type=*/$type);
   }
 
   protected function transferToHand(?array $card, int $playerId = null)
@@ -371,7 +377,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::HAND);
   }
 
   protected function score(?array $card, int $playerId = null)
@@ -384,7 +390,7 @@ abstract class AbstractCard
 
   protected function scoreCards(array $cards, int $playerId = null): bool
   {
-    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), 'score', ['score_keyword' => true]);
+    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), Locations::SCORE, ['score_keyword' => true]);
   }
 
   protected function transferToScorePile(?array $card, int $playerId = null)
@@ -392,12 +398,12 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'score');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::SCORE);
   }
 
   protected function transferCardsToScorePile(array $cards, int $playerId = null): bool
   {
-    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), 'score');
+    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), Locations::SCORE);
   }
 
   protected function meld(?array $card, int $playerId = null)
@@ -413,7 +419,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'board');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::BOARD);
   }
 
   protected function tuck(?array $card, int $playerId = null)
@@ -429,7 +435,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::REVEALED);
   }
 
   protected function safeguard(?array $card, int $playerId = null)
@@ -453,7 +459,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements", ["achieve_keyword" => true]);
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
   }
 
   protected function claim(int $cardId, int $playerId = null): ?array {
@@ -484,7 +490,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::ACHIEVEMENTS);
   }
 
   protected function return(?array $card): ?array
@@ -582,11 +588,11 @@ abstract class AbstractCard
   protected function drawAndSafeguard(int $age, int $playerId = null): ?array
   {
     $playerId = self::coercePlayerId($playerId);
-    if (self::isFourthEdition() && self::countCards('safe') >= $this->game->getForecastAndSafeLimit($playerId)) {
+    if (self::isFourthEdition() && self::countCards(Locations::SAFE) >= $this->game->getForecastAndSafeLimit($playerId)) {
       $card = self::draw($age, $playerId);
-      $this->notifications->notifyLocationFull(clienttranslate('safe'), $playerId);
+      $this->notifications->notifyLocationFull(clienttranslate(Locations::SAFE), $playerId);
     } else {
-      $card = $this->game->executeDraw($playerId, $age, 'safe');
+      $card = $this->game->executeDraw($playerId, $age, Locations::SAFE);
     }
     return $card;
   }
@@ -594,11 +600,11 @@ abstract class AbstractCard
   protected function drawAndForeshadow(int $age, int $playerId = null): ?array
   {
     $playerId = self::coercePlayerId($playerId);
-    if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
+    if (self::isFourthEdition() && self::countCards(Locations::FORECAST) >= $this->game->getForecastAndSafeLimit($playerId)) {
       $card = self::draw($age, $playerId);
-      $this->notifications->notifyLocationFull(clienttranslate('forecast'), $playerId);
+      $this->notifications->notifyLocationFull(clienttranslate(Locations::FORECAST), $playerId);
     } else {
-      $card = $this->game->executeDraw($playerId, $age, 'forecast');
+      $card = $this->game->executeDraw($playerId, $age, Locations::FORECAST);
     }
     return $card;
   }
@@ -637,6 +643,13 @@ abstract class AbstractCard
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
+  protected function filterByIcon(array $cards, int $icon): array
+  {
+    return array_values(array_filter($cards, function ($card) use ($icon) {
+      return self::hasIcon($card, $icon);
+    }));
+  }
+
   protected function filterByColor(array $cards, array $colors): array
   {
     return array_values(array_filter($cards, function ($card) use ($colors) {
@@ -648,6 +661,13 @@ abstract class AbstractCard
   {
     return array_values(array_filter($cards, function ($card) use ($types) {
       return in_array($card['type'], $types);
+    }));
+  }
+
+  protected function filterByValue(array $cards, array $values): array
+  {
+    return array_values(array_filter($cards, function ($card) use ($values) {
+      return in_array(self::getValue($card), $values);
     }));
   }
 
@@ -696,7 +716,7 @@ abstract class AbstractCard
 
   protected function getRevealedCard(int $playerId = null): ?array
   {
-    $cards = self::getCards('revealed');
+    $cards = self::getCards(Locations::REVEALED);
     if (count($cards) === 0) {
       return null;
     }
@@ -716,6 +736,12 @@ abstract class AbstractCard
     }));
   }
 
+  protected function isAvailableAchievement(int $cardId): bool
+  {
+    $card = $this->game->getCardInfo($cardId);
+    return $card['owner'] == 0 && $card['location'] === Locations::ACHIEVEMENTS;
+  }
+
   // BULK CARD HELPERS
 
   protected function junkBaseDeck(int $age): bool
@@ -730,17 +756,17 @@ abstract class AbstractCard
 
   protected function revealHand(int $playerId = null): void
   {
-    $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');
+    $this->game->revealLocation(self::coercePlayerId($playerId), Locations::HAND);
   }
 
   protected function revealScorePile(int $playerId = null): void
   {
-    $this->game->revealLocation(self::coercePlayerId($playerId), 'score');
+    $this->game->revealLocation(self::coercePlayerId($playerId), Locations::SCORE);
   }
 
   protected function revealForecast(int $playerId = null): void
   {
-    $this->game->revealLocation(self::coercePlayerId($playerId), 'forecast');
+    $this->game->revealLocation(self::coercePlayerId($playerId), Locations::FORECAST);
   }
 
   // CARD ACCESSOR HELPERS
@@ -1282,7 +1308,7 @@ abstract class AbstractCard
     return $this->game->countCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
-  protected function hasCards(string $location, int $playerId = null): int
+  protected function hasCards(string $location, int $playerId = null): bool
   {
     return self::countCards($location, $playerId) > 0;
   }
@@ -1391,7 +1417,7 @@ abstract class AbstractCard
   protected function getAllIconCounts(int $playerId = null): array
   {
     $icons = [];
-    $cardsByColor = self::getCardsKeyedByColor('board', $playerId);
+    $cardsByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
     foreach ($cardsByColor as $stack) {
       if (count($stack) > 1) {
         $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));

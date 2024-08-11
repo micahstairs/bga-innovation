@@ -218,7 +218,6 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand with a ${icon_4}. You may splay your red cards left.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand with ${icon_4}.'),
         'non_demand_effect_2_fourth'          => clienttranslate('You may splay your red cards left.'),
-        'separate_4E_implementation'          => true,
     ),
 
     32  => array(

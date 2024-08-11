@@ -27,24 +27,32 @@ class Card29 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => Locations::BOARD,
-        'owner_from'    => self::getPlayerId(),
-        'location_to'   => Locations::BOARD,
-        'owner_to'      => self::getLauncherId(),
-        'color'         => Colors::NON_GREEN,
-        'with_icon'     => Icons::HEALTH,
+        'location'   => Locations::BOARD,
+        'owner_from' => self::getPlayerId(),
+        'owner_to'   => self::getLauncherId(),
+        'color'      => Colors::NON_GREEN,
+        'with_icon'  => Icons::HEALTH,
       ];
     } else {
       return [
-        'location_from' => Locations::BOARD,
-        'owner_from'    => self::getLauncherId(),
-        'location_to'   => Locations::BOARD,
-        'owner_to'      => self::getPlayerId(),
-        'color'         => Colors::NON_GREEN,
-        'without_icon'  => Icons::HEALTH,
-        'meld_keyword'  => self::isFourthEdition(),
+        'location'     => Locations::BOARD,
+        'owner_from'   => self::getLauncherId(),
+        'owner_to'     => self::getPlayerId(),
+        'color'        => Colors::NON_GREEN,
+        'without_icon' => Icons::HEALTH,
+        'meld_keyword' => self::isFourthEdition(),
       ];
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::isGreen($card) && self::hasIcon($card, Icons::HEALTH)) {
+        return true;
+      }
+    }
+    return count(self::filterByIcon(self::getTopCards(self::getLauncherId()), Icons::HEALTH)) > 0;
   }
 
 }

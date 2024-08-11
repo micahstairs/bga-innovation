@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card112 extends AbstractCard
 {
@@ -36,7 +37,7 @@ class Card112 extends AbstractCard
   {
     return [
       'n'              => 'all',
-      'location_from'  => 'revealed,score',
+      'location_from'  => Locations::REVEALED_THEN_SCORE,
       'return_keyword' => true,
     ];
   }

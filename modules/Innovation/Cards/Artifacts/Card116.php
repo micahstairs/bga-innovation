@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card116 extends AbstractCard
 {
@@ -25,8 +26,8 @@ class Card116 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       return [
-        'location_from' => 'hand',
-        'location_to'   => 'revealed,score',
+        'location_from' => Locations::HAND,
+        'location_to'   => Locations::REVEALED_THEN_SCORE,
         'score_keyword' => true,
       ];
     } else {

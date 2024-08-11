@@ -43,4 +43,12 @@ class Card12 extends AbstractCard
     self::draw(1);
   }
 
+  public function demandMightBeEffective(): bool
+  {
+    if (self::getStandardIconCount(Icons::AUTHORITY) < 4) {
+      return false;
+    }
+    return count(self::filterByIcon(self::getTopCards(), Icons::AUTHORITY)) > 0;
+  }
+
 }

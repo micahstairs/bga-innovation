@@ -5,7 +5,6 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
-use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
 class Card44_4E extends AbstractCard

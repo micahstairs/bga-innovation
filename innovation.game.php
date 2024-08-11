@@ -2854,7 +2854,7 @@ class Innovation extends Table
         } else if ($location_from === 'revealed,hand') {
             $from_somewhere_for_player = clienttranslate(' that you revealed and from your hand');
             $from_somewhere_for_others = clienttranslate(' that he revealed and from his hand');
-        } else if ($location_from === 'revealed,score') {
+        } else if ($location_from === Locations::REVEALED_THEN_SCORE) {
             $from_somewhere_for_player = clienttranslate(' that you revealed and from your score pile');
             $from_somewhere_for_others = clienttranslate(' that he revealed and from his score pile');
         } else if ($location_from === 'pile,score') {
@@ -2917,7 +2917,7 @@ class Innovation extends Table
             $action = clienttranslate('junk then safeguard');
         } else if ($location_to === 'revealed') {
             $action = clienttranslate('reveal');
-        } else if ($location_to === 'revealed,score') {
+        } else if ($location_to === Locations::REVEALED_THEN_SCORE) {
             $action = clienttranslate('reveal and score');
         } else if ($location_to === 'revealed,deck') {
             $action = clienttranslate('reveal and return');
@@ -7130,7 +7130,7 @@ class Innovation extends Table
         $location_from = Locations::decode($this->innovationGameState->get('location_from'));
         if ($location_from == 'revealed,hand') {
             $condition_for_location = "location IN ('revealed', 'hand')";
-        } else if ($location_from == 'revealed,score') {
+        } else if ($location_from == Locations::REVEALED_THEN_SCORE) {
             $condition_for_location = "location IN ('revealed', 'score')";
         } else if ($location_from == Locations::HAND_OR_SCORE) {
             $condition_for_location = "location IN ('hand', 'score')";
@@ -10208,128 +10208,23 @@ class Innovation extends Table
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the demand effect (without revealing hidden info to the launching player). */
     function demandHasNoEffect($card, $launcher_id, $executing_player_id)
     {
-
-        // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules()) {
-            return false;
-        }
+        $card_id = $card['id'];
 
         // Many cards do not have a demand effect on them
         if (self::getDemandEffect($card['id']) === null) {
             return true;
         }
 
-        // Check the card's demand effect (excludes compel effects even they are technically a type of demand)
-        switch ($card['id']) {
-
-            /*** Basic cases involving empty hands and/or empty score piles ***/
-
-            case 64: // Emancipation
-            case 68: // Explosives
-            case 71: // Refrigeration
-            case 334: // Candles
-            case 347: // Crossbow
-            case 408: // Parachute
-                // This demand has no effect if the executer has an empty hand.
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
-
-            case 31: // Machinery
-            case 72: // Sanitation
-                // This demand has no effect if both the launcher amd executer have empty hands.
-                return self::countCardsInLocation($launcher_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'hand') == 0;
-
-            case 41: // Anatomy
-            case 51: // Statistics
-            case 62: // Vaccination
-            case 99: // Databases
-            case 393: // Indian Clubs
-            case 411: // Air Conditioner
-            case 430: // Flash Drive
-                // This demand has no effect if the executer has an empty score pile.
-                return self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            case 32: // Medicine
-                // This demand has no effect if both the launcher or executer have empty score piles.
-                return self::countCardsInLocation($launcher_id, 'score') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            /*** Other cases (sorted by card ID) ***/
-
-            case 12: // City States
-                // This demand has no effect if the player has less than 4 towers on their board.
-                return self::getPlayerResourceCounts($executing_player_id)[4] < 4;
-
-            case 20: // Mapmaking
-                // This demand has no effect if the player has no 1s in their score pile.
-                return self::countCardsInLocationKeyedByAge($executing_player_id, 'score')[1] == 0;
-
-            case 27: // Engineering
-                // This demand has no effect unless the player has a top card with a tower.
-                foreach (self::getTopCardsOnBoard($executing_player_id) as $top_card) {
-                    if (self::hasRessource($top_card, 4)) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 40: // Navigation
-                // This demand has no effect if the player has no 2s or 3s in their score pile.
-                $age_counts = self::countCardsInLocationKeyedByAge($executing_player_id, 'score');
-                return $age_counts[2] == 0 && $age_counts[3] == 0;
-
-            case 43: // Enterprise
-                // This demand has no effect unless the player has a top non-purple card with a crown.
-                foreach (Colors::NON_PURPLE as $color) {
-                    $top_card = self::getTopCardOnBoard($executing_player_id, $color);
-                    if (self::hasRessource($top_card, 1 /* crown */)) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 48: // The Pirate Code
-                // This demand has no effect if the player has no 1s, 2s, 3s, or 4s in their score pile.
-                $age_counts = self::countCardsInLocationKeyedByAge($executing_player_id, 'score');
-                return $age_counts[1] == 0 && $age_counts[2] == 0 && $age_counts[3] == 0 && $age_counts[4] == 0;
-
-            case 49: // Banking
-                // This demand has no effect unless the player has a top non-green card with a factory.
-                foreach ([0, 1, 3, 4] as $color) {
-                    $top_card = self::getTopCardOnBoard($executing_player_id, $color);
-                    if (self::hasRessource($top_card, 5 /* factory */)) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 54: // Societies
-                if ($this->innovationGameState->usingFirstEditionRules()) {
-                    // This demand has no effect unless the player has a top non-purple card with a lightbulb.
-                    foreach (Colors::NON_PURPLE as $color) {
-                        $top_card = self::getTopCardOnBoard($executing_player_id, $color);
-                        if (self::hasRessource($top_card, 3 /* lightbulb */)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                // This demand has no effect unless the player has a top card with a lightbulb higher than the
-                // launcher's top card of the same color.
-                foreach (Colors::ALL as $color) {
-                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    $player_top_card = self::getTopCardOnBoard($executing_player_id, $color);
-                    if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
-                        continue;
-                    }
-                    if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
-                        return false;
-                    }
-                }
-                return true;
-
-            // All other cards with demand effects are assumed to have an effect.
-            default:
-                return false;
+        if (self::isInSeparateFile($card_id)) {
+            $executionState = (new ExecutionState($this))
+                ->setEdition($this->innovationGameState->getEdition())
+                ->setLauncherId($launcher_id)
+                ->setPlayerId($executing_player_id);
+            return !self::getCardInstance($card_id, $executionState)->demandMightBeEffective();
         }
+
+        // Otherwise, we assume the demand effect will have an effect
+        return false;
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the compel effect (without revealing hidden info to the launching player). */
@@ -11508,11 +11403,16 @@ class Innovation extends Table
             return false;
         }
         return $card_id <= 12
+            || $card_id == 17
+            || $card_id == 20
             || $card_id == 22
             || $card_id == 25
+            || $card_id == 27
             || $card_id == 29
-            || $card_id == 42
-            || $card_id == 44
+            || (31 <= $card_id && $card_id <= 32)
+            || $card_id == 34
+            || $card_id == 38
+            || (40 <= $card_id && $card_id <= 44)
             || $card_id == 51
             || (56 <= $card_id && $card_id <= 57)
             || $card_id == 62
@@ -11687,41 +11587,6 @@ class Innovation extends Table
                     $step_max = 1;
                     break;
 
-                // id 17, age 2: Construction
-                case "17D1":
-                    $step_max = 1;
-                    break;
-
-                case "17N1":
-                    $boards = self::getBoards(self::getAllActivePlayerIds());
-                    $eligible = true;
-                    foreach ($boards as $current_id => $board) {
-                        if ($current_id == self::getPlayerTeammate($player_id)) { // Ignore teammate
-                            continue;
-                        }
-                        $number_of_top_cards = 0;
-                        for ($color = 0; $color < 5; $color++) {
-                            if (count($board[$color]) > 0) { // This player has a top card for this color.
-                                $number_of_top_cards++;
-                            }
-                        }
-                        if ($current_id == $player_id && $number_of_top_cards < 5 || $current_id != $player_id && $number_of_top_cards == 5) { // This player is the active player and has not 5 top cards, or he is an opponent who has 5 top cards
-                            $eligible = false;
-                        }
-                    }
-                    if ($eligible) { // "If you are the only player with five top cards"
-                        $achievement = self::getCardInfo(105);
-                        if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are the only player with five top cards.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards.'), array('player_name' => self::renderPlayerName($player_id)));
-                            self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the Empire achievement"
-                        } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are the only player with five top cards but the Empire achievement has already been claimed.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards but the Empire achievement has already been claimed.'), array('player_name' => self::renderPlayerName($player_id)));
-                        }
-                    }
-                    break;
-
                 // id 18, age 2: Road building
                 case "18N1":
                     $step_max = 1;
@@ -11731,20 +11596,6 @@ class Innovation extends Table
                 case "19N1":
                     self::setAuxiliaryValueFromArray(array());
                     $step_max = 1;
-                    break;
-
-                // id 20, age 2: Mapmaking
-                case "20D1":
-                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                        self::setAuxiliaryValue(0);
-                    }
-                    $step_max = 1;
-                    break;
-
-                case "20N1":
-                    if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
-                        self::executeDraw($player_id, 1, 'score'); // "Draw and score a 1"
-                    }
                     break;
 
                 // id 21, age 2: Canal building         
@@ -11801,27 +11652,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 27, age 3: Engineering        
-                case "27D1":
-                    // "I demand you transfer all top cards with a tower from your board to my score pile"
-                    $no_top_card_with_tower = true;
-                    foreach (Colors::ALL as $color) {
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if (self::hasRessource($top_card, 4)) { // This top card has a tower on it
-                            $no_top_card_with_tower = false;
-                            self::transferCardFromTo($top_card, $launcher_id, 'score');
-                        }
-                    }
-                    if ($no_top_card_with_tower) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top card with a ${tower} on your board.'), array('You' => 'You', 'tower' => $tower));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${tower} on his board.'), array('player_name' => self::renderPlayerName($player_id), 'tower' => $tower));
-                    }
-                    break;
-
-                case "27N1":
-                    $step_max = 1;
-                    break;
-
                 // id 28, age 3: Optics        
                 case "28N1":
                     $card = self::executeDrawAndMeld($player_id, 3); // "Draw and meld a 3"
@@ -11869,98 +11699,8 @@ class Innovation extends Table
                     $step_max = 1;
                     break;
 
-                // id 31, age 3: Machinery        
-                case "31D1_3E":
-                case "31D1_4E":
-                    // "Exchange all the cards in your hand with all the highest cards in my hand"
-
-                    // Get cards in hand
-                    $ids_of_cards_in_player_hand = self::getIdsOfCardsInLocation($player_id, 'hand');
-                    $ids_of_highest_cards_in_launcher_hand = self::getIdsOfHighestCardsInLocation($launcher_id, 'hand');
-
-                    // Make the transfers
-                    foreach ($ids_of_cards_in_player_hand as $id) {
-                        $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $launcher_id, 'hand');
-                    }
-                    foreach ($ids_of_highest_cards_in_launcher_hand as $id) {
-                        $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-                    break;
-
-                case "31N1_3E":
-                    $has_card_with_tower = false;
-                    foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                        if (self::hasRessource($card, 4 /* tower */)) {
-                            $has_card_with_tower = true;
-                            break;
-                        }
-                    }
-                    if (!$has_card_with_tower) {
-                        $step = 2; // Skip first interaction
-                        self::revealHand($player_id);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::renderPlayerName($player_id), 'tower' => $tower));
-
-                    }
-                    $step_max = 2;
-                    break;
-
-                case "31N1_4E":
-                    $has_card_with_tower = false;
-                    foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                        if (self::hasRessource($card, 4 /* tower */)) {
-                            $has_card_with_tower = true;
-                            break;
-                        }
-                    }
-                    if ($has_card_with_tower) {
-                        $step_max = 1;
-                    } else {
-                        self::revealHand($player_id);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::renderPlayerName($player_id), 'tower' => $tower));
-                    }
-                    break;
-
-                case "31N2_4E":
-                    $step_max = 1;
-                    break;
-
-                // id 32, age 3: Medicine        
-                case "32D1":
-                    $step_max = 2;
-                    break;
-
-                case "32N1":
-                    $step_max = 1; // 4th edition and beyond only
-                    break;
-
                 // id 33, age 3: Education        
                 case "33N1":
-                    $step_max = 1;
-                    break;
-
-                // id 34, age 3: Feudalism        
-                case "34D1":
-                    $has_card_with_tower = false;
-                    foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                        if (self::hasRessource($card, 4 /* tower */)) {
-                            $has_card_with_tower = true;
-                            break;
-                        }
-                    }
-                    if ($has_card_with_tower) {
-                        $step_max = 1;
-                    } else {
-                        self::revealHand($player_id);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::renderPlayerName($player_id), 'tower' => $tower));
-                    }
-                    break;
-
-                case "34N1":
                     $step_max = 1;
                     break;
 
@@ -11991,20 +11731,6 @@ class Innovation extends Table
                     } while (self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this effect"
                     break;
 
-                // id 38, age 4: Gunpowder
-                case "38D1":
-                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                        self::setAuxiliaryValue(0);
-                    }
-                    $step_max = 1;
-                    break;
-
-                case "38N1":
-                    if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
-                        self::executeDraw($player_id, 2, 'score'); // "Draw and score a 2"
-                    }
-                    break;
-
                 // id 39, age 4: Invention
                 case "39N1":
                     $step_max = 1;
@@ -12029,25 +11755,6 @@ class Innovation extends Table
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed but the Wonder achievement has already been claimed.'), array('player_name' => self::renderPlayerName($player_id)));
                         }
                     }
-                    break;
-
-                // id 40, age 4: Navigation
-                case "40D1":
-                    $step_max = 1;
-                    break;
-
-                // id 41, age 4: Anatomy
-                case "41D1":
-                    $step_max = 1;
-                    break;
-
-                // id 43, age 4: Enterprise
-                case "43D1":
-                    $step_max = 1;
-                    break;
-
-                case "43N1":
-                    $step_max = 1;
                     break;
 
                 // id 45, age 5: Chemistry
@@ -13224,20 +12931,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 17, age 2: Construction
-            case "17D1A":
-                // "Transfer two cards from you hand to my hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 2,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'hand'
-                );
-                break;
-
             // id 18, age 2: Road building
             case "18N1A":
                 // "Meld one or two cards from your hand"
@@ -13281,22 +12974,6 @@ class Innovation extends Table
                     'location_from' => 'hand',
                     'owner_to'      => 0,
                     'location_to'   => 'deck'
-                );
-                break;
-
-            // id 20, age 2: Mapmaking
-            case "20D1A":
-                // "Transfer a 1 from your score pile to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age'           => 1
                 );
                 break;
 
@@ -13385,19 +13062,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 27, age 3: Engineering        
-            case "27N1A":
-                // "You may splay your red cards left"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => array(1) /* red */
-                );
-                break;
-
             // id 28, age 3: Optics
             case "28N1A":
                 // "An opponent with fewer points than you"
@@ -13453,88 +13117,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 31, age 3: Machinery        
-            case "31N1A_3E":
-            case "31N1A_4E":
-                // "Score a card from your hand with a tower"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'revealed,score',
-
-                    'with_icon'     => 4,
-                    /* tower */
-
-                    'score_keyword' => true,
-                );
-                break;
-
-            case "31N1B_3E":
-            case "31N2A_4E":
-                // "You may splay your red cards left"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => array(1) /* red */
-                );
-                break;
-
-            // id 32, age 3: Medicine
-            case "32D1A":
-                // "... with the lowest card in my score pile"
-                $options = array(
-                    'player_id'     => $launcher_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $launcher_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getMinAgeInScore($launcher_id)
-                );
-                break;
-
-            case "32N1A":
-                // "Junk an available achievement of value 3 or 4"
-                // NOTE: This only occurs in the 4th edition and beyond
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => 0,
-                    'location_from' => 'achievements',
-                    'owner_to'      => 0,
-                    'location_to'   => 'junk',
-
-                    'age_min'       => 3,
-                    'age_max'       => 4,
-                );
-                break;
-
-            case "32D1B":
-                // "Exchange the highest card in your score pile..."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getMaxAgeInScore($player_id)
-                );
-                break;
-
-
             // id 33, age 3: Education        
             case "33N1A":
                 // You may return the highest card from your score pile
@@ -13549,35 +13131,6 @@ class Innovation extends Table
                     'location_to'   => 'deck',
 
                     'age'           => self::getMaxAgeInScore($player_id)
-                );
-                break;
-
-            // id 34, age 3: Feudalism        
-            case "34D1A":
-                // "Transfer a card with a tower from your hand to my hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'hand',
-
-                    'with_icon'     => 4 /* tower */
-                );
-                break;
-
-            case "34N1A":
-                // "You may splay your yellow or purple cards left"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 1,
-                    /* left */
-                    'color'           => array(3, 4) /* yellow or purple */
                 );
                 break;
 
@@ -13608,22 +13161,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 38, age 4: Gunpowder
-            case "38D1A":
-                // "Transfer a top card with a tower from your board to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'with_icon'     => 4 /* tower */
-                );
-                break;
-
             // id 39, age 4: Invention
             case "39N1A":
                 $splayed_left_colors = array();
@@ -13640,81 +13177,6 @@ class Innovation extends Table
 
                     'splay_direction' => Directions::RIGHT,
                     'color'           => $splayed_left_colors
-                );
-                break;
-
-            // id 40, age 4: Navigation
-            case "40D1A":
-                // "Transfer a 2 or a 3 from your score pile to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age_min'       => 2,
-                    'age_max'       => 3,
-                );
-                break;
-
-            // id 41, age 4: Anatomy
-            case "41D1A":
-                // "Return a card from your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "41D1B":
-                // "Return a card of equal value from your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => self::getAuxiliaryValue(),
-                );
-                break;
-
-            // id 43, age 4: Enterprise
-            case "43D1A":
-                // "Transfer a top non-purple card with a crown from your board to my board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'board',
-
-                    'color'         => array(0, 1, 2, 3) /* non-purple */,
-                    'with_icon'     => 1 /* with a crown */
-                );
-                break;
-
-            case "43N1A":
-                // "You may splay your green cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(2) /* green */
                 );
                 break;
 
@@ -15046,11 +14508,6 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 17, age 2: Construction
-                    case "17D1A":
-                        self::executeDraw($player_id, 2); // "Draw a 2"
-                        break;
-
                     // id 18, age 2: Road building
                     case "18N1A":
                         if ($n == 2) { // "If you melded two"
@@ -15085,13 +14542,6 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 20, age 2: Mapmaking
-                    case "20D1A":
-                        if ($n > 0) {
-                            self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                        }
-                        break;
-
                     // id 23, age 2: Monotheism        
                     case "23D1A":
                         if ($n > 0) { // "If you do"
@@ -15121,47 +14571,10 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 32, age 3: Medicine
-                    case "32D1B":
-                        // Finish the exchange
-                        $this->gamestate->changeActivePlayer($launcher_id); // This exchange was initiated by $launcher_id
-                        $id = self::getAuxiliaryValue();
-                        if ($id != -1) { // The attacking player could indeed choose a card
-                            $card = self::getCardInfo($id);
-                            self::transferCardFromTo($card, $player_id, 'score'); // $launcher_id -> $player_id
-                            self::setAuxiliaryValue(-1);
-                        }
-                        break;
-
                     // id 33, age 3: Education        
                     case "33N1A":
                         if ($n > 0) { // "If you do"
                             self::executeDraw($player_id, self::getMaxAgeInScore($player_id) + 2); // "Draw a card of value two higher than the highest card remaining in your score pile"
-                        }
-                        break;
-
-                    // id 34, age 3: Feudalism        
-                    case "34D1A":
-                        if ($this->innovationGameState->usingThirdEditionRules()) {
-                            if ($n > 0) { // "If you do"
-                                self::unsplay($player_id, $player_id, $this->innovationGameState->get('color_last_selected')); // "Unsplay that color of your cards"
-                            }
-                        } else if ($this->innovationGameState->usingFourthEditionRules()) {
-                            // "junk all available special achievements!"
-                            $achievement_cards = self::getCardsInLocation(0, 'achievements');
-                            foreach ($achievement_cards as $card) {
-                                if ($card['age'] == null) {
-                                    self::transferCardFromTo($card, 0, 'junk');
-                                }
-                            }
-                        }
-                        break;
-
-                    case "34N1A":
-                        // "If you do, draw a 3"
-                        // NOTE: This only occurs in the 4th edition and beyond
-                        if ($n > 0 && $this->innovationGameState->usingFourthEditionRules()) {
-                            self::executeDraw($player_id, 3);
                         }
                         break;
 
@@ -15177,39 +14590,10 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 38, age 4: Gunpowder
-                    case "38D1A":
-                        if ($n > 0) {
-                            self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                        }
-                        break;
-
                     // id 39, age 4: Invention
                     case "39N1A":
                         if ($n > 0) { // "If you do"
                             self::executeDraw($player_id, 4, 'score'); // "Draw and score a 4"
-                        }
-                        break;
-
-                    // id 41, age 4: Anatomy
-                    case "41D1A":
-                        if ($n > 0) { // "If you do"
-                            self::setAuxiliaryValue($this->innovationGameState->get('age_last_selected')); // Save the age of the returned card
-                            self::incrementStepMax(1);
-                        }
-                        break;
-
-                    case "41D1B":
-                        // "If you do, junk all cards in the 4 deck"
-                        if ($n > 0 && $this->innovationGameState->usingFourthEditionRules()) {
-                            self::junkBaseDeck(4);
-                        }
-                        break;
-
-                    // id 43, age 4: Enterprise
-                    case "43D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDrawAndMeld($player_id, 4); // "Draw and meld a 4"
                         }
                         break;
 
@@ -16198,12 +15582,6 @@ class Innovation extends Table
                     // Nothing to do but to go to the next step
                     break;
 
-                // id 32, age 3: Medicine
-                case "32D1A":
-                    // Delay the transfer: this way the launcher can not choose the card he would just receive
-                    self::setAuxiliaryValue($card['id']);
-                    break;
-
                 // id 50, age 5: Measurement
                 case "50N1B":
                     // $choice is a color
@@ -16413,7 +15791,7 @@ class Innovation extends Table
                             } else if ($location_to == 'revealed,deck') {
                                 $card = self::transferCardFromTo($card, $owner_to, 'revealed');
                                 self::returnCard($card);
-                            } else if ($location_to == 'revealed,score') {
+                            } else if ($location_to == Locations::REVEALED_THEN_SCORE) {
                                 $card = self::transferCardFromTo($card, $owner_to, 'revealed');
                                 self::scoreCard($card, $owner_to);
                             } else if ($location_to == 'junk,safe') {
@@ -16445,9 +15823,9 @@ class Innovation extends Table
                         } else {
                             // Do the splay as stated in B
                             $this->innovationGameState->set("color_last_selected", $card['color']);
-                            self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/$splay_direction == 0);
+                            $did_splay = self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/$splay_direction == 0);
                             if ($code !== null && self::isInSeparateFile($card_id)) {
-                                self::getCardInstance($card_id, $executionState)->handleSplayChoice(self::getCardInfo($selected_card_id));
+                                self::getCardInstance($card_id, $executionState)->handleSplayChoice($card['color'], $did_splay);
                                 self::setStepMax($executionState->getMaxSteps());
                                 self::setStep($executionState->getNextStep() - 1);
                             }
