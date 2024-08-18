@@ -36,4 +36,9 @@ class Card11_3E extends AbstractCard
     }
   }
 
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0;
+  }
+
 }

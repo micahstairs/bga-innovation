@@ -37,4 +37,12 @@ class Card11_4E extends AbstractCard
     ];
   }
 
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0) {
+      return true;
+    }
+    return self::countCardsKeyedByColor(Locations::BOARD)[Colors::RED] == 3;
+  }
+
 }

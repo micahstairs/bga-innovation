@@ -8,7 +8,7 @@ use Innovation\Enums\Locations;
 
 class Card5 extends AbstractCard
 {
-  //
+  // Oars:
   // - 3rd edition:
   //   - I DEMAND you transfer a card with a [PROSPERITY] from your hand to my score pile! If you
   //     do, draw a [1], and repeat this dogma effect!

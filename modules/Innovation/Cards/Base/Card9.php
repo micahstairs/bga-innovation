@@ -22,14 +22,19 @@ class Card9 extends AbstractCard
   {
     return [
       'can_pass'       => true,
-      'location_from'  => Locations::HAND,
       'return_keyword' => true,
+      'location_from'  => Locations::HAND,
     ];
   }
 
   public function handleCardChoice(array $card)
   {
     self::drawAndScore(self::getValue($card) + 1);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

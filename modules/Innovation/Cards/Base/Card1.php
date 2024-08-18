@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card1 extends AbstractCard
 {
@@ -21,16 +22,16 @@ class Card1 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return [
         'can_pass'       => true,
-        'n'              => 3,
-        'location_from'  => 'hand',
         'return_keyword' => true,
+        'n'              => 3,
+        'location_from'  => Locations::HAND,
       ];
     } else {
       return [
         'can_pass'       => true,
-        'location_from'  => 'hand',
         'return_keyword' => true,
         'age'            => 3,
+        'location_from'  => Locations::HAND,
       ];
     }
   }
@@ -44,5 +45,10 @@ class Card1 extends AbstractCard
       self::draw(1);
       self::draw(1);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 }

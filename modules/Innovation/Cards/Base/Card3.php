@@ -20,25 +20,33 @@ class Card3 extends AbstractCard
   {
     if (self::isDemand()) {
       self::draw(1);
+      self::setMaxSteps(1);
+    } else {
+      self::setMaxSteps(1);
     }
-    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       return [
+        'age'      => ValueSelectors::HIGHEST,
         'location' => Locations::HAND,
         'owner_to' => self::getLauncherId(),
-        'age'      => ValueSelectors::HIGHEST,
       ];
     } else {
       return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'junk_keyword'  => true,
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
         'age_min'       => 1,
         'age_max'       => 2,
       ];
     }
   }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByValue(self::getAvailableStandardAchievements(), [1, 2])) > 0;
+  }
+
 }

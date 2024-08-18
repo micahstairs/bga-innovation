@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card0 extends AbstractCard
 {
@@ -25,10 +26,10 @@ class Card0 extends AbstractCard
   {
     return [
       'can_pass'       => true,
+      'return_keyword' => true,
       'n_min'          => 1,
       'n_max'          => 3,
-      'location_from'  => 'hand',
-      'return_keyword' => true,
+      'location_from'  => Locations::HAND,
     ];
   }
 

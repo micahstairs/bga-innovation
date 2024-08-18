@@ -226,6 +226,18 @@ abstract class AbstractCard
     return false;
   }
 
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when the non-demands are executed.
+    return true;
+  }
+
+  public function echoMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when the echo effect is executed.
+    return true;
+  }
+
   public function demandMightBeEffective(): bool
   {
     // Subclasses should override this method and return false if the card is guaranteed not to have an effect when "I demand" is executed.

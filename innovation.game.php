@@ -31,6 +31,7 @@ use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
+use Innovation\Enums\ValueSelectors;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 use Innovation\Utils\Strings;
@@ -9859,95 +9860,19 @@ class Innovation extends Table
     function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects)
     {
 
-        // TODO(4E): Add proper no-op detection for 4th edition cards (refactor this in the card classes).
-        if ($this->innovationGameState->usingFourthEditionRules()) {
-            return false;
-        }
-
         // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
-            // NOTE: All cards with echo effects must be included in this switch statement, otherwise it breaks the logic
-            // farther down in this method. Also, we can't return true anywhere here, since an echo effect is not the only
-            // thing being executed.
-            switch ($card_id) {
-                case 219: // Safety Pin
-                case 331: // Perfume
-                case 332: // Ruler
-                case 339: // Chopsticks
-                case 345: // Lever
-                case 346: // Linguistics
-                case 348: // Horseshoes
-                case 355: // Almanac
-                case 356: // Magnifying Glass
-                case 359: // Charitable Trust
-                case 361: // Deodorant
-                case 363: // Novel
-                case 366: // Telescope
-                case 372: // Pencil
-                case 374: // Toilet
-                case 375: // Lightning Rod
-                case 377: // Coke
-                case 385: // Bifocals
-                case 389: // Hot Air Balloon
-                case 391: // Dentures
-                case 398: // Rubber
-                case 399: // Jeans
-                case 410: // Sliced Bread
-                case 406: // X-Ray
-                case 412: // Tractor
-                case 414: // Television
-                case 419: // Credit Card
-                case 420: // Email
-                case 421: // ATM
-                case 423: // Karaoke
-                    // These cards always have an effect.
+            if (self::isInSeparateFile($card_id)) {
+                $executionState = (new ExecutionState($this))
+                    ->setEdition($this->innovationGameState->getEdition())
+                    ->setLauncherId($launcher_id)
+                    ->setPlayerId($executing_player_id);
+                if (self::getCardInstance($card_id, $executionState)->echoMightBeEffective()) {
                     return false;
-
-                case 334: // Candles
-                case 335: // Plumbing
-                case 343: // Flute
-                case 350: // Scissors
-                case 367: // Kobukson
-                case 371: // Barometer
-                case 373: // Clock
-                case 376: // Thermometer
-                case 382: // Stove
-                case 384: // Tuning Fork
-                case 387: // Loom
-                case 395: // Photography
-                case 397: // Machine Gun
-                case 401: // Elevator
-                case 403: // Ice Cream
-                case 422: // Wristwatch
-                    // These cards sometimes have an effect. Until we add more granular logic for these cards, we will
-                    // assume the cards have an effect.
-                    return false;
-
-                case 383: // Piano
-                    // This card has no effect if all players have empty hands.
-                    foreach (self::getAllActivePlayerIds() as $player_id) {
-                        if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                            return false;
-                        }
-                    }
-                    break;
-
-                case 333: // Bangle
-                case 338: // Umbrella
-                case 342: // Bell
-                case 349: // Glassblowing
-                case 351: // Toothbrush
-                case 364: // Sunglasses
-                case 386: // Stethoscope
-                case 392: // Morphine
-                case 407: // Bandage
-                case 411: // Air Conditioner
-                case 418: // Jet
-                    // These echo effects have no effect if the player has an empty hand.
-                    if (self::countCardsInLocation($executing_player_id, 'hand') > 0) {
-                        return false;
-                    }
-                    break;
+                }
+            } else {
+                // Otherwise, we have to assume it has an effect
+                return false;
             }
         }
 
@@ -9956,238 +9881,16 @@ class Innovation extends Table
             return true;
         }
 
-        // Check the card's non-demand effects
-        // NOTE: There is no point in adding any cases for cards which have an echo effect which ALWAYS has an effect (e.g. "Draw a 2"),
-        // but for the sake of completeness, it also doesn't hurt to add them below (even though they will never get executed).
-        switch ($card['id']) {
-
-            // TODO(FIGURES): Add cases.
-
-            /*** Non-demand effects which read "No effect." ***/
-
-            case 332: // Ruler
-            case 335: // Plumbing
-            case 344: // Puppet
-                return true;
-
-            /*** Cases where the execution of the non-demand depends on an earlier demand ***/
-
-            case 20: // Mapmaking
-            case 38: // Gunpowder
-            case 48: // The Pirate Code
-            case 62: // Vaccination
-                // We can ignore these non-demand effect, because if the demand has no effect, then this won't either.
-                return false;
-
-            /*** Basic cases involving empty hands and/or empty score piles ***/
-
-            case 1: // Tools
-            case 9: // Agriculture
-            case 13: // Code of Laws
-            case 16: // Mathematics
-            case 18: // Road Building
-            case 19: // Currency
-            case 42: // Perspective
-            case 50: // Measurement
-            case 59: // Classification
-            case 63: // Democracy
-            case 71: // Refrigeration
-            case 73: // Lighting
-            case 75: // Quantum Theory
-            case 81: // Antibiotics
-            case 114: // Papyrus of Ani
-            case 120: // Lurgan Canoe
-            case 121: // Xianrendong Shards
-            case 130: // Baghdad Battery
-            case 131: // Holy Grail
-            case 136: // Charter of Liberties
-            case 139: // Philosopher's Stone
-            case 144: // Shroud of Turin
-            case 153: // Cross of Coronado
-            case 164: // Almira, Queen of the Castle
-            case 174: // Marcha Real
-            case 182: // Singer Model 27
-            case 216: // Complex Numbers
-            case 338: // Umbrella
-            case 341: // Soap
-            case 347: // Crossbow
-            case 352: // Watermill
-            case 362: // Sandpaper
-            case 370: // Globe
-            case 372: // Pencil
-            case 384: // Tuning Fork
-                // These non-demand effects have no effect if the player has an empty hand.
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
-
-            case 33: // Education            
-            case 146: // Delft Pocket Telescope
-            case 217: // Newton-Wickins Telescope
-            case 401: // Elevator
-            case 430: // Flash Drive
-                // These non-demand effects have no effect if the player has an empty score pile.
-                return self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            case 76: // Rocketry
-                // These non-demand effects have no effect if all players have empty score piles.
-                foreach (self::getAllActivePlayerIds() as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'score') > 0) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 69: // Bicycle
-                // These non-demand effects have no effect if the player has an empty score pile and an empty hand.
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            case 393: // Indian Clubs
-                // These non-demands have no effect if the player has an empty hand or empty score pile.
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 || self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            /*** Other cases (sorted by card ID) **/
-
-            case 15: // Calendar
-                // The non-demand effect has no effect unless the player has more cards in their score pile than their hand.
-                return self::countCardsInLocation($executing_player_id, 'score') <= self::countCardsInLocation($executing_player_id, 'hand');
-
-            case 17: // Construction
-                // The non-demand effect has no effect if the Empire achievement was already awarded.
-                if (self::getCardInfo(105)['owner'] != 0) {
-                    return true;
-                }
-
-                // The non-demand effect has no effect unless they are the only player with 5 top cards.
-                $boards = self::getBoards(self::getAllActivePlayerIds());
-                $num_players_with_five_top_cards = 0;
-                $executing_player_has_five_top_cards = false;
-                foreach ($boards as $player_id => $board) {
-                    $number_of_top_cards = 0;
-                    foreach (Colors::ALL as $color) {
-                        if (count($board[$color]) > 0) {
-                            $number_of_top_cards++;
-                        }
-                    }
-                    if ($number_of_top_cards == 5) {
-                        $num_players_with_five_top_cards += 1;
-                        if ($player_id == $executing_player_id) {
-                            $executing_player_has_five_top_cards = true;
-                        }
-                    }
-                }
-                if ($num_players_with_five_top_cards != 1 || !$executing_player_has_five_top_cards) {
-                    return true;
-                }
-                break;
-
-            case 21: // Canal Building
-                // The non-demand effect in the 4th edition will have an effect if the there is at least one age 3 card in the base deck.
-                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[3] > 0) {
-                    return false;
-                }
-                // The non-demand effect will have no effect if the player has an empty score pile and an empty hand.
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            case 24: // Philosophy
-                // The non-demand effects have no effect if the player has no cards in hand and no piles that can be splayed left
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && count(self::getSplayableColorsOnBoard($executing_player_id, Directions::LEFT)) == 0;
-
-            case 27: // Engineering
-                // The non-demand effect has no effect if the player cannot splay their red pile left
-                return !in_array(Colors::RED, self::getSplayableColorsOnBoard($executing_player_id, Directions::LEFT));
-
-            case 31: // Machinery
-                // The non-demand effect has no effect if the player has no cards in hand and cannot splay their red pile left
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::RED, self::getSplayableColorsOnBoard($executing_player_id, Directions::LEFT));
-
-            case 32: // Medicine
-                if ($this->innovationGameState->usingFourthEditionRules()) {
-                    // The non-demand has no effect if there are no 3's or 4's in the available achievements.
-                    $available_achievements = self::countCardsInLocationKeyedByAge(0, Locations::ACHIEVEMENTS);
-                    return $available_achievements[3] == 0 && $available_achievements[4] == 0;
-                }
-                return true;
-
-            case 36: // Printing Press
-                // The non-demand effect has no effect if the player has no cards in their score pile and cannot splay their blue pile right
-                return self::countCardsInLocation($executing_player_id, 'score') == 0 && !in_array(Colors::BLUE, self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
-
-            case 43: // Enterprise
-                // The non-demand effect has no effect if the player cannot splay their green pile right
-                return !in_array(Colors::GREEN, self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
-
-            case 44: // Reformation
-                // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or purple piles right
-                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT);
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::YELLOW, $right_splayable_colors) && !in_array(Colors::PURPLE, $right_splayable_colors);
-
-            case 49: // Banking
-                // The non-demand effect has no effect if the player cannot splay their green pile right
-                return !in_array(Colors::GREEN, self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
-
-            case 51: // Statistics
-                // The non-demand effect has no effect if the player cannot splay their yellow pile right
-                return !in_array(Colors::YELLOW, self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
-
-            case 56: // Encyclopedia
-                if ($this->innovationGameState->usingFourthEditionRules()) {
-                    // The non-demand will have an effect if there are cards in any of the age 5, 6, or 7 base decks.
-                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
-                    if ($base_decks[5] > 0 || $base_decks[6] > 0 || $base_decks[7] > 0) {
-                        return false;
-                    }
-                }
-                return self::countCardsInLocation($executing_player_id, 'score') == 0;
-
-            case 60: // Metric System
-                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT);
-                // The second non-demand effect has no effect if the player's green pile is not or cannot be splayed right
-                if (self::getCurrentSplayDirection($executing_player_id, Colors::GREEN) != Directions::RIGHT && !in_array(Colors::GREEN, $right_splayable_colors)) {
-                    return true;
-                }
-                // The non-demand effects have no effect if the player has no piles that can be splayed right
-                return count($right_splayable_colors) == 0;
-
-            case 64: // Emancipation
-                // The non-demand effect has no effect if the player cannot splay their red or purple piles right
-                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT);
-                return !in_array(Colors::RED, $right_splayable_colors) && !in_array(Colors::PURPLE, $right_splayable_colors);
-
-            case 72: // Sanitation
-                if ($this->innovationGameState->usingFourthEditionRules()) {
-                    // The non-demand has no effect if both the age 7 and age 8 base decks are empty.
-                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
-                    return $base_decks[7] == 0 && $base_decks[8] == 0;
-                }
-                return true;
-
-            case 77: // Flight
-                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::UP);
-                $top_red_card = self::getTopCardOnBoard($executing_player_id, Colors::RED);
-                // The second non-demand effect has no effect if the player's red pile is not and cannot be splayed up
-                if ($top_red_card == null || ($top_red_card['splay_direction'] != 3 && !in_array(Colors::RED, $up_splayable_colors))) {
-                    return true;
-                }
-                // The non-demand effects have no effect if the player has no piles that can be splayed up
-                return count($up_splayable_colors) == 0;
-
-            case 91: // Ecology
-                if ($this->innovationGameState->usingFourthEditionRules()) {
-                    // The non-demand will have an effect if there are cards in the age 10 base deck.
-                    if (self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[10] > 0) {
-                        return false;
-                    }
-                }
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
-
-            case 94: // Specialization
-                // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or blue piles up
-                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::UP);
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::BLUE, $up_splayable_colors) && !in_array(Colors::YELLOW, $up_splayable_colors);
-
-            // All other cards with non-demand effects are assumed to have an effect.
-            default:
-                return false;
+        if (self::isInSeparateFile($card_id)) {
+            $executionState = (new ExecutionState($this))
+                ->setEdition($this->innovationGameState->getEdition())
+                ->setLauncherId($launcher_id)
+                ->setPlayerId($executing_player_id);
+            return !self::getCardInstance($card_id, $executionState)->nonDemandsMightBeEffective();
         }
+
+        // Otherwise, we assume the non-demand effect(s) will have an effect
+        return false;
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the demand effect (without revealing hidden info to the launching player). */
