@@ -27,9 +27,19 @@ class Notifications
     self::notifyGeneralInfo(clienttranslate('It does not have a ${icon}.'), ['icon' => Icons::render($icon)]);
   }
 
+  public function notifyPlayerIconCount(int $player, int $icon, int $count)
+  {
+    $renderedCount = $this->game->renderNumber($count);
+    $renderedIcon = Icons::render($icon);
+    self::notifyPlayer($player, 'log', clienttranslate('${You} have ${n} ${icon}.'),
+      ['i18n' => ['n'], 'You' => 'You', 'n' => $renderedCount, 'icon' => $renderedIcon]);
+    self::notifyAllPlayersBut($player, 'log', clienttranslate('${player_name} has ${n} ${icon}.'),
+      ['i18n' => ['n'], 'player_name' => self::renderPlayerName($player), 'n' => $renderedCount, 'icon' => $renderedIcon]);
+  }
+
   public function notifyCardColor(int $color)
   {
-    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($color)));
+    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), ['i18n' => ['color'], 'color' => Colors::render($color)]);
   }
 
   // MISCELLANEOUS NOTIFICATIONS

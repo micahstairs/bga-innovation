@@ -6,6 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
+use Innovation\Enums\ValueSelectors;
 
 class Card78 extends AbstractCard
 {
@@ -32,7 +33,7 @@ class Card78 extends AbstractCard
       'location_to'          => Locations::SCORE,
       'color'                => Colors::NON_RED,
       'without_icon'         => Icons::INDUSTRY,
-      'age'                  => 'highest',
+      'age'                  => ValueSelectors::HIGHEST,
       'refresh_selection'    => true,
     ];
   }

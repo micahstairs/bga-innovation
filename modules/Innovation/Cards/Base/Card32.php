@@ -4,6 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
+use Innovation\Enums\ValueSelectors;
 
 class Card32 extends AbstractCard
 {
@@ -32,13 +33,13 @@ class Card32 extends AbstractCard
         return [
           'player_id' => self::getLauncherId(),
           'location'  => Locations::SCORE,
-          'age'       => self::getMinValue(self::getCards(Locations::SCORE, self::getLauncherId())),
+          'age'       => ValueSelectors::LOWEST,
         ];
       } else {
         return [
           'player_id' => self::getPlayerId(),
           'location'  => Locations::SCORE,
-          'age'       => self::getMaxValue(self::getCards(Locations::SCORE, self::getPlayerId())),
+          'age'       => ValueSelectors::HIGHEST,
         ];
       }
     } else {
@@ -70,7 +71,7 @@ class Card32 extends AbstractCard
 
   public function demandMightBeEffective(): bool
   {
-    return self::hasCards(self::getPlayerId(), Locations::SCORE) || self::hasCards(self::getLauncherId(), Locations::SCORE);
+    return self::hasCards(Locations::SCORE, self::getPlayerId()) || self::hasCards(Locations::SCORE, self::getLauncherId());
   }
 
 }

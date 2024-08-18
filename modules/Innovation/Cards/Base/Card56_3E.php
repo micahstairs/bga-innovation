@@ -4,6 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
+use Innovation\Enums\ValueSelectors;
 
 class Card56_3E extends AbstractCard
 {
@@ -20,10 +21,10 @@ class Card56_3E extends AbstractCard
   {
     return [
       'can_pass'      => true,
-      'n'             => 'all',
-      'location_from' => Locations::SCORE,
       'meld_keyword'  => true,
-      'age'           => self::getMaxValueInLocation(Locations::SCORE),
+      'n'             => 'all',
+      'age'           => ValueSelectors::HIGHEST,
+      'location_from' => Locations::SCORE,
     ];
   }
 

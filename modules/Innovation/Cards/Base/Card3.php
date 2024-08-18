@@ -4,6 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
+use Innovation\Enums\ValueSelectors;
 
 class Card3 extends AbstractCard
 {
@@ -27,10 +28,9 @@ class Card3 extends AbstractCard
   {
     if (self::isDemand()) {
       return [
-        'location_from' => 'hand',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'hand',
-        'age'           => self::getMaxValueInLocation('hand'),
+        'location' => Locations::HAND,
+        'owner_to' => self::getLauncherId(),
+        'age'      => ValueSelectors::HIGHEST,
       ];
     } else {
       return [

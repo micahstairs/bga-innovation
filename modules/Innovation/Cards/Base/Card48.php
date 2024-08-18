@@ -5,6 +5,7 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
+use Innovation\Enums\ValueSelectors;
 
 class Card48 extends AbstractCard
 {
@@ -40,10 +41,10 @@ class Card48 extends AbstractCard
       ];
     } else {
       return [
-        'location_from' => Locations::BOARD,
-        'age'           => self::getMinValue(self::filterByIcon(self::getTopCards(), Icons::PROSPERITY)),
-        'with_icon'     => Icons::PROSPERITY,
         'score_keyword' => true,
+        'age'           => ValueSelectors::LOWEST,
+        'location_from' => Locations::BOARD,
+        'with_icon'     => Icons::PROSPERITY,
       ];
     }
   }

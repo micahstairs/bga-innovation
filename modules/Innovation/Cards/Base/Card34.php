@@ -66,7 +66,7 @@ class Card34 extends AbstractCard
 
   public function demandMightBeEffective(): bool
   {
-    return self::hasCards(self::getPlayerId(), Locations::HAND);
+    return self::hasCards(Locations::HAND);
   }
 
 }

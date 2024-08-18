@@ -215,6 +215,11 @@ abstract class AbstractCard
     // See handleAbortedInteraction() for that.
   }
 
+  public function atEndOfEffect()
+  {
+    // Subclasses can optionally override this function if any extra handling needs to be done at the end of the effect.
+  }
+
   public function hasPostExecutionLogic(): bool
   {
     // Subclasses are expected to override this method and return true if the card needs to do any more logic after executing a card.
