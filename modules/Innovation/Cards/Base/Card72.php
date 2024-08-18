@@ -4,6 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
+use Innovation\Enums\Locations;
 
 class Card72 extends AbstractCard
 {
@@ -80,6 +81,11 @@ class Card72 extends AbstractCard
   public function handleListChoice($value)
   {
     self::junkBaseDeck($value);
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND) || self::hasCards(Locations::HAND, self::getLauncherId());
   }
 
 }

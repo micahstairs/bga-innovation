@@ -32,4 +32,9 @@ class Card67_3E extends AbstractCard
     ];
   }
 
+  public function demandMightBeEffective(): bool
+  {
+    return self::getStandardIconCount(Icons::PROSPERITY, self::getLauncherId()) >= 4 && self::hasCards(Locations::SCORE);
+  }
+
 }

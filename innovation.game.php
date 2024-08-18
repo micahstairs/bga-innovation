@@ -6645,7 +6645,7 @@ class Innovation extends Table
         return true;
     }
 
-    function expandInteractionOptions(array $options, int $player_id): ?array
+    function expandInteractionOptions(array $options, int $player_id, bool $is_refreshing_options): ?array
     {
         if (empty($options)) {
             return null;
@@ -6657,7 +6657,7 @@ class Innovation extends Table
         if (array_key_exists('n_max', $options) && $options['n_max'] === 'all') {
             $options['n_max'] = 999;
         }
-        if (!array_key_exists('can_pass', $options)) {
+        if (!array_key_exists('can_pass', $options) && !$is_refreshing_options) {
             $options['can_pass'] = false;
         }
         if (array_key_exists('location', $options)) {
@@ -6727,22 +6727,22 @@ class Innovation extends Table
             $options['location_to'] = Locations::ACHIEVEMENTS;
             $options['owner_to'] = 0;
         }
-        if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
+        if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options) && !$is_refreshing_options) {
             $options['n'] = 1;
         }
-        if (!array_key_exists('player_id', $options)) {
+        if (!array_key_exists('player_id', $options) && !$is_refreshing_options) {
             $options['player_id'] = $player_id;
         }
         if (array_key_exists('location_from', $options) && ($options['location_from'] == 'deck' || $options['location_from'] == 'junk')) {
             $options['owner_from'] = 0;
         }
-        if (!array_key_exists('owner_from', $options)) {
+        if (!array_key_exists('owner_from', $options) && !$is_refreshing_options) {
             $options['owner_from'] = $player_id;
         }
         if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
             $options['owner_to'] = 0;
         }
-        if (!array_key_exists('owner_to', $options)) {
+        if (!array_key_exists('owner_to', $options) && !$is_refreshing_options) {
             $options['owner_to'] = $player_id;
         }
         if (array_key_exists('choices', $options)) {
@@ -6787,6 +6787,11 @@ class Innovation extends Table
                     if (array_key_exists('choose_value', $options)) {
                         $rewritten_options[$key] = $value;
                     } else {
+                        if ($value === 'highest') {
+                            $value = -1;
+                        } else if ($value === 'lowest') {
+                            $value = -2;
+                        }
                         $rewritten_options['age_min'] = $value;
                         $rewritten_options['age_max'] = $value;
                     }
@@ -6820,6 +6825,7 @@ class Innovation extends Table
         if (array_key_exists('age', $rewritten_options)) {
             $rewritten_options['age'] = array_unique($rewritten_options['age']);
         } else {
+            // TODO(FIGURES): Handle the age 0 deck
             $rewritten_options['age'] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         }
         if (!array_key_exists('players', $rewritten_options)) {
@@ -6831,7 +6837,7 @@ class Innovation extends Table
             $rewritten_options['choices'] = [];
         }
 
-        if (self::getActivePlayerId() != $player_id) {
+        if (!$is_refreshing_options && self::getActivePlayerId() != $player_id) {
             $this->gamestate->changeActivePlayer($player_id);
         }
 
@@ -6876,6 +6882,7 @@ class Innovation extends Table
             $rewritten_options['solid_constraint'] = false;
         }
         if (!array_key_exists('age_min', $rewritten_options)) {
+            // TODO(FIGURES): Handle the age 0 deck
             $rewritten_options['age_min'] = 1;
         }
         if (!array_key_exists('age_max', $rewritten_options)) {
@@ -7142,20 +7149,6 @@ class Innovation extends Table
             $condition_for_location = self::format("location = '{location_from}'", array('location_from' => $location_from));
         }
 
-        // Condition for age
-        $age_min = $this->innovationGameState->get('age_min');
-        $age_max = $this->innovationGameState->get('age_max');
-        $age_args = ['age_min' => $age_min, 'age_max' => $age_max];
-        $include_special_achievements = $this->innovationGameState->get('include_special_achievements') == 1;
-        if ($location_from === 'board' || $location_from === 'display') {
-            $condition_for_age = self::format("faceup_age BETWEEN {age_min} AND {age_max}", $age_args);
-        } else if ($include_special_achievements) {
-            $condition_for_age = self::format("(age IS NULL OR (age BETWEEN {age_min} AND {age_max}))", $age_args);
-        } else {
-            $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", $age_args);
-        }
-        // TODO(LATER): Take 'age_array' into account if there are any cards which need to rely on this mechanism.
-
         // Condition for age because of achievement eligibility
         $condition_for_claimable_ages = true;
         if ($this->innovationGameState->get('require_achievement_eligibility') == 1) {
@@ -7175,7 +7168,9 @@ class Innovation extends Table
 
         // Condition for color
         $color_array = $this->innovationGameState->getAsArray('color_array');
+        $include_special_achievements = $this->innovationGameState->get('include_special_achievements') == 1;
         if ($include_special_achievements) {
+            // NOTE: We currently assume that 'include_special_achievements' is not used in conjunction with any restrictions on color.
             $condition_for_color = "TRUE";
         } else if (count($color_array) == 0) {
             $condition_for_color = "FALSE";
@@ -7297,100 +7292,121 @@ class Innovation extends Table
             $condition_for_excluding_bonus = "(spot_1 IS NULL OR spot_1 < 101) AND (spot_2 IS NULL OR spot_2 < 101) AND (spot_3 IS NULL OR spot_3 < 101) AND (spot_4 IS NULL OR spot_4 < 101) AND (spot_5 IS NULL OR spot_5 < 101) AND (spot_6 IS NULL OR spot_6 < 101)";
         }
 
+        $condition_for_position = "TRUE";
+        $join_for_position = "";
         if ($this->innovationGameState->get('splay_direction') == -1 && $location_from == 'board') {
-            self::DbQuery(
-                self::format("
-                UPDATE
-                    card
+            if ($this->innovationGameState->get('bottom_from') == 1) {
+                $position_to_select = '0';
+            } else {
+                $position_to_select = 'MAX(position)';
+            }
+            $join_for_position = self::format("
                 LEFT JOIN
                     (SELECT owner AS joined_owner, color AS joined_color, {position} AS position_to_select FROM card WHERE location = 'board' GROUP BY owner, color) AS joined
                     ON
                         owner = joined_owner AND
                         color = joined_color
-                SET
-                    selected = TRUE
-                WHERE
-                    {condition_for_owner} AND
-                    {condition_for_location} AND
-                    {condition_for_age} AND
-                    {condition_for_claimable_ages} AND
-                    {condition_for_demand_effect} AND
-                    position = position_to_select AND
-                    {condition_for_color} AND
-                    {condition_for_type} AND
-                    {condition_for_icon} AND
-                    {condition_for_icon_hash} AND
-                    {condition_for_splay} AND
-                    {condition_for_requiring_id} AND
-                    {condition_for_excluding_id} AND
-                    {condition_for_including_relic} AND
-                    {condition_for_including_bonus} AND
-                    {condition_for_excluding_bonus}
             ",
-                    array(
-                        'position'                      => $this->innovationGameState->get('bottom_from') == 1 ? '0' : 'MAX(position)',
-                        'condition_for_owner'           => $condition_for_owner,
-                        'condition_for_location'        => $condition_for_location,
-                        'condition_for_age'             => $condition_for_age,
-                        'condition_for_claimable_ages'  => $condition_for_claimable_ages,
-                        'condition_for_demand_effect'   => $condition_for_demand_effect,
-                        'condition_for_color'           => $condition_for_color,
-                        'condition_for_type'            => $condition_for_type,
-                        'condition_for_icon'            => $condition_for_icon,
-                        'condition_for_icon_hash'       => $condition_for_icon_hash,
-                        'condition_for_splay'           => $condition_for_splay,
-                        'condition_for_requiring_id'    => $condition_for_requiring_id,
-                        'condition_for_excluding_id'    => $condition_for_excluding_id,
-                        'condition_for_including_relic' => $condition_for_including_relic,
-                        'condition_for_including_bonus' => $condition_for_including_bonus,
-                        'condition_for_excluding_bonus' => $condition_for_excluding_bonus
-                    )
-                )
+                ['position' => $position_to_select]
             );
+            $condition_for_position = "position = position_to_select";
+        }
+
+        $conditions = self::format("
+            {condition_for_position} AND
+            {condition_for_owner} AND
+            {condition_for_location} AND
+            {condition_for_claimable_ages} AND
+            {condition_for_demand_effect} AND
+            {condition_for_color} AND
+            {condition_for_type} AND
+            {condition_for_icon} AND
+            {condition_for_icon_hash} AND
+            {condition_for_splay} AND
+            {condition_for_requiring_id} AND
+            {condition_for_excluding_id} AND
+            {condition_for_including_relic} AND
+            {condition_for_including_bonus} AND
+            {condition_for_excluding_bonus}
+        ", [
+            'condition_for_position'        => $condition_for_position,
+            'condition_for_owner'           => $condition_for_owner,
+            'condition_for_location'        => $condition_for_location,
+            'condition_for_claimable_ages'  => $condition_for_claimable_ages,
+            'condition_for_demand_effect'   => $condition_for_demand_effect,
+            'condition_for_color'           => $condition_for_color,
+            'condition_for_type'            => $condition_for_type,
+            'condition_for_icon'            => $condition_for_icon,
+            'condition_for_icon_hash'       => $condition_for_icon_hash,
+            'condition_for_splay'           => $condition_for_splay,
+            'condition_for_requiring_id'    => $condition_for_requiring_id,
+            'condition_for_excluding_id'    => $condition_for_excluding_id,
+            'condition_for_including_relic' => $condition_for_including_relic,
+            'condition_for_including_bonus' => $condition_for_including_bonus,
+            'condition_for_excluding_bonus' => $condition_for_excluding_bonus
+        ]);
+
+        // Condition for age
+        if ($include_special_achievements) {
+            // NOTE: We currently assume that 'include_special_achievements' is not used in conjunction with any restrictions on age.
+            $condition_for_age = "TRUE";
         } else {
-            self::DbQuery(
-                self::format("
+            if ($location_from === 'board' || $location_from === 'display') {
+                $age_column = 'faceup_age';
+            } else {
+                $age_column = 'age';
+            }
+
+            $age_min = $this->innovationGameState->get('age_min');
+            $age_max = $this->innovationGameState->get('age_max');
+
+            // Handle "highest" and "lowest" special cases
+            if ($age_min < 0 && $age_max < 0) {
+                $max_or_min = $age_min == -1 ? 'MAX' : 'MIN';
+                $value = self::getUniqueValueFromDB(self::format("
+                    SELECT
+                        COALESCE({max_or_min}({age_column}), 0)
+                    FROM
+                        card
+                    {join_for_position}
+                    WHERE
+                        {conditions}
+                ", [
+                    'max_or_min' => $max_or_min,
+                    'age_column' => $age_column,
+                    'join_for_position' => $join_for_position,
+                    'conditions' => $conditions
+                ]));
+                $age_min = $value;
+                $age_max = $value;
+            }
+            $age_args = [
+                'age_min' => $age_min,
+                'age_max' => $age_max,
+                'age_column' => $age_column,
+            ];
+            $condition_for_age = self::format("{age_column} BETWEEN {age_min} AND {age_max}", $age_args);
+        }
+        // TODO(LATER): Take 'age_array' into account if there are any cards which need to rely on this mechanism.
+
+        self::DbQuery(
+            self::format("
                 UPDATE
                     card
+                {join_for_position}
                 SET
                     selected = TRUE
                 WHERE
-                    {condition_for_owner} AND
-                    {condition_for_location} AND
                     {condition_for_age} AND
-                    {condition_for_claimable_ages} AND
-                    {condition_for_demand_effect} AND
-                    {condition_for_color} AND
-                    {condition_for_type} AND
-                    {condition_for_icon} AND
-                    {condition_for_icon_hash} AND
-                    {condition_for_splay} AND
-                    {condition_for_requiring_id} AND
-                    {condition_for_excluding_id} AND
-                    {condition_for_including_relic} AND
-                    {condition_for_including_bonus} AND
-                    {condition_for_excluding_bonus}
-            ",
-                    array(
-                        'condition_for_owner'           => $condition_for_owner,
-                        'condition_for_location'        => $condition_for_location,
-                        'condition_for_age'             => $condition_for_age,
-                        'condition_for_claimable_ages'  => $condition_for_claimable_ages,
-                        'condition_for_demand_effect'   => $condition_for_demand_effect,
-                        'condition_for_color'           => $condition_for_color,
-                        'condition_for_type'            => $condition_for_type,
-                        'condition_for_icon'            => $condition_for_icon,
-                        'condition_for_icon_hash'       => $condition_for_icon_hash,
-                        'condition_for_splay'           => $condition_for_splay,
-                        'condition_for_requiring_id'    => $condition_for_requiring_id,
-                        'condition_for_excluding_id'    => $condition_for_excluding_id,
-                        'condition_for_including_relic' => $condition_for_including_relic,
-                        'condition_for_including_bonus' => $condition_for_including_bonus,
-                        'condition_for_excluding_bonus' => $condition_for_excluding_bonus
-                    )
-                )
-            );
-        }
+                    {conditions}
+                ",
+                [
+                    'join_for_position' => $join_for_position,
+                    'condition_for_age' => $condition_for_age,
+                    'conditions' => $conditions,
+                ]
+            )
+        );
 
         return self::getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE selected IS TRUE");
     }
@@ -10807,19 +10823,24 @@ class Innovation extends Table
         $selectable_colors = $this->innovationGameState->getAsArray('color_array');
         if (count($selectable_colors) < 5) {
             $colors = self::getRecursivelyTranslatedColorList($selectable_colors);
-            $card_log = clienttranslate('${color} ${cards}${of_age}${with_icon}${with_demand}');
+            $card_log = clienttranslate('${color} ${qualifier}${cards}${of_age}${with_icon}${with_demand}');
             $card_args['color'] = $colors;
-            $card_args['i18n'] = ['color', 'cards', 'of_age', 'with_icon', 'with_demand'];
+            $card_args['i18n'] = ['color', 'qualifier', 'cards', 'of_age', 'with_icon', 'with_demand'];
         } else {
-            $card_log = clienttranslate('${cards}${of_age}${with_icon}${with_demand}');
-            $card_args['i18n'] = ['cards', 'of_age', 'with_icon', 'with_demand'];
+            $card_log = clienttranslate('${qualifier}${cards}${of_age}${with_icon}${with_demand}');
+            $card_args['i18n'] = ['qualifier', 'cards', 'of_age', 'with_icon', 'with_demand'];
         }
+        $card_args['qualifier'] = '';
         $card_args['cards'] = clienttranslate('card(s)');
         $card_args['of_age'] = '';
         $card_args['with_icon'] = '';
         $card_args['with_demand'] = '';
 
-        if ($age_min != 1 || $age_max != 11) {
+        if ($age_min == -1 && $age_max == -1) {
+            $card_args['qualifier'] = clienttranslate('highest ');
+        } else if ($age_min == -2 && $age_max == -2) {
+            $card_args['qualifier'] = clienttranslate('lowest ');
+        } else if ($age_min != 1 || $age_max != 11) {
             if ($age_min == $age_max) {
                 $of_age_log = clienttranslate(' of value ${<}${age_min}${>}');
             } else if ($age_min + 1 == $age_max) {
@@ -11413,13 +11434,16 @@ class Innovation extends Table
             || $card_id == 34
             || $card_id == 38
             || (40 <= $card_id && $card_id <= 44)
+            || (48 <= $card_id && $card_id <= 49)
             || $card_id == 51
+            || $card_id == 54
             || (56 <= $card_id && $card_id <= 57)
             || $card_id == 62
             || $card_id == 65
-            || $card_id == 67
-            || $card_id == 72
+            || (67 <= $card_id && $card_id <= 68)
+            || (71 <= $card_id && $card_id <= 72)
             || $card_id == 76
+            || $card_id == 78
             || $card_id == 92
             || $card_id == 93
             || (99 <= $card_id && $card_id <= 100)
@@ -11809,29 +11833,6 @@ class Innovation extends Table
                     $step_max = 1;
                     break;
 
-                // id 48, age 5: The pirate code
-                case "48D1":
-                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                        self::setAuxiliaryValue(0);
-                    }
-                    $step_max = 1;
-                    break;
-
-                case "48N1":
-                    if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
-                        $step_max = 1;
-                    }
-                    break;
-
-                // id 49, age 5: Banking
-                case "49D1":
-                    $step_max = 1;
-                    break;
-
-                case "49N1":
-                    $step_max = 1;
-                    break;
-
                 // id 50, age 5: Measurement
                 case "50N1":
                     $step_max = 1;
@@ -11888,28 +11889,6 @@ class Innovation extends Table
                     }
                     break;
 
-                // id 54, age 5: Societies
-                case "54D1":
-                    if ($this->innovationGameState->usingFirstEditionRules()) {
-                        $colors = array(0, 1, 2, 3); // All but purple
-                    } else {
-                        $colors = array();
-                        // Determine colors which top cards with a lightbulb of the player have a value higher than the tops cards of the launcher
-                        foreach (Colors::ALL as $color) {
-                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                            if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
-                                continue;
-                            }
-                            $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                            if ($launcher_top_card === null /* => Value 0, so the color is selectable */|| $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
-                                $colors[] = $color; // This color is selectable
-                            }
-                        }
-                    }
-                    self::setAuxiliaryValueFromArray($colors);
-                    $step_max = 1;
-                    break;
-
                 // id 55, age 6: Atomic theory
                 case "55N1":
                     $step_max = 1;
@@ -11955,15 +11934,6 @@ class Innovation extends Table
                     $step_max = 1;
                     break;
 
-                // id 64, age 6: Emancipation
-                case "64D1":
-                    $step_max = 1;
-                    break;
-
-                case "64N1":
-                    $step_max = 1;
-                    break;
-
                 // id 66, age 7: Publications
                 case "66N1_3E":
                     // Make sure there's at least one pile which can be rearranged
@@ -11985,43 +11955,6 @@ class Innovation extends Table
                     $step_max = 1;
                     break;
 
-                // id 68, age 7: Explosives
-                case "68D1":
-
-                    // Automate taking as many highest cards as possible
-                    $num_cards_in_hand = self::countCardsInLocation($player_id, 'hand');
-                    $cards_by_age = self::getCardsInLocationKeyedByAge($player_id, 'hand');
-                    $num_cards_left_to_transfer = 3;
-                    for ($age = 11; $age >= 1; $age--) {
-                        if (count($cards_by_age[$age]) <= $num_cards_left_to_transfer) {
-                            foreach ($cards_by_age[$age] as $card) {
-                                self::transferCardFromTo($card, $launcher_id, 'hand');
-                                $num_cards_left_to_transfer--;
-                                $num_cards_in_hand--;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-
-                    $num_cards_which_will_be_transferred = min($num_cards_left_to_transfer, $num_cards_in_hand);
-                    if ($num_cards_which_will_be_transferred > 0) {
-                        // TODO(LATER): Remove the use of the auxilary value.
-                        // Flag to indicate if the player has transfered a card or not
-                        if ($num_cards_left_to_transfer == 3) {
-                            self::setAuxiliaryValue(0);
-                        } else {
-                            self::setAuxiliaryValue(1);
-                        }
-                        $step = 4 - $num_cards_which_will_be_transferred;
-                        $step_max = 3;
-
-                        // "If you transferred any, and then have no cards in hand"
-                    } else if ($num_cards_left_to_transfer < 3 && $num_cards_in_hand == 0) {
-                        self::executeDraw($player_id, 7); // "Draw a 7"
-                    }
-                    break;
-
                 // id 69, age 7: Bicycle
                 case "69N1":
                     if (self::countCardsInLocation($player_id, 'hand') > 0 || self::countCardsInLocation($player_id, 'score') > 0) {
@@ -12034,17 +11967,6 @@ class Innovation extends Table
 
                 // id 70, age 7: Electricity
                 case "70N1":
-                    $step_max = 1;
-                    break;
-
-                // id 71, age 7: Refrigeration
-                case "71D1":
-                    if (self::countCardsInLocation($player_id, 'hand') > 1) {
-                        $step_max = 1;
-                    }
-                    break;
-
-                case "71N1":
                     $step_max = 1;
                     break;
 
@@ -12094,37 +12016,6 @@ class Innovation extends Table
 
                 case "77N2":
                     $step_max = 1;
-                    break;
-
-                // id 78, age 8: Mobility        
-                case "78D1":
-                    // "I demand you transfer the two highest non-red top cards without a factory from your board to my score pile!"
-                    // NOTE: This code is only here in order to add automation to the situation where there is no choice for which two
-                    // cards need to be transferred. Generic automation is not possible here because we must implement the card as two
-                    // separate interactions instead of a single interaction which returns two cards.
-                    $top_cards = self::getTopCardsOnBoard($player_id);
-                    $selectable_cards = array();
-                    for ($age = 11; $age >= 1; $age--) {
-                        foreach ($top_cards as $top_card) {
-                            if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
-                                $selectable_cards[] = $top_card;
-                            }
-                        }
-                        if (count($selectable_cards) == 2) {
-                            foreach ($selectable_cards as $card) {
-                                self::transferCardFromTo($card, $launcher_id, 'score');
-                            }
-                            // "If you transferred any cards, draw an 8"
-                            self::executeDraw($player_id, 8);
-                            break 2; // Exit the for loop and the switch
-                        } else if (count($selectable_cards) > 2) {
-                            break;
-                        }
-                    }
-
-                    // Proceed without automation
-                    self::setAuxiliaryValueFromArray(array(0, 2, 3, 4)); // Flag to indicate the colors the player can still choose (not red at the start)
-                    $step_max = 2;
                     break;
 
                 // id 79, age 8: Corporations        
@@ -12862,7 +12753,7 @@ class Innovation extends Table
 
         if (self::isInSeparateFile($card_id)) {
             $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
-            $options = self::expandInteractionOptions($compact_options, $player_id);
+            $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
         }
 
         switch ($code) {
@@ -13248,70 +13139,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 48, age 5: The pirate code
-            case "48D1A":
-                // "Transfer two cards of value 4 or less from your score pile to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 2,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age_max'       => 4
-                );
-                break;
-
-            case "48N1A":
-                // "Score the lowest top card with a crown from your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getMinAgeOnBoardTopCardsWithIcon($player_id, 1 /* crown */),
-                    'with_icon'     => 1,
-                    /* crown */
-
-                    'score_keyword' => true
-                );
-                break;
-
-            // id 49, age 5: Banking
-            case "49D1A":
-                // "Transfer a top non-green card with a factory from your board to my board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'board',
-
-                    'color'         => array(0, 1, 3, 4) /* non-green */,
-                    'with_icon'     => 5 /* with a factory */
-                );
-                break;
-
-            case "49N1A":
-                // "You may splay your green cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(2) /* green */
-                );
-                break;
-
             // id 50, age 5: Measurement
             case "50N1A":
                 if ($this->innovationGameState->usingFirstEditionRules()) {
@@ -13347,24 +13174,6 @@ class Innovation extends Table
                     'player_id'    => $player_id,
 
                     'choose_color' => true
-                );
-                break;
-
-            // id 54, age 5: Societies
-            case "54D1A":
-                // Last edition: "Transfer a card with a lightbulb higher than my top card of the same color from your board to my board"
-                // First edition: "Transfer a top non-purple card with a lightbulb from your board to my board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'board',
-
-                    'color'         => self::getAuxiliaryValueAsArray(),
-                    'with_icon'     => 3 /* with a lightbulb */
                 );
                 break;
 
@@ -13473,32 +13282,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 64, age 6: Emancipation
-            case "64D1A":
-                // "Transfer a card from your hand to my score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score'
-                );
-                break;
-
-            case "64N1A":
-                // "You may splay your red or purple cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(1, 4) /* red or purple */
-                );
-                break;
-
             // id 66, age 7: Publications
             case "66N1A_3E":
                 // "You may rearrange the order of one color of cards on your board"
@@ -13533,24 +13316,6 @@ class Innovation extends Table
                 );
                 break;
 
-            // id 68, age 7: Explosives
-            case "68D1A":
-            case "68D1B":
-            case "68D1C":
-                // "Transfer the highest cards from your hand to my hand" (three times)
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'hand',
-
-                    'age'           => self::getMaxAgeInHand($player_id)
-                );
-                break;
-
             // id 69, age 7: Bicycle      
             case "69N1A":
                 // "You may exchange all the highest cards in your hand with all the highest cards in your score pile"
@@ -13574,44 +13339,6 @@ class Innovation extends Table
 
                     'without_icon'  => 5,
                     /* factory */
-                );
-                break;
-
-            // id 71, age 7: Refrigeration
-            case "71D1A":
-                $hand_count = self::countCardsInLocation($player_id, 'hand');
-                if ($this->innovationGameState->usingFourthEditionRules()) {
-                    // "I demand you return all but one of the cards in your hand!"
-                    $num_cards_to_return = $hand_count == 0 ? 0 : $hand_count - 1;
-                } else {
-                    // "Return half (rounded down) of the cards in your hand"
-                    $num_cards_to_return = self::intDivision($hand_count, 2);
-                }
-
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => $num_cards_to_return,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "71N1A":
-                // "You may score a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true
                 );
                 break;
 
@@ -13704,26 +13431,6 @@ class Innovation extends Table
                     'splay_direction' => 3,
                     /* up */
                     'color'           => array(1) /* red */
-                );
-                break;
-
-            // id 78, age 8: Mobility        
-            case "78D1A":
-            case "78D1B":
-                // "Transfer your highest non-red top cards without a factory from your board to my score pile" (twice)
-                $selectable_colors = self::getAuxiliaryValueAsArray(); /* not red, and for the second card, not the same color as the first */
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'age'           => self::getMaxAgeOnBoardOfColorsWithoutIcon($player_id, $selectable_colors, 5 /* with no factory*/),
-                    'color'         => $selectable_colors,
-                    'without_icon'  => 5 /* factory */
                 );
                 break;
 
@@ -14607,20 +14314,6 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 48, age 5: The pirate code
-                    case "48D1A":
-                        if ($n > 0) {
-                            self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                        }
-                        break;
-
-                    // id 49, age 5: Banking
-                    case "49D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 5, 'score'); // "Draw and score a 5"
-                        }
-                        break;
-
                     // id 50, age 5: Measurement
                     case "50N1A":
                         if ($n > 0) { // "If you do"
@@ -14640,13 +14333,6 @@ class Innovation extends Table
                                 }
                                 self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
                             }
-                        }
-                        break;
-
-                    // id 54, age 5: Societies
-                    case "54D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 5); // Draw a 5
                         }
                         break;
 
@@ -14686,28 +14372,6 @@ class Innovation extends Table
                         if ($num_cards_returned_by_this_player > $max_cards_returned_by_another_player) {
                             self::executeDraw($player_id, 8, 'score');
                             self::DbQuery(self::format("UPDATE player SET democracy_counter = {count} WHERE player_id = {player_id}", array('count' => $num_cards_returned_by_this_player, 'player_id' => $player_id)));
-                        }
-                        break;
-
-                    // id 64, age 6: Emancipation
-                    case "64D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 6); // "Draw a 6"
-                        }
-                        break;
-
-                    // id 68, age 7: Explosives
-                    case "68D1A":
-                        // TODO(LATER): Remove the use of the auxilary value.
-                        if ($n > 0) {
-                            self::setAuxiliaryValue(1); // Flag that at least one card has been transfered
-                        }
-                        break;
-
-                    case "68D1C":
-                        // TODO(LATER): Remove the use of the auxilary value.
-                        if (self::getAuxiliaryValue() == 1 && self::countCardsInLocation($player_id, 'hand') == 0) { // "If you transferred any, and then have no cards in hand"
-                            self::executeDraw($player_id, 7); // "Draw a 7"
                         }
                         break;
 
@@ -14753,22 +14417,6 @@ class Innovation extends Table
                         if ($n == 2) { // "If you return two"
                             self::executeDraw($player_id, 10); // "Draw a 10"
                             self::executeDraw($player_id, 10, 'score'); // "Draw and score a 10"
-                        }
-                        break;
-
-                    // id 78, age 8: Mobility        
-                    case "78D1A":
-                        if ($n > 0) {
-                            $color = $this->innovationGameState->get('color_last_selected');
-                            $selectable_colors = self::getAuxiliaryValueAsArray();
-                            $selectable_colors = array_diff($selectable_colors, array($color)); // Remove the color of the card the player has chosen: he could not choose the same for his next card
-                            self::setAuxiliaryValueFromArray($selectable_colors);
-                        }
-                        break;
-
-                    case "78D1B":
-                        if (self::getAuxiliaryValueAsArray() <> array(0, 2, 3, 4)) { // "If you transferred any cards" (ie: a color has been removed from the initial array)
-                            self::executeDraw($player_id, 8); // "Draw a 8"
                         }
                         break;
 
@@ -15904,11 +15552,8 @@ class Innovation extends Table
 
         // Refresh selection, if prompted by the card
         if ($this->innovationGameState->get('refresh_selection') == 1) {
-            $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
-            $options = self::expandInteractionOptions($compact_options, $player_id);
-            // Clear the options that have to do with the number of cards being returned (only the
-            // initial getInteractionOptions call should set these)
-            unset($options['n'], $options['n_min'], $options['n_max']);
+            $compact_options = self::getCardInstance($card_id, $executionState)->updateInteractionOptions();
+            $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options=*/ true);
             self::setSelectionRange($options, /*is_refreshing_options=*/ true);
             self::trace('interSelectionMove->preSelectionMove');
             $this->gamestate->nextState('preSelectionMove');

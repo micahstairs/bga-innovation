@@ -41,4 +41,9 @@ class Card62_3E extends AbstractCard
     }
   }
 
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
+  }
+
 }

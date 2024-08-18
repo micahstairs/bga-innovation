@@ -41,6 +41,16 @@ abstract class AbstractCard
     throw new \RuntimeException("Unimplemented getInteractionOptions for card=$cardId");
   }
 
+  public function updateInteractionOptions(): array
+  {
+    // Subclasses can override this method if the card has any interactions that use 'refresh_selection' and the default behavior is not sufficient.
+    $options = static::getInteractionOptions();
+    // Clear the options that have to do with the number of cards being returned (only the
+    // initial getInteractionOptions call should set these)
+    unset($options['n'], $options['n_min'], $options['n_max']);
+    return $options;
+  }
+
   public final function getSpecialChoicePrompt(): array
   {
     $choiceType = $this->game->innovationGameState->get('special_type_of_choice');
@@ -641,6 +651,13 @@ abstract class AbstractCard
   protected function getBottomCardOfColor(int $color, int $playerId = null): ?array
   {
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
+  }
+
+  protected function filterWithoutIcon(array $cards, int $icon): array
+  {
+    return array_values(array_filter($cards, function ($card) use ($icon) {
+      return !self::hasIcon($card, $icon);
+    }));
   }
 
   protected function filterByIcon(array $cards, int $icon): array

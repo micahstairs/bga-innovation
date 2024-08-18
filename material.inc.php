@@ -332,8 +332,7 @@ $this->textual_card_infos = array(
 
     48  => array(
         'name'                                => clienttranslate('The Pirate Code'),
-        'i_demand_effect_first_and_third'     => clienttranslate('${I demand} you transfer two cards of value ${age_4} or less from your score pile to my score pile!'),
-        'i_demand_effect_fourth'              => clienttranslate('${I demand} you transfer two cards of value 4 or less from your score pile to my score pile!'),
+        'i_demand_effect'                     => clienttranslate('${I demand} you transfer two cards of value ${age_4} or less from your score pile to my score pile!'),
         'non_demand_effect_1_first_and_third' => clienttranslate('If any cards were transferred due to the demand, score the lowest top card with a ${icon_1} from your board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('If any cards were transferred due to the demand, score the lowest top card with ${icon_1} from your board.'),
     ),
