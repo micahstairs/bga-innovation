@@ -27,6 +27,6 @@ class Card4 extends AbstractCard
         return;
       }
     }
-    
+
   }
 }

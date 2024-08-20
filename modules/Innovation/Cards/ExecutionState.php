@@ -37,7 +37,7 @@ class ExecutionState
 
   function __construct(\Table $game)
   {
-      $this->game = $game;
+    $this->game = $game;
   }
 
   function setEdition(?int $edition): ExecutionState

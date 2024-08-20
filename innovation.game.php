@@ -7,20 +7,20 @@
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  */
 
-require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
-require_once('modules/Innovation/Cards/AbstractCard.php');
-require_once('modules/Innovation/Cards/ExecutionState.php');
-require_once('modules/Innovation/GameState.php');
-require_once('modules/Innovation/Enums/CardIds.php');
-require_once('modules/Innovation/Enums/CardTypes.php');
-require_once('modules/Innovation/Enums/Colors.php');
-require_once('modules/Innovation/Enums/Directions.php');
-require_once('modules/Innovation/Enums/Icons.php');
-require_once('modules/Innovation/Enums/Locations.php');
-require_once('modules/Innovation/Enums/ValueSelectors.php');
-require_once('modules/Innovation/Utils/Arrays.php');
-require_once('modules/Innovation/Utils/Notifications.php');
-require_once('modules/Innovation/Utils/Strings.php');
+require_once (APP_GAMEMODULE_PATH . 'module/table/table.game.php');
+require_once ('modules/Innovation/Cards/AbstractCard.php');
+require_once ('modules/Innovation/Cards/ExecutionState.php');
+require_once ('modules/Innovation/GameState.php');
+require_once ('modules/Innovation/Enums/CardIds.php');
+require_once ('modules/Innovation/Enums/CardTypes.php');
+require_once ('modules/Innovation/Enums/Colors.php');
+require_once ('modules/Innovation/Enums/Directions.php');
+require_once ('modules/Innovation/Enums/Icons.php');
+require_once ('modules/Innovation/Enums/Locations.php');
+require_once ('modules/Innovation/Enums/ValueSelectors.php');
+require_once ('modules/Innovation/Utils/Arrays.php');
+require_once ('modules/Innovation/Utils/Notifications.php');
+require_once ('modules/Innovation/Utils/Strings.php');
 
 
 use Innovation\GameState;
@@ -396,7 +396,7 @@ class Innovation extends Table
             return; // Not in debug mode
         }
         $player_id = self::getCurrentPlayerId();
-        self::splay($player_id, $player_id, $color, $direction, /*force_unsplay=*/$direction == 0);
+        self::splay($player_id, $player_id, $color, $direction, /*force_unsplay=*/ $direction == 0);
     }
 
     /*
@@ -871,7 +871,7 @@ class Innovation extends Table
         $result['safe_counts'] = array();
         for ($type = 0; $type <= 5; $type++) {
             foreach ($players as $player_id => $player) {
-                $result['safe_counts'][$player_id][$type] = self::countCardsInLocationKeyedByAge($player_id, 'safe', $type, /*is_relic=*/0);
+                $result['safe_counts'][$player_id][$type] = self::countCardsInLocationKeyedByAge($player_id, 'safe', $type, /*is_relic=*/ 0);
             }
         }
 
@@ -1797,7 +1797,7 @@ class Innovation extends Table
 
     function unsplay($player_id, $target_player_id, $color): bool
     {
-        return self::splay($player_id, $target_player_id, $color, Directions::UNSPLAYED, /*force_unsplay=*/true);
+        return self::splay($player_id, $target_player_id, $color, Directions::UNSPLAYED, /*force_unsplay=*/ true);
     }
 
     function splayLeft($player_id, $target_player_id, $color): bool
@@ -1872,7 +1872,7 @@ class Innovation extends Table
 
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
         if ($this->innovationGameState->citiesExpansionEnabled() && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES) == 0) {
-            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/false, CardTypes::CITIES);
+            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, CardTypes::CITIES);
         }
 
         self::recordThatChangeOccurred();
@@ -2199,7 +2199,7 @@ class Innovation extends Table
         if ($owner_to != 0 && $location_to == 'achievements') {
             try {
                 // The number of achievements is the BGA score (not to be confused with the definition of score in an Innovation game)
-                self::incrementBGAScore($owner_to, /*is_special_achievement=*/$card['age'] === null && $card['id'] < 1000); // Fountains and flags are not considered special achievements
+                self::incrementBGAScore($owner_to, /*is_special_achievement=*/ $card['age'] === null && $card['id'] < 1000); // Fountains and flags are not considered special achievements
             } catch (EndOfGame $e) {
                 $end_of_game = true;
             }
@@ -3653,7 +3653,7 @@ class Innovation extends Table
                 case 437: // Heritage: 8 or more visible hexagons in a pile
                     $eligible = false;
                     foreach (Colors::ALL as $color) {
-                        if (self::countVisibleIconsInPile($player_id, 0 /* empty hex */, $color) >= 8) {
+                        if (self::countVisibleIconsInPile($player_id, 0 /* empty hex */ , $color) >= 8) {
                             $eligible = true;
                             break;
                         }
@@ -3662,7 +3662,7 @@ class Innovation extends Table
                 case 438: // History: A total of 4 or more visible echo effects in a pile
                     $eligible = false;
                     foreach (Colors::ALL as $color) {
-                        if (self::countVisibleIconsInPile($player_id, 10 /* echo effect */, $color) >= 4) {
+                        if (self::countVisibleIconsInPile($player_id, 10 /* echo effect */ , $color) >= 4) {
                             $eligible = true;
                             break;
                         }
@@ -3774,7 +3774,7 @@ class Innovation extends Table
             $opponent_ids = self::getActiveOpponentIds($player_id);
             foreach (Colors::ALL as $color) {
                 // Flags
-                $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
+                $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */ , $color);
                 $num_visible_cards = self::countVisibleCards($player_id, $color);
                 $opponent_has_more_visible_cards = false;
                 foreach ($opponent_ids as $opponent_id) {
@@ -3800,7 +3800,7 @@ class Innovation extends Table
                 }
 
                 // Fountains
-                $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */, $color);
+                $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */ , $color);
                 $current_fountain_achievements = self::getUniqueValueFromDB(
                     self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
@@ -3863,7 +3863,7 @@ class Innovation extends Table
                 }
 
                 // Fountains
-                $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */, $color);
+                $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */ , $color);
                 $current_fountain_achievements = self::getUniqueValueFromDB(
                     self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
@@ -4967,7 +4967,7 @@ class Innovation extends Table
             Get all the cards in a particular location, keyed by age, then sorted by position.
         **/
         $column = $location === 'board' ? 'faceup_age' : 'age';
-        return self::getOrCountCardsInLocation( /*count=*/false, $owner, $location, $column, $type);
+        return self::getOrCountCardsInLocation( /*count=*/ false, $owner, $location, $column, $type);
     }
 
     function getCardsInLocationKeyedByColor($owner, $location)
@@ -4975,7 +4975,7 @@ class Innovation extends Table
         /**
             Get all the cards in a particular location, keyed by color, then sorted by position.
         **/
-        return self::getOrCountCardsInLocation( /*count=*/false, $owner, $location, 'color');
+        return self::getOrCountCardsInLocation( /*count=*/ false, $owner, $location, 'color');
     }
 
     function getCardsInLocation($owner, $location)
@@ -4983,7 +4983,7 @@ class Innovation extends Table
         /**
             Get all the cards in a particular location, sorted by position.
         **/
-        return self::getOrCountCardsInLocation( /*count=*/false, $owner, $location);
+        return self::getOrCountCardsInLocation( /*count=*/ false, $owner, $location);
     }
 
     function getCardsInHand($player_id)
@@ -5002,7 +5002,7 @@ class Innovation extends Table
             Count all the cards in a particular location, keyed by age.
         **/
         $column = $location === 'board' ? 'faceup_age' : 'age';
-        return self::getOrCountCardsInLocation( /*count=*/true, $owner, $location, $column, $type, $is_relic);
+        return self::getOrCountCardsInLocation( /*count=*/ true, $owner, $location, $column, $type, $is_relic);
     }
 
     function countCardsInLocationKeyedByColor($owner, $location)
@@ -5010,7 +5010,7 @@ class Innovation extends Table
         /**
             Count all the cards in a particular location, keyed by color.
         **/
-        return self::getOrCountCardsInLocation( /*count=*/true, $owner, $location, 'color');
+        return self::getOrCountCardsInLocation( /*count=*/ true, $owner, $location, 'color');
     }
 
     function countCardsInLocation($owner, $location, $type = null): int
@@ -5018,7 +5018,7 @@ class Innovation extends Table
         /**
             Count all the cards in a particular location.
         **/
-        return intval(self::getOrCountCardsInLocation( /*count=*/true, $owner, $location, /*key=*/null, $type));
+        return intval(self::getOrCountCardsInLocation( /*count=*/ true, $owner, $location, /*key=*/ null, $type));
     }
 
     function getTopCardOnBoard($player_id, $color)
@@ -6472,17 +6472,17 @@ class Innovation extends Table
 
     function executeDrawAndReveal($player_id, $age_min = null, $type = null)
     {
-        return self::executeDraw($player_id, $age_min, 'revealed', /*bottom_to=*/false, $type);
+        return self::executeDraw($player_id, $age_min, 'revealed', /*bottom_to=*/ false, $type);
     }
 
     function executeDrawAndMeld($player_id, $age_min = null, $type = null)
     {
-        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/false, $type, /*bottom_from=*/false, /*meld_keyword=*/true);
+        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ false, $type, /*bottom_from=*/ false, /*meld_keyword=*/ true);
     }
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null)
     {
-        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/true, $type);
+        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
@@ -6512,7 +6512,7 @@ class Innovation extends Table
 
         // "If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
         // draw a base card of that value instead."
-        if ($type != null && self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/$type)[$age_to_draw] == 0) {
+        if ($type != null && self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ $type)[$age_to_draw] == 0) {
             $type = null;
         }
 
@@ -6607,7 +6607,7 @@ class Innovation extends Table
             // TODO(FIGURES): Handle junking the age 0 deck
             return false;
         }
-        $cards = self::getCardsInLocationKeyedByAge( /*owner=*/0, 'deck', $type)[$age];
+        $cards = self::getCardsInLocationKeyedByAge( /*owner=*/ 0, 'deck', $type)[$age];
         if (empty($cards)) {
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, $type)]);
             return false;
@@ -7342,17 +7342,17 @@ class Innovation extends Table
                     WHERE
                         {conditions}
                 ", [
-                    'max_or_min' => $max_or_min,
-                    'age_column' => $age_column,
+                    'max_or_min'        => $max_or_min,
+                    'age_column'        => $age_column,
                     'join_for_position' => $join_for_position,
-                    'conditions' => $conditions
+                    'conditions'        => $conditions
                 ]));
                 $age_min = $value;
                 $age_max = $value;
             }
             $age_args = [
-                'age_min' => $age_min,
-                'age_max' => $age_max,
+                'age_min'    => $age_min,
+                'age_max'    => $age_max,
                 'age_column' => $age_column,
             ];
             $condition_for_age = self::format("{age_column} BETWEEN {age_min} AND {age_max}", $age_args);
@@ -7373,7 +7373,7 @@ class Innovation extends Table
                 [
                     'join_for_position' => $join_for_position,
                     'condition_for_age' => $condition_for_age,
-                    'conditions' => $conditions,
+                    'conditions'        => $conditions,
                 ]
             )
         );
@@ -7925,14 +7925,14 @@ class Innovation extends Table
                 ['player_name' => self::renderPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]
             );
         }
-        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/false, $replace_may_with_must);
+        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false, $replace_may_with_must);
         return true;
     }
 
     function superExecute($card)
     {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        
+
         self::checkForChainAchievement($player_id);
 
         if ($this->innovationGameState->usingFourthEditionRules()) {
@@ -7970,10 +7970,11 @@ class Innovation extends Table
             );
         }
 
-        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/true);
+        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
 
-    function getCardIdsWithEchoEffectsForNestedExecution($card) {
+    function getCardIdsWithEchoEffectsForNestedExecution($card)
+    {
         if ($this->innovationGameState->getEdition() <= 3) {
             if (self::getEchoEffect($card['id'])) {
                 return [$card['id']];
@@ -8012,7 +8013,7 @@ class Innovation extends Table
     {
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         $nested_card_state = self::getCurrentNestedCardState();
-        
+
         $super_execute = false;
         $as_if_on = $card['id'];
         if ($execute_demand_effects) {
@@ -8065,14 +8066,14 @@ class Innovation extends Table
             VALUES
                 ({nesting_index}, {card_id}, {as_if_on}, {super_execute}, {replace_may_with_must}, {launcher_id}, {effect_type}, {effect_number}, -1, -1)
         ", [
-            'nesting_index' => $next_nesting_index,
-            'card_id' => $card['id'],
-            'as_if_on' => $as_if_on,
-            'super_execute' => $super_execute ? 'TRUE' : 'FALSE',
+            'nesting_index'         => $next_nesting_index,
+            'card_id'               => $card['id'],
+            'as_if_on'              => $as_if_on,
+            'super_execute'         => $super_execute ? 'TRUE' : 'FALSE',
             'replace_may_with_must' => $replace_may_with_must ? 'TRUE' : 'FALSE',
-            'launcher_id' => $current_player_id,
-            'effect_type' => $effect_type,
-            'effect_number' => $effect_number,
+            'launcher_id'           => $current_player_id,
+            'effect_type'           => $effect_type,
+            'effect_number'         => $effect_number,
         ]));
     }
 
@@ -8407,7 +8408,8 @@ class Innovation extends Table
         $this->gamestate->nextState('finishArtifactPlayerTurn');
     }
 
-    function rotateArtifactOnDisplayIntoMuseum($player_id): bool {
+    function rotateArtifactOnDisplayIntoMuseum($player_id): bool
+    {
         $artifact = self::getArtifactOnDisplay($player_id);
         if (!$artifact) {
             return false;
@@ -8422,7 +8424,8 @@ class Innovation extends Table
         return true;
     }
 
-    function getArtifactIdsIfNoMuseumsAvailable(): array {
+    function getArtifactIdsIfNoMuseumsAvailable(): array
+    {
         if (self::countCardsInLocation(0, Locations::MUSEUMS)) {
             return [];
         }
@@ -8437,13 +8440,14 @@ class Innovation extends Table
         return $card_ids;
     }
 
-    function stFinishArtifactPlayerTurn() {
+    function stFinishArtifactPlayerTurn()
+    {
         $player_id = self::getActivePlayerId();
 
         // Check for special achievements at end of free action (only necessary in 4th edition)
         if ($this->innovationGameState->usingFourthEditionRules()) {
             try {
-                self::checkForSpecialAchievements(/*is_end_of_action_check=*/true);
+                self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
             } catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
                 self::trace('EOG bubbled from self::passArtifactOnDisplay');
@@ -8770,7 +8774,7 @@ class Innovation extends Table
                     if ($num_cards_to_reveal > 0) {
                         $card_ids_to_return = array();
                         for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/false, CardTypes::BASE);
+                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, CardTypes::BASE);
                             self::transferCardFromTo($card, $player_id, 'hand');
                             if (!self::hasRessource($card, $top_middle_icon)) {
                                 $card_ids_to_return[] = $card['id'];
@@ -8821,7 +8825,7 @@ class Innovation extends Table
         if ($this->innovationGameState->citiesExpansionEnabled()) {
             // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
             if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/false, CardTypes::CITIES);
+                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, CardTypes::CITIES);
             }
         }
 
@@ -8983,7 +8987,7 @@ class Innovation extends Table
             self::incStat(1, 'dogma_actions_number_targeting_artifact_on_board', $player_id);
         }
 
-        self::setUpDogma($player_id, $card, /*extra_icons_from_artifact_on_display=*/0, /*endorse_payment_card=*/null, $card_to_return);
+        self::setUpDogma($player_id, $card, /*extra_icons_from_artifact_on_display=*/ 0, /*endorse_payment_card=*/ null, $card_to_return);
 
         // Resolve the first dogma effect of the card
         self::trace('playerTurn->dogmaEffect (dogma)');
@@ -9032,7 +9036,7 @@ class Innovation extends Table
 
         try {
             // The tuck to pay for the Endorse action happens inside of setUpDogma
-            self::setUpDogma($player_id, $card_to_endorse, /*extra_icons_from_artifact_on_display=*/0, $card_payment);
+            self::setUpDogma($player_id, $card_to_endorse, /*extra_icons_from_artifact_on_display=*/ 0, $card_payment);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::endorse');
@@ -9550,7 +9554,7 @@ class Innovation extends Table
         $card = self::getArtifactOnDisplay($player_id);
         $effect_info = [];
         if ($card['dogma_icon']) {
-            $effect_info[$card['id']] = self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/true);
+            $effect_info[$card['id']] = self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/ true);
         }
         return ['_private' => ['active' => ["dogma_effect_info" => $effect_info]]];
     }
@@ -9626,7 +9630,7 @@ class Innovation extends Table
                 $cards_which_can_be_melded[] = $card;
             }
         }
-        
+
 
         // Identify which cards will trigger a City draw when melded
         $cities_expansion_enabled = $this->innovationGameState->citiesExpansionEnabled();
@@ -10202,14 +10206,14 @@ class Innovation extends Table
                             [
                                 'value' => 0,
                                 'text'  => clienttranslate('Dig from ${age} deck'),
-                                'age' => self::getAgeSquareWithType(self::getCardInfo($card_ids[0])['age'], CardTypes::ARTIFACTS),
+                                'age'   => self::getAgeSquareWithType(self::getCardInfo($card_ids[0])['age'], CardTypes::ARTIFACTS),
                             ],
                         ];
                         for ($i = 1; $i < count($card_ids); $i++) {
                             $options[] = [
                                 'value' => $i,
-                                'text' => clienttranslate('Rotate ${card} into a museum'),
-                                'card' => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
+                                'text'  => clienttranslate('Rotate ${card} into a museum'),
+                                'card'  => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
                             ];
                         }
                         break;
@@ -10688,7 +10692,7 @@ class Innovation extends Table
     function stInterPlayerTurn()
     {
         // An action of the player has been fully resolved.
-        
+
         // Move the Artifact on display if the free dogma action was used
         $player_id = self::getActivePlayerId();
         if ($this->innovationGameState->get('current_action_number') == 0) {
@@ -10716,11 +10720,11 @@ class Innovation extends Table
                 self::returnCard(self::getArtifactOnDisplay($player_id));
             }
         }
-            
+
         // Check for special achievements (only necessary in 4th edition)
         if ($this->innovationGameState->usingFourthEditionRules()) {
             try {
-                self::checkForSpecialAchievements( /*is_end_of_action_check=*/true);
+                self::checkForSpecialAchievements( /*is_end_of_action_check=*/ true);
             } catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
                 self::trace('EOG bubbled from self::stInterPlayerTurn');
@@ -11138,7 +11142,7 @@ class Innovation extends Table
             $set = "Unseen";
         }
         $suffix = self::getEditionSuffix($card_id);
-        require_once("modules/Innovation/Cards/${set}/Card${card_id}${suffix}.php");
+        require_once ("modules/Innovation/Cards/${set}/Card${card_id}${suffix}.php");
         $classname = "Innovation\Cards\\${set}\Card${card_id}${suffix}";
         return new $classname($this, $execution_state);
     }
@@ -12655,7 +12659,7 @@ class Innovation extends Table
                     'n'               => 1,
                     'can_pass'        => true,
 
-                    'splay_direction' => 3 /* up */,
+                    'splay_direction' => 3 /* up */ ,
                     'color'           => array(0, 3) /* blue or yellow */
                 );
                 break;
@@ -12742,7 +12746,7 @@ class Innovation extends Table
                     'n'               => 1,
                     'can_pass'        => true,
 
-                    'splay_direction' => 3 /* up */,
+                    'splay_direction' => 3 /* up */ ,
                     'color'           => $splayed_right_colors
                 );
                 break;
@@ -13950,7 +13954,7 @@ class Innovation extends Table
                         $this->transferCardFromTo($museum, 0, Locations::MUSEUMS);
                     }
                 }
-                
+
                 self::trace('interInteractionStep->finishArtifactPlayerTurn');
                 $this->gamestate->nextState('finishArtifactPlayerTurn');
                 return;
@@ -14041,7 +14045,7 @@ class Innovation extends Table
 
                 // The player passes or stops automatically
                 if ($this->innovationGameState->get('reveal_if_unable')) {
-                    self::revealLocation($owner_from, $location_from, /*forProvingPurposes*/true);
+                    self::revealLocation($owner_from, $location_from, /*forProvingPurposes*/ true);
                 } else {
                     self::notifyNoSelectableCards();
                 }
@@ -14049,7 +14053,7 @@ class Innovation extends Table
                 $this->gamestate->nextState('interInteractionStep');
                 return;
             }
-            
+
             // Color must be splayed and there is only one choice
             if ($autoselection_mode >= 1 && !$can_pass && $splay_direction >= 0 && count($colors) === 1) {
                 // A card is chosen automatically for the player
@@ -14083,7 +14087,7 @@ class Innovation extends Table
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             }
-            
+
             // Try to return cards to the deck where the order doesn't matter
             if (
                 (($autoselection_mode >= 1 && !$refresh_selection) || ($autoselection_mode == 2))
@@ -14103,7 +14107,7 @@ class Innovation extends Table
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             }
-            
+
             // Try to tuck cards where the order doesn't matter
             if (
                 (($autoselection_mode >= 1 && !$refresh_selection) || ($autoselection_mode == 2))
@@ -14123,7 +14127,7 @@ class Innovation extends Table
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             }
-            
+
             // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
             if ($n_min < 800 && $selection_size < $n_min) {
                 if ($this->innovationGameState->get('solid_constraint') == 1) {
@@ -14670,7 +14674,7 @@ class Innovation extends Table
                         } else {
                             // Do the splay as stated in B
                             $this->innovationGameState->set("color_last_selected", $card['color']);
-                            $did_splay = self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/$splay_direction == 0);
+                            $did_splay = self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
                             if ($code !== null && self::isInSeparateFile($card_id)) {
                                 self::getCardInstance($card_id, $executionState)->handleSplayChoice($card['color'], $did_splay);
                                 self::setStepMax($executionState->getMaxSteps());

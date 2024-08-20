@@ -30,7 +30,8 @@ class Card11_3E extends AbstractCard
     ];
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::getNumChosen() >= 4) {
       self::claim(CardIds::MONUMENT);
     }

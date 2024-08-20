@@ -51,298 +51,299 @@
 $machinestates = array(
 
     // The initial state. Please do not modify.
-    1 => array(
-        "name" => "gameSetup",
+    1  => array(
+        "name"        => "gameSetup",
         "description" => clienttranslate('Game setup'),
-        "type" => "manager",
-        "action" => "stGameSetup",
+        "type"        => "manager",
+        "action"      => "stGameSetup",
         "transitions" => array("" => 2)
     ),
-    
+
     // Note: ID=2 => your first state
 
-    2 => array(
-        "name" => "turn0",
-        "description" => clienttranslate('Some players still have to choose a card to meld'),
+    2  => array(
+        "name"              => "turn0",
+        "description"       => clienttranslate('Some players still have to choose a card to meld'),
         "descriptionmyturn" => clienttranslate('${You} must choose a card to meld'),
-        "type" => "multipleactiveplayer",
-        "action" => "stTurn0",
-        "args" => "argTurn0",
-        "possibleactions" => array("initialMeld", "updateInitialMeld"),
-        "transitions" => array("" => 3)
-    ),
-    
-    3 => array(
-        "name" => "whoBegins",
-        "description" => clienttranslate('Each player meld his card...'),
-        "type" => "game",
-        "action" => "stWhoBegins",
-        "updateGameProgression" => true,
-        "transitions" => array("" => 4)
+        "type"              => "multipleactiveplayer",
+        "action"            => "stTurn0",
+        "args"              => "argTurn0",
+        "possibleactions"   => array("initialMeld", "updateInitialMeld"),
+        "transitions"       => array("" => 3)
     ),
 
-    4 => array(
-        "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must take ${qualified_action}'),
+    3  => array(
+        "name"                  => "whoBegins",
+        "description"           => clienttranslate('Each player meld his card...'),
+        "type"                  => "game",
+        "action"                => "stWhoBegins",
+        "updateGameProgression" => true,
+        "transitions"           => array("" => 4)
+    ),
+
+    4  => array(
+        "name"              => "playerTurn",
+        "description"       => clienttranslate('${actplayer} must take ${qualified_action}'),
         "descriptionmyturn" => clienttranslate('${You} must take ${qualified_action}:'),
-        "type" => "activeplayer",
-        "possibleactions" => array("draw", "meld", "dogma", "endorse", "achieve"),
-        "args" => "argPlayerTurn",
-        "transitions" => array(
-            "interPlayerTurn" => 5,
-            "dogmaEffect" => 6,
-            "preSelectionMove" => 12, // The search icons on Cities cards can trigger this transition
+        "type"              => "activeplayer",
+        "possibleactions"   => array("draw", "meld", "dogma", "endorse", "achieve"),
+        "args"              => "argPlayerTurn",
+        "transitions"       => array(
+            "interPlayerTurn"   => 5,
+            "dogmaEffect"       => 6,
+            "preSelectionMove"  => 12, // The search icons on Cities cards can trigger this transition
             // TODO(LATER): Remove this transition since it now comes from the new digArtifact state.
-            "relicPlayerTurn" => 16,
-            "digArtifact" => 17,
+            "relicPlayerTurn"   => 16,
+            "digArtifact"       => 17,
             "justBeforeGameEnd" => 98,
         ),
     ),
-    
-    5 => array(
-        "name" => "interPlayerTurn",
-        "description" => clienttranslate('Finalising the player action...'),
-        "type" => "game",
-        "action" => "stInterPlayerTurn",
+
+    5  => array(
+        "name"                  => "interPlayerTurn",
+        "description"           => clienttranslate('Finalising the player action...'),
+        "type"                  => "game",
+        "action"                => "stInterPlayerTurn",
         "updateGameProgression" => true,
-        "transitions" => array(
-            "playerTurn" => 4,
-            "preSelectionMove" => 12, // Used when returning artifacts after getting the last available museum
+        "transitions"           => array(
+            "playerTurn"         => 4,
+            "preSelectionMove"   => 12, // Used when returning artifacts after getting the last available museum
             "artifactPlayerTurn" => 15,
-            "justBeforeGameEnd" => 98
+            "justBeforeGameEnd"  => 98
         )
     ),
 
-    6 => array(
-        "name" => "dogmaEffect",
+    6  => array(
+        "name"        => "dogmaEffect",
         "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect}...'),
-        "type" => "game",
-        "action" => "stDogmaEffect",
-        "args" => "argDogmaEffect",
+        "type"        => "game",
+        "action"      => "stDogmaEffect",
+        "args"        => "argDogmaEffect",
         "transitions" => array("playerInvolvedTurn" => 8, "interDogmaEffect" => 7)
     ),
-    
-    7 => array(
-        "name" => "interDogmaEffect",
-        "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect}...'),
-        "type" => "game",
-        "action" => "stInterDogmaEffect",
-        "args" => "argInterDogmaEffect",
+
+    7  => array(
+        "name"                  => "interDogmaEffect",
+        "description"           => clienttranslate('Resolving the ${card_name} ${qualified_effect}...'),
+        "type"                  => "game",
+        "action"                => "stInterDogmaEffect",
+        "args"                  => "argInterDogmaEffect",
         "updateGameProgression" => true,
-        "transitions" => array(
-            "interPlayerTurn" => 5,
-            "dogmaEffect" => 6,
+        "transitions"           => array(
+            "interPlayerTurn"    => 5,
+            "dogmaEffect"        => 6,
             "playerInvolvedTurn" => 8, // Used by mechanism which executes nested effects
-            "justBeforeGameEnd" => 98)
+            "justBeforeGameEnd"  => 98
+        )
     ),
-    
-    8 => array(
-        "name" => "playerInvolvedTurn",
+
+    8  => array(
+        "name"        => "playerInvolvedTurn",
         "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
-        "type" => "game",
-        "action" => "stPlayerInvolvedTurn",
-        "args" => "argPlayerInvolvedTurn",
+        "type"        => "game",
+        "action"      => "stPlayerInvolvedTurn",
+        "args"        => "argPlayerInvolvedTurn",
         "transitions" => array(
             "interPlayerInvolvedTurn" => 9,
-            "interactionStep" => 10,
-            "justBeforeGameEnd" => 98
+            "interactionStep"         => 10,
+            "justBeforeGameEnd"       => 98
         )
     ),
-    
-    9 => array(
-        "name" => "interPlayerInvolvedTurn",
-        "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
-        "type" => "game",
-        "action" => "stInterPlayerInvolvedTurn",
-        "args" => "argInterPlayerInvolvedTurn",
+
+    9  => array(
+        "name"                  => "interPlayerInvolvedTurn",
+        "description"           => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
+        "type"                  => "game",
+        "action"                => "stInterPlayerInvolvedTurn",
+        "args"                  => "argInterPlayerInvolvedTurn",
         "updateGameProgression" => true,
-        "transitions" => array(
-            "dogmaEffect" => 6,
-            "interDogmaEffect" => 7,
+        "transitions"           => array(
+            "dogmaEffect"        => 6,
+            "interDogmaEffect"   => 7,
             "playerInvolvedTurn" => 8,
-            "justBeforeGameEnd" => 98,
+            "justBeforeGameEnd"  => 98,
         )
     ),
-    
+
     10 => array(
-        "name" => "interactionStep",
+        "name"        => "interactionStep",
         "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
-        "type" => "game",
-        "action" => "stInteractionStep",
-        "args" => "argInteractionStep",
+        "type"        => "game",
+        "action"      => "stInteractionStep",
+        "args"        => "argInteractionStep",
         "transitions" => array("preSelectionMove" => 12, "interPlayerInvolvedTurn" => 9, "interactionStep" => 10, "justBeforeGameEnd" => 98)
     ),
-    
+
     11 => array(
-        "name" => "interInteractionStep",
-        "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
-        "type" => "game",
-        "action" => "stInterInteractionStep",
-        "args" => "argInterInteractionStep",
+        "name"                  => "interInteractionStep",
+        "description"           => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
+        "type"                  => "game",
+        "action"                => "stInterInteractionStep",
+        "args"                  => "argInterInteractionStep",
         "updateGameProgression" => true,
-        "transitions" => array(
-            "interPlayerInvolvedTurn" => 9,
-            "interactionStep" => 10,
-            "relicPlayerTurn" => 16, // After digging/strealing an artifact (when a relic needs to be seized)
-            "digArtifact" => 17, // After interaction from search icon or junk achievement icon
-            "promoteCard" => 18, // After digging/stealing an artifact (when no relic needs to be seized)
+        "transitions"           => array(
+            "interPlayerInvolvedTurn"  => 9,
+            "interactionStep"          => 10,
+            "relicPlayerTurn"          => 16, // After digging/strealing an artifact (when a relic needs to be seized)
+            "digArtifact"              => 17, // After interaction from search icon or junk achievement icon
+            "promoteCard"              => 18, // After digging/stealing an artifact (when no relic needs to be seized)
             "finishArtifactPlayerTurn" => 21, // After returning artifacts from museums
-            "justBeforeGameEnd" => 98,
+            "justBeforeGameEnd"        => 98,
         ),
     ),
-    
+
     12 => array(
-        "name" => "preSelectionMove",
+        "name"        => "preSelectionMove",
         "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
-        "type" => "game",
-        "action" => "stPreSelectionMove",
-        "args" => "argPreSelectionMove",
+        "type"        => "game",
+        "action"      => "stPreSelectionMove",
+        "args"        => "argPreSelectionMove",
         "transitions" => array(
             "interInteractionStep" => 11,
-            "selectionMove" => 13,
-            "interSelectionMove" => 14, // Automatic card selection when there's only one selectable card   
+            "selectionMove"        => 13,
+            "interSelectionMove"   => 14, // Automatic card selection when there's only one selectable card   
         )
     ),
-    
+
     13 => array(
-        "name" => "selectionMove",
+        "name"              => "selectionMove",
         // TODO(4E): When returning artifacts from museums, there's no relevant card name to put before the colon.
-        "description" => clienttranslate('${card_name}: ${message_for_others}'), // The content is generated in argSelectionMove
+        "description"       => clienttranslate('${card_name}: ${message_for_others}'), // The content is generated in argSelectionMove
         "descriptionmyturn" => clienttranslate('${card_name}: ${message_for_player}') . ' ', // The content is generated in argSelectionMove
-        "type" => "activeplayer",
-        "possibleactions" => array("choose"),
-        "args" => "argSelectionMove",
-        "transitions" => array("interSelectionMove" => 14, "interInteractionStep" => 11 /* for zombie only*/, "justBeforeGameEnd" => 98)
+        "type"              => "activeplayer",
+        "possibleactions"   => array("choose"),
+        "args"              => "argSelectionMove",
+        "transitions"       => array("interSelectionMove" => 14, "interInteractionStep" => 11 /* for zombie only*/ , "justBeforeGameEnd" => 98)
     ),
-    
+
     14 => array(
-        "name" => "interSelectionMove",
-        "description" => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
-        "type" => "game",
-        "action" => "stInterSelectionMove",
-        "args" => "argInterSelectionMove",
+        "name"                  => "interSelectionMove",
+        "description"           => clienttranslate('Resolving the ${card_name} ${qualified_effect} on ${player}...'),
+        "type"                  => "game",
+        "action"                => "stInterSelectionMove",
+        "args"                  => "argInterSelectionMove",
         "updateGameProgression" => true,
-        "transitions" => array(
-            "playerInvolvedTurn" => 8, // Used when returning to effect due to 4th edition distance rule
+        "transitions"           => array(
+            "playerInvolvedTurn"      => 8, // Used when returning to effect due to 4th edition distance rule
             "interPlayerInvolvedTurn" => 9, // Used when skipping effect due to 4th edition distance rule
-            "interInteractionStep" => 11,
-            "preSelectionMove" => 12,
-            "justBeforeGameEnd" => 98,
+            "interInteractionStep"    => 11,
+            "preSelectionMove"        => 12,
+            "justBeforeGameEnd"       => 98,
         )
     ),
 
     15 => array(
-        "name" => "artifactPlayerTurn",
-        "description" => clienttranslate('${actplayer} must choose what to do with his Artifact on display'),
+        "name"              => "artifactPlayerTurn",
+        "description"       => clienttranslate('${actplayer} must choose what to do with his Artifact on display'),
         "descriptionmyturn" => clienttranslate('${You} must choose what to do with your Artifact on display:'),
-        "args" => "argPlayerArtifactTurn",
-        "type" => "activeplayer",
-        "possibleactions" => array(
+        "args"              => "argPlayerArtifactTurn",
+        "type"              => "activeplayer",
+        "possibleactions"   => array(
             "dogmaArtifactOnDisplay",
             "returnArtifactOnDisplay", // Not available in 4th edition
             "passArtifactOnDisplay",
         ),
         // TODO(4E): Remove the unused transitions
-        "transitions" => array(
-            "playerTurn" => 4,
-            "dogmaEffect" => 6,
-            "preSelectionMove" => 12, // Used when returning artifacts after getting the last available museum
+        "transitions"       => array(
+            "playerTurn"               => 4,
+            "dogmaEffect"              => 6,
+            "preSelectionMove"         => 12, // Used when returning artifacts after getting the last available museum
             "finishArtifactPlayerTurn" => 21,
-            "justBeforeGameEnd" => 98,
+            "justBeforeGameEnd"        => 98,
         ),
     ),
 
     21 => array(
-        "name" => "finishArtifactPlayerTurn",
+        "name"        => "finishArtifactPlayerTurn",
         "description" => clienttranslate('Finalising the player action...'),
-        "type" => "game",
-        "action" => "stFinishArtifactPlayerTurn",
+        "type"        => "game",
+        "action"      => "stFinishArtifactPlayerTurn",
         "transitions" => array(
-            "playerTurn" => 4,
+            "playerTurn"        => 4,
             "justBeforeGameEnd" => 98,
         ),
     ),
 
     16 => array(
-        "name" => "relicPlayerTurn",
-        "description" => clienttranslate('${actplayer} must choose whether to seize ${relic_name}'),
+        "name"              => "relicPlayerTurn",
+        "description"       => clienttranslate('${actplayer} must choose whether to seize ${relic_name}'),
         "descriptionmyturn" => clienttranslate('${You} must choose whether to seize ${relic_name}:'),
-        "args" => "argRelicPlayerTurn",
-        "type" => "activeplayer",
-        "possibleactions" => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),
-        "transitions" => array("promoteCard" => 18, "justBeforeGameEnd" => 98)
+        "args"              => "argRelicPlayerTurn",
+        "type"              => "activeplayer",
+        "possibleactions"   => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),
+        "transitions"       => array("promoteCard" => 18, "justBeforeGameEnd" => 98)
     ),
 
     17 => array(
-        "name" => "digArtifact",
+        "name"        => "digArtifact",
         "description" => clienttranslate('Finalising the player action...'),
-        "type" => "game",
-        "action" => "stDigArtifact",
+        "type"        => "game",
+        "action"      => "stDigArtifact",
         "transitions" => array(
-            "preSelectionMove" => 12,
-            "promoteCard" => 18,
+            "preSelectionMove"  => 12,
+            "promoteCard"       => 18,
             "justBeforeGameEnd" => 98,
         ),
     ),
 
     18 => array(
-        "name" => "promoteCard",
+        "name"        => "promoteCard",
         "description" => clienttranslate('Finalising the player action...'),
-        "type" => "game",
-        "action" => "stPromoteCard",
+        "type"        => "game",
+        "action"      => "stPromoteCard",
         "transitions" => array(
-            "interPlayerTurn" => 5,
+            "interPlayerTurn"       => 5,
             "promoteCardPlayerTurn" => 19,
-            "justBeforeGameEnd" => 98,
+            "justBeforeGameEnd"     => 98,
         ),
     ),
 
     19 => array(
-        "name" => "promoteCardPlayerTurn",
-        "description" => clienttranslate('${message_for_others}'),
+        "name"              => "promoteCardPlayerTurn",
+        "description"       => clienttranslate('${message_for_others}'),
         "descriptionmyturn" => clienttranslate('${message_for_player}'),
-        "args" => "argPromoteCardPlayerTurn",
-        "type" => "activeplayer",
-        "possibleactions" => ["passPromoteCard", "promoteCard", "promoteCardBack"],
-        "transitions" => [
-            "interPlayerTurn" => 5,
-            "dogmaEffect" => 6, // In 4th edition, the dogma is mandatory, so dogmaPromotedPlayerTurn is skipped
+        "args"              => "argPromoteCardPlayerTurn",
+        "type"              => "activeplayer",
+        "possibleactions"   => ["passPromoteCard", "promoteCard", "promoteCardBack"],
+        "transitions"       => [
+            "interPlayerTurn"        => 5,
+            "dogmaEffect"            => 6, // In 4th edition, the dogma is mandatory, so dogmaPromotedPlayerTurn is skipped
             "promoteDogmaPlayerTurn" => 20,
-            "justBeforeGameEnd" => 98,
+            "justBeforeGameEnd"      => 98,
         ],
     ),
 
     20 => array(
-        "name" => "dogmaPromotedPlayerTurn",
-        "description" => clienttranslate('${actplayer} may choose to dogma the promoted card'),
+        "name"              => "dogmaPromotedPlayerTurn",
+        "description"       => clienttranslate('${actplayer} may choose to dogma the promoted card'),
         "descriptionmyturn" => clienttranslate('${You} may choose to dogma the promoted card'),
-        "args" => "argDogmaPromotedCardPlayerTurn",
-        "type" => "activeplayer",
-        "possibleactions" => ["passDogmaPromotedCard", "dogmaPromotedCard"],
-        "transitions" => [
-            "interPlayerTurn" => 5,
-            "dogmaEffect" => 6,
+        "args"              => "argDogmaPromotedCardPlayerTurn",
+        "type"              => "activeplayer",
+        "possibleactions"   => ["passDogmaPromotedCard", "dogmaPromotedCard"],
+        "transitions"       => [
+            "interPlayerTurn"   => 5,
+            "dogmaEffect"       => 6,
             "justBeforeGameEnd" => 98,
         ],
     ),
-    
+
     98 => array(
-        "name" => "justBeforeGameEnd",
-        "description" => clienttranslate('Finishing the game...'),
-        "type" => "game",
-        "action" => "stJustBeforeGameEnd",
+        "name"                  => "justBeforeGameEnd",
+        "description"           => clienttranslate('Finishing the game...'),
+        "type"                  => "game",
+        "action"                => "stJustBeforeGameEnd",
         "updateGameProgression" => true,
-        "transitions" => array("" => 99)
+        "transitions"           => array("" => 99)
     ),
-   
+
     // Final state.
     // Please do not modify.
     99 => array(
-        "name" => "gameEnd",
+        "name"        => "gameEnd",
         "description" => clienttranslate('End of game'),
-        "type" => "manager",
-        "action" => "stGameEnd",
-        "args" => "argGameEnd"
+        "type"        => "manager",
+        "action"      => "stGameEnd",
+        "args"        => "argGameEnd"
     )
 
 );

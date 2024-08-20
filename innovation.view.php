@@ -23,147 +23,145 @@
  * Note: if the HTML of your game interface is always the same, you don't have to place anything here.
  *
  */
-  
-  require_once( APP_BASE_PATH."view/common/game.view.php" );
-  
-  class view_innovation_innovation extends game_view
-  {
-    function getGameName() {
+
+require_once (APP_BASE_PATH . "view/common/game.view.php");
+
+class view_innovation_innovation extends game_view
+{
+    function getGameName()
+    {
         return "innovation";
     }
-    
-    function hex2rgb($hex) {
-    $hex = str_replace("#", "", $hex);
 
-       if(strlen($hex) == 3) {
-          $r = hexdec(substr($hex,0,1).substr($hex,0,1));
-          $g = hexdec(substr($hex,1,1).substr($hex,1,1));
-          $b = hexdec(substr($hex,2,1).substr($hex,2,1));
-       } else {
-          $r = hexdec(substr($hex,0,2));
-          $g = hexdec(substr($hex,2,2));
-          $b = hexdec(substr($hex,4,2));
-       }
-       $rgb = array($r, $g, $b);
-       return $rgb; // returns an array with the rgb values
+    function hex2rgb($hex)
+    {
+        $hex = str_replace("#", "", $hex);
+
+        if (strlen($hex) == 3) {
+            $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+            $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+            $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
+        } else {
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
+        }
+        $rgb = array($r, $g, $b);
+        return $rgb; // returns an array with the rgb values
     }
-    
-      function build_page( $viewArgs )
-      {        
-          // Get players
+
+    function build_page($viewArgs)
+    {
+        // Get players
         $players = $this->game->loadPlayersBasicInfos();
-        
+
         // Get my id
         global $g_user;
         $my_id = $g_user->get_id();
 
         /*********** Place your code below:  ************/
 
-        $this->page->begin_block( "innovation_innovation", "pile" );
-        $this->page->begin_block( "innovation_innovation", "player" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_1_1" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_2_1" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_3_1" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_4_1" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_5_1" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_6_1" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_1_2" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_2_2" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_3_2" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_4_2" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_5_2" );
-        $this->page->begin_block( "innovation_innovation", "decks_group_6_2" );
-        $this->page->begin_block( "innovation_innovation", "decks" );
-        $this->page->begin_block( "innovation_innovation", "available_relics" );
-        $this->page->begin_block( "innovation_innovation", "standard_achievements" );
-        $this->page->begin_block( "innovation_innovation", "special_achievements" );
-        $this->page->begin_block( "innovation_innovation", "available_museums" );
-        $this->page->begin_block( "innovation_innovation", "junk" );
-        
+        $this->page->begin_block("innovation_innovation", "pile");
+        $this->page->begin_block("innovation_innovation", "player");
+        $this->page->begin_block("innovation_innovation", "decks_group_1_1");
+        $this->page->begin_block("innovation_innovation", "decks_group_2_1");
+        $this->page->begin_block("innovation_innovation", "decks_group_3_1");
+        $this->page->begin_block("innovation_innovation", "decks_group_4_1");
+        $this->page->begin_block("innovation_innovation", "decks_group_5_1");
+        $this->page->begin_block("innovation_innovation", "decks_group_6_1");
+        $this->page->begin_block("innovation_innovation", "decks_group_1_2");
+        $this->page->begin_block("innovation_innovation", "decks_group_2_2");
+        $this->page->begin_block("innovation_innovation", "decks_group_3_2");
+        $this->page->begin_block("innovation_innovation", "decks_group_4_2");
+        $this->page->begin_block("innovation_innovation", "decks_group_5_2");
+        $this->page->begin_block("innovation_innovation", "decks_group_6_2");
+        $this->page->begin_block("innovation_innovation", "decks");
+        $this->page->begin_block("innovation_innovation", "available_relics");
+        $this->page->begin_block("innovation_innovation", "standard_achievements");
+        $this->page->begin_block("innovation_innovation", "special_achievements");
+        $this->page->begin_block("innovation_innovation", "available_museums");
+        $this->page->begin_block("innovation_innovation", "junk");
+
         // Players
         // Me
-        for($color = 0; $color<5; $color++)
-        {
-            $this->page->insert_block( "pile", array( 
-                                                    "PLAYER_ID" => $my_id,
-                                                    "COLOR" => $color
-                                                        ) );
+        for ($color = 0; $color < 5; $color++) {
+            $this->page->insert_block("pile", array(
+                "PLAYER_ID" => $my_id,
+                "COLOR"     => $color
+            ));
         }
-        
+
         if (array_key_exists($my_id, $players)) { // That is if I'm not a spectator
             $me = $players[$my_id];
             $rgb = self::hex2rgb($me['player_color']);
-            $this->page->insert_block( "player", array( 
-                                                    "PLAYER_ID" => $my_id,
-                                                    "PLAYER_NAME" => self::_("You"),
-                                                    "PLAYER_COLOR" => $me['player_color'] . "; display:none",
-                                                    "PLAYER TEAM" => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($me['player_color'] == "0000ff" ? _("Blue team") : _("Red team")): "",
-                                                    "R" => $rgb[0],
-                                                    "G" => $rgb[1],
-                                                    "B" => $rgb[2],
-                                                    "OPT_FORECAST_CLASS" => " class='forecast_show_window'",
-                                                    "OPT_SCORE_CLASS" => " class='score_show_window'",
-                                                    "HAND" => self::_("Hand"),
-                                                    "DISPLAY" => self::_("Artifact on Display"),
-                                                    "MUSEUMS" => self::_("Museums"),
-                                                    "SCORE_PILE" => self::_("Score pile"),
-                                                    ) );
+            $this->page->insert_block("player", array(
+                "PLAYER_ID"          => $my_id,
+                "PLAYER_NAME"        => self::_("You"),
+                "PLAYER_COLOR"       => $me['player_color'] . "; display:none",
+                "PLAYER TEAM"        => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($me['player_color'] == "0000ff" ? _("Blue team") : _("Red team")) : "",
+                "R"                  => $rgb[0],
+                "G"                  => $rgb[1],
+                "B"                  => $rgb[2],
+                "OPT_FORECAST_CLASS" => " class='forecast_show_window'",
+                "OPT_SCORE_CLASS"    => " class='score_show_window'",
+                "HAND"               => self::_("Hand"),
+                "DISPLAY"            => self::_("Artifact on Display"),
+                "MUSEUMS"            => self::_("Museums"),
+                "SCORE_PILE"         => self::_("Score pile"),
+            ));
             // Opponents
             // We have to reorganize players array so that it reflects the real turn order beginning from me
             $players_with_order = array();
-            foreach( $players as $player_id => $player ) {
+            foreach ($players as $player_id => $player) {
                 $player['player_id'] = $player_id;
                 $players_with_order[] = $player;
             }
-            
-            while($players_with_order[0]['player_id'] != $my_id)
-            {
+
+            while ($players_with_order[0]['player_id'] != $my_id) {
                 // Roll the array
                 $player = array_shift($players_with_order);
                 $players_with_order[] = $player;
             }
-            
+
             $players = array();
-            foreach($players_with_order as $player) {
+            foreach ($players_with_order as $player) {
                 $players[$player['player_id']] = $player;
             }
         }
-        
+
         // Now the order is good and it's the same as in the player panel
-        foreach( $players as $player_id => $player )
-        {
+        foreach ($players as $player_id => $player) {
             if ($player_id == $my_id) {
                 continue; // Skip me
             }
-            $this->page->reset_subblocks( "pile" ); 
-                                                     
-            for($color = 0; $color<5; $color++)
-            {
-                $this->page->insert_block( "pile", array( 
-                                                        "PLAYER_ID" => $player_id,
-                                                        "COLOR" => $color
-                                                         ) );
+            $this->page->reset_subblocks("pile");
+
+            for ($color = 0; $color < 5; $color++) {
+                $this->page->insert_block("pile", array(
+                    "PLAYER_ID" => $player_id,
+                    "COLOR"     => $color
+                ));
             }
-            
+
             $rgb = self::hex2rgb($player['player_color']);
-            
-            $this->page->insert_block( "player", array( 
-                                        "PLAYER_ID" => $player_id,
-                                        "PLAYER_NAME" => $player['player_name'],
-                                        "PLAYER_COLOR" => $player['player_color'],
-                                        "PLAYER TEAM" => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($player['player_color'] == "0000ff" ? self::_("Blue team") : self::_("Red team")): "",
-                                        "R" => $rgb[0],
-                                        "G" => $rgb[1],
-                                        "B" => $rgb[2],
-                                        "OPT_FORECAST_CLASS" => "",
-                                        "OPT_SCORE_CLASS" => "",
-                                        "HAND" => self::_("Hand"),
-                                        "DISPLAY" => self::_("Artifact on Display"),
-                                        "MUSEUMS" => self::_("Museums"),
-                                        "SCORE_PILE" => self::_("Score pile"),
-                                         ) );
+
+            $this->page->insert_block("player", array(
+                "PLAYER_ID"          => $player_id,
+                "PLAYER_NAME"        => $player['player_name'],
+                "PLAYER_COLOR"       => $player['player_color'],
+                "PLAYER TEAM"        => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($player['player_color'] == "0000ff" ? self::_("Blue team") : self::_("Red team")) : "",
+                "R"                  => $rgb[0],
+                "G"                  => $rgb[1],
+                "B"                  => $rgb[2],
+                "OPT_FORECAST_CLASS" => "",
+                "OPT_SCORE_CLASS"    => "",
+                "HAND"               => self::_("Hand"),
+                "DISPLAY"            => self::_("Artifact on Display"),
+                "MUSEUMS"            => self::_("Museums"),
+                "SCORE_PILE"         => self::_("Score pile"),
+            ));
         }
-        
+
         for ($age = 1; $age <= 5; $age++) {
             $this->page->insert_block("decks_group_1_1", array("TYPE" => 0, "AGE" => $age));
         }
@@ -200,13 +198,13 @@
         for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_6_2", array("TYPE" => 5, "AGE" => $age));
         }
-        $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
-        $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );
-        $this->page->insert_block( "standard_achievements", array("STANDARD_ACHIEVEMENTS" => self::_("Standard achievements")) );
-        $this->page->insert_block( "special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")) );
-        $this->page->insert_block( "available_museums", array("AVAILABLE_MUSEUMS" => self::_("Available museums")) );
-        $this->page->insert_block( "junk", array("JUNK" => self::_("Junk")) );
-      }
-  }
-  
+        $this->page->insert_block("decks", array("DECKS" => self::_("Decks")));
+        $this->page->insert_block("available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")));
+        $this->page->insert_block("standard_achievements", array("STANDARD_ACHIEVEMENTS" => self::_("Standard achievements")));
+        $this->page->insert_block("special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")));
+        $this->page->insert_block("available_museums", array("AVAILABLE_MUSEUMS" => self::_("Available museums")));
+        $this->page->insert_block("junk", array("JUNK" => self::_("Junk")));
+    }
+}
+
 

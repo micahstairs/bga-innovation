@@ -396,7 +396,7 @@ abstract class AbstractCard
 
   protected function drawType(int $age, int $type, int $playerId = null)
   {
-    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, Locations::HAND, /*bottom_to=*/false, /*type=*/$type);
+    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, Locations::HAND, /*bottom_to=*/ false, /*type=*/ $type);
   }
 
   protected function transferToHand(?array $card, int $playerId = null)
@@ -489,7 +489,8 @@ abstract class AbstractCard
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
   }
 
-  protected function claim(int $cardId, int $playerId = null): ?array {
+  protected function claim(int $cardId, int $playerId = null): ?array
+  {
     if (!self::isSpecialAchievement(self::getCard($cardId))) {
       return null;
     }
@@ -718,7 +719,8 @@ abstract class AbstractCard
     return Arrays::getRepeatedValues($values);
   }
 
-  public function getColorsMatchingValues(array $cards, array $values): array {
+  public function getColorsMatchingValues(array $cards, array $values): array
+  {
     $colors = [];
     foreach ($cards as $card) {
       if (in_array(self::getValue($card), $values)) {
@@ -1382,7 +1384,7 @@ abstract class AbstractCard
 
   protected function getBaseDecks(): array
   {
-    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE);
+    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/ 0, 'deck', CardTypes::BASE);
   }
 
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
@@ -1650,7 +1652,7 @@ abstract class AbstractCard
     return $this->game->renderPlayerName(self::coercePlayerId($playerId));
   }
 
-// PRIVATE HELPERS
+  // PRIVATE HELPERS
 
   private function canPass(): bool
   {

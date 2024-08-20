@@ -50,166 +50,236 @@
 $stats_type = array(
 
     // Statistics global to table
-    "table" => array(
+    "table"  => array(
 
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-                    
-        "actions_number" => array("id"=> 11,
-                    "name" => totranslate("Number of actions"),
-                    "type" => "int" ),
-                    
-        "end_achievements" => array("id"=> 12,
-                    "name" => totranslate("End of game by achievement?"),
-                    "type" => "bool" ),
-                    
-        "end_score" => array("id"=> 13,
-                    "name" => totranslate("End of game by score?"),
-                    "type" => "bool" ),
+        "turns_number"      => array(
+            "id"   => 10,
+            "name" => totranslate("Number of turns"),
+            "type" => "int"
+        ),
 
-        "end_dogma" => array("id"=> 14,
-                    "name" => totranslate("End of game by dogma?"),
-                    "type" => "bool" ),
+        "actions_number"    => array(
+            "id"   => 11,
+            "name" => totranslate("Number of actions"),
+            "type" => "int"
+        ),
 
-        "fission_triggered" => array("id"=> 15,
-                    "name" => totranslate("Fission card removal triggered?"),
-                    "type" => "bool" ),
-    
+        "end_achievements"  => array(
+            "id"   => 12,
+            "name" => totranslate("End of game by achievement?"),
+            "type" => "bool"
+        ),
+
+        "end_score"         => array(
+            "id"   => 13,
+            "name" => totranslate("End of game by score?"),
+            "type" => "bool"
+        ),
+
+        "end_dogma"         => array(
+            "id"   => 14,
+            "name" => totranslate("End of game by dogma?"),
+            "type" => "bool"
+        ),
+
+        "fission_triggered" => array(
+            "id"   => 15,
+            "name" => totranslate("Fission card removal triggered?"),
+            "type" => "bool"
+        ),
+
     ),
-    
+
     // Statistics existing for each player
     "player" => array(
-        "achievements_number" => array("id"=> 10,
-                    "name" => totranslate("Number of achievements"),
-                    "type" => "int" ),
-                    
-        "score" => array("id"=> 11,
-                    "name" => totranslate("Final score"),
-                    "type" => "int" ),
-                    
-        "max_age_on_board" => array("id"=> 12,
-                    "name" => totranslate("Final max age on board top cards"),
-                    "type" => "int" ),
+        "achievements_number"                              => array(
+            "id"   => 10,
+            "name" => totranslate("Number of achievements"),
+            "type" => "int"
+        ),
 
-        "turns_number" => array("id"=> 13,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-                    
-        "actions_number" => array("id"=> 14,
-                    "name" => totranslate("Number of actions"),
-                    "type" => "int" ),
-                    
-        "draw_actions_number" => array("id"=> 15,
-                    "name" => totranslate("Number of draw actions"),
-                    "type" => "int" ),
-                    
-        "meld_actions_number" => array("id"=> 16,
-                    "name" => totranslate("Number of meld actions"),
-                    "type" => "int" ),
-                    
-        "dogma_actions_number" => array("id"=> 17,
-                    "name" => totranslate("Number of dogma actions"),
-                    "type" => "int" ),
-                    
-        "achieve_actions_number" => array("id"=> 18,
-                    "name" => totranslate("Number of achieve actions"),
-                    "type" => "int" ),
-                    
-        "special_achievements_number" => array("id"=> 19,
-                    "name" => totranslate("Number of claimed special achievements"),
-                    "type" => "int" ),
-                    
-        // Does not count the nested execution of any cards.
-        "dogma_actions_number_with_i_demand" => array("id"=> 20,
-                    "name" => totranslate("Number of dogma actions with an effective \"I demand\" effect"),
-                    "type" => "int" ),
-                    
-        "dogma_actions_number_with_sharing" => array("id"=> 21,
-                    "name" => totranslate("Number of dogma actions with an effective sharing"),
-                    "type" => "int" ),
+        "score"                                            => array(
+            "id"   => 11,
+            "name" => totranslate("Final score"),
+            "type" => "int"
+        ),
+
+        "max_age_on_board"                                 => array(
+            "id"   => 12,
+            "name" => totranslate("Final max age on board top cards"),
+            "type" => "int"
+        ),
+
+        "turns_number"                                     => array(
+            "id"   => 13,
+            "name" => totranslate("Number of turns"),
+            "type" => "int"
+        ),
+
+        "actions_number"                                   => array(
+            "id"   => 14,
+            "name" => totranslate("Number of actions"),
+            "type" => "int"
+        ),
+
+        "draw_actions_number"                              => array(
+            "id"   => 15,
+            "name" => totranslate("Number of draw actions"),
+            "type" => "int"
+        ),
+
+        "meld_actions_number"                              => array(
+            "id"   => 16,
+            "name" => totranslate("Number of meld actions"),
+            "type" => "int"
+        ),
+
+        "dogma_actions_number"                             => array(
+            "id"   => 17,
+            "name" => totranslate("Number of dogma actions"),
+            "type" => "int"
+        ),
+
+        "achieve_actions_number"                           => array(
+            "id"   => 18,
+            "name" => totranslate("Number of achieve actions"),
+            "type" => "int"
+        ),
+
+        "special_achievements_number"                      => array(
+            "id"   => 19,
+            "name" => totranslate("Number of claimed special achievements"),
+            "type" => "int"
+        ),
 
         // Does not count the nested execution of any cards.
-        "i_demand_effects_number" => array("id"=> 22,
-                    "name" => totranslate("Number of times the player has effectivly executed the \"I demand\" effect of an opponent card"),
-                    "type" => "int" ),
-                    
-        // Does not count the nested execution of any cards.
-        "sharing_effects_number" => array("id"=> 23,
-                    "name" => totranslate("Number of times the player has effectivly shared the effects of an opponent card"),
-                    "type" => "int" ),
+        "dogma_actions_number_with_i_demand"               => array(
+            "id"   => 20,
+            "name" => totranslate("Number of dogma actions with an effective \"I demand\" effect"),
+            "type" => "int"
+        ),
 
-        "execution_combo_count" => array("id"=> 90,
-                    "name" => totranslate("Number of times the player was eligible to draw and achieve an 11 due to the Chain Rule"),
-                    "type" => "int" ),
-        
+        "dogma_actions_number_with_sharing"                => array(
+            "id"   => 21,
+            "name" => totranslate("Number of dogma actions with an effective sharing"),
+            "type" => "int"
+        ),
+
+        // Does not count the nested execution of any cards.
+        "i_demand_effects_number"                          => array(
+            "id"   => 22,
+            "name" => totranslate("Number of times the player has effectivly executed the \"I demand\" effect of an opponent card"),
+            "type" => "int"
+        ),
+
+        // Does not count the nested execution of any cards.
+        "sharing_effects_number"                           => array(
+            "id"   => 23,
+            "name" => totranslate("Number of times the player has effectivly shared the effects of an opponent card"),
+            "type" => "int"
+        ),
+
+        "execution_combo_count"                            => array(
+            "id"   => 90,
+            "name" => totranslate("Number of times the player was eligible to draw and achieve an 11 due to the Chain Rule"),
+            "type" => "int"
+        ),
+
         /* Artifacts-specific */
 
-        "dig_events_number" => array("id"=> 24,
-                    "name" => totranslate("Number of artifacts dug"),
-                    "type" => "int" ),
+        "dig_events_number"                                => array(
+            "id"   => 24,
+            "name" => totranslate("Number of artifacts dug"),
+            "type" => "int"
+        ),
 
-        "free_action_dogma_number" => array("id"=> 25,
-                    "name" => totranslate("Number of times that an artifact on display was executed"),
-                    "type" => "int" ),
+        "free_action_dogma_number"                         => array(
+            "id"   => 25,
+            "name" => totranslate("Number of times that an artifact on display was executed"),
+            "type" => "int"
+        ),
 
-        "free_action_return_number" => array("id"=> 26,
-                    "name" => totranslate("Number of artifacts on display returned without being used"),
-                    "type" => "int" ),
+        "free_action_return_number"                        => array(
+            "id"   => 26,
+            "name" => totranslate("Number of artifacts on display returned without being used"),
+            "type" => "int"
+        ),
 
-        "free_action_pass_number" => array("id"=> 27,
-                    "name" => totranslate("Number of turns that an artifact on display was not used or returned"),
-                    "type" => "int" ),
-
-        // Does not count the nested execution of any cards.
-        "dogma_actions_number_targeting_artifact_on_board" => array("id"=> 28,
-                    "name" => totranslate("Number of dogma actions targeting an artifact on your board"),
-                    "type" => "int" ),
-
-        // Does not count the nested execution of any cards.
-        "dogma_actions_number_with_i_compel" => array("id"=> 29,
-                    "name" => totranslate("Number of dogma actions with an effective \"I compel\" effect"),
-                    "type" => "int" ),
+        "free_action_pass_number"                          => array(
+            "id"   => 27,
+            "name" => totranslate("Number of turns that an artifact on display was not used or returned"),
+            "type" => "int"
+        ),
 
         // Does not count the nested execution of any cards.
-        "i_compel_effects_number" => array("id"=> 30,
-                    "name" => totranslate("Number of times the player has been forced to execute the \"I compel\" effect of an opponent's card"),
-                    "type" => "int" ),
-    
+        "dogma_actions_number_targeting_artifact_on_board" => array(
+            "id"   => 28,
+            "name" => totranslate("Number of dogma actions targeting an artifact on your board"),
+            "type" => "int"
+        ),
+
+        // Does not count the nested execution of any cards.
+        "dogma_actions_number_with_i_compel"               => array(
+            "id"   => 29,
+            "name" => totranslate("Number of dogma actions with an effective \"I compel\" effect"),
+            "type" => "int"
+        ),
+
+        // Does not count the nested execution of any cards.
+        "i_compel_effects_number"                          => array(
+            "id"   => 30,
+            "name" => totranslate("Number of times the player has been forced to execute the \"I compel\" effect of an opponent's card"),
+            "type" => "int"
+        ),
+
         /* Artifacts + Relics specific */
 
-        "relics_seized_number" => array("id"=> 31,
-                    "name" => totranslate("Number of relics seized by player"),
-                    "type" => "int" ),
+        "relics_seized_number"                             => array(
+            "id"   => 31,
+            "name" => totranslate("Number of relics seized by player"),
+            "type" => "int"
+        ),
 
-        "relics_stolen_number" => array("id"=> 32,
-                    "name" => totranslate("Number of relics stolen from player"),
-                    "type" => "int" ),
+        "relics_stolen_number"                             => array(
+            "id"   => 32,
+            "name" => totranslate("Number of relics stolen from player"),
+            "type" => "int"
+        ),
 
         /* Cities-specific */
 
-        "endorse_actions_number" => array("id"=> 40,
-                    "name" => totranslate("Number of endorse actions"),
-                    "type" => "int" ),
+        "endorse_actions_number"                           => array(
+            "id"   => 40,
+            "name" => totranslate("Number of endorse actions"),
+            "type" => "int"
+        ),
 
-        "city_cards_drawn_number" => array("id"=> 41,
-                    "name" => totranslate("Number of city cards drawn"),
-                    "type" => "int" ),
+        "city_cards_drawn_number"                          => array(
+            "id"   => 41,
+            "name" => totranslate("Number of city cards drawn"),
+            "type" => "int"
+        ),
 
         /* Echoes-specific */
 
-        "foreshadowed_number" => array("id"=> 60,
-                    "name" => totranslate("Number of cards foreshadowed"),
-                    "type" => "int" ),
+        "foreshadowed_number"                              => array(
+            "id"   => 60,
+            "name" => totranslate("Number of cards foreshadowed"),
+            "type" => "int"
+        ),
 
-        "promoted_number" => array("id"=> 61,
-                    "name" => totranslate("Number of cards promoted from forecast"),
-                    "type" => "int" ),
+        "promoted_number"                                  => array(
+            "id"   => 61,
+            "name" => totranslate("Number of cards promoted from forecast"),
+            "type" => "int"
+        ),
 
         // This counts every execution of every echo effect, regardless of whether it was nested or even if it was effective.
-        "executed_echo_effect_number" => array("id"=> 62,
-                    "name" => totranslate("Number of executed echo effects"),
-                    "type" => "int" ),
+        "executed_echo_effect_number"                      => array(
+            "id"   => 62,
+            "name" => totranslate("Number of executed echo effects"),
+            "type" => "int"
+        ),
 
     )
 

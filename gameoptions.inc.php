@@ -50,8 +50,8 @@ $game_options = array(
 
     */
     100 => array(
-        'name' => totranslate('Game type'),
-        'values' => array(
+        'name'           => totranslate('Game type'),
+        'values'         => array(
             1 => array('name' => totranslate('Classic game')),
             2 => array('name' => totranslate('2 vs 2, random teams'), 'tmdisplay' => totranslate('Team game (2 vs 2)'), 'beta' => true, 'no_beginner' => true),
             3 => array('name' => totranslate('2 vs 2, by table order (1st/2nd vs 3rd/4th)'), 'tmdisplay' => totranslate('Team game (2 vs 2)'), 'beta' => true, 'no_beginner' => true),
@@ -78,10 +78,10 @@ $game_options = array(
             )
         ),
     ),
-    
+
     101 => array(
-        'name' => totranslate('Game rules'),
-        'values' => array(
+        'name'           => totranslate('Game rules'),
+        'values'         => array(
             3 => array('name' => totranslate('4th edition'), 'tmdisplay' => totranslate('4th edition')),
             1 => array('name' => totranslate('3rd edition'), 'tmdisplay' => totranslate('3rd edition')),
             /* TODO(4E): Retire 1st editiion. */
@@ -96,7 +96,7 @@ $game_options = array(
                 array('type' => 'otheroptionisnot', 'id' => 102, 'value' => 3, 'message' => totranslate('Relics are not part of the 4th edition rules')),
             ),
             // 2 => array(
-                /* TODO(4E): Retire 1st editiion. */
+            /* TODO(4E): Retire 1st editiion. */
             //     array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
             //     array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
             //     array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
@@ -107,24 +107,24 @@ $game_options = array(
     ),
 
     102 => array(
-        'name' => totranslate('Artifacts of History expansion'),
+        'name'   => totranslate('Artifacts of History expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array(
-                'name' => totranslate('Enable'),
+                'name'        => totranslate('Enable'),
                 'no_beginner' => true,
-                'tmdisplay' => totranslate('Artifacts Expansion'),
+                'tmdisplay'   => totranslate('Artifacts Expansion'),
             ),
             3 => array(
-                'name' => totranslate('Enable with Relics (3rd edition only)'),
+                'name'        => totranslate('Enable with Relics (3rd edition only)'),
                 'no_beginner' => true,
-                'tmdisplay' => totranslate('Artifacts Expansion with Relics')
+                'tmdisplay'   => totranslate('Artifacts Expansion with Relics')
             ),
         ),
     ),
 
     103 => array(
-        'name' => totranslate('Cities of Destiny expansion'),
+        'name'   => totranslate('Cities of Destiny expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
@@ -132,7 +132,7 @@ $game_options = array(
     ),
 
     104 => array(
-        'name' => totranslate('Echoes of the Past expansion'),
+        'name'   => totranslate('Echoes of the Past expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Echoes Expansion'))
@@ -149,7 +149,7 @@ $game_options = array(
     ),*/
 
     106 => array(
-        'name' => totranslate('The Unseen expansion'),
+        'name'   => totranslate('The Unseen expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Unseen Expansion'))
@@ -157,15 +157,15 @@ $game_options = array(
     ),
 
     110 => array(
-        'name' => totranslate('Extra achievement to win'),
+        'name'   => totranslate('Extra achievement to win'),
         'values' => array(
             1 => array(
-                'name' => totranslate('Disable'),
+                'name'        => totranslate('Disable'),
                 'description' => totranslate('An extra achievement will still be added to the win requirement for each enabled expansion'),
             ),
             2 => array(
-                'name' => totranslate('Enable'),
-                'tmdisplay' => totranslate('Extra Achievement'),
+                'name'        => totranslate('Enable'),
+                'tmdisplay'   => totranslate('Extra Achievement'),
                 'description' => totranslate('An extra achievement will be added to the win requirement (in addition to an achievement being added for each enabled expansion)'),
                 'no_beginner' => true,
             ),
@@ -175,70 +175,70 @@ $game_options = array(
 
 $game_preferences = array(
     112 => array(
-        'name' => totranslate('Position of decks and achievements'),
+        'name'       => totranslate('Position of decks and achievements'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('Right')),
             2 => array('name' => totranslate('Bottom')),
         ),
-        'default' => 1,
+        'default'    => 1,
     ),
     100 => array(
-        'name' => totranslate('Dogma confirmation'),
+        'name'       => totranslate('Dogma confirmation'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled (short timer)')),
             3 => array('name' => totranslate('Enabled (medium timer)')),
             4 => array('name' => totranslate('Enabled (long timer)')),
         ),
-        'default' => 1
+        'default'    => 1
     ),
     102 => array(
-        'name' => totranslate('Sharing confirmation'),
+        'name'       => totranslate('Sharing confirmation'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled')),
         ),
-        'default' => 2
+        'default'    => 2
     ),
     101 => array(
-        'name' => totranslate('Meld confirmation'),
+        'name'       => totranslate('Meld confirmation'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled (short timer)')),
             3 => array('name' => totranslate('Enabled (medium timer)')),
             4 => array('name' => totranslate('Enabled (long timer)')),
         ),
-        'default' => 1
+        'default'    => 1
     ),
     110 => array(
-        'name' => totranslate('Simplified card backs'),
+        'name'       => totranslate('Simplified card backs'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled')),
         ),
-        'default' => 1,
+        'default'    => 1,
     ),
     111 => array(
-        'name' => totranslate('Card appearance'),
+        'name'       => totranslate('Card appearance'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('First edition')),
             2 => array('name' => totranslate('Third edition')),
         ),
-        'default' => 2,
+        'default'    => 2,
     ),
     113 => array(
-        'name' => totranslate('Pile size indicators on boards'),
+        'name'       => totranslate('Pile size indicators on boards'),
         'needReload' => true,
-        'values' => array(
+        'values'     => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled')),
         ),
-        'default' => 2,
+        'default'    => 2,
     ),
 );

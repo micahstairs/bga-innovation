@@ -49,6 +49,6 @@ class GameInfosTest extends BaseTest
 
     public function testPlayers()
     {
-        $this->assertEquals([2,3,4,5], $this->config['players']);
+        $this->assertEquals([2, 3, 4, 5], $this->config['players']);
     }
 }

@@ -1,3 +1,5 @@
 <?php
 
-class BgaVisibleSystemException extends Exception {}
+class BgaVisibleSystemException extends Exception
+{
+}
