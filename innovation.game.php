@@ -11095,8 +11095,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 12
-            || $card_id == 17
+        return $card_id <= 17
             || $card_id == 20
             || $card_id == 22
             || $card_id == 25
@@ -11244,46 +11243,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 13, age 1: Code of laws
-                case "13N1":
-                    $step_max = 1;
-                    break;
-
-                // id 14, age 1: Mysticism
-                case "14N1":
-                    $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1
-                    $color = $card['color'];
-                    if (self::getTopCardOnBoard($player_id, $color)) { // "If it is the same color of any card on your board"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => Colors::render($color)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($color)));
-                        self::meldCard($card, $player_id); // "Meld it"
-                        self::executeDraw($player_id, 1); // "Draw a 1"
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} do not have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => Colors::render($color)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} does not have this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($color)));
-                        self::transferCardFromTo($card, $player_id, 'hand'); // (Put the card in your hand)
-                    }
-                    break;
-
-                // id 15, age 2: Calendar
-                case "15N1":
-                    if (self::countCardsInLocation($player_id, 'score') > self::countCardsInLocation($player_id, 'hand')) { // "If you have more cards in your score pile than in your hand"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have more cards in your score pile than in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has more cards in his score pile than in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
-
-                        self::executeDraw($player_id, 3); // "Draw two 3"
-                        self::executeDraw($player_id, 3); // 
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have more cards in your score pile than in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have more cards in his score pile than in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
-                    }
-                    break;
-
-                // id 16, age 2: Mathematics
-                case "16N1":
-                    $step_max = 1;
-                    break;
 
                 // id 18, age 2: Road building
                 case "18N1":
@@ -12216,58 +12175,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 13, age 1: Code of laws
-            case "13N1A":
-                // "You may tuck a card from your hand of the same color of any card on your board"
-                $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                $selectable_colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if (count($board[$color]) > 0) { // This is a color the player already have
-                        $selectable_colors[] = $color;
-                    }
-                }
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-                    'bottom_to'     => true,
-
-                    'color'         => $selectable_colors
-                );
-                break;
-
-            case "13N1B":
-                // "You may splay that color left"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => array($this->innovationGameState->get('color_last_selected'))
-                );
-                break;
-
-            // id 16, age 2: Mathematics
-            case "16N1A":
-                // "You may return a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
 
             // id 18, age 2: Road building
             case "18N1A":
@@ -13533,20 +13440,6 @@ class Innovation extends Table
                                     }
                                 }
                             }
-                        }
-                        break;
-
-                    // id 13, age 1: Code of laws
-                    case "13N1A":
-                        if ($n > 0) { // "If you do"
-                            self::incrementStepMax(1);
-                        }
-                        break;
-
-                    // id 16, age 2: Mathematics
-                    case "16N1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected') + 1); // "Draw and meld a card of value one higher than the card you returned"
                         }
                         break;
 
