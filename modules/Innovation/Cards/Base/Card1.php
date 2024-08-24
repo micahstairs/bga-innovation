@@ -20,19 +20,9 @@ class Card1 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'       => true,
-        'return_keyword' => true,
-        'n'              => 3,
-        'location_from'  => Locations::HAND,
-      ];
+      return self::youMay()->return()->exactly(3)->fromHand()->build();
     } else {
-      return [
-        'can_pass'       => true,
-        'return_keyword' => true,
-        'age'            => 3,
-        'location_from'  => Locations::HAND,
-      ];
+      return self::youMay()->return()->value(3)->fromHand()->build();
     }
   }
 

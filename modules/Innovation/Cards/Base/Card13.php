@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 
@@ -22,18 +21,9 @@ class Card13 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'      => true,
-        'tuck_keyword'  => true,
-        'location_from' => Locations::HAND,
-        'color'         => self::getColorsOnBoard(),
-      ];
+      return self::youMay()->tuck()->fromHand()->withColor(self::getColorsOnBoard())->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [self::getLastSelectedColor()],
-      ];
+      return self::youMay()->splayLeft()->withColor([self::getLastSelectedColor()])->build();
     }
   }
 

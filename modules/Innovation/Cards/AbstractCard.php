@@ -3,6 +3,7 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
@@ -49,6 +50,16 @@ abstract class AbstractCard
     // initial getInteractionOptions call should set these)
     unset($options['n'], $options['n_min'], $options['n_max']);
     return $options;
+  }
+
+  public function youMay(): InteractionBuilder
+  {
+    return (new InteractionBuilder(self::getLauncherId()))->canPass(true);
+  }
+
+  public function youMust(): InteractionBuilder
+  {
+    return (new InteractionBuilder(self::getLauncherId()))->canPass(false);
   }
 
   public final function getSpecialChoicePrompt(): array
@@ -817,6 +828,16 @@ abstract class AbstractCard
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location, 'MAX');
   }
 
+  protected function getLowestCards(string $location, int $playerId = null): array
+  {
+    return self::filterByValue(self::getCards($location), [self::getMinValueInLocation($location)]);
+  }
+
+  protected function getHighestCards(string $location, int $playerId = null): array
+  {
+    return self::filterByValue(self::getCards($location), [self::getMaxValueInLocation($location)]);
+  }
+
   protected function hasIcon(?array $card, int $icon): bool
   {
     if (!$card) {
@@ -1429,6 +1450,18 @@ abstract class AbstractCard
       }
     }
     return $numColors;
+  }
+
+  protected function canSplayLeft(array $colors = Colors::ALL, int $playerId = null): bool
+  {
+    $playerId = self::coercePlayerId($playerId);
+    $cardsKeyedByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
+    foreach ($colors as $color) {
+      if ($cardsKeyedByColor[$color] >= 2 && $cardsKeyedByColor[0]['splay_direction'] != Directions::LEFT) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected function getStandardIconCount(int $icon, int $playerId = null): int

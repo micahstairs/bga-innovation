@@ -31,12 +31,7 @@ class Card20 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location'   => Locations::SCORE,
-      'owner_from' => self::getPlayerId(),
-      'owner_to'   => self::getLauncherId(),
-      'age'        => 1,
-    ];
+    return self::youMust()->value(1)->fromScore()->toMine()->build();
   }
 
   public function handleCardChoice(array $card)

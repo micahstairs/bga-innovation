@@ -35,7 +35,7 @@ class Card27 extends AbstractCard
     return [
       'can_pass'        => true,
       'splay_direction' => Directions::LEFT,
-      'color'           => Colors::RED,
+      'color'           => [Colors::RED],
     ];
   }
 

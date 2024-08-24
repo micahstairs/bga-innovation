@@ -33,12 +33,7 @@ class Card22 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'      => true,
-      'location_from' => Locations::HAND,
-      'tuck_keyword'  => true,
-      'color'         => [Colors::GREEN],
-    ];
+    return self::youMay()->tuck()->fromHand()->withColor([Colors::GREEN])->build();
   }
 
   public function afterInteraction()
@@ -47,6 +42,22 @@ class Card22 extends AbstractCard
       self::junkBaseDeck(2);
       self::junk($this->game->getIfTopCardOnBoard(CardIds::FERMENTING));
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::isFourthEdition()) {
+      if (count(self::filterByColor(self::getCards(Locations::HAND), [Colors::GREEN])) > 0) {
+        return true;
+      }
+      if (self::getBaseDeckCount(2) > 0) {
+        return true;
+      }
+      if ($this->game->getIfTopCardOnBoard(CardIds::FERMENTING)) {
+        return true;
+      }
+    }
+    return self::getStandardIconCount(Icons::HEALTH) > 0;
   }
 
 }

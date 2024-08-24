@@ -20,11 +20,7 @@ class Card9 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'       => true,
-      'return_keyword' => true,
-      'location_from'  => Locations::HAND,
-    ];
+    return self::youMay()->return()->fromHand()->build();
   }
 
   public function handleCardChoice(array $card)

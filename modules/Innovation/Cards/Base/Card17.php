@@ -23,12 +23,7 @@ class Card17 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'          => 2,
-      'location'   => Locations::HAND,
-      'owner_from' => self::getPlayerId(),
-      'owner_to'   => self::getLauncherId(),
-    ];
+    return self::youMust()->exactly(2)->fromHand()->toMine()->build();
   }
 
   public function afterInteraction()

@@ -20,14 +20,7 @@ class Card11_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'      => true,
-      'n_min'         => 1,
-      'n_max'         => 'all',
-      'location_from' => Locations::HAND,
-      'meld_keyword'  => true,
-      'with_icon'     => Icons::AUTHORITY,
-    ];
+    return self::youMay()->meld()->anyNumber()->fromHand()->withIcon(Icons::AUTHORITY)->build();
   }
 
   public function afterInteraction()

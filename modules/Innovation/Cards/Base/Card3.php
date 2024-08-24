@@ -3,8 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card3 extends AbstractCard
 {
@@ -29,18 +27,9 @@ class Card3 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'age'      => ValueSelectors::HIGHEST,
-        'location' => Locations::HAND,
-        'owner_to' => self::getLauncherId(),
-      ];
+      return self::youMust()->highest()->fromHand()->toMine()->build();
     } else {
-      return [
-        'junk_keyword'  => true,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'age_min'       => 1,
-        'age_max'       => 2,
-      ];
+      return self::youMust()->junk()->range(1, 2)->fromAvailableAchievements()->build();
     }
   }
 

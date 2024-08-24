@@ -9863,6 +9863,7 @@ class Innovation extends Table
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the non-demand and echo effects (without revealing hidden info to the launching player). */
     function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects)
     {
+        $card_id = $card['id'];
 
         // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
@@ -10098,26 +10099,6 @@ class Innovation extends Table
             }
 
             switch ($code) {
-                // id 18, age 2: Road building
-                case "18N1B":
-                    $message_for_player = clienttranslate('${You} may choose another player to transfer your top red card to his board, then transfer his top green card to your board:');
-                    $message_for_others = clienttranslate('${player_name} may choose another player to transfer his own red card to that player\'s board, then transfer that player\'s top green card to his own board');
-                    break;
-
-                // id 21, age 2: Canal building
-                case "21N1A":
-                    if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[3] > 0) {
-                        $message_args_for_player['age_3'] = self::getAgeSquare(3);
-                        $message_args_for_others['age_3'] = self::getAgeSquare(3);
-                        $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile or junk the ${age_3} pile?');
-                        $message_for_others = clienttranslate('${player_name} may exchange all his highest cards in his hand with all the highest cards in his score pile or junk the ${age_3} pile?');
-                        $options = array(array('value' => 1, 'text' => clienttranslate("Exchange")), array('value' => 0, 'text' => clienttranslate("Junk")));
-                    } else {
-                        $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile?');
-                        $message_for_others = clienttranslate('${player_name} may exchange all his highest cards in his hand with all the highest cards in his score pile');
-                        $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                    }
-                    break;
 
                 // id 28, age 3: Optics        
                 case "28N1A":
@@ -11099,10 +11080,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 17
-            || $card_id == 20
-            || $card_id == 22
-            || $card_id == 25
+        return $card_id <= 25
             || $card_id == 27
             || $card_id == 29
             || (31 <= $card_id && $card_id <= 32)
@@ -11247,45 +11225,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 18, age 2: Road building
-                case "18N1":
-                    $step_max = 1;
-                    break;
-
-                // id 19, age 2: Currency
-                case "19N1":
-                    self::setAuxiliaryValueFromArray(array());
-                    $step_max = 1;
-                    break;
-
-                // id 21, age 2: Canal building         
-                case "21N1":
-                    if (!$this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocation($player_id, 'score') == 0 && self::countCardsInLocation($player_id, 'hand') == 0) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand or score pile to exchange.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand or score pile to exchange.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else {
-                        $step_max = 1;
-                    }
-                    break;
-
-                // id 23, age 2: Monotheism        
-                case "23D1":
-                    $step_max = 1;
-                    break;
-
-                case "23N1":
-                    self::executeDrawAndTuck($player_id, 1); // "Draw and tuck a 1"
-                    break;
-
-                // id 24, age 2: Philosophy        
-                case "24N1":
-                    $step_max = 1;
-                    break;
-
-                case "24N2":
-                    $step_max = 1;
-                    break;
 
                 // id 26, age 3: Translation        
                 case "26N1":
@@ -12179,121 +12118,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 18, age 2: Road building
-            case "18N1A":
-                // "Meld one or two cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'n_max'         => 2,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'meld_keyword'  => true,
-                );
-                break;
-
-            case "18N1B":
-                // "You may transfer your top red card to another player's board. If you do, meld that player's top green card."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'can_pass'      => true,
-
-                    'choose_player' => true,
-                    'players'       => self::getOtherActivePlayers($player_id),
-
-                    // 4th edition says "meld that player's top green card" but earlier editions say "transfer that player's top green card to your board"
-                    'meld_keyword'  => $this->innovationGameState->usingFourthEditionRules(),
-                );
-                break;
-
-            // id 19, age 2: Currency
-            case "19N1A":
-                // "You may return any number of card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
-            // id 21, age 2: Canal building         
-            case "21N1A":
-                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[3] > 0) {
-                    // "You may choose to either exchange all the highest cards in your hand with all the highest cards in your score pile, or junk all cards in the 3 deck."
-                    $options = array(
-                        'player_id'        => $player_id,
-                        'can_pass'         => true,
-                        'choose_yes_or_no' => true,
-                    );
-                } else {
-                    // "You may exchange all the highest cards in your hand with all the highest cards in your score pile"
-                    $options = array(
-                        'player_id'        => $player_id,
-                        'choose_yes_or_no' => true,
-                    );
-                }
-                break;
-
-            // id 23, age 2: Monotheism        
-            case "23D1A":
-                // "I demand you transfer a top card on your board of different color from any card on my board to my score pile!"
-                $board = self::getCardsInLocationKeyedByColor($launcher_id, 'board');
-                $selectable_colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if (count($board[$color]) == 0) { // This is a color the player does not have
-                        $selectable_colors[] = $color;
-                    }
-                }
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $launcher_id,
-                    'location_to'   => 'score',
-
-                    'color'         => $selectable_colors,
-                );
-                break;
-
-            // id 24, age 2: Philosophy        
-            case "24N1A":
-                // "You may splay any one color of your cards"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT
-                );
-                break;
-
-            case "24N2A":
-                // "You may score a card from your board"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true
-                );
-                break;
 
             // id 26, age 3: Translation        
             case "26N1A":
@@ -13447,47 +13271,6 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 18, age 2: Road building
-                    case "18N1A":
-                        if ($n == 2) { // "If you melded two"
-                            if (self::getTopCardOnBoard($player_id, 1) !== null) { // The player has a top red board card
-                                self::incrementStepMax(1);
-                            } else {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top red card on your board.'), array('You' => 'You'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top red card on your board.'), array('player_name' => self::renderPlayerName($player_id)));
-                            }
-                        }
-                        break;
-
-                    // id 19, age 2: Currency
-                    case "19N1A":
-                        if ($n > 0) { // "If you do"
-                            $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
-                            $number_of_cards_to_score = count($different_values_selected_so_far);
-
-                            if ($number_of_cards_to_score == 1) {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('Each card ${you} returned has the same value.'), array('you' => 'you'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} returned has the same value.'), array('player_name' => self::renderPlayerName($player_id)));
-                            } else if ($number_of_cards_to_score > 1) {
-                                $n = self::renderNumber($number_of_cards_to_score);
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned cards of ${n} different values.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $n));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} returned.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $n));
-                            }
-
-                            // "For every different value of card you returned"
-                            for ($i = 0; $i < $number_of_cards_to_score; $i++) {
-                                self::executeDraw($player_id, 2, 'score'); // "Draw and score a 2"
-                            }
-                        }
-                        break;
-
-                    // id 23, age 2: Monotheism        
-                    case "23D1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDrawAndTuck($player_id, 1); // "Draw an tuck a 1"
-                        }
-                        break;
-
                     // id 30, age 3: Paper
                     case "30N2A_4E":
                         if ($n > 0) { // "If you do, draw a 4 for every color you have splayed left"
@@ -14374,59 +14157,6 @@ class Innovation extends Table
                 // The letter indicates the step : A for the first one, B for the second
 
                 // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 18, age 2: Road building
-                case "18N1B":
-                    // $choice is the chosen player id
-                    $top_red_card = self::getTopCardOnBoard($player_id, 1);
-                    self::transferCardFromTo($top_red_card, $choice, 'board'); // "Transfer your top red card to another's player's board"
-                    $top_green_card = self::getTopCardOnBoard($choice, 2);
-                    if ($top_green_card !== null) {
-                        self::transferCardFromTo($top_green_card, $player_id, 'board'); // "Transfer that player's top green card to your board"
-                    } else {
-                        self::notifyPlayer($choice, 'log', clienttranslate('${You} have no top green card on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($choice, 'log', clienttranslate('${player_name} has no top green card on his board.'), array('player_name' => self::renderPlayerName($choice)));
-                    }
-                    break;
-
-                // id 19, age 2: Currency
-                case "19N1A":
-                    $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
-                    if (!in_array($card['age'], $different_values_selected_so_far)) { // The player choose to return a card of a new value
-                        $different_values_selected_so_far[] = $card['age'];
-                        self::setAuxiliaryValueFromArray($different_values_selected_so_far);
-                    }
-                    self::returnCard($card);
-                    break;
-
-                // id 21, age 2: Canal building         
-                case "21N1A":
-                    if ($choice == 0) { // No exchange
-                        if ($this->innovationGameState->usingFourthEditionRules()) {
-                            self::junkBaseDeck(3);
-                        } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to exchange.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::renderPlayerName($player_id)));
-                        }
-                    } else { // "Exchange all the highest cards in your hand with all the highest cards in your score pile"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to exchange.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to exchange.'), array('player_name' => self::renderPlayerName($player_id)));
-
-                        // Get highest cards in hand and highest cards in score
-                        $ids_of_highest_cards_in_hand = self::getIdsOfHighestCardsInLocation($player_id, 'hand');
-                        $ids_of_highest_cards_in_score = self::getIdsOfHighestCardsInLocation($player_id, 'score');
-
-                        // Make the transfers
-                        foreach ($ids_of_highest_cards_in_score as $id) {
-                            $card = self::getCardInfo($id);
-                            self::transferCardFromTo($card, $player_id, 'hand');
-                        }
-                        foreach ($ids_of_highest_cards_in_hand as $id) {
-                            $card = self::getCardInfo($id);
-                            self::transferCardFromTo($card, $player_id, 'score'); // Note: this has no score keyword 
-                        }
-                    }
-                    break;
 
                 // id 28, age 3: Optics        
                 case "28N1A":

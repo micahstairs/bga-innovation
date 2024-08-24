@@ -48,13 +48,7 @@ class Card5 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'    => Locations::HAND,
-      'owner_to'         => self::getLauncherId(),
-      'location_to'      => Locations::SCORE,
-      'with_icon'        => Icons::PROSPERITY,
-      'reveal_if_unable' => true,
-    ];
+    return self::youMust()->withIcon(Icons::PROSPERITY)->fromHand()->toMyScore()->revealIfUnable()->build();
   }
 
   public function handleCardChoice(array $card)

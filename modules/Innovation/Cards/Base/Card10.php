@@ -3,8 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card10 extends AbstractCard
 {
@@ -18,12 +16,7 @@ class Card10 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'meld_keyword'  => true,
-      'age'           => ValueSelectors::LOWEST,
-      'location_from' => Locations::HAND,
-    ];
-
+    return self::youMust()->meld()->lowest()->fromHand()->build();
   }
 
   public function afterInteraction()
