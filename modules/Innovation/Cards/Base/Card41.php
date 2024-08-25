@@ -16,16 +16,9 @@ class Card41 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyward' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     } else {
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyward' => true,
-        'age'            => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourBoard()->build();
     }
   }
 

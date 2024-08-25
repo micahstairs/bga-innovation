@@ -10890,9 +10890,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 36
-            || $card_id == 38
-            || (40 <= $card_id && $card_id <= 44)
+        return $card_id <= 44
             || (48 <= $card_id && $card_id <= 49)
             || $card_id == 51
             || $card_id == 54
@@ -11003,11 +11001,8 @@ class Innovation extends Table
             // TODO(LATER): Consider adding something to the log which says that an effect is resuming.
         }
 
-        $crown = Icons::render(1);
         $leaf = Icons::render(2);
         $lightbulb = Icons::render(3);
-        $tower = Icons::render(4);
-        $factory = Icons::render(5);
 
         $using_execution_status_object = false;
 
@@ -11031,44 +11026,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 37, age 4: Colonialism
-                case "37N1":
-                    do {
-                        // "Draw and tuck a 3"
-                        $card = self::executeDrawAndTuck($player_id, 3);
-                        // "If it is green, junk all cards in the 5 deck"
-                        if ($card['color'] == 2 && $this->innovationGameState->usingFourthEditionRules()) {
-                            self::junkBaseDeck(5);
-                        }
-                    } while (self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this effect"
-                    break;
-
-                // id 39, age 4: Invention
-                case "39N1":
-                    $step_max = 1;
-                    break;
-
-                case "39N2":
-                    $eligible = true;
-                    foreach (Colors::ALL as $color) {
-                        if (self::getCurrentSplayDirection($player_id, $color) == 0) { // This color is missing or unsplayed
-                            $eligible = false;
-                        }
-                        ;
-                    }
-                    if ($eligible) { // "If you have colors splayed, each in any direction"
-                        $achievement = self::getCardInfo(107);
-                        if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have all your five colors splayed.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed.'), array('player_name' => self::renderPlayerName($player_id)));
-                            self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the Wonder achievement"
-                        } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have all your five colors splayed but the Wonder achievement has already been claimed.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed but the Wonder achievement has already been claimed.'), array('player_name' => self::renderPlayerName($player_id)));
-                        }
-                    }
-                    break;
 
                 // id 45, age 5: Chemistry
                 case "45N1":
@@ -11829,25 +11786,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 39, age 4: Invention
-            case "39N1A":
-                $splayed_left_colors = array();
-                foreach (Colors::ALL as $color) {
-                    if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
-                        $splayed_left_colors[] = $color;
-                    }
-                }
-                // "You may splay right any one color of your cards currently splayed left"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => $splayed_left_colors
-                );
-                break;
 
             // id 45, age 5: Chemistry
             case "45N1A":
@@ -12865,13 +12803,6 @@ class Innovation extends Table
                                     }
                                 }
                             }
-                        }
-                        break;
-
-                    // id 39, age 4: Invention
-                    case "39N1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, 4, 'score'); // "Draw and score a 4"
                         }
                         break;
 

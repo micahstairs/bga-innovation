@@ -700,8 +700,11 @@ abstract class AbstractCard
     }));
   }
 
-  protected function filterByColor(array $cards, array $colors): array
+  protected function filterByColor(array $cards, int|array $colors): array
   {
+    if (!is_array($colors)) {
+      $colors = [$colors];
+    }
     return array_values(array_filter($cards, function ($card) use ($colors) {
       return in_array(self::getColor($card), $colors);
     }));
@@ -1453,39 +1456,47 @@ abstract class AbstractCard
     return $numColors;
   }
 
-  protected function countSplayedColors(array $directions = Directions::SPLAYED, int $playerId = null): int
+  protected function getSplayedColors(array $directions = Directions::SPLAYED, int $playerId = null): array
   {
-    $numColors = 0;
+    $colors = [];
     foreach (Colors::ALL as $color) {
       if (in_array(self::getSplayDirection($color, $playerId), $directions)) {
-        $numColors++;
+        $colors[] = $color;
       }
     }
-    return $numColors;
+    return $colors;
   }
 
-  protected function canSplayLeft(array $colors = Colors::ALL, int $playerId = null): bool
+  protected function countSplayedColors(array $directions = Directions::SPLAYED, int $playerId = null): int
+  {
+    return count(self::getSplayedColors($directions, $playerId));
+  }
+
+  protected function canSplayLeft(array|int $colors = Colors::ALL, int $playerId = null): bool
   {
     return self::canSplayInDirection(Directions::LEFT, $colors, $playerId);
   }
 
-  protected function canSplayRight(array $colors = Colors::ALL, int $playerId = null): bool
+  protected function canSplayRight(array|int $colors = Colors::ALL, int $playerId = null): bool
   {
     return self::canSplayInDirection(Directions::RIGHT, $colors, $playerId);
   }
 
-  protected function canSplayUp(array $colors = Colors::ALL, int $playerId = null): bool
+  protected function canSplayUp(array|int $colors = Colors::ALL, int $playerId = null): bool
   {
     return self::canSplayInDirection(Directions::UP, $colors, $playerId);
   }
 
-  protected function canSplayAslant(array $colors = Colors::ALL, int $playerId = null): bool
+  protected function canSplayAslant(array|int $colors = Colors::ALL, int $playerId = null): bool
   {
     return self::canSplayInDirection(Directions::ASLANT, $colors, $playerId);
   }
 
-  protected function canSplayInDirection(int $direction, array $colors = Colors::ALL, int $playerId = null): bool
+  protected function canSplayInDirection(int $direction, array|int $colors = Colors::ALL, int $playerId = null): bool
   {
+    if (!is_array($colors)) {
+      $colors = [$colors];
+    }
     $playerId = self::coercePlayerId($playerId);
     $cardsKeyedByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
     foreach ($colors as $color) {

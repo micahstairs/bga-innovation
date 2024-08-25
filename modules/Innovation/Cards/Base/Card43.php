@@ -4,9 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card43 extends AbstractCard
 {
@@ -23,21 +21,10 @@ class Card43 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => Locations::BOARD,
-        'owner_from'    => self::getPlayerId(),
-        'owner_to'      => self::getLauncherId(),
-        'color'         => Colors::NON_PURPLE,
-        'with_icon'     => Icons::PROSPERITY,
-      ];
+      return self::youMust()->non(Colors::PURPLE)->withIcon(Icons::PROSPERITY)->fromYourBoard()->toMine()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
     }
-
   }
 
   public function handleCardChoice(array $card)
@@ -49,6 +36,11 @@ class Card43 extends AbstractCard
   {
     $nonPurpleTopCards = self::filterByColor(self::getTopCards(), Colors::NON_PURPLE);
     return count(self::filterByIcon($nonPurpleTopCards, Icons::PROSPERITY)) > 0;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayRight(Colors::GREEN);
   }
 
 }

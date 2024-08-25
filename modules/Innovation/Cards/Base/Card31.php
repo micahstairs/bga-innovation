@@ -39,7 +39,7 @@ class Card31 extends AbstractCard
     if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       return self::youMust()->revealAndScore()->withIcon(Icons::AUTHORITY)->fromYourHand()->revealIfUnable()->build();
     } else {
-      return self::youMay()->splayLeft()->withColor([Colors::RED])->build();
+      return self::youMay()->splayLeft()->withColor(Colors::RED)->build();
     }
   }
 
@@ -50,7 +50,7 @@ class Card31 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (self::canSplayLeft([Colors::RED])) {
+    if (self::canSplayLeft(Colors::RED)) {
       return true;
     }
     if (self::isLauncher()) {

@@ -107,8 +107,11 @@ class InteractionBuilder
 
   // COLOR OF CARDS
 
-  function withColor(array $colors): InteractionBuilder
+  function withColor(int|array $colors): InteractionBuilder
   {
+    if (!is_array($colors)) {
+      $colors = [$colors];
+    }
     $this->interactionOptions['color'] = $colors;
     return $this;
   }

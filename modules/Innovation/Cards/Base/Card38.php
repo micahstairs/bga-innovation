@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card38 extends AbstractCard
 {
@@ -32,13 +31,7 @@ class Card38 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => Locations::BOARD,
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => Locations::SCORE,
-      'with_icon'     => Icons::AUTHORITY,
-    ];
+    return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMyScore()->build();
   }
 
   public function handleCardChoice(array $card)

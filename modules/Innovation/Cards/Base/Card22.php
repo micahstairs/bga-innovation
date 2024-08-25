@@ -33,7 +33,7 @@ class Card22 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->tuck()->fromYourHand()->withColor([Colors::GREEN])->build();
+    return self::youMay()->tuck()->fromYourHand()->withColor(Colors::GREEN)->build();
   }
 
   public function afterInteraction()
@@ -48,7 +48,7 @@ class Card22 extends AbstractCard
   {
     if (self::isFourthEdition()) {
       if (self::isLauncher()) {
-        if (count(self::filterByColor(self::getCards(Locations::HAND), [Colors::GREEN])) > 0) {
+        if (count(self::filterByColor(self::getCards(Locations::HAND), Colors::GREEN)) > 0) {
           return true;
         }
       } else {

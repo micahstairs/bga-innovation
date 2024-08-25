@@ -15,13 +15,7 @@ class Card40 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location'   => Locations::SCORE,
-      'owner_from' => self::getPlayerId(),
-      'owner_to'   => self::getLauncherId(),
-      'age_min'    => 2,
-      'age_max'    => 3,
-    ];
+    return self::youMust()->range(2, 3)->fromYourScore()->toMine()->build();
   }
 
   public function demandMightBeEffective(): bool

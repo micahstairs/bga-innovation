@@ -51,7 +51,7 @@ class Card30 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (self::canSplayLeft([Colors::GREEN, Colors::BLUE])) {
+    if (self::canSplayLeft(Colors::GREEN, Colors::BLUE)) {
       return true;
     }
     if (self::isFirstOrThirdEdition()) {
