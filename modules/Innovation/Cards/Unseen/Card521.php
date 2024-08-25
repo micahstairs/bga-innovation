@@ -14,11 +14,6 @@ class Card521 extends AbstractCard
   //   - Transfer a card from your hand or score pile to the board of the player on your right. If
   //     you don't, claim the Folklore achievement.
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
@@ -32,7 +27,8 @@ class Card521 extends AbstractCard
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isFirstNonDemand() && self::getNumChosen() === 0) {
       self::claim(CardIds::FOLKLORE);
     }

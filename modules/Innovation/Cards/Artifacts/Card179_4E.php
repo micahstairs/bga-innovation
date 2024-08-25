@@ -12,25 +12,21 @@ class Card179_4E extends AbstractCard
   //     cards. If the number of cards of each of those colors on your board is equal to that
   //     value, you win. Otherwise, return the drawn cards.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
       return ['choose_value' => true];
     } else {
       return [
-        'n' => 'all',
-        'location_from' => Locations::REVEALED,
+        'n'              => 'all',
+        'location_from'  => Locations::REVEALED,
         'return_keyword' => true,
       ];
     }
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     self::notifyValueChoice($value);
 
     $card1 = self::drawAndReveal($value);

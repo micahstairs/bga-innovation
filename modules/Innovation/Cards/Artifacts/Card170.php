@@ -13,11 +13,6 @@ class Card170 extends AbstractCard
   //     colors, score it and splay up that color on your board. Otherwise, return all cards of
   //     that color from your score pile, and unsplay that color.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

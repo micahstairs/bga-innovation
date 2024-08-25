@@ -13,11 +13,6 @@ class Card44_4E extends AbstractCard
   //   - You may splay your yellow or purple cards right.
   //   - You may tuck a card from your hand for every splayed color on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

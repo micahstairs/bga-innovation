@@ -17,11 +17,6 @@ class Card410 extends AbstractCard
   //   - Return a card from your score pile. Draw and score two cards of value one less than the
   //     value of the card you return.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
@@ -29,7 +24,7 @@ class Card410 extends AbstractCard
         'n'              => 'all',
         'location_from'  => 'hand',
         'return_keyword' => true,
-      ]; 
+      ];
     } else {
       return [
         'location_from'  => 'score',
@@ -38,7 +33,8 @@ class Card410 extends AbstractCard
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isEcho()) {
       self::draw(8);
       self::draw(8);

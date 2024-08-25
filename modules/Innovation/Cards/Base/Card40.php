@@ -13,11 +13,6 @@ class Card40 extends AbstractCard
   // - 4th edition:
   //   - I DEMAND you transfer a [2] or [3] from your score pile to my score pile!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

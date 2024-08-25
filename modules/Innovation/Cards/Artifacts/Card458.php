@@ -14,11 +14,6 @@ class Card458 extends AbstractCard
   //   - Choose a valued card in the junk. Score all cards of the chosen card's value in the junk. If you
   //     do, and you score fewer than eleven points, repeat this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

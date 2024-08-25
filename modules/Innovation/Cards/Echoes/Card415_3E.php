@@ -14,11 +14,6 @@ class Card415_3E extends AbstractCard
   //     value less than 11, draw a card of that total value and repeat this dogma effect (once only).
   //   - You may splay your blue cards up.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

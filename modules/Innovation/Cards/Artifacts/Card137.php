@@ -12,18 +12,13 @@ class Card137 extends AbstractCard
   //   - I COMPEL you to transfer a top card of higher value than my top card of the same color
   //     from your board to my board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
-      'location'      => Locations::BOARD,
-      'owner_from'    => self::getPlayerId(),
-      'owner_to'      => self::getLauncherId(),
-      'color'         => self::getEligibleColors(),
+      'location'   => Locations::BOARD,
+      'owner_from' => self::getPlayerId(),
+      'owner_to'   => self::getLauncherId(),
+      'color'      => self::getEligibleColors(),
     ];
   }
 

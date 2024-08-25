@@ -33,7 +33,11 @@ abstract class AbstractCard
     // Even if the card is endorsed, this method will still only be called once.
   }
 
-  public abstract function initialExecution();
+  public function initialExecution()
+  {
+    // Subclasses are expected to override this method unless every effect has exactly one interaction.
+    self::setMaxSteps(1);
+  }
 
   public function getInteractionOptions(): array
   {
@@ -777,9 +781,17 @@ abstract class AbstractCard
 
   protected function getAvailableStandardAchievements(): array
   {
-    $achievements = $this->game->getCardsInLocation(0, Locations::ACHIEVEMENTS);
+    $achievements = self::getCards(Locations::AVAILABLE_ACHIEVEMENTS);
     return array_values(array_filter($achievements, function ($card) {
       return self::isValuedCard($card);
+    }));
+  }
+
+  protected function getAvailableSpecialAchievements(): array
+  {
+    $achievements = self::getCards(Locations::AVAILABLE_ACHIEVEMENTS);
+    return array_values(array_filter($achievements, function ($card) {
+      return self::isSpecialAchievement($card);
     }));
   }
 
@@ -1454,10 +1466,30 @@ abstract class AbstractCard
 
   protected function canSplayLeft(array $colors = Colors::ALL, int $playerId = null): bool
   {
+    return self::canSplayInDirection(Directions::LEFT, $colors, $playerId);
+  }
+
+  protected function canSplayRight(array $colors = Colors::ALL, int $playerId = null): bool
+  {
+    return self::canSplayInDirection(Directions::RIGHT, $colors, $playerId);
+  }
+
+  protected function canSplayUp(array $colors = Colors::ALL, int $playerId = null): bool
+  {
+    return self::canSplayInDirection(Directions::UP, $colors, $playerId);
+  }
+
+  protected function canSplayAslant(array $colors = Colors::ALL, int $playerId = null): bool
+  {
+    return self::canSplayInDirection(Directions::ASLANT, $colors, $playerId);
+  }
+
+  protected function canSplayInDirection(int $direction, array $colors = Colors::ALL, int $playerId = null): bool
+  {
     $playerId = self::coercePlayerId($playerId);
     $cardsKeyedByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
     foreach ($colors as $color) {
-      if ($cardsKeyedByColor[$color] >= 2 && $cardsKeyedByColor[0]['splay_direction'] != Directions::LEFT) {
+      if ($cardsKeyedByColor[$color] >= 2 && $cardsKeyedByColor[0]['splay_direction'] != $direction) {
         return true;
       }
     }

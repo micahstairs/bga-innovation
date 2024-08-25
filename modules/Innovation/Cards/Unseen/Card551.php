@@ -14,11 +14,6 @@ class Card551 extends AbstractCard
   //   - Tuck a card from any score pile.
   //   - You may splay your red or yellow cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

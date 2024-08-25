@@ -12,11 +12,6 @@ class Card586 extends AbstractCard
   //   - Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return
   //     one of your secrets. If you don't, you lose. Otherwise, repeat this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

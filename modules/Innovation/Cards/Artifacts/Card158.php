@@ -15,11 +15,6 @@ class Card158 extends AbstractCard
   //   - If you have no cards in your score pile, choose a color and score all cards of that color
   //     on your board. Otherwise, return all cards from your score pile.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::countCards(Locations::SCORE) === 0) {

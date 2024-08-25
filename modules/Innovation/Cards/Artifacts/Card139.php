@@ -18,11 +18,6 @@ class Card139 extends AbstractCard
   //     cards you score.
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

@@ -18,11 +18,6 @@ class Card380 extends AbstractCard
   //   - Choose the [3], [4], or [5] deck. You may junk all cards in the chosen deck. If you do,
   //     achieve the highest card in the junk if eligible.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
@@ -80,7 +75,7 @@ class Card380 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       // TODO(LATER): This shouldn't really be a draw.
-      $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
+      $this->game->executeDraw(0, /*age=*/ self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
     } else {
       if (self::junkBaseDeck(self::getAuxiliaryValue2())) {
         self::setMaxSteps(3);

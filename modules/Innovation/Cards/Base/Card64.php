@@ -13,11 +13,6 @@ class Card64 extends AbstractCard
   //   - I DEMAND you transfer a card from your hand to my score pile! If you do, draw a 6!
   //   - You may splay your red or purple cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

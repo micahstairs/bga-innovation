@@ -18,11 +18,6 @@ class Card146 extends AbstractCard
   //     the drawn cards and repeat this effect.
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

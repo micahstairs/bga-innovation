@@ -12,11 +12,6 @@ class Card448 extends AbstractCard
   //   - Reveal and junk a card in your hand. Return from your hand all cards of value equal to the
   //     value of the junked card. Draw three cards of that value. Self-execute the junked card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

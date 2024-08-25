@@ -17,11 +17,6 @@ class Card114 extends AbstractCard
   //   - Return a purple card from your hand. If you do, draw and reveal a card from any set of
   //     value two higher. If the drawn card is purple, meld it and self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
@@ -44,7 +39,7 @@ class Card114 extends AbstractCard
 
   public function handleTypeChoice(int $type)
   {
-    $card = $this->game->executeDraw(self::getPlayerId(), self::getAuxiliaryValue(), 'revealed', /*bottom_to=*/false, $type);
+    $card = $this->game->executeDraw(self::getPlayerId(), self::getAuxiliaryValue(), 'revealed', /*bottom_to=*/ false, $type);
     if (self::isPurple($card)) {
       self::selfExecute(self::meld($card));
     } else {

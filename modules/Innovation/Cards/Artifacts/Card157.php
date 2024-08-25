@@ -15,11 +15,6 @@ class Card157 extends AbstractCard
   //     my board! From the bottom up, transfer all cards of that color from my board to my score
   //     pile, then from your board to my board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

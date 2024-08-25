@@ -11,11 +11,6 @@ class Card99_4E extends AbstractCard
   //   - I DEMAND you return a number of cards from your score pile equal to the value of your
   //     highest achievement!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

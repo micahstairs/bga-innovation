@@ -20,11 +20,6 @@ class Card49 extends AbstractCard
   //     If you do, draw and score a [5]!
   //   - You may splay your green cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

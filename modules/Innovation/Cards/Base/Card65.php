@@ -11,11 +11,6 @@ class Card65 extends AbstractCard
   //   - You may choose to either draw and score an [8] and then return a card from your score pile,
   //     or draw a card of value one higher than the highest card in your score pile.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

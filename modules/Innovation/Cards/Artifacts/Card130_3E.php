@@ -13,11 +13,6 @@ class Card130_3E extends AbstractCard
   //     draw a card of matching type and value to the covered card, then score a card from your
   //     hand.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

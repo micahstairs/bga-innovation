@@ -15,11 +15,6 @@ class Card120 extends AbstractCard
   //   - Meld a card from your hand. Score all other cards of the same color from your board. If
   //     you score a card, repeat this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

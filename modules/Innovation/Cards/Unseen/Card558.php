@@ -14,11 +14,6 @@ class Card558 extends AbstractCard
   //     to your hand, or transfer all cards in your hand to the available achievements.
   //   - Choose a color you have splayed left and splay it up.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() === 1) {

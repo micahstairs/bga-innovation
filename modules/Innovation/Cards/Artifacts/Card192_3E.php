@@ -13,11 +13,6 @@ class Card192_3E extends AbstractCard
   //   - I COMPEL you to transfer a non-yellow top card with a [EFFICIENCY] from your board to my
   //     board! If you do, repeat this effect!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

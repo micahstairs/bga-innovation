@@ -11,11 +11,6 @@ class Card480 extends AbstractCard
   //   - I DEMAND you reveal a card in your hand! If you do, and I have no card in my hand of the
   //     same color, transfer it to my hand, then repeat this effect!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
@@ -40,7 +35,8 @@ class Card480 extends AbstractCard
     }
   }
 
-  private function hasCardWithColor(array $cards, int $color): bool{
+  private function hasCardWithColor(array $cards, int $color): bool
+  {
     foreach ($cards as $card) {
       if ($card['color'] == $color) {
         return true;

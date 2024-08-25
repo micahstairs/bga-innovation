@@ -15,11 +15,6 @@ class Card166 extends AbstractCard
   //   - Tuck a card from your hand. Splay right its color on your board. Draw a card of value
   //     equal to the highest number of icons of the same type in that color on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {

@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card32 extends AbstractCard
 {
@@ -18,7 +17,6 @@ class Card32 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand()) {
-
       self::setAuxiliaryValue(-1); // Track which card the launcher chose
       self::setMaxSteps(2);
     } else {
@@ -30,25 +28,12 @@ class Card32 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'player_id' => self::getLauncherId(),
-          'location'  => Locations::SCORE,
-          'age'       => ValueSelectors::LOWEST,
-        ];
+        return self::youMust()->highest()->fromYourScore()->toMine()->build();
       } else {
-        return [
-          'player_id' => self::getPlayerId(),
-          'location'  => Locations::SCORE,
-          'age'       => ValueSelectors::HIGHEST,
-        ];
+        return self::youMust()->lowest()->fromMyScore()->toYours()->build();
       }
     } else {
-      return [
-        'location'     => Locations::AVAILABLE_ACHIEVEMENTS,
-        'age_min'      => 3,
-        'age_max'      => 4,
-        'junk_keyword' => true,
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->range(3, 4)->build();
     }
   }
 
@@ -72,6 +57,11 @@ class Card32 extends AbstractCard
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::SCORE, self::getPlayerId()) || self::hasCards(Locations::SCORE, self::getLauncherId());
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByValue(self::getAvailableStandardAchievements(), [3, 4])) > 0;
   }
 
 }

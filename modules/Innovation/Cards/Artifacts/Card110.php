@@ -17,11 +17,6 @@ class Card110 extends AbstractCard
   //   - I COMPEL you to return a top card with a demand effect of each color from your board!
   //   - Score a top, non-blue card from your board with a demand effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {

@@ -13,11 +13,6 @@ class Card200 extends AbstractCard
   // - 4th edition:
   //   - Return all cards from your hand. Draw and reveal five [9]. If you reveal five colors, you win.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

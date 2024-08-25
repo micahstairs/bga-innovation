@@ -14,11 +14,6 @@ class Card522 extends AbstractCard
   //     higher than the transferred card. If you don't, safeguard an available achievement of
   //     value equal to the value of your top red card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

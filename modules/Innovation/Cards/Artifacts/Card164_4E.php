@@ -12,11 +12,6 @@ class Card164_4E extends AbstractCard
   //     eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available
   //     achievement, if there is one.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

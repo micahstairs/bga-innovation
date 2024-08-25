@@ -10,27 +10,23 @@ class Card131 extends AbstractCard
   // Holy Grail
   //   - Return a card from your hand. Claim an available achievement of matching value ignoring eligibility.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'hand',
+        'location_from'  => 'hand',
         'return_keyword' => true,
       ];
     } else {
       return [
-        'age' => self::getLastSelectedAge(),
+        'age'             => self::getLastSelectedAge(),
         'achieve_keyword' => true,
       ];
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isFirstInteraction()) {
       self::setMaxSteps(2);
     }

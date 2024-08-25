@@ -9,11 +9,6 @@ class Card10 extends AbstractCard
   // Domestication
   //   - Meld the lowest card in your hand. Draw a [1].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return self::youMust()->meld()->lowest()->fromYourHand()->build();

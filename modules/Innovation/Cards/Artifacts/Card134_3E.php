@@ -18,11 +18,6 @@ class Card134_3E extends AbstractCard
     return true;
   }
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isSplayInteraction()) {

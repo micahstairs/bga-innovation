@@ -11,11 +11,6 @@ class Card24 extends AbstractCard
   //   - You may splay left any one color of your cards.
   //   - You may score a card from your hand.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

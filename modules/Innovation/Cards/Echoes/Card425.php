@@ -16,11 +16,6 @@ class Card425 extends AbstractCard
   //   - Claim one available standard achievement, if eligible, doubling your current score for the
   //     purpose of checking eligibility. If you do, and Artifical Heart was foreseen, repeat this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $cardIds = [];

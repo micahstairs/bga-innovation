@@ -15,11 +15,6 @@ class Card561 extends AbstractCard
   //     If you do, unsplay the transferred card's color on your board!
   //   - Unsplay the color on your board with the most visible cards.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

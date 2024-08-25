@@ -12,11 +12,6 @@ class Card1 extends AbstractCard
   //   - You may return three cards from your hand. If you do, draw and meld a [3].
   //   - You may return a [3] from your hand. If you do, draw three [1].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

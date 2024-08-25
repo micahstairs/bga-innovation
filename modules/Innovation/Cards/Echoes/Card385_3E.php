@@ -15,11 +15,6 @@ class Card385_3E extends AbstractCard
   //     value to the card returned.
   //   - You may splay your green cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {

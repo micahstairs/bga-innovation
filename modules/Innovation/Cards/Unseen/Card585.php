@@ -12,11 +12,6 @@ class Card585 extends AbstractCard
   //   - Return a bottom card from your board. Splay that color on your board aslant. Score all
   //     cards on your board of that color without [HEALTH].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

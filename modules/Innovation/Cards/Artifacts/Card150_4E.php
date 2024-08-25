@@ -15,11 +15,6 @@ class Card150_4E extends AbstractCard
   //   - Meld a card from your hand.
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

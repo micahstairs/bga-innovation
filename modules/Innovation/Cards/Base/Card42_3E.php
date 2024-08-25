@@ -12,11 +12,6 @@ class Card42_3E extends AbstractCard
   //   - You may return a card from your hand. If you do, score a card from your hand for every
   //     two [CONCEPT] on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

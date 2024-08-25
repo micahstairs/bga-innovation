@@ -17,11 +17,6 @@ class Card116 extends AbstractCard
   //   - Score a card from your hand. If you have a top card matching its color, super-execute
   //     that top card it is your turn, otherwise self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

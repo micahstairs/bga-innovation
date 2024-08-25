@@ -12,11 +12,6 @@ class Card470 extends AbstractCard
   //     board, if eligible, or score it. If you do either, and Streaming was foreseen, repeat
   //     this effect using the same color.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

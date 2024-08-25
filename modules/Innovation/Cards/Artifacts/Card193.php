@@ -16,11 +16,6 @@ class Card193 extends AbstractCard
   //   - Meld an [8] from your hand. If the melded card has no effects, you win. Otherwise,
   //     self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

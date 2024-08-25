@@ -16,11 +16,6 @@ class Card156 extends AbstractCard
   //   - Return your top card of each non-blue color. For each card you return, draw and meld a
   //     card of value one higher than the value of the returned card, in ascending order.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     self::setAuxiliaryArray([]);

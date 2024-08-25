@@ -13,20 +13,16 @@ class Card190 extends AbstractCard
   //   - Return a card from your hand. Draw and score three cards of the returned card's value. If
   //     you don't, junk all cards in the deck of value equal to the highest scored card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
-      'location_from' => 'hand',
+      'location_from'  => 'hand',
       'return_keyword' => true,
     ];
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     $value = 0;
     if (self::getNumChosen() > 0) {
       $value = self::getLastSelectedAge();

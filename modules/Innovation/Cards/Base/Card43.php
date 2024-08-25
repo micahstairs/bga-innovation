@@ -20,29 +20,24 @@ class Card43 extends AbstractCard
   //     board! If you do, draw and meld a [4]!
   //   - You may splay your green cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       return [
         'location_from' => Locations::BOARD,
-        'owner_from' => self::getPlayerId(),
-        'owner_to' => self::getLauncherId(),
-        'color' => Colors::NON_PURPLE,
-        'with_icon' => Icons::PROSPERITY,
+        'owner_from'    => self::getPlayerId(),
+        'owner_to'      => self::getLauncherId(),
+        'color'         => Colors::NON_PURPLE,
+        'with_icon'     => Icons::PROSPERITY,
       ];
-  } else {
+    } else {
       return [
         'can_pass'        => true,
         'splay_direction' => Directions::RIGHT,
         'color'           => [Colors::GREEN],
       ];
     }
-  
+
   }
 
   public function handleCardChoice(array $card)

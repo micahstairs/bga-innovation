@@ -14,11 +14,6 @@ class Card163 extends AbstractCard
   //   - Draw and reveal a [6]. If it is red, claim an available standard achievement, ignoring
   //     eligibility. Otherwise, junk an available standard achievement.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $card = self::drawAndReveal(6);

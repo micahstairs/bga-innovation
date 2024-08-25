@@ -13,11 +13,6 @@ class Card171_3E extends AbstractCard
   //     your score pile to mine! If you do, return a card from your score pile of value equal to
   //     the top green card on your board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

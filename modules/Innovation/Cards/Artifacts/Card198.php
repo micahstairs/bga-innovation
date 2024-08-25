@@ -16,11 +16,6 @@ class Card198 extends AbstractCard
   //     from your score pile to my score pile! If you do neither, I win!
   //   - Score your highest top card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {

@@ -17,27 +17,23 @@ class Card434 extends AbstractCard
   //   - Draw and meld a card of any value. If you have nine different bonus values on your
   //     board, you win. Otherwise, self-execute the melded card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
       return [
-        'can_pass' => true,
-        'n_min' => 1,
-        'n_max' => 'all',
+        'can_pass'      => true,
+        'n_min'         => 1,
+        'n_max'         => 'all',
         'location_from' => 'hand',
-        'tuck_keyword' => true,
+        'tuck_keyword'  => true,
       ];
     } else {
       return ['choose_value' => true];
     }
   }
 
-  public function handleValueChoice($value) {
+  public function handleValueChoice($value)
+  {
     $card = self::drawAndMeld($value);
     if (count(array_unique(self::getBonuses())) >= 9) {
       self::win();

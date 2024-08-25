@@ -12,11 +12,6 @@ class Card538 extends AbstractCard
   //   - I DEMAND you unsplay the color on your board of my choice! Meld your bottom card of that
   //     color! Transfer your bottom non-top card of that color to my board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $colors = [];

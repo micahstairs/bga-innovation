@@ -21,11 +21,6 @@ class Card16 extends AbstractCard
   //   - You may return a card from your hand. If you do, draw and meld a card of value one higher
   //     than the card you return.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return self::youMay()->return()->fromYourHand()->build();

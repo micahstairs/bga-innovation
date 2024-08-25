@@ -12,11 +12,6 @@ class Card452 extends AbstractCard
   //   - Choose a value different from any top card on your board. Score all cards in the deck of
   //     that value. Score all cards in the junk of that value.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $presentValues = array_unique(self::getValues(self::getTopCards()));
@@ -27,7 +22,8 @@ class Card452 extends AbstractCard
     ];
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     // NOTE: We want to output a message to the game log before scoring the cards in case the Monument achievement is awarded
     $args = ['age' => self::renderValue($value)];
     self::notifyPlayer(clienttranslate('${You} score all ${age} in the base deck and in the junk.'), $args);

@@ -12,17 +12,12 @@ class Card446 extends AbstractCard
   //   - I DEMAND you transfer all the cards of the value of my choice from your score pile to my score pile!
   //   - Reveal and self-execute the highest card in your score pile.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $maxScoreValue = self::getMaxValueInLocation(Locations::SCORE);
     if (self::isDemand()) {
       return [
-        'player_id' => self::getLauncherId(),
+        'player_id'    => self::getLauncherId(),
         'choose_value' => true,
       ];
     } else {
@@ -34,7 +29,8 @@ class Card446 extends AbstractCard
     }
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
       self::transferToScorePile($card, self::getLauncherId());
     }

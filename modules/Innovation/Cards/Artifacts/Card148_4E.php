@@ -13,16 +13,11 @@ class Card148_4E extends AbstractCard
   //     my score pile! If you transfer any, transfer a top card on your board of that value to my board!
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
       return [
-        'player_id' => self::getLauncherId(),
+        'player_id'    => self::getLauncherId(),
         'choose_value' => true,
       ];
     } else {

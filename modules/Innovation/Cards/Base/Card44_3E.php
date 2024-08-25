@@ -13,11 +13,6 @@ class Card44_3E extends AbstractCard
   //   - You may tuck a card from your hand for every two [HEALTH] on your board.
   //   - You may splay your yellow or purple cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

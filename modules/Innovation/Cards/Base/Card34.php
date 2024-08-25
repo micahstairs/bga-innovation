@@ -12,46 +12,27 @@ class Card34 extends AbstractCard
 {
   // Feudalism:
   // - 3rd edition:
-  //   - I DEMAND you transfer a card with a [AUTHORITY] from your hand to my hand! If you do, unsplay that color of your cards!
+  //   - I DEMAND you transfer a card with a [AUTHORITY] from your hand to my hand! If you do,
+  //     unsplay that color of your cards!
   //   - You may splay your yellow or purple cards left.
   // - 4th edition:
-  //   - I DEMAND you transfer a card with [AUTHORITY] from your hand to my hand! If you do, junk all available special achievements!
+  //   - I DEMAND you transfer a card with [AUTHORITY] from your hand to my hand! If you do, junk
+  //     all available special achievements!
   //   - You may splay your yellow or purple cards left. If you do, draw a [3].
-
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
 
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location'         => Locations::HAND,
-        'owner_from'       => self::getPlayerId(),
-        'owner_to'         => self::getLauncherId(),
-        'with_icon'        => Icons::AUTHORITY,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->fromYourHand()->withIcon(Icons::AUTHORITY)->toMine()->revealIfUnable()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::YELLOW, Colors::PURPLE],
-      ];
+      return self::youMay()->splayLeft()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFourthEdition()) {
-      $availableSpecialAchievements = [];
-      foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $achievement) {
-        if (self::isSpecialAchievement($achievement)) {
-          $availableSpecialAchievements[] = $achievement;
-        }
-      }
-      self::junkCards($availableSpecialAchievements);
+      self::junkCards(self::getAvailableSpecialAchievements());
     } else {
       self::unsplay(self::getColor($card));
     }
@@ -67,6 +48,11 @@ class Card34 extends AbstractCard
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::HAND);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayLeft([Colors::YELLOW, Colors::PURPLE]);
   }
 
 }

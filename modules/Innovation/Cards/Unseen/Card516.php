@@ -12,11 +12,6 @@ class Card516 extends AbstractCard
   //     than one of your secrets. If you reveal a red or purple card, meld one of your other secrets.
   //     If you do, safeguard the drawn card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

@@ -18,23 +18,18 @@ class Card78 extends AbstractCard
   //   - I demand you transfer your two highest non-red top cards without [INDUSTRY] of different
   //     colors to my score pile! If you transfer any cards, draw an 8.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
-      'n'                    => 2,
-      'owner_from'           => self::getPlayerId(),
-      'location_from'        => Locations::BOARD,
-      'owner_to'             => self::getLauncherId(),
-      'location_to'          => Locations::SCORE,
-      'color'                => Colors::NON_RED,
-      'without_icon'         => Icons::INDUSTRY,
-      'age'                  => ValueSelectors::HIGHEST,
-      'refresh_selection'    => true,
+      'n'                 => 2,
+      'owner_from'        => self::getPlayerId(),
+      'location_from'     => Locations::BOARD,
+      'owner_to'          => self::getLauncherId(),
+      'location_to'       => Locations::SCORE,
+      'color'             => Colors::NON_RED,
+      'without_icon'      => Icons::INDUSTRY,
+      'age'               => ValueSelectors::HIGHEST,
+      'refresh_selection' => true,
     ];
   }
 

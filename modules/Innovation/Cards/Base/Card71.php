@@ -15,11 +15,6 @@ class Card71 extends AbstractCard
   //   - I demand you return all but one of the cards in your hand!
   //   - You may score a card from your hand.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

@@ -17,11 +17,6 @@ class Card136 extends AbstractCard
   //   - Reveal a card from your hand. If you do, splay left its color on your board, then choose a
   //     top card other than Yata No Kagami of that color on any board and self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

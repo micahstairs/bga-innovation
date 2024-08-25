@@ -14,11 +14,6 @@ class Card134_4E extends AbstractCard
   //   - Splay left a color on any player's board.
   //   - Choose any top purple card other than Cyrus Cylinder on any player's board. Self-execute it. 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

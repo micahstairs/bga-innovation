@@ -13,11 +13,6 @@ class Card490 extends AbstractCard
   //   - You may transfer the lowest available achievement to your hand. If you do, return all
   //     yellow cards and all blue cards on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

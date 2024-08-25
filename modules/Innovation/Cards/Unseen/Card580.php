@@ -13,11 +13,6 @@ class Card580 extends AbstractCard
   //   - You may achieve one of your secrets regardless of eligibility.
   //   - You may splay your purple cards up.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

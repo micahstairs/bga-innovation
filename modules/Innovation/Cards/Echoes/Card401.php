@@ -19,11 +19,6 @@ class Card401 extends AbstractCard
   //     from either all opponents' hands or all their score piles. Draw and foreshadow a card of
   //     the chosen value.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {

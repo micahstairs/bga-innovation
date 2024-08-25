@@ -19,11 +19,6 @@ class Card82 extends AbstractCard
   //     you do, score your top card of that color, then return all cards of that color form your
   //     board, and transfer Skyscrapers to my hand if it is a top card!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

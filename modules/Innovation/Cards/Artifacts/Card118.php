@@ -16,11 +16,6 @@ class Card118 extends AbstractCard
   //   - I COMPEL you to return a card from your score pile! If you do, transfer an achievement of
   //     the same value from your achievements to mine, and junk all cards in the deck of that value!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

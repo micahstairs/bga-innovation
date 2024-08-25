@@ -13,23 +13,18 @@ class Card41 extends AbstractCard
   // - 4th edition:
   //   - I DEMAND you return a card from your score pile! If you do, return a top card of equal value from your board! If you do, junk all cards in the 4 deck!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => Locations::SCORE,
+        'location_from'  => Locations::SCORE,
         'return_keyward' => true,
       ];
     } else {
       return [
-        'location_from' => Locations::BOARD,
+        'location_from'  => Locations::BOARD,
         'return_keyward' => true,
-        'age' => self::getAuxiliaryValue(),
+        'age'            => self::getAuxiliaryValue(),
       ];
     }
   }

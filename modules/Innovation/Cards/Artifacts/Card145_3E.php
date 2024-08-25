@@ -14,11 +14,6 @@ class Card145_3E extends AbstractCard
   //     with a [AUTHORITY] on your board!
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $numTopCardsWithAuthority = 0;

@@ -13,11 +13,6 @@ class Card449 extends AbstractCard
   //     board! If you transfer any cards, exchange all cards in your score pile with all cards in
   //     my score pile!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

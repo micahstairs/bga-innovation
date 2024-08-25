@@ -15,11 +15,6 @@ class Card145_4E extends AbstractCard
   //     [AUTHORITY] on your board!
   //   - Junk an available achievement of value equal to the number of [AUTHORITY] on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {

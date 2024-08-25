@@ -13,11 +13,6 @@ class Card42_4E extends AbstractCard
   //   - You may return a card from your hand. If you do, score a card from your hand for every
   //     color on your board with [CONCEPT].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

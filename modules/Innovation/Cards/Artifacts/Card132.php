@@ -19,11 +19,6 @@ class Card132 extends AbstractCard
   //   - Score a card from your hand with no [AUTHORITY]. If you do, junk all cards in the deck of
   //     value equal to the scored card. Otherwise, tuck Terracotta Army.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {

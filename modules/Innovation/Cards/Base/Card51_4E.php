@@ -13,16 +13,11 @@ class Card51_4E extends AbstractCard
   //   - I DEMAND you transfer all the cards of the value of my choice in your score pile to your hand!
   //   - You may splay your yellow cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       return [
-        'player_id' => self::getLauncherId(),
+        'player_id'    => self::getLauncherId(),
         'choose_value' => true,
       ];
     } else {

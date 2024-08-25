@@ -13,11 +13,6 @@ class Card529 extends AbstractCard
   //     available achievements. If you transfer at least four cards, draw and safeguard a card
   //     of that value, and score three available standard achievements.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
@@ -39,8 +34,8 @@ class Card529 extends AbstractCard
     $count = 0;
     foreach ($this->game->getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $playerId) {
       foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $card) {
-          $this->game->transferCardFromTo($card, 0, 'achievements');
-          $count++;
+        $this->game->transferCardFromTo($card, 0, 'achievements');
+        $count++;
       }
     }
     if ($count >= 4) {

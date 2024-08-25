@@ -14,11 +14,6 @@ class Card507 extends AbstractCard
   //     your board of that color to my score pile!
   //   - You may splay your red or green cards left.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
@@ -38,10 +33,10 @@ class Card507 extends AbstractCard
   public function afterInteraction()
   {
     if (self::isDemand()) {
-        if (self::getNumChosen() > 0) {
-          $card = self::getTopCardOfColor(self::getLastSelectedColor());
-          self::transferToScorePile($card, self::getLauncherId());
-        }
+      if (self::getNumChosen() > 0) {
+        $card = self::getTopCardOfColor(self::getLastSelectedColor());
+        self::transferToScorePile($card, self::getLauncherId());
+      }
     }
   }
 }

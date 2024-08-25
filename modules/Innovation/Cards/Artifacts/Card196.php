@@ -15,11 +15,6 @@ class Card196 extends AbstractCard
   //     of cards you return.
   //   - Choose a value. Junk all cards in that deck.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

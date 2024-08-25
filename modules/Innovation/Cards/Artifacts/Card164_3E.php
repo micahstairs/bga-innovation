@@ -10,11 +10,6 @@ class Card164_3E extends AbstractCard
   // Almira, Queen of the Castle (3rd edition):
   //   - Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

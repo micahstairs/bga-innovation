@@ -179,6 +179,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromMyScore(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::SCORE;
+    $this->interactionOptions['owner_from'] = $this->state->getLauncherId();
+    return $this;
+  }
+
   function fromMyHandOrRevealed(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = 'revealed,hand';

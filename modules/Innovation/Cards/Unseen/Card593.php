@@ -13,11 +13,6 @@ class Card593 extends AbstractCard
   //     aslant. If you do both, exchange all the lowest cards in your score pile with all your
   //     claimed standard achievements of lower value.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return ['choices' => [Colors::RED, Colors::BLUE, Colors::GREEN]];

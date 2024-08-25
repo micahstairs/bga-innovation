@@ -16,11 +16,6 @@ class Card68 extends AbstractCard
   //   - I DEMAND you transfer the three highest cards from your hand to my hand! If you
   //     transfer any, and have no cards in hand, draw a [7]!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

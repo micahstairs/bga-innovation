@@ -16,19 +16,14 @@ class Card54 extends AbstractCard
   //   - I DEMAND you transfer a top card with [CONCEPT] higher than my top card of the same
   //     color from your board to my board! If you do, draw an [5]!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
-      'location' => Locations::BOARD,
+      'location'   => Locations::BOARD,
       'owner_from' => self::getPlayerId(),
-      'owner_to' => self::getLauncherId(),
-      'color' => self::getEligibleColors(),
-      'with_icon' => Icons::CONCEPT,
+      'owner_to'   => self::getLauncherId(),
+      'color'      => self::getEligibleColors(),
+      'with_icon'  => Icons::CONCEPT,
     ];
   }
 

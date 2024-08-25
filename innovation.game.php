@@ -10890,8 +10890,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 32
-            || $card_id == 34
+        return $card_id <= 36
             || $card_id == 38
             || (40 <= $card_id && $card_id <= 44)
             || (48 <= $card_id && $card_id <= 49)
@@ -11032,26 +11031,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 33, age 3: Education        
-                case "33N1":
-                    $step_max = 1;
-                    break;
-
-                // id 35, age 4: Experimentation        
-                case "35N1":
-                    // "Draw and meld a 5"
-                    self::executeDrawAndMeld($player_id, 5);
-                    break;
-
-                // id 36, age 4: Printing press        
-                case "36N1":
-                    $step_max = 1;
-                    break;
-
-                case "36N2":
-                    $step_max = 1;
-                    break;
 
                 // id 37, age 4: Colonialism
                 case "37N1":
@@ -11850,50 +11829,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 33, age 3: Education        
-            case "33N1A":
-                // You may return the highest card from your score pile
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => self::getMaxAgeInScore($player_id)
-                );
-                break;
-
-            // id 36, age 4: Printing press        
-            case "36N1A":
-                // "You may return a card from your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
-            case "36N2A":
-                // "You may splay your blue cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(0) /* blue */
-                );
-                break;
 
             // id 39, age 4: Invention
             case "39N1A":
@@ -12929,25 +12864,6 @@ class Innovation extends Table
                                         break;
                                     }
                                 }
-                            }
-                        }
-                        break;
-
-                    // id 33, age 3: Education        
-                    case "33N1A":
-                        if ($n > 0) { // "If you do"
-                            self::executeDraw($player_id, self::getMaxAgeInScore($player_id) + 2); // "Draw a card of value two higher than the highest card remaining in your score pile"
-                        }
-                        break;
-
-                    // id 36, age 4: Printing press        
-                    case "36N1A":
-                        if ($n > 0) { // "If you do"
-                            $top_purple_card = self::getTopCardOnBoard($player_id, Colors::PURPLE);
-                            if ($top_purple_card !== null) {
-                                self::executeDraw($player_id, $top_purple_card['age'] + 2); // "Draw a card of value two higher than the top purple card on your board"
-                            } else {
-                                self::executeDraw($player_id, 2); // If no purple card, draw a 2.
                             }
                         }
                         break;

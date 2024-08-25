@@ -14,11 +14,6 @@ class Card569 extends AbstractCard
   //   - Choose to either draw an [11], or safeguard an available standard achievement.
   //   - Reveal one of your secrets, and super-execute it if it is your turn.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

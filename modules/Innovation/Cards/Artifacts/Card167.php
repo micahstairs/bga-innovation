@@ -11,11 +11,6 @@ class Card167 extends AbstractCard
   //   - I COMPEL you to reveal a card in your hand! If you do, and its value is equal to the value
   //     of any of my top cards, return it and all cards of its color from your board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

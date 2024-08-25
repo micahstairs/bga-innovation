@@ -13,11 +13,6 @@ class Card9 extends AbstractCard
   // - 4th edition:
   //   - You may return a card from your hand. If you do, draw and score a card of value one higher than the card you return.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return self::youMay()->return()->fromYourHand()->build();

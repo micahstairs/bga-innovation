@@ -16,11 +16,6 @@ class Card18 extends AbstractCard
   //   - Meld one or two cards from your hand. If you meld two, you may transfer your top red card
   //     to another player's board. If you do, meld that player's top green card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

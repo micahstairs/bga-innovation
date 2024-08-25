@@ -15,11 +15,6 @@ class Card76 extends AbstractCard
   // - 4th edition:
   //   - Return a card in any opponent's score pile for every color on your board with [EFFICIENCY].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {

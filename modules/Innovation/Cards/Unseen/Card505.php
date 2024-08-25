@@ -13,11 +13,6 @@ class Card505 extends AbstractCard
   //     Brethren of Purity during this action. If you meld over a card with a [CONCEPT], repeat
   //     this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     // The array will either contain a single value (if a card has been melded due to Brethren of
