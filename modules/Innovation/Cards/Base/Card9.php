@@ -20,7 +20,7 @@ class Card9 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->return()->fromHand()->build();
+    return self::youMay()->return()->fromYourHand()->build();
   }
 
   public function handleCardChoice(array $card)

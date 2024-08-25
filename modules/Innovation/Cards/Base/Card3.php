@@ -27,7 +27,7 @@ class Card3 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return self::youMust()->highest()->fromHand()->toMine()->build();
+      return self::youMust()->highest()->fromYourHand()->toMine()->build();
     } else {
       return self::youMust()->junk()->range(1, 2)->fromAvailableAchievements()->build();
     }

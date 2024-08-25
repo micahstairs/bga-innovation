@@ -20,9 +20,9 @@ class Card1 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->return()->exactly(3)->fromHand()->build();
+      return self::youMay()->return()->exactly(3)->fromYourHand()->build();
     } else {
-      return self::youMay()->return()->value(3)->fromHand()->build();
+      return self::youMay()->return()->value(3)->fromYourHand()->build();
     }
   }
 

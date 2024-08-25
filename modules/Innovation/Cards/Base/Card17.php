@@ -16,14 +16,14 @@ class Card17 extends AbstractCard
   {
     if (self::isDemand()) {
       self::setMaxSteps(1);
-    } else if (self::isAvailableAchievement(CardIds::EMPIRE) && self::isOnlyOneWithFiveTopCards()) {
+    } else if (self::isAvailable(CardIds::EMPIRE) && self::isOnlyOneWithFiveTopCards()) {
       self::claim(CardIds::EMPIRE);
     }
   }
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->exactly(2)->fromHand()->toMine()->build();
+    return self::youMust()->exactly(2)->fromYourHand()->toMine()->build();
   }
 
   public function afterInteraction()

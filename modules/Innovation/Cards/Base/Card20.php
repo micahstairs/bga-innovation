@@ -31,7 +31,7 @@ class Card20 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->value(1)->fromScore()->toMine()->build();
+    return self::youMust()->value(1)->fromYourScore()->toMine()->build();
   }
 
   public function handleCardChoice(array $card)

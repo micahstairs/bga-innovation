@@ -54,12 +54,12 @@ abstract class AbstractCard
 
   public function youMay(): InteractionBuilder
   {
-    return (new InteractionBuilder(self::getLauncherId()))->canPass(true);
+    return (new InteractionBuilder($this->state))->canPass(true);
   }
 
   public function youMust(): InteractionBuilder
   {
-    return (new InteractionBuilder(self::getLauncherId()))->canPass(false);
+    return (new InteractionBuilder($this->state))->canPass(false);
   }
 
   public final function getSpecialChoicePrompt(): array
@@ -783,7 +783,7 @@ abstract class AbstractCard
     }));
   }
 
-  protected function isAvailableAchievement(int $cardId): bool
+  protected function isAvailable(int $cardId): bool
   {
     $card = $this->game->getCardInfo($cardId);
     return $card['owner'] == 0 && $card['location'] === Locations::ACHIEVEMENTS;
@@ -1441,11 +1441,11 @@ abstract class AbstractCard
     return $numColors;
   }
 
-  protected function countSplayedColors(int $playerId = null): int
+  protected function countSplayedColors(array $directions = Directions::SPLAYED, int $playerId = null): int
   {
     $numColors = 0;
     foreach (Colors::ALL as $color) {
-      if (self::isSplayed($color, $playerId)) {
+      if (in_array(self::getSplayDirection($color, $playerId), $directions)) {
         $numColors++;
       }
     }

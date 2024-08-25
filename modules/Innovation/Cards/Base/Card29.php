@@ -5,7 +5,6 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card29 extends AbstractCard
 {
@@ -26,22 +25,11 @@ class Card29 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location'   => Locations::BOARD,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'color'      => Colors::NON_GREEN,
-        'with_icon'  => Icons::HEALTH,
-      ];
+      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::HEALTH)->fromYourBoard()->toMine()->build();
+    } else if (self::isFirstOrThirdEdition()) {
+      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYours()->build();
     } else {
-      return [
-        'location'     => Locations::BOARD,
-        'owner_from'   => self::getLauncherId(),
-        'owner_to'     => self::getPlayerId(),
-        'color'        => Colors::NON_GREEN,
-        'without_icon' => Icons::HEALTH,
-        'meld_keyword' => self::isFourthEdition(),
-      ];
+      return self::youMust()->meld()->withoutIcon(Icons::HEALTH)->fromMyBoard()->build();
     }
   }
 

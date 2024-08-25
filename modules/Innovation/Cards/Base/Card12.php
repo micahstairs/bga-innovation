@@ -30,7 +30,7 @@ class Card12 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->fromBoard()->withIcon(Icons::AUTHORITY)->toMine()->build();
+    return self::youMust()->fromYourBoard()->withIcon(Icons::AUTHORITY)->toMine()->build();
   }
 
   public function handleCardChoice(array $card)

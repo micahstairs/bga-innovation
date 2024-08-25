@@ -27,15 +27,19 @@ class Card11_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->meld()->anyNumber()->fromHand()->withIcon(Icons::AUTHORITY)->build();
+    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY)->build();
   }
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0) {
+    if (self::countCardsKeyedByColor(Locations::BOARD)[Colors::RED] == 3) {
       return true;
     }
-    return self::countCardsKeyedByColor(Locations::BOARD)[Colors::RED] == 3;
+    if (self::isLauncher()) {
+      return count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0;
+    } else {
+      return self::hasCards(Locations::HAND);
+    }
   }
 
 }

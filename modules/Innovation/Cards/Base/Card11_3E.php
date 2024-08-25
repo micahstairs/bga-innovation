@@ -20,7 +20,7 @@ class Card11_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->meld()->anyNumber()->fromHand()->withIcon(Icons::AUTHORITY)->build();
+    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY)->build();
   }
 
   public function afterInteraction()
@@ -32,7 +32,11 @@ class Card11_3E extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0;
+    if (self::isLauncher()) {
+      return count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0;
+    } else {
+      return self::hasCards(Locations::HAND);
+    }
   }
 
 }

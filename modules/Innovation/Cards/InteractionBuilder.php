@@ -2,20 +2,22 @@
 
 namespace Innovation\Cards;
 
+use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 use Innovation\Enums\ValueSelectors;
+use Innovation\Cards\ExecutionState;
 
 /* Builder class for interactions */
 class InteractionBuilder
 {
   private array $interactionOptions = [];
-  private int $launcherId;
+  private ExecutionState $state;
 
-  function __construct(int $launcherId)
+  function __construct(ExecutionState $state)
   {
     $this->interactionOptions = [];
-    $this->launcherId = $launcherId;
+    $this->state = $state;
   }
 
   function build(): array
@@ -97,11 +99,23 @@ class InteractionBuilder
     return $this;
   }
 
+  function withoutIcon(string $icon): InteractionBuilder
+  {
+    $this->interactionOptions['without_icon'] = $icon;
+    return $this;
+  }
+
   // COLOR OF CARDS
 
   function withColor(array $colors): InteractionBuilder
   {
     $this->interactionOptions['color'] = $colors;
+    return $this;
+  }
+
+  function non(int $color): InteractionBuilder
+  {
+    $this->interactionOptions['color'] = Colors::getAllColorsOtherThan($color);
     return $this;
   }
 
@@ -139,25 +153,33 @@ class InteractionBuilder
     return $this;
   }
 
-  function fromBoard(): InteractionBuilder
+  function fromYourBoard(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::BOARD;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }
 
-  function fromHand(): InteractionBuilder
+  function fromMyBoard(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::BOARD;
+    $this->interactionOptions['owner_from'] = $this->state->getLauncherId();
+    return $this;
+  }
+
+  function fromYourHand(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::HAND;
     return $this;
   }
 
-  function fromScore(): InteractionBuilder
+  function fromYourScore(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::SCORE;
     return $this;
   }
 
-  function fromRevealedAndHand(): InteractionBuilder
+  function fromMyHandOrRevealed(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = 'revealed,hand';
     return $this;
@@ -165,16 +187,28 @@ class InteractionBuilder
 
   // DESTINATION LOCATION
 
+  function toPlayer(int $playerId): InteractionBuilder
+  {
+    $this->interactionOptions['owner_to'] = $playerId;
+    return $this;
+  }
+
+  function toYours(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
+    return $this;
+  }
+
   function toMine(): InteractionBuilder
   {
-    $this->interactionOptions['owner_to'] = $this->launcherId;
+    $this->interactionOptions['owner_to'] = $this->state->getLauncherId();
     $this->interactionOptions['location_to'] = $this->interactionOptions['location_from'];
     return $this;
   }
 
   function toMy(): InteractionBuilder
   {
-    $this->interactionOptions['owner_to'] = $this->launcherId;
+    $this->interactionOptions['owner_to'] = $this->state->getLauncherId();
     return $this;
   }
 
@@ -198,6 +232,13 @@ class InteractionBuilder
   function return(): InteractionBuilder
   {
     $this->interactionOptions['return_keyword'] = true;
+    return $this;
+  }
+
+  function revealAndScore(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::REVEALED_THEN_SCORE;
+    $this->interactionOptions['score_keyword'] = true;
     return $this;
   }
 

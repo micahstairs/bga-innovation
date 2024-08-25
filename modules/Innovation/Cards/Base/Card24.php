@@ -21,7 +21,7 @@ class Card24 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->splayLeft()->build();
     } else {
-      return self::youMay()->score()->fromHand()->build();
+      return self::youMay()->score()->fromYourHand()->build();
     }
   }
 

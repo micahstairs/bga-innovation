@@ -28,7 +28,7 @@ class Card23 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->fromBoard()->withColor([self::getSelectableColors()])->toMyScore()->build();
+    return self::youMust()->fromYourBoard()->withColor([self::getSelectableColors()])->toMyScore()->build();
   }
 
   private function getSelectableColors(): array

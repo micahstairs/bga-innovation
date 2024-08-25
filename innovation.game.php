@@ -1222,34 +1222,6 @@ class Innovation extends Table
         ", array('player_id' => $player_id)), true);
     }
 
-    function getActiveOpponentsWithFewerPoints($player_id)
-    {
-        return self::getObjectListFromDB(self::format("
-            SELECT
-            player_index
-            FROM
-                player
-            WHERE
-                player_eliminated = 0 AND
-                player_team <> (
-                    SELECT
-                        player_team
-                    FROM
-                        player
-                    WHERE
-                        player_id = {player_id}
-                ) AND
-                player_innovation_score < (
-                    SELECT
-                        player_innovation_score
-                    FROM
-                        player
-                    WHERE
-                        player_id = {player_id}
-                )
-        ", array('player_id' => $player_id)), true);
-    }
-
     function isEliminated($player_id)
     {
         return self::getUniqueValueFromDB(self::format("SELECT player_eliminated FROM player WHERE player_id={player_id}", array('player_id' => $player_id)));
@@ -4804,28 +4776,6 @@ class Innovation extends Table
         return self::getIdsOfHighestOrLowestCardsInLocation($owner, $location, false);
     }
 
-    function getSizeOfMaxVisiblePileOnBoard($owner)
-    {
-        /**
-            Return the size of the stack(s) which have maximum number of visible cards on a specific player's board 
-        **/
-        return self::getUniqueValueFromDB(
-            self::format("
-            SELECT
-                COALESCE(MAX(CASE WHEN splay_direction = 0 THEN 1 ELSE position + 1 END), 0)
-            FROM
-                card
-            WHERE
-                owner = {owner} AND
-                location = 'board'
-        ",
-                array('owner' => $owner)
-            )
-        );
-    }
-
-
-
     function getOrCountCardsInLocation($count, $owner, $location, $key = null, $type = null, $is_relic = null)
     {
         /**
@@ -5172,62 +5122,6 @@ class Innovation extends Table
         );
     }
 
-    function getSplayableColorsOnBoard($player_id, $splay_direction)
-    {
-        /**
-        Returns the splayable colors in the specified direction on a player's board, in ascending order
-        **/
-        return self::getObjectListFromDB(self::format("
-            SELECT
-                color
-            FROM
-                card
-            WHERE
-                owner = {player_id} AND
-                location = 'board' AND
-                position = 1 AND
-                splay_direction != {splay_direction}
-            ORDER BY
-                color
-            ",
-            array('player_id' => $player_id, 'splay_direction' => $splay_direction)
-        ), true);
-    }
-
-    function getMinAgeOnBoardTopCards($player_id)
-    {
-        /**
-        Get the age the player is in, that is to say, the minimum age that can be found on his board top cards
-        (0 if the player have no card on his board)
-        **/
-
-        // Get the min of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(
-            self::format("
-            SELECT
-                COALESCE(MIN(a.faceup_age), 0)
-            FROM
-                card AS a
-            LEFT JOIN
-                (SELECT
-                    color, MAX(position) AS position
-                FROM
-                    card
-                WHERE
-                    owner = {player_id} AND
-                    location = 'board'
-                GROUP BY
-                    color) AS b ON a.color = b.color
-            WHERE
-                a.owner = {player_id} AND
-                a.location = 'board' AND
-                a.position = b.position
-        ",
-                array('player_id' => $player_id)
-            )
-        );
-    }
-
     function getMaxAgeOnBoardTopCards($player_id)
     {
         /**
@@ -5339,41 +5233,6 @@ class Innovation extends Table
             )
         );
     }
-    function getMinAgeOnBoardTopCardsWithIcon($player_id, $icon)
-    {
-        /**
-        Get the minimum age of the top cards with a particular icon
-        (0 if the player have no card on his board)
-        **/
-
-
-        // Get the max of the age matching the position defined in the sub-request
-        return self::getUniqueValueFromDB(
-            self::format("
-            SELECT
-                COALESCE(MIN(a.faceup_age), 0)
-            FROM
-                card AS a
-            LEFT JOIN
-                (SELECT
-                    color, MAX(position) AS position
-                FROM
-                    card
-                WHERE
-                    owner = {player_id} AND
-                    location = 'board'
-                GROUP BY
-                    color) AS b ON a.color = b.color
-            WHERE
-                a.owner = {player_id} AND
-                a.location = 'board' AND
-                a.position = b.position AND
-                (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon} OR a.spot_5 = {icon} OR a.spot_6 = {icon})
-        ",
-                array('player_id' => $player_id, 'icon' => $icon)
-            )
-        );
-    }
 
     function getMaxAgeOnBoardTopCardsWithIcon($player_id, $icon)
     {
@@ -5472,33 +5331,6 @@ class Innovation extends Table
                 array('min_or_max' => $min_or_max, 'player_id' => $player_id, 'location' => $location)
             )
         );
-    }
-
-    function getMinAgeInHand($player_id)
-    {
-        /**
-        Get the minimum age that can be found in a player hand
-        (0 if the player have no card in his hand)
-        **/
-        return self::getMinOrMaxAgeInLocation($player_id, 'hand', 'MIN');
-    }
-
-    function getMaxAgeInHand($player_id)
-    {
-        /**
-        Get the maximum age that can be found in a player hand
-        (0 if the player have no card in his hand)
-        **/
-        return self::getMinOrMaxAgeInLocation($player_id, 'hand', 'MAX');
-    }
-
-    function getMinAgeInScore($player_id)
-    {
-        /**
-        Get the minimum age that can be found in a player score
-        (0 if the player have no card in his score pile)
-        **/
-        return self::getMinOrMaxAgeInLocation($player_id, 'score', 'MIN');
     }
 
     function getMaxAgeInScore($player_id)
@@ -6264,22 +6096,6 @@ class Innovation extends Table
         }
         $players = self::loadPlayersBasicInfos();
         return $players[$player_id]['player_color'];
-    }
-
-    function getPlayerTeam($player_id)
-    {
-        return self::getUniqueValueFromDB(
-            self::format("
-            SELECT
-                player_id
-            FROM
-                player
-            WHERE
-                player_id={player_id}
-        ",
-                array('player_id' => $player_id)
-            )
-        );
     }
 
     function getPlayerTeammate($player_id)
@@ -10100,12 +9916,6 @@ class Innovation extends Table
 
             switch ($code) {
 
-                // id 28, age 3: Optics        
-                case "28N1A":
-                    $message_for_player = clienttranslate('${You} must choose an opponent with fewer points than you to transfer a card from your score pile to his score pile');
-                    $message_for_others = clienttranslate('${player_name} must choose an opponent with fewer points than him to transfer a card from his own score pile to that opponent score pile');
-                    break;
-
                 // id 50, age 5: Measurement
                 case "50N1B":
                     $message_for_player = clienttranslate('${You} must choose a color');
@@ -11080,10 +10890,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 25
-            || $card_id == 27
-            || $card_id == 29
-            || (31 <= $card_id && $card_id <= 32)
+        return $card_id <= 32
             || $card_id == 34
             || $card_id == 38
             || (40 <= $card_id && $card_id <= 44)
@@ -11225,79 +11032,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 26, age 3: Translation        
-                case "26N1":
-                    $step_max = 1;
-                    break;
-
-                case "26N2":
-                    $eligible = true;
-                    foreach (Colors::ALL as $color) {
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($top_card !== null && !self::hasRessource($top_card, 1)) { // This top card is present, with no crown on it
-                            $eligible = false;
-                        }
-                    }
-                    if ($eligible) { // "If each card on your board has a crown"
-                        $achievement = self::getCardInfo(108);
-                        if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown}.'), array('your' => 'your', 'crown' => $crown));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown}.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
-                            self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the World achievement"
-                        } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the World achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown} but the World achievement has already been claimed.'), array('player_name' => self::renderPlayerName($player_id), 'crown' => $crown));
-                        }
-                    }
-                    break;
-
-                // id 28, age 3: Optics        
-                case "28N1":
-                    $card = self::executeDrawAndMeld($player_id, 3); // "Draw and meld a 3"
-                    if (self::hasRessource($card, 1)) { // "If it has a crown"
-                        self::notifyGeneralInfo(clienttranslate('It has a ${crown}.'), array('crown' => $crown));
-                        self::executeDraw($player_id, 4, 'score'); // "Draw and score a 4"
-                    } else { // "Otherwise"
-                        self::notifyGeneralInfo(clienttranslate('It does not have a ${crown}.'), array('crown' => $crown));
-                        if (empty(self::getActiveOpponentsWithFewerPoints($player_id))) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${you}.'), array('you' => 'you'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${player_name}.'), array('player_name' => self::renderPlayerName($player_id)));
-                        } else {
-                            $step_max = 2;
-                        }
-                    }
-                    break;
-
-                // id 30, age 3: Paper        
-                case "30N1_3E":
-                case "30N1_4E":
-                    $step_max = 1;
-                    break;
-
-                case "30N2_3E":
-                    // "Draw a 4 for every color you have splayed left"
-                    $number_of_colors_splayed_left = 0;
-                    foreach (Colors::ALL as $color) {
-                        if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
-                            $number_of_colors_splayed_left++;
-                        }
-                    }
-                    if ($number_of_colors_splayed_left == 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
-                    }
-                    for ($i = 0; $i < $number_of_colors_splayed_left; $i++) {
-                        self::executeDraw($player_id, 4);
-                    }
-                    break;
-
-                case "30N2_4E":
-                    $step_max = 1;
-                    break;
 
                 // id 33, age 3: Education        
                 case "33N1":
@@ -12098,8 +11832,6 @@ class Innovation extends Table
 
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
 
-        $clock = Icons::render(6);
-
         if (self::isInSeparateFile($card_id)) {
             $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
             $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
@@ -12118,77 +11850,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 26, age 3: Translation        
-            case "26N1A":
-                // "You may meld all the cards in your score pile. If you meld one, you must meld them all"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'board',
-
-                    'meld_keyword'  => true,
-                );
-                break;
-
-            // id 28, age 3: Optics
-            case "28N1A":
-                // "An opponent with fewer points than you"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'choose_player' => true,
-                    'players'       => self::getActiveOpponentsWithFewerPoints($player_id)
-                );
-                break;
-
-            case "28N1B":
-                // "Transfer a card from your score pile to the opponent score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => $this->innovationGameState->get('choice'),
-                    // ie the opponent chosen on the previous step
-                    'location_to'   => 'score'
-                );
-                break;
-
-            // id 30, age 3: Paper
-            case "30N1A_3E":
-            case "30N1A_4E":
-                // "You may splay your green or blue cards left"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::LEFT,
-                    'color'           => array(0, 2) /* blue or green */
-                );
-                break;
-
-            case "30N2A_4E":
-                // "Score a top card with a leaf."
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-                    'score_keyword' => true,
-
-                    'with_icon'     => 2 /* with a leaf */
-                );
-                break;
 
             // id 33, age 3: Education        
             case "33N1A":
@@ -13155,6 +12816,7 @@ class Innovation extends Table
             || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age'])))
             || (array_key_exists('choices', $options) && empty($options['choices']))
             || (array_key_exists('color', $options) && empty($options['color']))
+            || (array_key_exists('choose_player', $options) && empty($options['players']))
         ) {
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
@@ -13267,28 +12929,6 @@ class Innovation extends Table
                                         break;
                                     }
                                 }
-                            }
-                        }
-                        break;
-
-                    // id 30, age 3: Paper
-                    case "30N2A_4E":
-                        if ($n > 0) { // "If you do, draw a 4 for every color you have splayed left"
-                            $number_of_colors_splayed_left = 0;
-                            foreach (Colors::ALL as $color) {
-                                if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
-                                    $number_of_colors_splayed_left++;
-                                }
-                            }
-                            if ($number_of_colors_splayed_left == 1) {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
-                            } else {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
-                            }
-                            for ($i = 0; $i < $number_of_colors_splayed_left; $i++) {
-                                self::executeDraw($player_id, 4);
                             }
                         }
                         break;
@@ -14157,11 +13797,6 @@ class Innovation extends Table
                 // The letter indicates the step : A for the first one, B for the second
 
                 // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 28, age 3: Optics        
-                case "28N1A":
-                    // Nothing to do but to go to the next step
-                    break;
 
                 // id 50, age 5: Measurement
                 case "50N1B":

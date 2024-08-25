@@ -209,7 +209,6 @@ $this->textual_card_infos = array(
         'non_demand_effect_1'                 => clienttranslate('You may splay your green or blue cards left.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('Draw a ${age_4} for every color you have splayed left.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Score a top card with ${icon_2} from your board. If you do, draw a ${age_4} for every color you have splayed left.'),
-        'separate_4E_implementation'          => true,
     ),
 
     31  => array(
@@ -529,7 +528,7 @@ $this->textual_card_infos = array(
     ),
 
     76  => array(
-        'name'                => clienttranslate('Rocketry'),
+        'name'                                => clienttranslate('Rocketry'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return a card in any opponent\'s score pile for every two ${icon_6} on your board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Return a card in any opponent\'s score pile for every color on your board with ${icon_6}.'),
     ),

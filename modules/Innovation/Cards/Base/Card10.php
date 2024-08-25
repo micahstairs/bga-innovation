@@ -16,7 +16,7 @@ class Card10 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->lowest()->fromHand()->build();
+    return self::youMust()->meld()->lowest()->fromYourHand()->build();
   }
 
   public function afterInteraction()

@@ -23,7 +23,7 @@ class Card0 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->return()->minCards(1)->maxCards(3)->fromHand()->build();
+    return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand()->build();
   }
 
   public function afterInteraction()

@@ -6,7 +6,6 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 
 class Card31 extends AbstractCard
 {
@@ -22,13 +21,13 @@ class Card31 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand()) {
-      $playerCardIds = $this->game->getIdsOfCardsInLocation(self::getPlayerId(), Locations::HAND);
-      $launcherCardIds = $this->game->getIdsOfCardsInLocation($this->getLauncherId(), Locations::HAND);
-      foreach ($playerCardIds as $cardId) {
-        self::transferToHand(self::getCard($cardId), $this->getLauncherId());
+      $playerCards = self::getCards(Locations::HAND, self::getPlayerId());
+      $launcherCards = self::getCards(Locations::HAND, self::getLauncherId());
+      foreach ($playerCards as $card) {
+        self::transferToHand($card, self::getLauncherId());
       }
-      foreach ($launcherCardIds as $cardId) {
-        self::transferToHand(self::getCard($cardId), self::getPlayerId());
+      foreach ($launcherCards as $card) {
+        self::transferToHand($card, self::getPlayerId());
       }
     } else {
       self::setMaxSteps(2);
@@ -38,25 +37,27 @@ class Card31 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand() && self::isFirstInteraction()) {
-      return [
-        'location_from'    => Locations::HAND,
-        'location_to'      => Locations::REVEALED_THEN_SCORE,
-        'score_keyword'    => true,
-        'with_icon'        => Icons::AUTHORITY,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->revealAndScore()->withIcon(Icons::AUTHORITY)->fromYourHand()->revealIfUnable()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'color'           => [Colors::RED],
-        'splay_direction' => Directions::LEFT,
-      ];
+      return self::youMay()->splayLeft()->withColor([Colors::RED])->build();
     }
   }
 
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(self::getPlayerId(), Locations::HAND) || self::hasCards(self::getLauncherId(), Locations::HAND);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::canSplayLeft([Colors::RED])) {
+      return true;
+    }
+    if (self::isLauncher()) {
+      return count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0;
+    } else {
+      return self::hasCards(Locations::HAND);
+    }
   }
 
 }

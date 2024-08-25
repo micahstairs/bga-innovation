@@ -21,7 +21,7 @@ class Card13 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->tuck()->fromHand()->withColor(self::getColorsOnBoard())->build();
+      return self::youMay()->tuck()->fromYourHand()->withColor(self::getColorsOnBoard())->build();
     } else {
       return self::youMay()->splayLeft()->withColor([self::getLastSelectedColor()])->build();
     }
@@ -46,7 +46,11 @@ class Card13 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return count(self::filterByColor(self::getCards(Locations::HAND), self::getColorsOnBoard())) > 0;
+    if (self::isLauncher()) {
+      return count(self::filterByColor(self::getCards(Locations::HAND), self::getColorsOnBoard())) > 0;
+    } else {
+      return self::hasCards(Locations::HAND) && count(self::getColorsOnBoard()) > 0;
+    }
   }
 
 }

@@ -32,16 +32,17 @@ class Card27 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::LEFT,
-      'color'           => [Colors::RED],
-    ];
+    return self::youMay()->splayLeft()->withColor([Colors::RED])->build();
   }
 
   public function demandMightBeEffective(): bool
   {
     return count(self::filterByIcon(self::getTopCards(), Icons::AUTHORITY)) > 0;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayLeft([Colors::RED]);
   }
 
 }

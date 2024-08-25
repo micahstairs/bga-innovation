@@ -33,7 +33,7 @@ class Card6 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->fromHand()->withColor(self::getColorsNotOnBoard())->build();
+    return self::youMust()->meld()->fromYourHand()->withColor(self::getColorsNotOnBoard())->build();
   }
 
   private function getColorsNotOnBoard(): array
@@ -72,10 +72,14 @@ class Card6 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (self::filterByColor(self::getCards(Locations::HAND), self::getColorsNotOnBoard())) {
+    if (self::getNumberOfCardsToScore() > 0) {
       return true;
     }
-    return self::getNumberOfCardsToScore() > 0;
+    if (self::isLauncher()) {
+      return count(self::filterByColor(self::getCards(Locations::HAND), self::getColorsNotOnBoard())) > 0;
+    } else {
+      return self::getColorsNotOnBoard() > 0 && self::hasCards(Locations::HAND);
+    }
   }
 
 }
