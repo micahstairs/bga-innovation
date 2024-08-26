@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 class Card44_4E extends AbstractCard
@@ -16,19 +15,18 @@ class Card44_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::YELLOW, Colors::PURPLE],
-      ];
+      return self::youMay()->splayRight()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'n'             => self::countSplayedColors(),
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-      ];
+      return self::youMay()->tuck()->exactly(self::countSplayedColors())->fromYourHand()->build();
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::canSplayRight([Colors::YELLOW, Colors::PURPLE])) {
+      return true;
+    }
+    return self::countSplayedColors() > 0 && self::hasCards(Locations::HAND);
   }
 
 }

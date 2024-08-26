@@ -17,7 +17,7 @@ class Card396 extends AbstractCard
 
   public function initialExecution()
   {
-    self::setAuxiliaryValue(count(self::getUniqueColors('hand'))); // Track how many cards need to be drawn
+    self::setAuxiliaryValue(count(self::getUniqueColorsInLocation('hand'))); // Track how many cards need to be drawn
     self::setMaxSteps(1);
   }
 

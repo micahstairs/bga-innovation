@@ -16,8 +16,8 @@ class Card51_3E extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand()) {
-      foreach ($this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), Locations::SCORE) as $cardId) {
-        self::transferToHand(self::getCard($cardId));
+      foreach (self::getHighestCards(Locations::SCORE) as $card) {
+        self::transferToHand($card);
       }
     } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
@@ -26,16 +26,17 @@ class Card51_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::RIGHT,
-      'color'           => [Colors::YELLOW],
-    ];
+    return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
   }
 
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayRight(Colors::YELLOW);
   }
 
 }

@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 class Card51_4E extends AbstractCard
@@ -16,16 +15,9 @@ class Card51_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'player_id'    => self::getLauncherId(),
-        'choose_value' => true,
-      ];
+      return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
     }
   }
 
@@ -39,6 +31,11 @@ class Card51_4E extends AbstractCard
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayRight(Colors::YELLOW);
   }
 
 }

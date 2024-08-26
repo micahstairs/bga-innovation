@@ -31,6 +31,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function ofMyChoice(): InteractionBuilder
+  {
+    $this->interactionOptions['player_id'] = $this->state->getLauncherId();
+    return $this;
+  }
+
   // NUMBER OF CARDS
 
   function exactly(int $n): InteractionBuilder
@@ -69,6 +75,18 @@ class InteractionBuilder
   function value(int $value): InteractionBuilder
   {
     $this->interactionOptions['age'] = $value;
+    return $this;
+  }
+
+  function minValue(int $min): InteractionBuilder
+  {
+    $this->interactionOptions['age_min'] = $min;
+    return $this;
+  }
+
+  function maxValue(int $max): InteractionBuilder
+  {
+    $this->interactionOptions['age_max'] = $max;
     return $this;
   }
 
@@ -189,7 +207,7 @@ class InteractionBuilder
     return $this;
   }
 
-  function fromMyHandOrRevealed(): InteractionBuilder
+  function fromYourHandOrRevealed(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = 'revealed,hand';
     return $this;
@@ -245,6 +263,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function revealAndReturn(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::REVEALED_THEN_DECK;
+    $this->interactionOptions['return_keyword'] = true;
+    return $this;
+  }
+
   function revealAndScore(): InteractionBuilder
   {
     $this->interactionOptions['location_to'] = Locations::REVEALED_THEN_SCORE;
@@ -282,6 +307,12 @@ class InteractionBuilder
   {
     $this->interactionOptions['choose_player'] = true;
     $this->interactionOptions['players'] = $playerIds;
+    return $this;
+  }
+
+  function chooseValue(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_value'] = true;
     return $this;
   }
 

@@ -47,7 +47,7 @@ class Card423 extends AbstractCard
       if (self::isFirstOrThirdEdition()) {
         $values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       } else {
-        $values = self::getUniqueValues('hand');
+        $values = self::getUniqueValuesInLocation('hand');
         if (empty($values)) {
           $values[] = 0;
         }

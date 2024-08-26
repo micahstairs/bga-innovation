@@ -4,9 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card49 extends AbstractCard
 {
@@ -23,20 +21,9 @@ class Card49 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location'   => Locations::BOARD,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'color'      => Colors::NON_GREEN,
-        'with_icon'  => Icons::INDUSTRY,
-        'age'        => 5,
-      ];
+      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::INDUSTRY)->fromYourBoard()->toMine()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
     }
   }
 
@@ -49,6 +36,11 @@ class Card49 extends AbstractCard
   {
     $topNonGreenCards = self::filterByColor(self::getTopCards(), Colors::NON_GREEN);
     return count(self::filterByIcon($topNonGreenCards, Icons::INDUSTRY)) > 0;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayRight(Colors::GREEN);
   }
 
 }

@@ -18,7 +18,7 @@ class Card489 extends AbstractCard
       self::transferToHand($card);
     }
 
-    $colors = self::getUniqueColors(Locations::HAND);
+    $colors = self::getUniqueColorsInLocation(Locations::HAND);
     if (count($colors) <= 2) {
       foreach (self::getCards(Locations::HAND) as $card) {
         self::transferToHand($card, self::getLauncherId());

@@ -19,7 +19,7 @@ class Card458 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return [
         'choose_color' => true,
-        'color'        => self::getUniqueColors(Locations::BOARD),
+        'color'        => self::getUniqueColorsInLocation(Locations::BOARD),
       ];
     } else {
       return [

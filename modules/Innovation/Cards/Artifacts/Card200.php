@@ -28,7 +28,7 @@ class Card200 extends AbstractCard
       self::drawAndReveal(9);
     }
 
-    $numColors = count(self::getUniqueColors(Locations::REVEALED));
+    $numColors = count(self::getUniqueColorsInLocation(Locations::REVEALED));
     $args = ['i18n' => ['n'], 'n' => self::renderNumber($numColors)];
     self::notifyPlayer(clienttranslate('${You} revealed ${n} colors.'), $args);
     self::notifyOthers(clienttranslate('${player_name} revealed ${n} colors.'), $args);

@@ -20,7 +20,7 @@ class Card186_4E extends AbstractCard
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     }
-    
+
   }
 
   public function getInteractionOptions(): array
@@ -44,7 +44,7 @@ class Card186_4E extends AbstractCard
     if (self::decrementAuxiliaryValue() >= 0) { // Decrement the value to return next
       self::setNextStep(1);
     } else {
-      $junkedValues = array_filter(self::getUniqueValues(Locations::JUNK), function($value) {
+      $junkedValues = array_filter(self::getUniqueValuesInLocation(Locations::JUNK), function ($value) {
         return $value < 9;
       });
       if (count($junkedValues) === 8) {

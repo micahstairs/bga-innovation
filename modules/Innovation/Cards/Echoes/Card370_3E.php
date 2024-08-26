@@ -19,7 +19,7 @@ class Card370_3E extends AbstractCard
       return [
         'can_pass'     => true,
         'choose_color' => true,
-        'color'        => self::getUniqueColors(Locations::HAND),
+        'color'        => self::getUniqueColorsInLocation(Locations::HAND),
       ];
     } else if (self::isSecondInteraction()) {
       return [

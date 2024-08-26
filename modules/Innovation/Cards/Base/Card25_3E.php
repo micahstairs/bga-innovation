@@ -42,7 +42,7 @@ class Card25_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->return()->all()->fromMyHandOrRevealed()->build();
+      return self::youMust()->return()->all()->fromYourHandOrRevealed()->build();
     } else if (self::isFirstInteraction()) {
       return self::youMust()->meld()->fromYourHand()->build();
     } else {

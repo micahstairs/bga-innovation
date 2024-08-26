@@ -5,7 +5,6 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card48 extends AbstractCard
 {
@@ -32,20 +31,9 @@ class Card48 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'n'          => 2,
-        'location'   => Locations::SCORE,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'age_max'    => 4,
-      ];
+      return self::youMust()->exactly(2)->maxValue(4)->fromYourScore()->toMine()->build();
     } else {
-      return [
-        'score_keyword' => true,
-        'age'           => ValueSelectors::LOWEST,
-        'location_from' => Locations::BOARD,
-        'with_icon'     => Icons::PROSPERITY,
-      ];
+      return self::youMust()->score()->lowest()->withIcon(Icons::PROSPERITY)->fromYourBoard()->build();
     }
   }
 

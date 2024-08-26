@@ -14,7 +14,7 @@ class Card214_3E extends AbstractCard
   public function initialExecution()
   {
     self::revealScorePile();
-    self::setAuxiliaryArray(self::getUniqueColors(Locations::SCORE)); // Track colors to meld
+    self::setAuxiliaryArray(self::getUniqueColorsInLocation(Locations::SCORE)); // Track colors to meld
     self::setMaxSteps(1);
   }
 
@@ -30,8 +30,9 @@ class Card214_3E extends AbstractCard
       'color'         => $colors,
     ];
   }
-  
-  public function handleCardChoice(array $card) {
+
+  public function handleCardChoice(array $card)
+  {
     self::removeFromAuxiliaryArray($card['color']);
     self::setNextStep(1);
   }

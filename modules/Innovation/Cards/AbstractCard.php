@@ -1385,7 +1385,7 @@ abstract class AbstractCard
     return self::countCards($location, $playerId) > 0;
   }
 
-  protected function getUniqueValues(string $location, int $playerId = null): array
+  protected function getUniqueValuesInLocation(string $location, int $playerId = null): array
   {
     $values = [];
     foreach (self::countCardsKeyedByValue($location, $playerId) as $value => $count) {
@@ -1396,7 +1396,7 @@ abstract class AbstractCard
     return $values;
   }
 
-  protected function getUniqueColors(string $location, int $playerId = null): array
+  protected function getUniqueColorsInLocation(string $location, int $playerId = null): array
   {
     $colors = [];
     foreach (self::countCardsKeyedByColor($location, $playerId) as $color => $count) {
@@ -1405,6 +1405,15 @@ abstract class AbstractCard
       }
     }
     return $colors;
+  }
+
+  protected function getUniqueColors(array $cards): array
+  {
+    $colors = [];
+    foreach ($cards as $card) {
+      $colors[] = self::getColor($card);
+    }
+    return array_unique($colors);
   }
 
   protected function getCardsKeyedByValue(string $location, int $playerId = null): array

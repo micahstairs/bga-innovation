@@ -14,7 +14,7 @@ class Card153 extends AbstractCard
   public function initialExecution()
   {
     self::revealHand();
-    if (self::countCards(Locations::HAND) === 5 && count(self::getUniqueColors(Locations::HAND)) === 5) {
+    if (self::countCards(Locations::HAND) === 5 && count(self::getUniqueColorsInLocation(Locations::HAND)) === 5) {
       self::notifyPlayer(clienttranslate('${You} have exactly five cards and five colors in your hand.'));
       self::notifyOthers(clienttranslate('${player_name} has exactly five cards and five colors in his hand.'));
       self::win();

@@ -33,8 +33,8 @@ class Card23 extends AbstractCard
 
   private function getSelectableColors(): array
   {
-    $playerBoardColors = self::getUniqueColors(Locations::BOARD);
-    $launcherBoardColors = self::getUniqueColors(Locations::BOARD, self::getLauncherId());
+    $playerBoardColors = self::getUniqueColorsInLocation(Locations::BOARD);
+    $launcherBoardColors = self::getUniqueColorsInLocation(Locations::BOARD, self::getLauncherId());
     return array_diff($playerBoardColors, $launcherBoardColors);
   }
 

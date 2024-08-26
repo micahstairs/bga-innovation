@@ -33,7 +33,7 @@ class Card383 extends AbstractCard
     if (self::isEcho()) {
       $values = [];
       foreach (self::getPlayerIds() as $playerId) {
-        $values = array_merge($values, self::getUniqueValues('hand', $playerId));
+        $values = array_merge($values, self::getUniqueValuesInLocation('hand', $playerId));
       }
       return [
         'choose_value' => true,

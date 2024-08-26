@@ -7,20 +7,20 @@
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  */
 
-require_once (APP_GAMEMODULE_PATH . 'module/table/table.game.php');
-require_once ('modules/Innovation/Cards/AbstractCard.php');
-require_once ('modules/Innovation/Cards/ExecutionState.php');
-require_once ('modules/Innovation/GameState.php');
-require_once ('modules/Innovation/Enums/CardIds.php');
-require_once ('modules/Innovation/Enums/CardTypes.php');
-require_once ('modules/Innovation/Enums/Colors.php');
-require_once ('modules/Innovation/Enums/Directions.php');
-require_once ('modules/Innovation/Enums/Icons.php');
-require_once ('modules/Innovation/Enums/Locations.php');
-require_once ('modules/Innovation/Enums/ValueSelectors.php');
-require_once ('modules/Innovation/Utils/Arrays.php');
-require_once ('modules/Innovation/Utils/Notifications.php');
-require_once ('modules/Innovation/Utils/Strings.php');
+require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
+require_once('modules/Innovation/Cards/AbstractCard.php');
+require_once('modules/Innovation/Cards/ExecutionState.php');
+require_once('modules/Innovation/GameState.php');
+require_once('modules/Innovation/Enums/CardIds.php');
+require_once('modules/Innovation/Enums/CardTypes.php');
+require_once('modules/Innovation/Enums/Colors.php');
+require_once('modules/Innovation/Enums/Directions.php');
+require_once('modules/Innovation/Enums/Icons.php');
+require_once('modules/Innovation/Enums/Locations.php');
+require_once('modules/Innovation/Enums/ValueSelectors.php');
+require_once('modules/Innovation/Utils/Arrays.php');
+require_once('modules/Innovation/Utils/Notifications.php');
+require_once('modules/Innovation/Utils/Strings.php');
 
 
 use Innovation\GameState;
@@ -10890,9 +10890,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 44
-            || (48 <= $card_id && $card_id <= 49)
-            || $card_id == 51
+        return $card_id <= 51
             || $card_id == 54
             || (56 <= $card_id && $card_id <= 57)
             || $card_id == 62
@@ -10924,7 +10922,7 @@ class Innovation extends Table
             $set = "Unseen";
         }
         $suffix = self::getEditionSuffix($card_id);
-        require_once ("modules/Innovation/Cards/${set}/Card${card_id}${suffix}.php");
+        require_once("modules/Innovation/Cards/${set}/Card${card_id}${suffix}.php");
         $classname = "Innovation\Cards\\${set}\Card${card_id}${suffix}";
         return new $classname($this, $execution_state);
     }
@@ -11026,63 +11024,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 45, age 5: Chemistry
-                case "45N1":
-                    $step_max = 1;
-                    break;
-
-                case "45N2":
-                    // "Draw and score a card of value one higher than the highest top card on your board"
-                    self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1, 'score');
-                    $step_max = 1;
-                    break;
-
-                // id 46, age 5: Physics
-                case "46N1":
-                    $cards = array();
-                    $colors = array();
-                    $same_color = false;
-                    for ($i = 0; $i < 3; $i++) { // "Three times"
-                        $card = self::executeDraw($player_id, 6, 'revealed'); // "Draw and reveal a 6"
-                        if (in_array($card['color'], $colors)) { // This card has the same color than one that has already been drawn
-                            $same_color = true;
-                        } else {
-                            $colors[] = $card['color'];
-                        }
-                        $cards[] = $card;
-                    }
-
-                    if ($same_color) { // "If two or more cards are the same color"
-                        $step_max = 1;
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} drew two cards of the same color.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew two cards of the same color.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else { // "Otherwise"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('All the cards ${you} drew have different colors.'), array('you' => 'you'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All the cards ${player_name} drew have different colors.'), array('player_name' => self::renderPlayerName($player_id)));
-                        foreach ($cards as $card) {
-                            self::transferCardFromTo($card, $player_id, 'hand'); // "Keep them" (ie place them in your hand)
-                        }
-                    }
-                    break;
-
-                // id 47, age 5: Coal
-                case "47N1":
-                    self::executeDrawAndTuck($player_id, 5); // "Draw and tuck a 5"
-                    break;
-
-                case "47N2":
-                    $step_max = 1;
-                    break;
-
-                case "47N3":
-                    $step_max = 1;
-                    break;
-
-                // id 50, age 5: Measurement
-                case "50N1":
-                    $step_max = 1;
-                    break;
 
                 // id 52, age 5: Steam engine
                 case "52N1":
@@ -11786,112 +11727,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 45, age 5: Chemistry
-            case "45N1A":
-                // "You may splay your blue cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(0) /* blue */
-                );
-                break;
-
-            case "45N2A":
-                // "Return a card from your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            // id 46, age 5: Physics        
-            case "46N1A":
-                // "Return the drawn cards and all cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'revealed,hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            // id 47, age 5: Coal
-            case "47N2A":
-                // "You may splay your red cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(1) /* red */
-                );
-                break;
-
-            case "47N3A":
-                // "You may score any one of your top cards"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'score_keyword' => true
-                );
-                break;
-
-            // id 50, age 5: Measurement
-            case "50N1A":
-                if ($this->innovationGameState->usingFirstEditionRules()) {
-                    // "You may return a card from your hand"
-                    $options = array(
-                        'player_id'     => $player_id,
-                        'n'             => 1,
-                        'can_pass'      => true,
-
-                        'owner_from'    => $player_id,
-                        'location_from' => 'hand',
-                        'owner_to'      => 0,
-                        'location_to'   => 'deck',
-                    );
-                } else {
-                    // "You may reveal and return a card from your hand"
-                    $options = array(
-                        'player_id'     => $player_id,
-                        'n'             => 1,
-                        'can_pass'      => true,
-
-                        'owner_from'    => $player_id,
-                        'location_from' => 'hand',
-                        'owner_to'      => $player_id,
-                        'location_to'   => 'revealed,deck',
-                    );
-                }
-                break;
-
-            case "50N1B":
-                // "Choose a color"
-                $options = array(
-                    'player_id'    => $player_id,
-
-                    'choose_color' => true
-                );
-                break;
 
             // id 55, age 6: Atomic theory
             case "55N1A":
@@ -12806,38 +12641,6 @@ class Innovation extends Table
                         }
                         break;
 
-                    // id 47, age 5: Coal
-                    case "47N3A":
-                        if ($n > 0) { // "If you do"
-                            $card = self::getTopCardOnBoard($player_id, $this->innovationGameState->get('color_last_selected'));
-                            if ($card !== null) { // Check if the p^layer has a card beneath the card he scored
-                                self::scoreCard($card, $player_id); // "Also score the card beneath it"
-                            }
-                        }
-                        break;
-
-                    // id 50, age 5: Measurement
-                    case "50N1A":
-                        if ($n > 0) { // "If you do"
-                            if ($this->innovationGameState->usingFirstEditionRules()) {
-                                // In the first edition, color is chosen by the player
-                                self::incrementStepMax(1);
-                            } else {
-                                $color = $this->innovationGameState->get('color_last_selected');
-                                self::splayRight($player_id, $player_id, $color); // "Splay that color of your cards right"
-                                $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
-                                if ($number_of_cards == 1) {
-                                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($color)));
-                                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($color)));
-                                } else {
-                                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($color)));
-                                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($color)));
-                                }
-                                self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
-                            }
-                        }
-                        break;
-
                     // id 59, age 6: Classification
                     case "59N1A":
                         if ($n > 0) { // Unsaid rule: the player must have at least one card to show from his hand, else, the effect can't continue
@@ -13644,23 +13447,6 @@ class Innovation extends Table
                 // The letter indicates the step : A for the first one, B for the second
 
                 // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 50, age 5: Measurement
-                case "50N1B":
-                    // $choice is a color
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
-                    self::splayRight($player_id, $player_id, $choice); // "Splay that color of your cards right"
-                    $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$choice];
-                    if ($number_of_cards == 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($choice)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($choice)));
-                    } else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($choice)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($choice)));
-                    }
-                    self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
-                    break;
 
                 // id 61, age 6: Canning
                 case "61N1A":
