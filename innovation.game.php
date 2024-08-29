@@ -50,6 +50,8 @@ class Innovation extends Table
     /** @var Notifications Used to help create notifications */
     public Notifications $notifications;
 
+    public $textual_card_infos;
+
     // Effect types
     const DEMAND_EFFECT = 0;
     const NON_DEMAND_EFFECT = 1;
@@ -4891,7 +4893,8 @@ class Innovation extends Table
 
     function isTopBoardCard($card)
     {
-        if ($card['position'] == null || $card['location'] != 'board') {
+
+        if ($card['position'] === null || $card['location'] != 'board') {
             return false;
         }
         $number_of_cards_above = self::getUniqueValueFromDB(
@@ -10922,8 +10925,8 @@ class Innovation extends Table
             $set = "Unseen";
         }
         $suffix = self::getEditionSuffix($card_id);
-        require_once("modules/Innovation/Cards/${set}/Card${card_id}${suffix}.php");
-        $classname = "Innovation\Cards\\${set}\Card${card_id}${suffix}";
+        require_once("modules/Innovation/Cards/{$set}/Card{$card_id}{$suffix}.php");
+        $classname = "Innovation\Cards\\{$set}\Card{$card_id}{$suffix}";
         return new $classname($this, $execution_state);
     }
 

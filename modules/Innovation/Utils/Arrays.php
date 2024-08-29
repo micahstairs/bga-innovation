@@ -37,10 +37,10 @@ class Arrays
         $array = [];
         $value = 0;
         while ($encodedValue > 0) {
-            if ($encodedValue % 2 == 1) {
+            if ((int) round($encodedValue % 2) == 1) {
                 $array[] = $value;
             }
-            $encodedValue /= 2;
+            $encodedValue = (int) ($encodedValue / 2);
             $value++;
         }
         return $array;
