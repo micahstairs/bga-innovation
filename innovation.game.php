@@ -3560,7 +3560,8 @@ class Innovation extends Table
         if ($this->innovationGameState->unseenExpansionEnabled() && $is_end_of_action_check) {
             $achievements_to_test = array_merge($achievements_to_test, [595, 596, 597, 598, 599]);
         }
-        $end_of_game = false;
+
+        $end_of_game_exception = null;
 
         foreach ($achievements_to_test as $achievement_id) {
             $achievement = self::getCardInfo($achievement_id);
@@ -3725,15 +3726,15 @@ class Innovation extends Table
                     self::transferCardFromTo($achievement, $player_id, 'achievements');
                 } catch (EndOfGame $e) { // End of game has been detected
                     self::trace('EOG bubbled but suspended from self::checkForSpecialAchievementsForPlayer');
-                    $end_of_game = true;
+                    $end_of_game_exception = $e;
                     continue; // But the other achievements must be checked as well before ending
                 }
             }
         }
         // All special achievements have been checked
-        if ($end_of_game) { // End of game has been detected
+        if ($end_of_game_exception instanceof EndOfGame) { // End of game has been detected
             self::trace('EOG bubbled from self::checkForSpecialAchievementsForPlayer');
-            throw $e; // Re-throw the flag
+            throw $end_of_game_exception; // Re-throw the flag
         }
     }
 
@@ -6858,7 +6859,7 @@ class Innovation extends Table
             }
             if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction' && $key <> 'with_icons' && $key <> 'without_icons') {
                 if (!is_numeric($value)) {
-                    throw new BgaUserException("Value for option '$key' must be numeric");
+                    throw new BgaUserException("Value for option '$key' must be numeric but was of type " . gettype($value));
                 }
                 $this->innovationGameState->set($key, $value);
             }

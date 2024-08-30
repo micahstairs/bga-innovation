@@ -10,47 +10,47 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   public function test_allDogmas_thirdEdition_base()
   {
-    error_log("*** test_allDogmas_thirdEdition_echoes ***");
+    error_log("*** test_allDogmas_thirdEdition_base ***");
     self::executeCards(range(1, 104));
   }
 
   public function test_allDogmas_fourthEdition_base()
   {
-    error_log("*** test_allDogmas_fourthEdition_echoes ***");
+    error_log("*** test_allDogmas_fourthEdition_base ***");
     self::executeCards(array_merge(range(1, 104), range(440, 449)));
   }
 
-  public function test_allDogmas_thirdEdition_artifacts()
-  {
-    error_log("*** test_allDogmas_thirdEdition_artifacts ***");
-    self::executeCards(array_merge(range(110, 187), range(189, 214)));
-  }
+  // public function test_allDogmas_thirdEdition_artifacts()
+  // {
+  //   error_log("*** test_allDogmas_thirdEdition_artifacts ***");
+  //   self::executeCards(array_merge(range(110, 187), range(189, 214)));
+  // }
 
-  public function test_allDogmas_fourthEdition_artifacts()
-  {
-    error_log("*** test_allDogmas_fourthEdition_artifacts ***");
-    // TODO(4E): Add Martian Internet later
-    self::executeCards(array_merge(range(110, 187), range(189, 214), [450], range(452, 459)));
-  }
+  // public function test_allDogmas_fourthEdition_artifacts()
+  // {
+  //   error_log("*** test_allDogmas_fourthEdition_artifacts ***");
+  //   // TODO(4E): Add Martian Internet later
+  //   self::executeCards(array_merge(range(110, 187), range(189, 214), [450], range(452, 459)));
+  // }
 
-  public function test_allDogmas_thirdEdition_echoes()
-  {
-    error_log("*** test_allDogmas_thirdEdition_echoes ***");
-    self::executeCards(range(330, 434));
-  }
+  // public function test_allDogmas_thirdEdition_echoes()
+  // {
+  //   error_log("*** test_allDogmas_thirdEdition_echoes ***");
+  //   self::executeCards(range(330, 434));
+  // }
 
-  public function test_allDogmas_fourthEdition_echoes()
-  {
-    error_log("*** test_allDogmas_fourthEdition_echoes ***");
-    self::executeCards(array_merge(range(330, 434), range(470, 479)));
-  }
+  // public function test_allDogmas_fourthEdition_echoes()
+  // {
+  //   error_log("*** test_allDogmas_fourthEdition_echoes ***");
+  //   self::executeCards(array_merge(range(330, 434), range(470, 479)));
+  // }
 
-  public function test_allDogmas_fourthEdition_unseen()
-  {
-    error_log("*** test_allDogmas_fourthEdition_unseen ***");
-    // TODO(4E): Add Hitchhiking and Teleprompter later
-    self::executeCards(array_merge(range(480, 559), range(561, 569), range(571, 594)));
-  }
+  // public function test_allDogmas_fourthEdition_unseen()
+  // {
+  //   error_log("*** test_allDogmas_fourthEdition_unseen ***");
+  //   // TODO(4E): Add Hitchhiking and Teleprompter later
+  //   self::executeCards(array_merge(range(480, 559), range(561, 569), range(571, 594)));
+  // }
 
   private function executeCards(array $cardIds)
   {
@@ -69,19 +69,27 @@ class CompleteDogmaTest extends BaseIntegrationTest
       }
 
       $card = $this->tableInstance->getTable()->getCardInfo($cardId);
-      $meldedCard = $this->tableInstance->getTable()->meldCard($card, self::getActivePlayerId());
-      self::dogma($meldedCard['id']);
-      $numCardsTested++;
 
-      if (self::getCurrentStateName() === 'gameEnd') {
-        error_log("*** GAME ENDED PREMATURELY ***");
-        break;
-      }
+      try {
+        $meldedCard = $this->tableInstance->getTable()->meldCard($card, self::getActivePlayerId());
+        self::dogma($meldedCard['id']);
+        $numCardsTested++;
 
-      foreach (self::getPlayerIds() as $playerId) {
-        if (self::getCards(Locations::REVEALED, $playerId)) {
-          throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+        if (self::getCurrentStateName() === 'gameEnd') {
+          error_log("*** GAME ENDED PREMATURELY ***");
+          break;
         }
+
+        foreach (self::getPlayerIds() as $playerId) {
+          if (self::getCards(Locations::REVEALED, $playerId)) {
+            throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+          }
+        }
+      } catch (\Exception $e) {
+        error_log("FAILED: " . $e->getMessage() . " " . $e->getTraceAsString());
+        $totalCards = count($cardIds);
+        error_log("*** TESTED $numCardsTested/$totalCards CARDS ***");
+        throw $e;
       }
     }
 

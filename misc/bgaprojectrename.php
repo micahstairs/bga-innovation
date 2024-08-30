@@ -44,8 +44,8 @@ function replacecontent($newprojectpath)
       } else {
         // file
         $corrfile = $file;
-        $corrfile = preg_replace("/\\b${oldprojectname}\\b/", "${newprojectname}", $corrfile);
-        $corrfile = preg_replace("/\\b${oldprojectname}_${oldprojectname}\\b/", "${newprojectname}_${newprojectname}", $corrfile);
+        $corrfile = preg_replace("/\\b{$oldprojectname}\\b/", "{$newprojectname}", $corrfile);
+        $corrfile = preg_replace("/\\b{$oldprojectname}_{$oldprojectname}\\b/", "{$newprojectname}_{$newprojectname}", $corrfile);
         if ($corrfile != $file) {
           echo "Renaming $file => $corrfile\n";
           rename($path, "$newprojectpath/$corrfile");
@@ -56,32 +56,32 @@ function replacecontent($newprojectpath)
 
         $content = file_get_contents($path);
         if ($corrfile != $file) {
-          $content = preg_replace("/\\b${file}\\b/", "${corrfile}", $content);
+          $content = preg_replace("/\\b{$file}\\b/", "{$corrfile}", $content);
         }
 
-        $content = preg_replace("/${oldprojectname} implementation/i", "${newprojectname} implementation", $content);
-        $content = preg_replace("/\"bgagame\\.${oldprojectname}\"/", "\"bgagame.${newprojectname}\"", $content);
-        $content = preg_replace("/${oldprojectname}_${oldprojectname}/", "${newprojectname}_${newprojectname}", $content);
-        $content = preg_replace("/action_${oldprojectname}\\b/", "action_${newprojectname}", $content);
-        $content = preg_replace("/\\/${oldprojectname}\\/${oldprojectname}\\//", "/${newprojectname}/${newprojectname}/", $content);
-        $content = preg_replace("/class ${oldprojectname} extends/i", "class $newprojectname extends", $content);
-        $content = preg_replace("/game_version_${oldprojectname}/", "game_version_${newprojectname}", $content);
-        $content = preg_replace("/${oldprojectname}\.js/i", "${newprojectname}.js", $content);
-        $content = preg_replace("/${oldprojectname}\.css/", "${newprojectname}.css", $content);
-        $content = preg_replace("/${oldprojectname}\.scss/", "${newprojectname}.scss", $content);
-        $content = preg_replace("/${oldprojectname}\.game.php/", "${newprojectname}.game.php", $content);
-        $content = preg_replace("/${oldprojectname}\.action.php/", "${newprojectname}.action.php", $content);
-        $content = preg_replace("/${oldprojectname} game/i", "${newprojectname} game", $content);
-        $content = preg_replace("/bga.${oldprojectname}/", "bga.${newprojectname}", $content);
-        $content = preg_replace("/\/${oldprojectname}\//", "/${newprojectname}/", $content);
-        $content = preg_replace("/return \"${oldprojectname}\"/", "return \"${newprojectname}\"", $content);
-        $content = preg_replace("/\\b${oldprojectname}\.prototype/i", "${newprojectname}.prototype", $content);
-        $content = preg_replace("/var ${oldprojectname} =/i", "var ${newprojectname} =", $content);
-        $content = preg_replace("/\(${oldprojectname},/i", "(${newprojectname},", $content);
-        $content = preg_replace("/function ${oldprojectname}\(/i", "function ${newprojectname}(", $content);
-        $content = preg_replace("/return ${oldprojectname};/i", "return ${newprojectname};", $content);
-        $content = preg_replace("/new ${oldprojectname}\(/i", "new ${newprojectname}(", $content);
-        $content = preg_replace("/\\\\Innovation/i", "\\${newprojectname}", $content);
+        $content = preg_replace("/{$oldprojectname} implementation/i", "{$newprojectname} implementation", $content);
+        $content = preg_replace("/\"bgagame\\.{$oldprojectname}\"/", "\"bgagame.{$newprojectname}\"", $content);
+        $content = preg_replace("/{$oldprojectname}_{$oldprojectname}/", "{$newprojectname}_{$newprojectname}", $content);
+        $content = preg_replace("/action_{$oldprojectname}\\b/", "action_{$newprojectname}", $content);
+        $content = preg_replace("/\\/{$oldprojectname}\\/{$oldprojectname}\\//", "/{$newprojectname}/{$newprojectname}/", $content);
+        $content = preg_replace("/class {$oldprojectname} extends/i", "class $newprojectname extends", $content);
+        $content = preg_replace("/game_version_{$oldprojectname}/", "game_version_{$newprojectname}", $content);
+        $content = preg_replace("/{$oldprojectname}\.js/i", "{$newprojectname}.js", $content);
+        $content = preg_replace("/{$oldprojectname}\.css/", "{$newprojectname}.css", $content);
+        $content = preg_replace("/{$oldprojectname}\.scss/", "{$newprojectname}.scss", $content);
+        $content = preg_replace("/{$oldprojectname}\.game.php/", "{$newprojectname}.game.php", $content);
+        $content = preg_replace("/{$oldprojectname}\.action.php/", "{$newprojectname}.action.php", $content);
+        $content = preg_replace("/{$oldprojectname} game/i", "{$newprojectname} game", $content);
+        $content = preg_replace("/bga.{$oldprojectname}/", "bga.{$newprojectname}", $content);
+        $content = preg_replace("/\/{$oldprojectname}\//", "/{$newprojectname}/", $content);
+        $content = preg_replace("/return \"{$oldprojectname}\"/", "return \"{$newprojectname}\"", $content);
+        $content = preg_replace("/\\b{$oldprojectname}\.prototype/i", "{$newprojectname}.prototype", $content);
+        $content = preg_replace("/var {$oldprojectname} =/i", "var {$newprojectname} =", $content);
+        $content = preg_replace("/\({$oldprojectname},/i", "({$newprojectname},", $content);
+        $content = preg_replace("/function {$oldprojectname}\(/i", "function {$newprojectname}(", $content);
+        $content = preg_replace("/return {$oldprojectname};/i", "return {$newprojectname};", $content);
+        $content = preg_replace("/new {$oldprojectname}\(/i", "new {$newprojectname}(", $content);
+        $content = preg_replace("/\\\\Innovation/i", "\\{$newprojectname}", $content);
 
         file_put_contents($path, $content);
       }
@@ -126,4 +126,3 @@ function endsWith($haystack, $needle)
   $length = strlen($needle);
   return $length === 0 || (substr($haystack, -$length) === $needle);
 }
-?>

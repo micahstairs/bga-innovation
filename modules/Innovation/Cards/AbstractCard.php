@@ -1465,8 +1465,11 @@ abstract class AbstractCard
     return $numColors;
   }
 
-  protected function getSplayedColors(array $directions = Directions::SPLAYED, int $playerId = null): array
+  protected function getSplayedColors(array|int $directions = Directions::SPLAYED, int $playerId = null): array
   {
+    if (!is_array($directions)) {
+      $directions = [$directions];
+    }
     $colors = [];
     foreach (Colors::ALL as $color) {
       if (in_array(self::getSplayDirection($color, $playerId), $directions)) {
@@ -1476,7 +1479,7 @@ abstract class AbstractCard
     return $colors;
   }
 
-  protected function countSplayedColors(array $directions = Directions::SPLAYED, int $playerId = null): int
+  protected function countSplayedColors(array|int $directions = Directions::SPLAYED, int $playerId = null): int
   {
     return count(self::getSplayedColors($directions, $playerId));
   }
@@ -1509,7 +1512,7 @@ abstract class AbstractCard
     $playerId = self::coercePlayerId($playerId);
     $cardsKeyedByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
     foreach ($colors as $color) {
-      if ($cardsKeyedByColor[$color] >= 2 && $cardsKeyedByColor[0]['splay_direction'] != $direction) {
+      if (count($cardsKeyedByColor[$color]) >= 2 && $cardsKeyedByColor[$color][0]['splay_direction'] != $direction) {
         return true;
       }
     }

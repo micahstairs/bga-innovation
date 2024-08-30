@@ -45,7 +45,7 @@ class Card31 extends AbstractCard
 
   public function demandMightBeEffective(): bool
   {
-    return self::hasCards(self::getPlayerId(), Locations::HAND) || self::hasCards(self::getLauncherId(), Locations::HAND);
+    return self::hasCards(Locations::HAND, self::getPlayerId()) || self::hasCards(Locations::HAND, self::getLauncherId());
   }
 
   public function nonDemandsMightBeEffective(): bool

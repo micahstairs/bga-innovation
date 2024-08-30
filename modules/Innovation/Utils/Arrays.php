@@ -23,7 +23,7 @@ class Arrays
     {
         $encodedValue = 0;
         foreach ($array as $value) {
-            $encodedValue += pow(2, $value);
+            $encodedValue += (int) round(pow(2, $value));
         }
         return $encodedValue;
     }

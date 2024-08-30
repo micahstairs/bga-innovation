@@ -29,7 +29,7 @@ class Card39 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor(self::getSplayedColors([Directions::LEFT]))->build();
+    return self::youMay()->splayRight()->withColor(self::getSplayedColors(Directions::LEFT))->build();
   }
 
   public function handleSplayChoice(int $color, bool $splayChanged)
@@ -41,7 +41,7 @@ class Card39 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (self::countSplayedColors([Directions::LEFT]) > 0) {
+    if (self::countSplayedColors(Directions::LEFT) > 0) {
       return true;
     }
     return self::countSplayedColors() == 5 && self::isAvailable(CardIds::WONDER);

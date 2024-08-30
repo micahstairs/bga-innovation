@@ -21,7 +21,7 @@ class Card28 extends AbstractCard
     if (self::hasIcon($card, Icons::PROSPERITY)) {
       self::drawAndScore(4);
     } else {
-      self::setMaxSteps(2);
+      self::setMaxSteps(1);
     }
   }
 

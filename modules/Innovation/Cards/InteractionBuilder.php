@@ -113,7 +113,7 @@ class InteractionBuilder
 
   function withIcon(string $icon): InteractionBuilder
   {
-    $this->interactionOptions['icon'] = $icon;
+    $this->interactionOptions['with_icon'] = $icon;
     return $this;
   }
 
@@ -144,25 +144,25 @@ class InteractionBuilder
 
   function splayLeft(): InteractionBuilder
   {
-    $this->interactionOptions['splay_direction'] = [Directions::LEFT];
+    $this->interactionOptions['splay_direction'] = Directions::LEFT;
     return $this;
   }
 
   function splayRight(): InteractionBuilder
   {
-    $this->interactionOptions['splay_direction'] = [Directions::RIGHT];
+    $this->interactionOptions['splay_direction'] = Directions::RIGHT;
     return $this;
   }
 
   function splayUp(): InteractionBuilder
   {
-    $this->interactionOptions['splay_direction'] = [Directions::UP];
+    $this->interactionOptions['splay_direction'] = Directions::UP;
     return $this;
   }
 
   function splayAslant(): InteractionBuilder
   {
-    $this->interactionOptions['splay_direction'] = [Directions::ASLANT];
+    $this->interactionOptions['splay_direction'] = Directions::ASLANT;
     return $this;
   }
 
