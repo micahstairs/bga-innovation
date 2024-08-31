@@ -57,7 +57,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
     "name": "BGA",
     "host": "1.studio.boardgamearena.com",
     "protocol": "sftp",
-    "port": 22,
+    "port": 2022,
     "username": "johnsmith",
     "password": "password",
     "remotePath": "/innovationjohnsmith/",

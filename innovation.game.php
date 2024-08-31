@@ -10,6 +10,7 @@
 require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
 require_once('modules/Innovation/Cards/AbstractCard.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
+require_once('modules/Innovation/Cards/InteractionBuilder.php');
 require_once('modules/Innovation/GameState.php');
 require_once('modules/Innovation/Enums/CardIds.php');
 require_once('modules/Innovation/Enums/CardTypes.php');
@@ -9887,26 +9888,6 @@ class Innovation extends Table
                     $message_for_others = clienttranslate('${player_name} must choose a color');
                     break;
 
-                // id 61, age 6: Canning
-                case "61N1A":
-                    $age_to_draw = self::getAgeToDrawIn($player_id, 6);
-                    $age_6 = self::getAgeSquare($age_to_draw);
-                    $max_age = self::getMaxAge();
-                    $age_10 = self::getAgeSquare($max_age);
-                    $icon_5 = Icons::render(5);
-                    $message_args_for_player['age_6'] = $age_6;
-                    $message_args_for_player['age_10'] = $age_10;
-                    $message_args_for_player['icon_5'] = $icon_5;
-                    $message_args_for_others['age_6'] = $age_6;
-                    $message_args_for_others['age_10'] = $age_10;
-                    $message_args_for_others['icon_5'] = $icon_5;
-                    $message_for_player = $age_to_draw <= $max_age ? clienttranslate('Do ${you} want to draw and tuck a ${age_6}, then score all your top cards without a ${icon_5}?')
-                        : clienttranslate('Finish the game (attempt to draw above ${age_10})');
-                    $message_for_others = $age_to_draw <= $max_age ? clienttranslate('${player_name} may draw and tuck a ${age_6}, then score all his top cards without a ${icon_5}')
-                        : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
-                    $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                    break;
-
                 // id 66, age 7: Publications
                 case "66N1A_3E":
                     $message_for_player = clienttranslate('${You} may rearrange one color of your cards. Click on a card then use arrows to move it within the pile');
@@ -10855,8 +10836,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 60
-            || $card_id == 62
+        return $card_id <= 62
             || $card_id == 65
             || (67 <= $card_id && $card_id <= 68)
             || (71 <= $card_id && $card_id <= 72)
@@ -10987,15 +10967,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 61, age 6: Canning
-                case "61N1":
-                    $step_max = 1;
-                    break;
-
-                case "61N2":
-                    $step_max = 1;
-                    break;
 
                 // id 63, age 6: Democracy          
                 case "63N1":
@@ -11608,28 +11579,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 61, age 6: Canning
-            case "61N1A":
-                // "You may draw and tuck a 6"
-                $options = array(
-                    'player_id'        => $player_id,
-
-                    'choose_yes_or_no' => true
-                );
-                break;
-
-            case "61N2A":
-                // "You may splay your yellow cards right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => Directions::RIGHT,
-                    'color'           => array(3) /* yellow */
-                );
-                break;
 
             // id 63, age 6: Democracy          
             case "63N1A":
@@ -12337,7 +12286,7 @@ class Innovation extends Table
             || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age'])))
             || (array_key_exists('choices', $options) && empty($options['choices']))
             || (array_key_exists('color', $options) && empty($options['color']))
-            || (array_key_exists('choose_player', $options) && empty($options['players']))
+            || (array_key_exists('choose_player', $options) && empty($options['player_array']))
         ) {
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
@@ -13232,28 +13181,6 @@ class Innovation extends Table
                 // The letter indicates the step : A for the first one, B for the second
 
                 // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 61, age 6: Canning
-                case "61N1A":
-                    // $choice is yes or no
-                    if ($choice == 0) { // No tuck
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to tuck.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to tuck.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else { // Draw and tuck
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to tuck.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to tuck.'), array('player_name' => self::renderPlayerName($player_id)));
-
-                        self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
-
-                        // Make the transfers
-                        foreach (Colors::ALL as $color) {
-                            $card = self::getTopCardOnBoard($player_id, $color);
-                            if ($card !== null && !self::hasRessource($card, 5)) {
-                                self::scoreCard($card, $player_id); // "Score all your top cards without a factory"
-                            }
-                        }
-                    }
-                    break;
 
                 // id 66, age 7: Publications          
                 case "66N1A_3E":
