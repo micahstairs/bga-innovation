@@ -263,6 +263,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function reveal(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::REVEALED;
+    return $this;
+  }
+
   function revealAndReturn(): InteractionBuilder
   {
     $this->interactionOptions['location_to'] = Locations::REVEALED_THEN_DECK;

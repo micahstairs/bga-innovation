@@ -9,7 +9,7 @@ use Innovation\Enums\Icons;
 
 class Card57_4E extends AbstractCard
 {
-  // Industrialization (3rd edition):
+  // Industrialization (4th edition):
   //   - Draw and tuck three [6]. Then, if you are the single player with the most [EFFICIENCY], return your top red card.
   //   - You may splay your red or purple cards right.
 
@@ -33,11 +33,7 @@ class Card57_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::RIGHT,
-      'color'           => [Colors::RED, Colors::PURPLE],
-    ];
+    return self::youMay()->splayRight()->withColor([Colors::RED, Colors::PURPLE])->build();
   }
 
 }

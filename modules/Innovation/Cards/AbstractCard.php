@@ -914,6 +914,14 @@ abstract class AbstractCard
     return Locations::isFaceup($card['location']) ? intval($card['faceup_age']) : intval($card['age']);
   }
 
+  protected static function getId(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return $card['id'];
+  }
+
   protected function getCard(int $cardId): ?array
   {
     return $this->game->getCardInfo($cardId);
