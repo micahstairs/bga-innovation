@@ -191,12 +191,21 @@ class InteractionBuilder
   function fromYourHand(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::HAND;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    return $this;
+  }
+
+  function fromMyHand(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::HAND;
+    $this->interactionOptions['owner_from'] = $this->state->getLauncherId();
     return $this;
   }
 
   function fromYourScore(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::SCORE;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }
 
@@ -210,6 +219,7 @@ class InteractionBuilder
   function fromYourHandOrRevealed(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = 'revealed,hand';
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }
 
@@ -322,9 +332,27 @@ class InteractionBuilder
     return $this;
   }
 
+  function chooseToRearrange(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_rearrange'] = true;
+    return $this;
+  }
+
+  function chooseSpecialAchievement(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_special_achievement'] = true;
+    return $this;
+  }
+
   // EXTRA OPTIONS
 
-  function revealIfUnable(): InteractionBuilder
+  function refreshingSelection(): InteractionBuilder
+  {
+    $this->interactionOptions['refresh_selection'] = true;
+    return $this;
+  }
+
+  function revealingIfUnable(): InteractionBuilder
   {
     $this->interactionOptions['reveal_if_unable'] = true;
     return $this;

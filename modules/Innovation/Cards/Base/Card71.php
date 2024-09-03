@@ -24,21 +24,18 @@ class Card71 extends AbstractCard
       } else {
         $numCardsToReturn = $this->game->intDivision($handCount, 2);
       }
-      return [
-        'n'              => $numCardsToReturn,
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->exactly($numCardsToReturn)->fromYourHand()->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->fromYourHand()->build();
     }
   }
 
   public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
   {
     return self::hasCards(Locations::HAND);
   }

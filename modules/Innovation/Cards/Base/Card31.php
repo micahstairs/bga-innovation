@@ -37,7 +37,7 @@ class Card31 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand() && self::isFirstInteraction()) {
-      return self::youMust()->revealAndScore()->withIcon(Icons::AUTHORITY)->fromYourHand()->revealIfUnable()->build();
+      return self::youMust()->revealAndScore()->withIcon(Icons::AUTHORITY)->fromYourHand()->revealingIfUnable()->build();
     } else {
       return self::youMay()->splayLeft()->withColor(Colors::RED)->build();
     }

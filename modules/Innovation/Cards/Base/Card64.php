@@ -16,18 +16,9 @@ class Card64 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::HAND,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-      ];
+      return self::youMust()->fromYourHand()->toMyScore()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED, Colors::PURPLE],
-      ];
+      return self::youMay()->splayRight()->withColor([Colors::RED, Colors::PURPLE])->build();
     }
   }
 
@@ -39,6 +30,11 @@ class Card64 extends AbstractCard
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::HAND);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplayRight([Colors::RED, Colors::PURPLE]);
   }
 
 }

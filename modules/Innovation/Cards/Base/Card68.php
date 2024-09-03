@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card68 extends AbstractCard
 {
@@ -18,14 +17,7 @@ class Card68 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'                 => 3,
-      'location'          => Locations::HAND,
-      'owner_from'        => self::getPlayerId(),
-      'owner_to'          => self::getLauncherId(),
-      'age'               => ValueSelectors::HIGHEST,
-      'refresh_selection' => true,
-    ];
+    return self::youMust()->exactly(3)->highest()->fromYourHand()->toMine()->refreshingSelection()->build();
   }
 
   public function afterInteraction()

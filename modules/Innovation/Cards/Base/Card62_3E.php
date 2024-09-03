@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card62_3E extends AbstractCard
 {
@@ -26,12 +25,7 @@ class Card62_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'return_keyword' => true,
-      'n'              => 'all',
-      'age'            => ValueSelectors::LOWEST,
-      'location_from'  => Locations::SCORE,
-    ];
+    return self::youMay()->return()->all()->lowest()->fromYourScore()->build();
   }
 
   public function afterInteraction()
@@ -45,6 +39,11 @@ class Card62_3E extends AbstractCard
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    return true;
   }
 
 }

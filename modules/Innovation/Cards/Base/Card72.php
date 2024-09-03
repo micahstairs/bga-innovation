@@ -29,25 +29,12 @@ class Card72 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'player_id'     => self::getLauncherId(),
-          'owner_from'    => self::getLauncherId(),
-          'location_from' => 'hand',
-          'owner_to'      => self::getPlayerId(),
-          'location_to'   => 'hand',
-          'age'           => self::getMinValueInLocation('hand', self::getLauncherId()),
-        ];
+        return self::youMust()->exactly(2)->lowest()->fromMyHand()->toYours()->ofMyChoice()->build();
       } else {
-        return [
-          'owner_from'    => self::getPlayerId(),
-          'location_from' => 'hand',
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => 'hand',
-          'age'           => self::getMaxValueInLocation('hand'),
-        ];
+        return self::youMust()->highest()->fromYourHand()->toMine()->build();
       }
     } else {
-      return ['choices' => [7, 8]];
+      return self::youMust()->choose([7, 8])->build();
     }
   }
 
@@ -55,7 +42,7 @@ class Card72 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       // Delay the transfer, so that the other player cannot choose the card they would be giving them
-      self::setAuxiliaryValue($card['id']);
+      self::setAuxiliaryValue(self::getId($card));
       return true;
     }
     return false;
@@ -86,6 +73,11 @@ class Card72 extends AbstractCard
   public function demandMightBeEffective(): bool
   {
     return self::hasCards(Locations::HAND) || self::hasCards(Locations::HAND, self::getLauncherId());
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::isFourthEdition() && (self::hasCards(Locations::HAND) || self::hasCards(Locations::HAND, self::getLauncherId()));
   }
 
 }

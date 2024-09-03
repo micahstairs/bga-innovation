@@ -23,7 +23,7 @@ class Card34 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return self::youMust()->fromYourHand()->withIcon(Icons::AUTHORITY)->toMine()->revealIfUnable()->build();
+      return self::youMust()->fromYourHand()->withIcon(Icons::AUTHORITY)->toMine()->revealingIfUnable()->build();
     } else {
       return self::youMay()->splayLeft()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
     }

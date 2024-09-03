@@ -461,7 +461,6 @@ $this->textual_card_infos = array(
         'non_demand_effect_1_fourth'          => clienttranslate('You may splay your yellow or blue cards up.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your yellow or blue cards up.'),
         'non_demand_effect_2_fourth'          => clienttranslate('You may junk an available special achievement or make a special achievement in the junk available.'),
-        'separate_4E_implementation'          => true,
     ],
 
     67  => [

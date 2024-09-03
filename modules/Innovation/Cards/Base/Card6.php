@@ -33,7 +33,7 @@ class Card6 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->fromYourHand()->withColor(self::getColorsNotOnBoard())->build();
+    return self::youMust()->meld()->fromYourHand()->withColor(self::getColorsNotOnBoard())->revealingIfUnable()->build();
   }
 
   private function getColorsNotOnBoard(): array

@@ -44,4 +44,9 @@ class Card20 extends AbstractCard
     return self::countCardsKeyedByValue(Locations::SCORE)[1] > 0;
   }
 
+  public function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    return true;
+  }
+
 }

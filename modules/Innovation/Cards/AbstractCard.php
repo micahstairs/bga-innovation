@@ -80,6 +80,8 @@ abstract class AbstractCard
         return static::getPromptForColorChoice();
       case 5: // choose_two_colors
         return static::getPromptForTwoColorChoice();
+      case 6: // choose_rearrange
+        return static::getPromptForRearrangeChoice();
       case 8; // choose_type
         return static::getPromptForTypeChoice();
       case 9: // choose_three_colors
@@ -90,6 +92,8 @@ abstract class AbstractCard
         return static::getPromptForNumberChoice();
       case 12: // choose_icon_type
         return static::getPromptForIconChoice();
+      case 13: // choose_special_achievement
+        return static::getPromptForSpecialAchievementChoice();
       default:
         $cardId = self::getThisCardId();
         throw new \RuntimeException("Unhandled value in getSpecialChoicePrompt: $choiceType for card=$cardId");
@@ -133,25 +137,29 @@ abstract class AbstractCard
       // TODO:(LATER): Remove choose_yes_or_no.
       case 1: // choose_from_list
       case 7: // choose_yes_or_no
-        return static::handleListChoice($choice);
+        static::handleListChoice($choice);
       case 3: // choose_value
-        return static::handleValueChoice($choice);
+        static::handleValueChoice($choice);
       case 4: // choose_color
-        return static::handleColorChoice($choice);
+        static::handleColorChoice($choice);
       case 5: // choose_two_colors
         $colors = Arrays::decode($choice);
-        return static::handleTwoColorChoice($colors[0], $colors[1]);
+        static::handleTwoColorChoice($colors[0], $colors[1]);
+      case 6: // choose_rearrange
+        static::handleRearrangeChoice($choice);
       case 8; // choose_type
-        return static::handleTypeChoice($choice);
+        static::handleTypeChoice($choice);
       case 9: // choose_two_colors
         $colors = Arrays::decode($choice);
-        return static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
+        static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
       case 10: // choose_player
-        return static::handlePlayerChoice($choice);
+        static::handlePlayerChoice($choice);
       case 11: // choose_non_negative_integer
-        return static::handleNumberChoice($choice);
+        static::handleNumberChoice($choice);
       case 12: // choose_icon_type
-        return static::handleIconChoice($choice);
+        static::handleIconChoice($choice);
+      case 13: // choose_special_achievement
+        static::handleSpecialAchievementChoice($choice);
       default:
         $cardId = self::getThisCardId();
         throw new \RuntimeException("Unhandled value in handleSpecialChoice: $choiceType for card=$cardId");
@@ -221,6 +229,20 @@ abstract class AbstractCard
     throw new \RuntimeException("Unimplemented handleIconChoice for card=$cardId");
   }
 
+  protected function handleRearrangeChoice(int $choice)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_rearrange' interactions.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleRearrangeChoice for card=$cardId");
+  }
+
+  protected function handleSpecialAchievementChoice(int $specialAchievementId)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_special_achievement' interactions.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleSpecialAchievementChoice for card=$cardId");
+  }
+
   public function afterInteraction()
   {
     // Subclasses can optionally override this function if any extra handling needs to be done
@@ -244,7 +266,16 @@ abstract class AbstractCard
   public function nonDemandsMightBeEffective(): bool
   {
     // Subclasses should override this method and return false if the card is guaranteed not to have an effect when the non-demands are executed.
+    if (static::nonDemandEffectivenessDependsOnDemand()) {
+      return false;
+    }
     return true;
+  }
+
+  protected function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    // Subclasses should override this method and return true if the card's effectiveness when non-demands are executed only if the demand is effective.
+    return false;
   }
 
   public function echoMightBeEffective(): bool
@@ -534,6 +565,14 @@ abstract class AbstractCard
       return null;
     }
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::ACHIEVEMENTS);
+  }
+
+  protected function transferToAvailableAchievements(?array $card)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, 0, Locations::ACHIEVEMENTS);
   }
 
   protected function return(?array $card): ?array
@@ -1275,6 +1314,20 @@ abstract class AbstractCard
       ]);
     }
     return $options;
+  }
+
+  protected function getPromptForRearrangeChoice(): array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_rearrange' choices.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented getPromptForRearrangeChoice for card=$cardId");
+  }
+
+  protected function getPromptForSpecialAchievementChoice(): array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_special_achievement' choices.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented getPromptForSpecialAchievementChoice for card=$cardId");
   }
 
   // PLAYER HELPERS

@@ -44,4 +44,9 @@ class Card38 extends AbstractCard
     return count(self::filterByIcon(self::getTopCards(), Icons::AUTHORITY)) > 0;
   }
 
+  public function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    return true;
+  }
+
 }

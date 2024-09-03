@@ -48,7 +48,7 @@ class Card5 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->withIcon(Icons::PROSPERITY)->fromYourHand()->toMyScore()->revealIfUnable()->build();
+    return self::youMust()->withIcon(Icons::PROSPERITY)->fromYourHand()->toMyScore()->revealingIfUnable()->build();
   }
 
   public function handleCardChoice(array $card)

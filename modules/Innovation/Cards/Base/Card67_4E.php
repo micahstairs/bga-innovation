@@ -25,16 +25,18 @@ class Card67_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'        => self::countColorsWithIcon(Icons::PROSPERITY, self::getLauncherId()),
-      'location' => Locations::SCORE,
-      'owner_to' => self::getLauncherId(),
-    ];
+    $numCards = self::countColorsWithIcon(Icons::PROSPERITY, self::getLauncherId());
+    return self::youMust()->exactly($numCards)->fromYourScore()->toMine()->build();
   }
 
   public function demandMightBeEffective(): bool
   {
     return self::countColorsWithIcon(Icons::PROSPERITY, self::getLauncherId()) > 0 && self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::getCardsKeyedByColor(Locations::BOARD)[Colors::RED]) > 0;
   }
 
 }

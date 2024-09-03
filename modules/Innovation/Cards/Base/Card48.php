@@ -49,4 +49,9 @@ class Card48 extends AbstractCard
     return count(self::filterByValue(self::getCards(Locations::SCORE), [0, 1, 2, 3, 4])) > 0;
   }
 
+  public function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    return true;
+  }
+
 }
