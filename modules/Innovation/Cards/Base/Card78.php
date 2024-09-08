@@ -5,8 +5,6 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card78 extends AbstractCard
 {
@@ -20,17 +18,7 @@ class Card78 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'                 => 2,
-      'owner_from'        => self::getPlayerId(),
-      'location_from'     => Locations::BOARD,
-      'owner_to'          => self::getLauncherId(),
-      'location_to'       => Locations::SCORE,
-      'color'             => Colors::NON_RED,
-      'without_icon'      => Icons::INDUSTRY,
-      'age'               => ValueSelectors::HIGHEST,
-      'refresh_selection' => true,
-    ];
+    return self::youMust()->exactly(2)->highest()->non(Colors::RED)->withoutIcon(Icons::INDUSTRY)->fromYourBoard()->toMyScore()->refreshingSelection()->build();
   }
 
   public function afterInteraction()

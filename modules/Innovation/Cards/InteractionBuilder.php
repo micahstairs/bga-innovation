@@ -140,6 +140,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function currentlySplayedRight(): InteractionBuilder
+  {
+    $this->interactionOptions['has_splay_direction'] = [Directions::RIGHT];
+    return $this;
+  }
+
   // DIRECTION OF SPLAY
 
   function splayLeft(): InteractionBuilder
@@ -171,6 +177,14 @@ class InteractionBuilder
   function fromAvailableAchievements(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::AVAILABLE_ACHIEVEMENTS;
+    return $this;
+  }
+
+  function yourStack(int $color): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::PILE;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    $this->interactionOptions['color'] = $color;
     return $this;
   }
 
@@ -213,6 +227,20 @@ class InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::SCORE;
     $this->interactionOptions['owner_from'] = $this->state->getLauncherId();
+    return $this;
+  }
+
+  function fromOpponentsScore(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::SCORE;
+    $this->interactionOptions['owner_from'] = 'any opponent';
+    return $this;
+  }
+
+  function fromAnyScore(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::SCORE;
+    $this->interactionOptions['owner_from'] = 'any player';
     return $this;
   }
 

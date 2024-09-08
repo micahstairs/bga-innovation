@@ -9882,12 +9882,6 @@ class Innovation extends Table
 
             switch ($code) {
 
-                // id 80, age 8: Mass media
-                case "80N1B":
-                    $message_for_player = clienttranslate('Choose a value');
-                    $message_for_others = clienttranslate('${player_name} must choose a value');
-                    break;
-
                 // id 83, age 8: Empiricism
                 case "83N1A":
                     $message_for_player = clienttranslate('${You} must choose two colors');
@@ -10812,10 +10806,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 73
-            || $card_id == 76
-            || (78 <= $card_id && $card_id <= 79)
-            || $card_id == 82
+        return $card_id <= 82
             || (87 <= $card_id && $card_id <= 88)
             || $card_id == 92
             || $card_id == 93
@@ -10941,60 +10932,8 @@ class Innovation extends Table
 
                 // Setting the $step_max variable means there is interaction needed with the player
 
-                // id 74, age 7: Railroad        
-                case "74N1_3E":
-                case "74N1_4E":
-                    $step_max = 1;
-                    break;
-
-                case "74N2_3E":
-                    $step_max = 1;
-                    break;
-
-                case "74N2_4E":
-                    // "Draw three 6"
-                    self::executeDraw($player_id, 6);
-                    self::executeDraw($player_id, 6);
-                    self::executeDraw($player_id, 6);
-                    break;
-
-                case "74N3_4E":
-                    $step_max = 1;
-                    break;
-
-                // id 75, age 8: Quantum theory        
-                case "75N1":
-                    $step_max = 1;
-                    break;
-
                 // id 76, age 8: Rocketry       
                 case "76N1":
-                    $step_max = 1;
-                    break;
-
-                // id 77, age 8: Flight
-                case "77N1":
-                    if (self::getCurrentSplayDirection($player_id, Colors::RED) == 3 /* up */) { // "If your red cards are splayed up"
-                        $step_max = 1;
-                    }
-                    break;
-
-                case "77N2":
-                    $step_max = 1;
-                    break;
-
-                // id 80, age 8: Mass media 
-                case "80N1":
-                    $step_max = 1;
-                    break;
-
-                case "80N2":
-                    $step_max = 1;
-                    break;
-
-                // id 81, age 8: Antibiotics
-                case "81N1":
-                    self::setAuxiliaryValueFromArray(array()); // Flag to indicate what ages have been returned
                     $step_max = 1;
                     break;
 
@@ -11505,147 +11444,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 74, age 7: Railroad        
-            case "74N1A_3E":
-            case "74N1A_4E":
-                // "Return all the cards in your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "74N2A_3E":
-            case "74N3A_4E":
-                $splayed_right_colors = array();
-                foreach (Colors::ALL as $color) {
-                    if (self::getCurrentSplayDirection($player_id, $color) == Directions::RIGHT) {
-                        $splayed_right_colors[] = $color;
-                    }
-                }
-                // "You may splay up any one color of your cards currently splayed right"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 3 /* up */ ,
-                    'color'           => $splayed_right_colors
-                );
-                break;
-
-            // id 75, age 8: Quantum theory        
-            case "75N1A":
-                // "You may return up to two cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'n_max'         => 2,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            // id 77, age 8: Flight
-            case "77N1A":
-                // "You may splay any one color of your cards up"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 3 /* up */
-                );
-                break;
-
-            case "77N2A":
-                // "You may splay your red cards up"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 3,
-                    /* up */
-                    'color'           => array(1) /* red */
-                );
-                break;
-
-            // id 80, age 8: Mass media         
-            case "80N1A":
-                // "You may return a card from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
-            case "80N1B":
-                // "Choose a value"
-                $options = array(
-                    'player_id'    => $player_id,
-
-                    'choose_value' => true
-                );
-                break;
-
-            case "80N1C":
-                // "Return all cards of that value from all score piles"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => 'any player',
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age'           => self::getAuxiliaryValue()
-                );
-                break;
-
-            case "80N2A":
-                // "You may splay your purple cards up"
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 3,
-                    /* up */
-                    'color'           => array(4) /* purple */
-                );
-                break;
-
-            // id 81, age 8: Antibiotics
-            case "81N1A":
-                // "You may return up to three cards from your hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'n_max'         => 3,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
 
             // id 83, age 8: Empiricism     
             case "83N1A":
@@ -12219,52 +12017,6 @@ class Innovation extends Table
                     // E1 means the first (and single) echo effect
 
                     // The letter indicates the step : A for the first one, B for the second
-
-                    // id 74, age 7: Railroad        
-                    case "74N1A_3E":
-                        // "Draw three 6"
-                        self::executeDraw($player_id, 6);
-                        self::executeDraw($player_id, 6);
-                        self::executeDraw($player_id, 6);
-                        break;
-
-                    // id 75, age 8: Quantum theory        
-                    case "75N1A":
-                        if ($n == 2) { // "If you return two"
-                            self::executeDraw($player_id, 10); // "Draw a 10"
-                            self::executeDraw($player_id, 10, 'score'); // "Draw and score a 10"
-                        }
-                        break;
-
-                    // id 80, age 8: Mass media         
-                    case "80N1A":
-                        if ($n > 0) { // "If you do
-                            self::incrementStepMax(2);
-                        }
-                        break;
-
-                    // id 81, age 8: Antibiotics
-                    case "81N1A":
-                        if ($n > 0) { // If you do (implicit)
-                            $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
-                            $number_of_cards_to_draw = count($different_values_selected_so_far);
-
-                            if ($number_of_cards_to_draw == 1) {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('Each card ${you} returned has the same value.'), array('you' => 'you'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} returned has the same value.'), array('player_name' => self::renderPlayerName($player_id)));
-                            } else if ($number_of_cards_to_draw > 1) {
-                                $n = self::renderNumber($number_of_cards_to_draw);
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned cards of ${n} different values.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $n));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} returned.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $n));
-                            }
-
-                            // "For every different value of card that you returned"
-                            for ($i = 0; $i < $number_of_cards_to_draw; $i++) {
-                                self::executeDraw($player_id, 8); // "Draw two 8"
-                                self::executeDraw($player_id, 8); //
-                            }
-                        }
-                        break;
 
                     // id 84, age 8: Socialism     
                     case "84N1A_3E":
@@ -12958,13 +12710,6 @@ class Innovation extends Table
                 // The letter indicates the step : A for the first one, B for the second
 
                 // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 80, age 8, Mass media
-                case "80N1B":
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                    self::setAuxiliaryValue($choice);
-                    break;
 
                 // id 81, age 8: Antibiotics
                 case "81N1A":

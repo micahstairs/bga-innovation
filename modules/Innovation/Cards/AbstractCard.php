@@ -1032,6 +1032,11 @@ abstract class AbstractCard
     return self::getSplayDirection($color, self::coercePlayerId($playerId)) > 0;
   }
 
+  protected function isSplayedUp(int $color, int $playerId = null): int
+  {
+    return self::getSplayDirection($color, self::coercePlayerId($playerId)) === Directions::UP;
+  }
+
   // SELECTION HELPERS
 
   protected function getLastSelectedCard(): ?array

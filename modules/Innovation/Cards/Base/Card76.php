@@ -18,20 +18,27 @@ class Card76 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {
-      return [
-        'owner_from'     => 'any opponent',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'n'              => $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2),
-      ];
+      $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2);
     } else {
-      return [
-        'owner_from'     => 'any opponent',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'n'              => self::countColorsWithIcon(Icons::EFFICIENCY),
-      ];
+      $numCards = self::countColorsWithIcon(Icons::EFFICIENCY);
     }
+    return self::youMust()->return()->exactly($numCards)->fromOpponentsScore()->build();
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::isFirstOrThirdEdition() && self::getStandardIconCount(Icons::EFFICIENCY) < 2) {
+      return false;
+    }
+    if (self::isFourthEdition() && self::countColorsWithIcon(Icons::EFFICIENCY) == 0) {
+      return false;
+    }
+    foreach (self::getOpponentIds() as $opponentId) {
+      if (self::hasCards(Locations::SCORE, $opponentId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

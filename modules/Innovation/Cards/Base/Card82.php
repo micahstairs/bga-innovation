@@ -6,7 +6,6 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card82 extends AbstractCard
 {
@@ -22,20 +21,9 @@ class Card82 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'color'      => Colors::NON_YELLOW,
-        'with_icon'  => Icons::EFFICIENCY,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'location'   => Locations::BOARD,
-      ];
+      return self::youMust()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine()->build();
     } else {
-      return [
-        'return_keyword' => true,
-        'n'              => 'all',
-        'color'          => [self::getAuxiliaryValue()],
-        'location_from'  => Locations::PILE,
-      ];
+      return self::youMust()->return()->all()->yourStack(self::getAuxiliaryValue())->build();
     }
   }
 
