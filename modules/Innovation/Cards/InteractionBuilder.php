@@ -37,6 +37,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function otherThan(int $cardId): InteractionBuilder
+  {
+    $this->interactionOptions['not_id'] = $cardId;
+    return $this;
+  }
+
   // NUMBER OF CARDS
 
   function exactly(int $n): InteractionBuilder
@@ -180,6 +186,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromYourRevealed(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::REVEALED;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    return $this;
+  }
+
   function yourStack(int $color): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::PILE;
@@ -199,6 +212,13 @@ class InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::BOARD;
     $this->interactionOptions['owner_from'] = $this->state->getLauncherId();
+    return $this;
+  }
+
+  function fromAnyBoard(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::BOARD;
+    $this->interactionOptions['owner_from'] = 'any player';
     return $this;
   }
 
@@ -278,9 +298,26 @@ class InteractionBuilder
     return $this;
   }
 
+  function toMyBoard(): InteractionBuilder
+  {
+    return $this->toMy()->toBoard();
+  }
+
   function toMyScore(): InteractionBuilder
   {
     return $this->toMy()->toScore();
+  }
+
+  function toMyHand(): InteractionBuilder
+  {
+    return $this->toMy()->toHand();
+  }
+
+  function toYourHand(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
+    $this->interactionOptions['location_to'] = Locations::HAND;
+    return $this;
   }
 
   function junk(): InteractionBuilder
@@ -292,6 +329,18 @@ class InteractionBuilder
   function meld(): InteractionBuilder
   {
     $this->interactionOptions['meld_keyword'] = true;
+    return $this;
+  }
+
+  function toBoard(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::BOARD;
+    return $this;
+  }
+
+  function toHand(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::HAND;
     return $this;
   }
 
@@ -359,6 +408,14 @@ class InteractionBuilder
     $this->interactionOptions['choose_value'] = true;
     return $this;
   }
+
+  function chooseTwoColors(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_two_colors'] = true;
+    return $this;
+  }
+
+
 
   function chooseToRearrange(): InteractionBuilder
   {

@@ -816,9 +816,16 @@ abstract class AbstractCard
     return $cards[0];
   }
 
-  protected function getCards(string $location, int $playerId = null): array
+  protected function getCards(string|array $locations, int $playerId = null): array
   {
-    return $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+    $cards = [];
+    if (!is_array($locations)) {
+      $locations = [$locations];
+    }
+    foreach ($locations as $location) {
+      $cards = array_merge($cards, $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location));
+    }
+    return $cards;
   }
 
   protected function getAvailableStandardAchievements(): array

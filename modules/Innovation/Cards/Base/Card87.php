@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
-use Innovation\Enums\ValueSelectors;
 
 class Card87 extends AbstractCard
 {
@@ -20,17 +19,10 @@ class Card87 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'        => self::countCards(Locations::HAND) - 1,
-        'location' => Locations::HAND,
-        'owner_to' => self::getLauncherId(),
-      ];
+      $numCards = self::countCards(Locations::HAND) - 1;
+      return self::youMust()->exactly($numCards)->fromYourHand()->toMine()->build();
     } else {
-      return [
-        'age'      => ValueSelectors::HIGHEST,
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-      ];
+      return self::youMust()->highest()->fromYourScore()->toMine()->build();
     }
   }
 

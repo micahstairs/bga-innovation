@@ -28,15 +28,7 @@ class Card88 extends AbstractCard
         $this->game->setStat(true, 'fission_triggered');
         $cards = [];
         foreach (self::getPlayerIds() as $player) {
-          $cards = array_merge($cards, self::getCards(Locations::HAND), $player);
-          $cards = array_merge($cards, self::getCards(Locations::BOARD), $player);
-          $cards = array_merge($cards, self::getCards(Locations::SCORE), $player);
-          $cards = array_merge($cards, self::getCards(Locations::REVEALED), $player);
-          if (self::isFourthEdition()) {
-            $cards = array_merge($cards, self::getCards(Locations::DISPLAY), $player);
-            $cards = array_merge($cards, self::getCards(Locations::FORECAST), $player);
-            $cards = array_merge($cards, self::getCards(Locations::SAFE), $player);
-          }
+          $cards = array_merge($cards, self::getCards(self::getAffectedLocations(), $player));
         }
         if (self::isFourthEdition()) {
           self::junkCards($cards);
@@ -72,18 +64,22 @@ class Card88 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'return_keyword' => true,
-      'location_from'  => Locations::BOARD,
-      'not_id'         => CardIds::FISSION,
-      'owner_from'     => 'any player',
-    ];
+    return self::youMust()->return()->otherThan(CardIds::FISSION)->fromAnyBoard()->build();
   }
 
   public function atEndOfEffect()
   {
     if (self::isFirstNonDemand() && self::isFirstOrThirdEdition()) {
       self::draw(10);
+    }
+  }
+
+  public function getAffectedLocations(): array
+  {
+    if (self::isFourthEdition()) {
+      return [Locations::HAND, Locations::BOARD, Locations::SCORE, Locations::REVEALED, Locations::DISPLAY, Locations::FORECAST, Locations::SAFE];
+    } else {
+      return [Locations::HAND, Locations::BOARD, Locations::SCORE, Locations::REVEALED];
     }
   }
 
