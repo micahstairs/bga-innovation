@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card101 extends AbstractCard
 {
@@ -44,11 +43,7 @@ class Card101 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'return_keyword' => true,
-      'location_from'  => Locations::BOARD,
-      'with_icon'      => Icons::HEALTH,
-    ];
+    return self::youMust()->return()->withIcon(Icons::HEALTH)->fromYourBoard()->build();
   }
 
   public function someoneHasMoreHealthThanIndustry(): bool

@@ -4,6 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card52 extends AbstractCard
 {

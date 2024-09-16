@@ -222,6 +222,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromOpponentsBoard(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::BOARD;
+    $this->interactionOptions['owner_from'] = 'any opponent';
+    return $this;
+  }
+
   function fromYourHand(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::HAND;
@@ -308,6 +315,13 @@ class InteractionBuilder
     return $this->toMy()->toScore();
   }
 
+  function toYourScore(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
+    $this->interactionOptions['location_to'] = Locations::SCORE;
+    return $this;
+  }
+
   function toMyHand(): InteractionBuilder
   {
     return $this->toMy()->toHand();
@@ -389,6 +403,12 @@ class InteractionBuilder
   }
 
   // SPECIAL CHOICES
+
+  function chooseCardFrom(string $location): InteractionBuilder
+  {
+    $this->interactionOptions['choose_from'] = $location;
+    return $this;
+  }
 
   function choose(array $choices): InteractionBuilder
   {

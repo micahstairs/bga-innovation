@@ -13,11 +13,8 @@ class Card99_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => self::getMaxValueInLocation(Locations::ACHIEVEMENTS),
-      'location_from'  => Locations::SCORE,
-      'return_keyword' => true,
-    ];
+    $numCards = self::getMaxValueInLocation(Locations::ACHIEVEMENTS);
+    return self::youMust()->return()->exactly($numCards)->fromYourScore()->build();
   }
 
   public function demandMightBeEffective(): bool

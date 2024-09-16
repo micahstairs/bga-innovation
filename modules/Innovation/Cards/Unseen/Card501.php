@@ -29,6 +29,7 @@ class Card501 extends AbstractCard
       if ($card = $this->game->getIfTopCardOnBoard(CardIds::EXILE)) {
         self::return($card);
       }
+      self::draw(3);
     }
   }
 
@@ -42,9 +43,9 @@ class Card501 extends AbstractCard
       ];
     } else {
       return [
-        'location_from' => Locations::SCORE,
-        'age'           => self::getAuxiliaryValue2(),
-        'n'             => 'all',
+        'location_from'  => Locations::SCORE,
+        'age'            => self::getAuxiliaryValue2(),
+        'n'              => 'all',
         'return_keyword' => true,
       ];
     }

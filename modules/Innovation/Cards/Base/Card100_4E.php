@@ -15,14 +15,7 @@ class Card100_4E extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $numAchievements = $this->game->getPlayerNumberOfAchievements(self::getPlayerId());
-      $hasTwiceTheAchievements = true;
-      foreach (self::getOpponentIds() as $opponentId) {
-        if ($numAchievements < $this->game->getPlayerNumberOfAchievements($opponentId) * 2) {
-          $hasTwiceTheAchievements = false;
-        }
-      }
-      if ($hasTwiceTheAchievements) {
+      if (self::hasTwiceAsManyAchievements()) {
         if ($this->game->isTeamGame()) {
           self::notifyTeam(clienttranslate('Your team has at least twice an many achievements than the other team.'));
           self::notifyOtherTeam(clienttranslate('The other team has at least twice as many achievements as yours.'));
@@ -39,15 +32,33 @@ class Card100_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'choose_from' => Locations::BOARD,
-      'not_id'      => CardIds::SELF_SERVICE,
-    ];
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::SELF_SERVICE)->build();
   }
 
   public function handleCardChoice(array $card)
   {
     self::selfExecute($card);
+  }
+
+  private function hasTwiceAsManyAchievements(): bool
+  {
+    $numAchievements = $this->game->getPlayerNumberOfAchievements(self::getPlayerId());
+    foreach (self::getOpponentIds() as $opponentId) {
+      if ($numAchievements < $this->game->getPlayerNumberOfAchievements($opponentId) * 2) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::getId($card) != CardIds::SELF_SERVICE) {
+        return true;
+      }
+    }
+    return self::hasTwiceAsManyAchievements();
   }
 
 }

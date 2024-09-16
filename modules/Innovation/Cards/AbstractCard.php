@@ -138,28 +138,39 @@ abstract class AbstractCard
       case 1: // choose_from_list
       case 7: // choose_yes_or_no
         static::handleListChoice($choice);
+        break;
       case 3: // choose_value
         static::handleValueChoice($choice);
+        break;
       case 4: // choose_color
         static::handleColorChoice($choice);
+        break;
       case 5: // choose_two_colors
         $colors = Arrays::decode($choice);
         static::handleTwoColorChoice($colors[0], $colors[1]);
+        break;
       case 6: // choose_rearrange
         static::handleRearrangeChoice($choice);
+        break;
       case 8; // choose_type
         static::handleTypeChoice($choice);
+        break;
       case 9: // choose_two_colors
         $colors = Arrays::decode($choice);
         static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
+        break;
       case 10: // choose_player
         static::handlePlayerChoice($choice);
+        break;
       case 11: // choose_non_negative_integer
         static::handleNumberChoice($choice);
+        break;
       case 12: // choose_icon_type
         static::handleIconChoice($choice);
+        break;
       case 13: // choose_special_achievement
         static::handleSpecialAchievementChoice($choice);
+        break;
       default:
         $cardId = self::getThisCardId();
         throw new \RuntimeException("Unhandled value in handleSpecialChoice: $choiceType for card=$cardId");
@@ -899,6 +910,16 @@ abstract class AbstractCard
     return self::filterByValue(self::getCards($location), [self::getMaxValueInLocation($location)]);
   }
 
+  protected function hasAnyIcons(array $card, array $icons): bool
+  {
+    foreach ($icons as $icon) {
+      if (self::hasIcon($card, $icon)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   protected function hasIcon(?array $card, int $icon): bool
   {
     if (!$card) {
@@ -965,7 +986,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $card['id'];
+    return intval($card['id']);
   }
 
   protected function getCard(int $cardId): ?array

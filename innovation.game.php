@@ -10791,8 +10791,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 94
-            || (99 <= $card_id && $card_id <= 101)
+        return $card_id <= 101
             || $card_id == 104
             || (110 <= $card_id && $card_id <= 214)
             || (220 <= $card_id && $card_id <= 498)
@@ -10913,81 +10912,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 95, age 10: Bioengineering
-                case "95N1":
-                    $step_max = 1;
-                    break;
-
-                case "95N2":
-                    $player_ids = self::getAllActivePlayerIds();
-                    $max_number_of_leaves = -1;
-                    $leaves_limit = $this->innovationGameState->usingFourthEditionRules() ? 2 : 3;
-                    $anyone_under_leaves_limit = false;
-                    foreach ($player_ids as $player_id) {
-                        $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
-                        if (!$anyone_under_leaves_limit && $number_of_leaves < $leaves_limit) {
-                            self::notifyGeneralInfo(clienttranslate('That is less than ${n}.'), array('i18n' => array('n'), 'n' => self::renderNumber($leaves_limit)));
-                            $anyone_under_leaves_limit = true;
-                        }
-                        if ($number_of_leaves > $max_number_of_leaves) {
-                            $max_number_of_leaves = $number_of_leaves;
-                            $owner_of_max_number_of_leaves = $player_id;
-                            $tie = false;
-                        } else if ($number_of_leaves == $max_number_of_leaves && $player_id != self::getPlayerTeammate($owner_of_max_number_of_leaves)) {
-                            $tie = true;
-                        }
-                    }
-
-                    if (!$anyone_under_leaves_limit) {
-                        self::notifyGeneralInfo(clienttranslate('Nobody has less than ${n} ${leaves}.'), array('i18n' => array('n'), 'leaves' => $leaf, 'n' => self::renderNumber($leaves_limit)));
-                    } else if ($tie) {
-                        self::notifyGeneralInfo(clienttranslate('There is a tie for the most number of ${leaves}. The game continues.'), array('leaves' => $leaf));
-                    } else { // "If any player has less than three leaves, the single player with the most number of leaves"
-                        self::notifyPlayer($owner_of_max_number_of_leaves, 'log', clienttranslate('${You} have more ${leaves} than each opponent.'), array('You' => 'You', 'leaves' => $leaf));
-                        self::notifyAllPlayersBut($owner_of_max_number_of_leaves, 'log', clienttranslate('${player_name} has more ${leaves} than each opponent.'), array('player_name' => self::renderPlayerName($owner_of_max_number_of_leaves), 'leaves' => $leaf));
-                        // Abort win if the game is in a special debug mode which prevents the game from ending
-                        if ($this->innovationGameState->get('debug_mode') != 2) {
-                            $this->innovationGameState->set('winner_by_dogma', $owner_of_max_number_of_leaves); // "Wins"
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Bioengineering');
-                            throw new EndOfGame();
-                        }
-                    }
-
-                    break;
-
-                // id 96, age 10: Software
-                case "96N1":
-                    self::executeDraw($player_id, 10, 'score'); // "Draw and score a 10"
-                    break;
-
-                case "96N2":
-                    // Draw and meld two 10s, then execute each of the second card's non dogma effects. Do not share them."
-                    // NOTE: In 4th edition, draw and meld two 9s instead.
-                    $value = $this->innovationGameState->usingFourthEditionRules() ? 9 : 10;
-                    self::executeDrawAndMeld($player_id, $value);
-                    $card = self::executeDrawAndMeld($player_id, $value);
-                    self::selfExecute($card);
-                    break;
-
-                // id 97, age 10: Miniaturization
-                case "97N1":
-                    $step_max = 1;
-                    break;
-
-                // id 98, age 10: Robotics
-                case "98N1":
-                    $top_green_card = self::getTopCardOnBoard($player_id, Colors::GREEN);
-                    if ($top_green_card !== null) {
-                        self::scoreCard($top_green_card, $player_id); // "Score your top green card"
-                    }
-                    $card = self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10
-                    if ($this->innovationGameState->getEdition() <= 3 || self::hasRessource($card, Icons::INDUSTRY) || self::hasRessource($card, Icons::EFFICIENCY)) {
-                        self::selfExecute($card); // "Execute each its non-demand dogma effects"
-                    }
-                    break;
 
                 // id 102, age 10: Stem cells
                 case "102N1":
@@ -11295,42 +11219,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 95, age 10: Bioengineering
-            case "95N1A":
-                // "Transfer a top card with a leaf from any opponent's board to your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-
-                    'owner_from'    => 'any opponent',
-                    'location_from' => 'board',
-                    'owner_to'      => $player_id,
-                    'location_to'   => 'score',
-
-                    'with_icon'     => 2,
-                    /* leaf */
-
-                    // Fourth edition: "Score a top card with a leaf on any opponent's board."
-                    'score_keyword' => $this->innovationGameState->usingFourthEditionRules(),
-                );
-                break;
-
-            // id 97, age 10: Miniaturization
-            case "97N1A":
-                // "You may return a card from you hand"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n'             => 1,
-                    'can_pass'      => $this->innovationGameState->getEdition() <= 3,
-                    // Fourth edition doesn't say "You may"
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
 
             // id 102, age 10: Stem cells
             case "102N1A":
@@ -11642,52 +11530,6 @@ class Innovation extends Table
                     // E1 means the first (and single) echo effect
 
                     // The letter indicates the step : A for the first one, B for the second
-
-                    // id 97, age 10: Miniaturization
-                    case "97N1A":
-                        // Only proceed if a card was returned
-                        if ($n <= 0) {
-                            break;
-                        }
-
-                        $age_last_selected = $this->innovationGameState->get('age_last_selected');
-                        if ($age_last_selected == 10) { // "If you returned a 10"
-                            $number_of_cards_in_score = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                            $number_of_different_value = 0;
-                            for ($age = 1; $age <= 11; $age++) {
-                                if ($number_of_cards_in_score[$age] > 0) {
-                                    $number_of_different_value++;
-                                }
-                            }
-
-                            if ($number_of_different_value == 0) {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no card in your score pile.'), array('You' => 'You'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s has no card in his score pile.'), array('player_name' => self::renderPlayerName($player_id)));
-                            } else if ($number_of_different_value == 1) {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('Each card in ${your} score pile has the same value.'), array('your' => 'your'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name}\'s score pile has the same value.'), array('player_name' => self::renderPlayerName($player_id)));
-                            } else if ($number_of_different_value > 1) {
-                                $n = self::renderNumber($number_of_different_value);
-                                self::notifyPlayer($player_id, 'log', clienttranslate('There are ${n} different values that can be found in ${your} score pile.'), array('i18n' => array('n'), 'your' => 'your', 'n' => $n));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in ${player_name}\'s score pile.'), array('i18n' => array('n'), 'player_name' => self::renderPlayerName($player_id), 'n' => $n));
-                            }
-
-                            for ($i = 0; $i < $number_of_different_value; $i++) { // "For every different value of card in your score pile"
-                                self::executeDraw($player_id, 10); // "Draw a 10"                    
-                            }
-                        } else {
-                            if ($this->innovationGameState->usingFourthEditionRules()) {
-                                if ($age_last_selected == 11) {
-                                    // "If you returned an 11, junk all cards in the 11 deck."
-                                    self::junkBaseDeck(11);
-                                } else {
-                                    self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age10} or ${age11}.'), array('age10' => self::getAgeSquare(10), 'age11' => self::getAgeSquare(11)));
-                                }
-                            } else {
-                                self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
-                            }
-                        }
-                        break;
 
                     // id 149, Artifacts age 4: Molasses Reef Caravel
                     case "149N1A":

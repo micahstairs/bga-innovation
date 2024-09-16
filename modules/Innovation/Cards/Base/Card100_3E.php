@@ -16,14 +16,7 @@ class Card100_3E extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else if (self::isSecondNonDemand()) {
-      $numAchievements = $this->game->getPlayerNumberOfAchievements(self::getPlayerId());
-      $hasMostAchievements = true;
-      foreach (self::getOpponentIds() as $opponentId) {
-        if ($this->game->getPlayerNumberOfAchievements($opponentId) > $numAchievements) {
-          $hasMostAchievements = false;
-        }
-      }
-      if ($hasMostAchievements) {
+      if (self::hasMoreAchievements()) {
         if ($this->game->isTeamGame()) {
           self::notifyTeam(clienttranslate('Your team has more achievements than the other team.'));
           self::notifyOtherTeam(clienttranslate('The other team has more achievements than yours.'));
@@ -38,16 +31,39 @@ class Card100_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'choose_from' => Locations::BOARD,
-      // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
-      'not_id'      => $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'],
-    ];
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(self::getCardIdWhichCannotBeChosen())->build();
+  }
+
+  private function getCardIdWhichCannotBeChosen(): int
+  {
+    // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
+    return $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'];
   }
 
   public function handleCardChoice(array $card)
   {
     self::selfExecute($card);
+  }
+
+  private function hasMoreAchievements(): bool
+  {
+    $numAchievements = $this->game->getPlayerNumberOfAchievements(self::getPlayerId());
+    foreach (self::getOtherPlayerIds() as $otherPlayerId) {
+      if ($this->game->getPlayerNumberOfAchievements($otherPlayerId) > $numAchievements) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::getId($card) != $this->getCardIdWhichCannotBeChosen()) {
+        return true;
+      }
+    }
+    return self::hasMoreAchievements();
   }
 
 }
