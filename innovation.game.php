@@ -9863,7 +9863,25 @@ class Innovation extends Table
             $message_args_for_player = array('You' => 'You', 'you' => 'you');
             $message_args_for_others = array('player_name' => $player_name);
 
-            if ($code !== null && self::isInSeparateFile($card_id)) {
+            if ($card_id === null) { // Digging/stealing artifact
+                $message_for_player = clienttranslate('${You} must make a choice');
+                $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to rotate into a museum');
+                $card_ids = self::getAuxiliaryArray();
+                $options = [
+                    [
+                        'value' => 0,
+                        'text'  => clienttranslate('Dig from ${age} deck'),
+                        'age'   => self::getAgeSquareWithType(self::getCardInfo($card_ids[0])['age'], CardTypes::ARTIFACTS),
+                    ],
+                ];
+                for ($i = 1; $i < count($card_ids); $i++) {
+                    $options[] = [
+                        'value' => $i,
+                        'text'  => clienttranslate('Rotate ${card} into a museum'),
+                        'card'  => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
+                    ];
+                }
+            } else {
                 $executionState = (new ExecutionState($this))
                     ->setEdition($this->innovationGameState->getEdition())
                     ->setLauncherId($nested_card_state['launcher_id'])
@@ -9878,40 +9896,6 @@ class Innovation extends Table
                 if (array_key_exists('options', $prompt)) {
                     $options = $prompt['options'];
                 }
-            }
-
-            switch ($code) {
-
-                // id 102, age 10: Stem cells 
-                case "102N1A":
-                    $message_for_player = clienttranslate('Do ${you} want to score all the cards from your hand?');
-                    $message_for_others = clienttranslate('${player_name} may score all the cards from his hand');
-                    $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                    break;
-
-                default:
-                    if ($card_id === null) { // Digging/stealing artifact
-                        $message_for_player = clienttranslate('${You} must make a choice');
-                        $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to rotate into a museum');
-                        $card_ids = self::getAuxiliaryArray();
-                        $options = [
-                            [
-                                'value' => 0,
-                                'text'  => clienttranslate('Dig from ${age} deck'),
-                                'age'   => self::getAgeSquareWithType(self::getCardInfo($card_ids[0])['age'], CardTypes::ARTIFACTS),
-                            ],
-                        ];
-                        for ($i = 1; $i < count($card_ids); $i++) {
-                            $options[] = [
-                                'value' => $i,
-                                'text'  => clienttranslate('Rotate ${card} into a museum'),
-                                'card'  => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
-                            ];
-                        }
-                        break;
-                    } else if (!self::isInSeparateFile($card_id)) {
-                        throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
-                    }
             }
 
             $card_names = self::getDogmaCardNames();
@@ -10791,9 +10775,7 @@ class Innovation extends Table
         if ($card['type'] == CardTypes::CITIES) {
             return false;
         }
-        return $card_id <= 101
-            || $card_id == 104
-            || (110 <= $card_id && $card_id <= 214)
+        return $card_id <= 214
             || (220 <= $card_id && $card_id <= 498)
             || $card_id >= 501;
     }
@@ -10912,99 +10894,6 @@ class Innovation extends Table
                 // E1 means the first (and single) echo effect
 
                 // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 102, age 10: Stem cells
-                case "102N1":
-                    if (self::countCardsInLocation($player_id, 'hand') == 0) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand to score.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand to score.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else {
-                        $step_max = 1;
-                    }
-                    break;
-
-                case "102N2":
-                    // NOTE: This is only present in 4th edition and beyond
-                    self::executeDraw($player_id, 11);
-                    break;
-
-                // id 103, age 10: A. I.
-                case "103N1":
-                    self::executeDraw($player_id, 10, 'score'); // "Draw and score a 10"
-                    break;
-
-                case "103N2":
-                    if (self::isTopBoardCard(self::getCardInfo(96)) && self::isTopBoardCard(self::getCardInfo(98))) { // "If Robotics and Software are top cards on any board"
-                        self::notifyGeneralInfo(clienttranslate('Robotics and Software are both visible as top cards.'));
-
-                        $min_score = 9999;
-                        foreach (self::getAllActivePlayerIds() as $any_player_id) {
-                            $score = self::getPlayerScore($any_player_id);
-                            if ($score < $min_score) {
-                                $min_score = $score;
-                                $player_with_min_score = $any_player_id;
-                                $tie = false;
-                            } else if ($score == $min_score) {
-                                $tie = true;
-                            }
-
-                            // Display the score (or the combined score for the team)
-                            if ($score < 2) {
-                                $message_for_others = clienttranslate('${player_name} has ${n} point.');
-                                $message_for_player = clienttranslate('${You} have ${n} point.');
-                            } else {
-                                $message_for_others = clienttranslate('${player_name} has ${n} points.');
-                                $message_for_player = clienttranslate('${You} have ${n} points.');
-                            }
-                            self::notifyAllPlayersBut(
-                                $any_player_id,
-                                "log",
-                                $message_for_others,
-                                array(
-                                    'player_name' => self::getPlayerNameFromId($any_player_id),
-                                    'n'           => $score
-                                )
-                            );
-
-                            self::notifyPlayer(
-                                $any_player_id,
-                                "log",
-                                $message_for_player,
-                                array(
-                                    'You' => 'You',
-                                    'n'   => $score
-                                )
-                            );
-                        }
-                        if ($tie) {
-                            self::notifyGeneralInfo(clienttranslate('There is a tie for the lowest score. The game continues.'));
-                        } else {
-                            self::notifyAllPlayersBut(
-                                $player_with_min_score,
-                                "log",
-                                clienttranslate('${player_name} has the lowest score.'),
-                                array(
-                                    'player_name' => self::getPlayerNameFromId($player_with_min_score)
-                                )
-                            );
-
-                            self::notifyPlayer(
-                                $player_with_min_score,
-                                "log",
-                                clienttranslate('${You} have the lowest score.'),
-                                array(
-                                    'You' => 'You'
-                                )
-                            );
-                            // Abort win if the game is in a special debug mode which prevents the game from ending
-                            if ($this->innovationGameState->get('debug_mode') != 2) {
-                                $this->innovationGameState->set('winner_by_dogma', $player_with_min_score); // "The single player with the most points wins" (scores are not combined for teams)
-                                self::trace('EOG bubbled from self::stPlayerInvolvedTurn A. I.');
-                                throw new EndOfGame();
-                            }
-                        }
-                    }
-                    break;
 
                 // id 216, Relic age 4: Complex Numbers
                 case "216N1":
@@ -11219,16 +11108,6 @@ class Innovation extends Table
             // The letter indicates the step : A for the first one, B for the second
 
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 102, age 10: Stem cells
-            case "102N1A":
-                // The player faces a choice
-                $options = array(
-                    'player_id'        => $player_id,
-
-                    'choose_yes_or_no' => true
-                );
-                break;
 
             // id 216, Relic age 4: Complex Numbers
             case "216N1A":
@@ -12100,33 +11979,6 @@ class Innovation extends Table
                 // The letter indicates the step : A for the first one, B for the second
 
                 // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 102, age 10: Stem cells 
-                case "102N1A":
-                    // $choice is yes or no
-                    if ($choice == 0) { // No scoring
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to score the cards in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to score the cards in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else { // "Score all cards from your hand"
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to score the cards in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to score the cards in his hand.'), array('player_name' => self::renderPlayerName($player_id)));
-
-                        // Get all cards in hand
-                        $ids_of_cards_in_hand = self::getIdsOfCardsInLocation($player_id, 'hand');
-
-                        // Make the transfers
-                        foreach ($ids_of_cards_in_hand as $id) {
-                            $card = self::getCardInfo($id);
-                            self::scoreCard($card, $player_id);
-                        }
-                    }
-                    break;
-
-                case "346N1A":
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::renderPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                    self::setAuxiliaryValue($choice);
-                    break;
 
                 // id 499, Unseen age 2: Cipher
                 case "499N1A":

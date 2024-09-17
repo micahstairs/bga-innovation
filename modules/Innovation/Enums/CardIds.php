@@ -11,6 +11,8 @@ class CardIds
   const STEAM_ENGINE = 52;
   const SKYSCRAPERS = 82;
   const FISSION = 88;
+  const SOFTWARE = 96;
+  const ROBOTICS = 98;
   const SELF_SERVICE = 100;
   const AI = 103;
   const EMPIRE = 105;

@@ -4,7 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 
-class Card74_3E extends AbstractCard
+class Card74_4E extends AbstractCard
 {
   // Railroad (4th edition):
   //   - Return all cards from your hand.
