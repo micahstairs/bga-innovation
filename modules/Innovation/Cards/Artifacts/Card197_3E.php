@@ -17,7 +17,7 @@ class Card197_3E extends AbstractCard
       self::setMaxSteps(1);
     } else {
       foreach (self::getTopCards() as $card) {
-        if ($card['has_demand'] == true) {
+        if (self::hasDemandEffect($card)) {
           self::draw(10);
           return;
         }
@@ -40,7 +40,7 @@ class Card197_3E extends AbstractCard
   public function compelMightBeEffective(): bool
   {
     foreach (self::getTopCards() as $card) {
-      if ($card['has_demand'] == true) {
+      if (self::hasDemandEffect($card)) {
         return true;
       }
     }

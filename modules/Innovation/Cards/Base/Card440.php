@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card440 extends AbstractCard
 {
@@ -26,32 +27,16 @@ class Card440 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'player_id'        => self::getLauncherId(),
-          'choose_icon_type' => true,
-          // TODO(4E): Non-standard icons should be an option too here.
-          'icon'             => [1, 3, 4, 5, 6, 7],
-        ];
+        // TODO(4E): Non-standard icons should be an option too here (and use constants).
+        return self::youMust()->chooseIcon([1, 3, 4, 5, 6, 7])->ofMyChoice()->build();
       } else {
-        return [
-          'location_from'  => 'board',
-          'return_keyword' => true,
-          'with_icon'      => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->return()->exactly(2)->fromYourBoard()->withIcon(self::getAuxiliaryValue())->refreshingSelection()->build();
       }
     }
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => 'board',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourBoard()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'score',
-        'return_keyword' => true,
-        'age_min'        => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->return()->all()->fromYourScore()->minValue(self::getAuxiliaryValue())->build();
     }
   }
 
@@ -71,4 +56,16 @@ class Card440 extends AbstractCard
     self::notifyIconChoice($icon);
     self::setAuxiliaryValue($icon);
   }
+
+  public function demandMightBeEffective(): bool
+  {
+    // NOTE: This could be improved by filtering out stacks where the top card has only [HEALTH] icons.
+    return self::hasCards(Locations::BOARD);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::BOARD) || self::hasCards(Locations::SCORE);
+  }
+
 }

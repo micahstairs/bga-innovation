@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card443 extends AbstractCard
 {
@@ -20,16 +19,9 @@ class Card443 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
     } else {
-      return [
-        'location_from' => Locations::BOARD,
-        'score_keyword' => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->score()->fromYourBoard()->value(self::getAuxiliaryValue())->build();
     }
   }
 
@@ -44,6 +36,11 @@ class Card443 extends AbstractCard
   public function handleValueChoice(int $value)
   {
     self::setAuxiliaryValue($value); // Track value to score next
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByValue(self::getTopCards(), [11])) > 0;
   }
 
 }

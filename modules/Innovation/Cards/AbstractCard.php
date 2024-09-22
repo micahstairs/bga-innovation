@@ -928,6 +928,12 @@ abstract class AbstractCard
     return $this->game->hasRessource($card, $icon);
   }
 
+  protected function hasDemandEffect(int $cardId): bool
+  {
+    $card = $this->game->getCardInfo($cardId);
+    return $card['has_demand'] == true;
+  }
+
   protected function getBonuses(int $playerId = null): array
   {
     return $this->game->getVisibleBonusesOnBoard(self::coercePlayerId($playerId));
@@ -979,6 +985,14 @@ abstract class AbstractCard
       return 0;
     }
     return Locations::isFaceup($card['location']) ? intval($card['faceup_age']) : intval($card['age']);
+  }
+
+  protected static function getFaceupValue(?array $card): int
+  {
+    if (!$card) {
+      return 0;
+    }
+    return intval($card['faceup_age']);
   }
 
   protected static function getId(?array $card): int|null

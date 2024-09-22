@@ -43,6 +43,18 @@ class InteractionBuilder
     return $this;
   }
 
+  function onlyCardsInAuxiliaryArray(): InteractionBuilder
+  {
+    $this->interactionOptions['card_ids_are_in_auxiliary_array'] = true;
+    return $this;
+  }
+
+  function withDemandEffect(): InteractionBuilder
+  {
+    $this->interactionOptions['has_demand_effect'] = true;
+    return $this;
+  }
+
   // NUMBER OF CARDS
 
   function exactly(int $n): InteractionBuilder
@@ -236,6 +248,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromYourHandOrScore(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::HAND_OR_SCORE;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    return $this;
+  }
+
   function fromMyHand(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::HAND;
@@ -416,16 +435,21 @@ class InteractionBuilder
     return $this;
   }
 
-  function choosePlayer(array $playerIds): InteractionBuilder
+  function choosePlayer(?array $playerIds): InteractionBuilder
   {
     $this->interactionOptions['choose_player'] = true;
-    $this->interactionOptions['players'] = $playerIds;
+    if ($playerIds !== null) {
+      $this->interactionOptions['players'] = $playerIds;
+    }
     return $this;
   }
 
-  function chooseValue(): InteractionBuilder
+  function chooseValue(?array $values = null): InteractionBuilder
   {
     $this->interactionOptions['choose_value'] = true;
+    if ($values !== null) {
+      $this->interactionOptions['age'] = $values;
+    }
     return $this;
   }
 
@@ -435,7 +459,12 @@ class InteractionBuilder
     return $this;
   }
 
-
+  function chooseIcon(array $icons): InteractionBuilder
+  {
+    $this->interactionOptions['choose_icon'] = true;
+    $this->interactionOptions['icon'] = $icons;
+    return $this;
+  }
 
   function chooseToRearrange(): InteractionBuilder
   {

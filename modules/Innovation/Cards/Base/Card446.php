@@ -14,18 +14,10 @@ class Card446 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $maxScoreValue = self::getMaxValueInLocation(Locations::SCORE);
     if (self::isDemand()) {
-      return [
-        'player_id'    => self::getLauncherId(),
-        'choose_value' => true,
-      ];
+      return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return [
-        'location_from' => Locations::SCORE,
-        'location_to'   => Locations::REVEALED,
-        'age'           => $maxScoreValue,
-      ];
+      return self::youMust()->reveal()->highest()->fromYourScore()->build();
     }
   }
 
@@ -42,6 +34,16 @@ class Card446 extends AbstractCard
       self::transferToScorePile($card);
       self::selfExecute($card);
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
   }
 
 }

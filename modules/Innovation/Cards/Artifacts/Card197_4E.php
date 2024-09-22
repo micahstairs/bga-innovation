@@ -16,7 +16,7 @@ class Card197_4E extends AbstractCard
   {
     if (self::isCompel()) {
       foreach (self::getTopCards() as $card) {
-        if ($card['has_demand'] == true) {
+        if (self::hasDemandEffect($card)) {
           self::transferToScorePile(self::getBottomCardOfColor($card['color']), self::getLauncherId());
           self::transferToScorePile(self::getBottomCardOfColor($card['color']), self::getLauncherId());
         }
@@ -43,7 +43,7 @@ class Card197_4E extends AbstractCard
   public function compelMightBeEffective(): bool
   {
     foreach (self::getTopCards() as $card) {
-      if ($card['has_demand'] == true) {
+      if (self::hasDemandEffect($card)) {
         return true;
       }
     }
