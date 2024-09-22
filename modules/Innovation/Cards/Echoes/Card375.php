@@ -24,7 +24,7 @@ class Card375 extends AbstractCard
       self::drawAndTuck(5);
     } else if (self::isDemand()) {
       $card = self::drawAndTuck(5);
-      self::return(self::getTopCardOfColor($card['color']));
+      self::return(self::getTopCardOfColor(self::getColor($card)));
     } else if (self::isFirstNonDemand()) {
       if (self::isFirstOrThirdEdition()) {
         self::drawAndTuck(5);
@@ -38,8 +38,8 @@ class Card375 extends AbstractCard
   public function getInteractionOptions(): array
   {
     return [
-      'can_pass' => self::isFirstOrThirdEdition(),
-      'location_from' => 'board',
+      'can_pass'       => self::isFirstOrThirdEdition(),
+      'location_from'  => 'board',
       'return_keyword' => true,
     ];
   }

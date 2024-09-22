@@ -34,7 +34,7 @@ class Card340 extends AbstractCard
       }
     } else {
       $card = self::drawAndReveal(1);
-      $this->notifications->notifyCardColor($card['color']);
+      $this->notifications->notifyCardColor(self::getColor($card));
       self::transferToHand($card);
       if (self::isYellow($card)) {
         foreach (self::getCardsKeyedByValue('hand')[1] as $card) {

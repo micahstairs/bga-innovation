@@ -35,7 +35,7 @@ class Card556 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::getNumChosen() === 1) {
-      self::setAuxiliaryValue($card['color']);
+      self::setAuxiliaryValue(self::getColor($card));
     }
   }
 
@@ -44,7 +44,7 @@ class Card556 extends AbstractCard
     if (self::getNumChosen() === 2) {
       $card = self::reveal($this->game->getDeckTopCard(10, CardTypes::BASE));
       if ($card) {
-        if ($card['color'] == self::getAuxiliaryValue() || $card['color'] == self::getLastSelectedColor()) {
+        if (self::getColor($card) == self::getAuxiliaryValue() || self::getColor($card) == self::getLastSelectedColor()) {
           self::transferToHand($card);
         } else {
           self::placeOnTopOfDeck($card);

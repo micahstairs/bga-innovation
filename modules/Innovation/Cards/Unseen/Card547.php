@@ -96,7 +96,7 @@ class Card547 extends AbstractCard
     for ($age = 1; $age <= 11; $age++) {
       if (count($cardsByAge[$age]) >= 2) {
         foreach ($cardsByAge[$age] as $card) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
     }

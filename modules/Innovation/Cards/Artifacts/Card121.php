@@ -39,9 +39,9 @@ class Card121 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === -1) {
-        self::setAuxiliaryValue($card['color']); // Track color of first scored card
+        self::setAuxiliaryValue(self::getColor($card)); // Track color of first scored card
       } else {
-        self::setAuxiliaryValue2($card['color']); // Track color of second scored card
+        self::setAuxiliaryValue2(self::getColor($card)); // Track color of second scored card
       }
     }
   }

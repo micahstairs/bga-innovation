@@ -21,7 +21,7 @@ class Card405_3E extends AbstractCard
       $cardIds = [];
       for ($i = 0; $i < $numCardsToDraw; $i++) {
         $card = self::draw(9);
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
       self::setAuxiliaryArray($cardIds);
       self::setMaxSteps(2);
@@ -49,10 +49,10 @@ class Card405_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      if ($card['id'] == CardIds::AI) {
+      if (self::getId($card) == CardIds::AI) {
         self::win();
       } else {
-        self::removeFromAuxiliaryArray($card['id']);
+        self::removeFromAuxiliaryArray(self::getId($card));
       }
     }
   }

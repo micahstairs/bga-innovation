@@ -42,21 +42,23 @@ class Card455 extends AbstractCard
       $playerId = self::getAuxiliaryValue();
       return [
         'choose_from' => Locations::BOARD,
-        'owner_from'    => $playerId,
-        'age' => self::getMaxValue(self::getTopCards($playerId)),
+        'owner_from'  => $playerId,
+        'age'         => self::getMaxValue(self::getTopCards($playerId)),
       ];
     }
   }
 
-  public function handlePlayerChoice(int $playerId) {
+  public function handlePlayerChoice(int $playerId)
+  {
     self::removeFromAuxiliaryArray($playerId);
     self::setAuxiliaryValue($playerId); // Track chosen player
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     $playerId = self::getAuxiliaryValue();
     foreach (self::getTopCards($playerId) as $topCard) {
-      if ($topCard['color'] != $card['color']) {
+      if ($topCard['color'] != self::getColor($card)) {
         self::transferToScorePile($topCard, $playerId);
       }
     }

@@ -54,7 +54,7 @@ class Card372_3E extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(max(self::getAuxiliaryValue(), $card['age']));
     } else if (self::isSecondInteraction()) {
-      self::removeFromAuxiliaryArray($card['id']);
+      self::removeFromAuxiliaryArray(self::getId($card));
     }
   }
 
@@ -65,7 +65,7 @@ class Card372_3E extends AbstractCard
       $cardIds = [];
       for ($i = 1; $i <= self::getNumChosen(); $i++) {
         $card = self::draw($valueToDraw);
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
       self::setAuxiliaryArray($cardIds); // Track cards to foreshadow/return
       self::setMaxSteps(3);

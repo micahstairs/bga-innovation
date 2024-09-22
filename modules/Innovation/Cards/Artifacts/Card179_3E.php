@@ -20,8 +20,8 @@ class Card179_3E extends AbstractCard
   {
     self::notifyValueChoice($value);
     $card = self::drawAndMeld($value);
-    self::splayUp($card['color']);
-    if ($card['faceup_age'] == self::countVisibleCardsInStack($card['color'])) {
+    self::splayUp(self::getColor($card));
+    if ($card['faceup_age'] == self::countVisibleCardsInStack(self::getColor($card))) {
       self::win();
     } else {
       self::return($card);

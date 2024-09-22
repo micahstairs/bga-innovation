@@ -47,7 +47,7 @@ class Card418_4E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isEcho() && self::isLauncher()) {
-      self::setActionScopedAuxiliaryArray([$card['id']], self::getPlayerId()); // Track melded card
+      self::setActionScopedAuxiliaryArray([self::getId($card)], self::getPlayerId()); // Track melded card
     }
   }
 

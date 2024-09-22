@@ -57,10 +57,10 @@ class Card511 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      if ($card['color'] == Colors::YELLOW || $card['type'] != CardTypes::BASE) {
+      if (self::getColor($card) == Colors::YELLOW || $card['type'] != CardTypes::BASE) {
         self::setAuxiliaryValue(1); // Remember that a yellow card or an expansion card was tucked
       }
-      $colors = Arrays::removeElement(Arrays::decode(self::getAuxiliaryValue2()), $card['color']);
+      $colors = Arrays::removeElement(Arrays::decode(self::getAuxiliaryValue2()), self::getColor($card));
       if ($colors) {
         self::setNextStep(1);
         self::setAuxiliaryValue2(Arrays::encode($colors));

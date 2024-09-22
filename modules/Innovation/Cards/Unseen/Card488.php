@@ -54,8 +54,8 @@ class Card488 extends AbstractCard
   {
     $colors = [];
     foreach (self::getTopCards() as $card) {
-      if (!in_array($card['color'], $colors)) {
-        $colors[] = $card['color'];
+      if (!in_array(self::getColor($card), $colors)) {
+        $colors[] = self::getColor($card);
       }
     }
     return $colors;

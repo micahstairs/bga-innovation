@@ -100,9 +100,9 @@ class Card423 extends AbstractCard
   {
     $card = self::drawAndMeld($value);
     if (self::isFirstOrThirdEdition()) {
-      self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
+      self::addToActionScopedAuxiliaryArray(self::getId($card), self::getPlayerId());
     } else {
-      self::setActionScopedAuxiliaryArray([$card['id']], self::getPlayerId());
+      self::setActionScopedAuxiliaryArray([self::getId($card)], self::getPlayerId());
     }
   }
 

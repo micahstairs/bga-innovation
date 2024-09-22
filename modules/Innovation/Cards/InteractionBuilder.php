@@ -205,6 +205,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromYourRevealedAndScore(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::REVEALED_THEN_SCORE; // Read as "REVEALED_AND_SCORE" here
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    return $this;
+  }
+
   function yourStack(int $color): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::PILE;

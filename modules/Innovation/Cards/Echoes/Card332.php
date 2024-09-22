@@ -38,9 +38,10 @@ class Card332 extends AbstractCard
     ];
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isFirstInteraction()) {
-      self::removeFromAuxiliaryArray($card['id']);
+      self::removeFromAuxiliaryArray(self::getId($card));
     }
   }
 

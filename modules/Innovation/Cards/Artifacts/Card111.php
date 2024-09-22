@@ -15,8 +15,8 @@ class Card111 extends AbstractCard
   {
     while (true) {
       $card = self::drawAndReveal(1);
-      $topCard = self::getTopCardOfColor($card['color']);
-      if ($topCard && $card['faceup_age'] == $topCard['faceup_age']) {
+      $topCard = self::getTopCardOfColor(self::getColor($card));
+      if ($topCard && self::getFaceupValue($card) == self::getFaceupValue($topCard)) {
         self::score($card);
       } else {
         break;

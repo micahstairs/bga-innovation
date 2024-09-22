@@ -71,7 +71,7 @@ class Card406_4E extends AbstractCard
     $cardIds = [];
     for ($i = 0; $i < $numCardsToDraw; $i++) {
       $card = self::draw($value);
-      $cardIds[] = $card['id'];
+      $cardIds[] = self::getId($card);
     }
     self::setAuxiliaryArray($cardIds); // Track cards which are allowed to be foreshadowed
   }

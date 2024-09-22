@@ -41,7 +41,7 @@ class Card182 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::splayUp($card['color']);
+      self::splayUp(self::getColor($card));
       self::setMaxSteps(2);
     }
   }

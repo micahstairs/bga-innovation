@@ -44,7 +44,7 @@ class Card184_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::getAuxiliaryValue() == self::getLauncherId()) {
-      self::setAuxiliaryValue2($card['id']); // Track which card was melded by the launcher so it can be executed later
+      self::setAuxiliaryValue2(self::getId($card)); // Track which card was melded by the launcher so it can be executed later
     }
 
     if (count(self::getAuxiliaryArray()) > 1) {

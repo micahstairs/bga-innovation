@@ -23,7 +23,7 @@ class Card585 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    $color = $card['color'];
+    $color = self::getColor($card);
     self::splayAslant($color);
     foreach (self::getStack($color) as $card) {
       if (!self::hasIcon($card, Icons::HEALTH)) {

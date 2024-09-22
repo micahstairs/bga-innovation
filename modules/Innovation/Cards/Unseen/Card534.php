@@ -63,7 +63,7 @@ class Card534 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::splayRight($card['color']);
+    self::splayRight(self::getColor($card));
   }
 
 }

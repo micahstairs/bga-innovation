@@ -26,7 +26,7 @@ class Card330 extends AbstractCard
       self::transferToHand($card);
       $bonus = self::getBonusIcon($card);
       if ($bonus > 0) {
-          self::drawAndMeld($bonus);
+        self::drawAndMeld($bonus);
       }
     } else if (self::wasForeseen()) {
       $card = self::draw(4);
@@ -39,7 +39,7 @@ class Card330 extends AbstractCard
       }
       if (count($opponents) > 0) {
         self::setAuxiliaryArray($opponents); // Track which opponents can be chosen to receive the card
-        self::setAuxiliaryValue2($card['id']); // Track which card needs to be transferred to an opponent's hand
+        self::setAuxiliaryValue2(self::getId($card)); // Track which card needs to be transferred to an opponent's hand
         self::setMaxSteps(1);
       }
     }
@@ -47,13 +47,14 @@ class Card330 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-   return [
-    'choose_player' => true,
-    'players' => self::getAuxiliaryArray(),
-   ]; 
+    return [
+      'choose_player' => true,
+      'players'       => self::getAuxiliaryArray(),
+    ];
   }
 
-  public function handlePlayerChoice(int $opponentId) {
+  public function handlePlayerChoice(int $opponentId)
+  {
     self::transferToHand(self::getCard(self::getAuxiliaryValue2()), $opponentId);
   }
 

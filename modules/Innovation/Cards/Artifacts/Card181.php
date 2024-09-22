@@ -26,7 +26,7 @@ class Card181 extends AbstractCard
 
     $matches = false;
     foreach (self::getCards(Locations::HAND) as $card) {
-      if ($card['id'] != $drawnCard['id'] && $card['color'] == $drawnCard['color']) {
+      if (self::getId($card) != $drawnCard['id'] && self::getColor($card) == $drawnCard['color']) {
         $matches = true;
         break;
       }

@@ -41,7 +41,7 @@ class Card32 extends AbstractCard
   {
     if (self::isDemand() && self::isFirstInteraction()) {
       // Delay the transfer so that the players cannot choose the same card
-      self::setAuxiliaryValue($card['id']);
+      self::setAuxiliaryValue(self::getId($card));
     }
     return false;
   }

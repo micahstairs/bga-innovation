@@ -36,7 +36,7 @@ class Card561 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::unsplay($card['color']);
+    self::unsplay(self::getColor($card));
   }
 
   private function getColorsWithMostVisibleCards(): array

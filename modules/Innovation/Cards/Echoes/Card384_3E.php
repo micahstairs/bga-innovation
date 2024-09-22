@@ -33,7 +33,7 @@ class Card384_3E extends AbstractCard
           for ($type = 0; $type <= 5; $type++) {
             $card = $this->game->getDeckTopCard($age, $type);
             if ($card) {
-              $cardIds[] = $card['id'];
+              $cardIds[] = self::getId($card);
             }
           }
         }

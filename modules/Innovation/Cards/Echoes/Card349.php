@@ -25,7 +25,7 @@ class Card349 extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       $minValue = null;
       foreach (self::getTopCards() as $card) {
-        if ($card['color'] != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
+        if (self::getColor($card) != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
           $minValue = $card['faceup_age'];
         }
       }

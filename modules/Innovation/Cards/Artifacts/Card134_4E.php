@@ -35,7 +35,7 @@ class Card134_4E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      self::splayLeft($card['color'], $card['owner'], self::getPlayerId());
+      self::splayLeft(self::getColor($card), $card['owner'], self::getPlayerId());
     } else {
       self::selfExecute($card);
     }

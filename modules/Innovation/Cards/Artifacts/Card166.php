@@ -33,15 +33,15 @@ class Card166 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFourthEdition()) {
-      self::splayRight($card['color']);
+      self::splayRight(self::getColor($card));
     }
 
-    $countsByIcon = self::getAllIconCountsInStack($card['color']);
+    $countsByIcon = self::getAllIconCountsInStack(self::getColor($card));
     $maxCount = $countsByIcon ? max(array_values($countsByIcon)) : 0;
     self::draw($maxCount);
 
     if (self::isFirstOrThirdEdition()) {
-      self::splayRight($card['color']);
+      self::splayRight(self::getColor($card));
     }
   }
 }

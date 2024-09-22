@@ -57,7 +57,7 @@ class Card497 extends AbstractCard
       $cardIds = [];
       foreach (self::getCards(Locations::HAND) as $card) {
         if (!in_array(self::getValue($card), $values)) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
       if ($cardIds) {

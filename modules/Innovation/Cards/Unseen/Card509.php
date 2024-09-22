@@ -25,7 +25,7 @@ class Card509 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    switch ($card['color']) {
+    switch (self::getColor($card)) {
       case Colors::BLUE:
         self::draw(5);
         self::safeguard($card);

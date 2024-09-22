@@ -42,7 +42,7 @@ class Card418_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isEcho() && self::isLauncher()) {
-      self::addToAuxiliaryArray($card['color']);
+      self::addToAuxiliaryArray(self::getColor($card));
     }
   }
 

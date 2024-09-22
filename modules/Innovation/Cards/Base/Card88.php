@@ -23,7 +23,7 @@ class Card88 extends AbstractCard
   {
     if (self::isDemand()) {
       $card = self::drawAndReveal(10);
-      $this->notifications->notifyCardColor($card['color']);
+      $this->notifications->notifyCardColor(self::getColor($card));
       if (self::isRed($card)) {
         $this->game->setStat(true, 'fission_triggered');
         $cards = [];

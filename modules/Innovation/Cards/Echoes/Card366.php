@@ -84,7 +84,7 @@ class Card366 extends AbstractCard
     $cardIds = [];
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
       if (self::isValuedCard($card)) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     return $cardIds;

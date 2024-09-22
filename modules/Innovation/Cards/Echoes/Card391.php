@@ -24,7 +24,7 @@ class Card391 extends AbstractCard
   {
     if (self::isEcho()) {
       $card = self::drawAndTuck(6);
-      $this->game->setIndexedAuxiliaryValue(self::getPlayerId(), $card['color']); // Track last color tucked
+      $this->game->setIndexedAuxiliaryValue(self::getPlayerId(), self::getColor($card)); // Track last color tucked
     } else if (self::isFirstNonDemand()) {
       if (!$this->game->echoEffectWasExecuted()) {
         return;
@@ -40,7 +40,7 @@ class Card391 extends AbstractCard
           self::score(self::getTopCardOfColor($color));
         } else {
           $card = self::drawAndTuck(6);
-          $color = $card['color'];
+          $color = self::getColor($card);
           $continue = true;
         }
       } while ($continue);

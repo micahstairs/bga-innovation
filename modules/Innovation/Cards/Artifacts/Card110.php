@@ -20,26 +20,26 @@ class Card110 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
-      return [
-        'n'                 => 'all',
-        'location_from'     => Locations::BOARD,
-        'return_keyword'    => true,
-        'has_demand_effect' => true,
-      ];
+      return self::youMust()->all()->withDemandEffect()->fromYourBoard()->build();
     } else {
-      return [
-        'location_from'     => Locations::BOARD,
-        'score_keyword'     => true,
-        'color'             => Colors::NON_BLUE,
-        'has_demand_effect' => true,
-      ];
+      return self::youMust()->return()->all()->non(Colors::BLUE)->fromYourBoard()->withDemandEffect()->build();
     }
   }
 
   public function compelMightBeEffective(): bool
   {
     foreach (self::getTopCards() as $card) {
-      if ($card['has_demand'] == true) {
+      if (self::hasDemandEffect($card)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::isBlue($card) && self::hasDemandEffect($card)) {
         return true;
       }
     }

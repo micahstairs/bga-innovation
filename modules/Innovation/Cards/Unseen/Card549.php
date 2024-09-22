@@ -70,7 +70,7 @@ class Card549 extends AbstractCard
     $cardIds = [];
     foreach (self::getCards('revealed') as $card) {
       if (!self::hasIcon($card, Icons::EFFICIENCY) && !self::hasIcon($card, Icons::AVATAR)) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     return $cardIds;

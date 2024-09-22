@@ -47,9 +47,10 @@ class Card124 extends AbstractCard
     self::setAuxiliaryValue($color); // Track color to meld
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isSecondInteraction()) {
-      self::splayLeft($card['color']);
+      self::splayLeft(self::getColor($card));
       if (self::isFourthEdition()) {
         self::setMaxSteps(3);
       }

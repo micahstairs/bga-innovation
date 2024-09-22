@@ -22,7 +22,7 @@ class Card115 extends AbstractCard
     $cardIds = [];
     for ($i = 0; $i < 3; $i++) {
       $card = self::draw($value);
-      $cardIds[] = $card['id'];
+      $cardIds[] = self::getId($card);
     }
     self::setAuxiliaryArray($cardIds);
     self::setMaxSteps(2);

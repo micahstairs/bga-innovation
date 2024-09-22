@@ -16,7 +16,7 @@ class Card538 extends AbstractCard
   {
     $colors = [];
     foreach (self::getTopCards() as $card) {
-      $colors[] = $card['color'];
+      $colors[] = self::getColor($card);
     }
     return [
       'player_id'    => self::getLauncherId(),

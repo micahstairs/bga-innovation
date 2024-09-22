@@ -17,8 +17,8 @@ class Card492 extends AbstractCard
     $cardIds = [];
     $counts = self::countCardsKeyedByColor('hand');
     foreach (self::getCards('hand') as $card) {
-      if ($counts[$card['color']] >= 2) {
-        $cardIds[] = $card['id'];
+      if ($counts[self::getColor($card)] >= 2) {
+        $cardIds[] = self::getId($card);
       }
     }
     if (count($cardIds) >= 2) {

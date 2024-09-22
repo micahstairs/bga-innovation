@@ -34,7 +34,7 @@ class Card430_4E extends AbstractCard
       $cardIds = [];
       foreach (self::getCards('score') as $card) {
         if (in_array($card['age'], $values)) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
       self::setAuxiliaryArray($cardIds);

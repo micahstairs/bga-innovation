@@ -17,7 +17,7 @@ class Card86 extends AbstractCard
     $value = self::isFourthEdition() ? 11 : 10;
     $meldedCard = self::drawAndMeld($value);
     foreach (self::getStack(self::getColor($meldedCard)) as $card) {
-      if ($card['id'] != $meldedCard['id']) {
+      if (self::getId($card) != $meldedCard['id']) {
         self::score($card);
       }
     }

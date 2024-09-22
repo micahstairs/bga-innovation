@@ -41,7 +41,7 @@ class Card174 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::addToAuxiliaryArray($card['id']);
+      self::addToAuxiliaryArray(self::getId($card));
     }
   }
 

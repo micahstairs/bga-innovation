@@ -34,7 +34,7 @@ class Card160 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::splayRight($card['color']);
+    self::splayRight(self::getColor($card));
     if (self::isFourthEdition()) {
       self::junkBaseDeck($card['faceup_age']);
     }

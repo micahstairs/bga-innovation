@@ -22,7 +22,7 @@ class Card425 extends AbstractCard
     $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
     foreach ($this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId(), 2) as $value) {
       foreach ($achievementsByValue[$value] as $card) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     self::setAuxiliaryArray($cardIds);

@@ -17,8 +17,8 @@ class Card197_4E extends AbstractCard
     if (self::isCompel()) {
       foreach (self::getTopCards() as $card) {
         if (self::hasDemandEffect($card)) {
-          self::transferToScorePile(self::getBottomCardOfColor($card['color']), self::getLauncherId());
-          self::transferToScorePile(self::getBottomCardOfColor($card['color']), self::getLauncherId());
+          self::transferToScorePile(self::getBottomCardOfColor(self::getColor($card)), self::getLauncherId());
+          self::transferToScorePile(self::getBottomCardOfColor(self::getColor($card)), self::getLauncherId());
         }
       }
     } else {

@@ -17,7 +17,7 @@ class Card125 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndMeld(3);
-    self::selfExecute(self::meld(self::getBottomCardOfColor($card['color'])));
+    self::selfExecute(self::meld(self::getBottomCardOfColor(self::getColor($card))));
   }
 
 }

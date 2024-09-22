@@ -17,7 +17,7 @@ class Card484 extends AbstractCard
     $colorCounts = [0, 0, 0, 0, 0];
     $cards = self::getCards('hand', self::getLauncherId());
     foreach ($cards as $card) {
-      $colorCounts[$card['color']]++;
+      $colorCounts[self::getColor($card)]++;
     }
     if ($cards) {
       self::revealHand(self::getLauncherId());
@@ -31,8 +31,8 @@ class Card484 extends AbstractCard
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
     foreach (self::getCards('hand') as $card) {
-      if ($colorCounts[$card['color']] > 0) {
-        $cardIds[] = $card['id'];
+      if ($colorCounts[self::getColor($card)] > 0) {
+        $cardIds[] = self::getId($card);
       }
     }
     self::setAuxiliaryArray($cardIds);
@@ -73,8 +73,8 @@ class Card484 extends AbstractCard
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
     foreach (self::getCards('hand', $playerId) as $card) {
-      if ($colorCounts[$card['color']] > 0) {
-        $cardIds[] = $card['id'];
+      if ($colorCounts[self::getColor($card)] > 0) {
+        $cardIds[] = self::getId($card);
       }
     }
     return $cardIds;

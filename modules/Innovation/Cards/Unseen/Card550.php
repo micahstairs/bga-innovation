@@ -38,7 +38,7 @@ class Card550 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($card['id']);
+      self::setAuxiliaryValue(self::getId($card));
     } else {
       // Make sure the card is actually in the safe (the safe could have been full)
       if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {

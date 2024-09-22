@@ -19,7 +19,7 @@ class Card138 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    foreach (array_reverse(self::getStack($card['color'])) as $card) {
+    foreach (array_reverse(self::getStack(self::getColor($card))) as $card) {
       self::transferToScorePile($card, self::getLauncherId());
     }
   }

@@ -90,7 +90,7 @@ class Card399 extends AbstractCard
   {
     if (self::isEcho()) {
       $cardIds = self::getAuxiliaryArray();
-      $cardIdToForeshadow = $cardIds[0] == $card['id'] ? $cardIds[1] : $cardIds[0];
+      $cardIdToForeshadow = $cardIds[0] == self::getId($card) ? $cardIds[1] : $cardIds[0];
       self::foreshadow(self::getCard($cardIdToForeshadow));
     }
   }

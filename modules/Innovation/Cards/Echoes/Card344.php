@@ -27,7 +27,7 @@ class Card344 extends AbstractCard
     $cardIds = [];
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
       if (self::isValuedCard($card) && in_array(intval($card['age']), $values)) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     self::setAuxiliaryArray($cardIds);

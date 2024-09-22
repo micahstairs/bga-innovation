@@ -31,7 +31,7 @@ class Card130_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      $stack = self::getStack($card['color']);
+      $stack = self::getStack(self::getColor($card));
       if (count($stack) >= 2) {
         $coveredCard = $stack[count($stack) - 2];
         if ($coveredCard['type'] != $card['type']) {

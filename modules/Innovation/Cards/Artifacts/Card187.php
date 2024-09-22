@@ -17,7 +17,7 @@ class Card187 extends AbstractCard
     return [
       'n'              => 'all',
       'location_from'  => 'pile',
-      'color'          => [$card['color']],
+      'color'          => [self::getColor($card)],
       'return_keyword' => true,
     ];
   }

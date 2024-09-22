@@ -21,7 +21,7 @@ class Card140 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       $card = self::drawAndReveal(4);
-      self::splayRight($card['color']);
+      self::splayRight(self::getColor($card));
       self::transferToHand($card);
     } else if (self::isFourthEdition()) {
       self::setMaxSteps(2);

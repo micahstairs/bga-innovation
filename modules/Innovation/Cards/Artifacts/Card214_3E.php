@@ -33,7 +33,7 @@ class Card214_3E extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::removeFromAuxiliaryArray($card['color']);
+    self::removeFromAuxiliaryArray(self::getColor($card));
     self::setNextStep(1);
   }
 

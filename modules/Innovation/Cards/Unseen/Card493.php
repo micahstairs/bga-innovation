@@ -33,7 +33,7 @@ class Card493 extends AbstractCard
           continue 2;
         }
       }
-      $cardIds[] = $card['id'];
+      $cardIds[] = self::getId($card);
     }
     self::setAuxiliaryArray($cardIds);
     return [

@@ -46,9 +46,9 @@ class Card136 extends AbstractCard
     if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       if (self::isFourthEdition()) {
         self::transferToHand($card);
-        self::setAuxiliaryValue($card['color']); // Track color to self-execute
+        self::setAuxiliaryValue(self::getColor($card)); // Track color to self-execute
       }
-      self::splayLeft($card['color']);
+      self::splayLeft(self::getColor($card));
       self::setMaxSteps(2);
     } else if (self::isSecondInteraction()) {
       self::selfExecute($card);

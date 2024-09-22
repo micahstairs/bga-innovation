@@ -54,7 +54,7 @@ class Card144 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      $this->notifications->notifyCardColor($card['color']);
+      $this->notifications->notifyCardColor(self::getColor($card));
       self::setMaxSteps(3);
     }
     self::incrementAuxiliaryValue();

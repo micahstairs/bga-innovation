@@ -41,7 +41,7 @@ class Card162_3E extends AbstractCard
   public function handleValueChoice(int $value)
   {
     $card = self::draw($value);
-    self::setAuxiliaryArray([$card['id']]);
+    self::setAuxiliaryArray([self::getId($card)]);
   }
 
   public function handleCardChoice(array $card)

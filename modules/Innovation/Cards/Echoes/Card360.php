@@ -25,7 +25,7 @@ class Card360 extends AbstractCard
       $handCounts = self::countCardsKeyedByValue('hand', self::getLauncherId());
       foreach (self::getCards('score') as $card) {
         if ($handCounts[$card['age']] > 0) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
       self::setMaxSteps(1);

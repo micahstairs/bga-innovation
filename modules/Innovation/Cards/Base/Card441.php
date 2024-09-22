@@ -16,7 +16,7 @@ class Card441 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndMeld(11);
-    $color = $card['color'];
+    $color = self::getColor($card);
     $stack = self::getStack($color);
     if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];

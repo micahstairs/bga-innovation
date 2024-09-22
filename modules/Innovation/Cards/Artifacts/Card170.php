@@ -39,14 +39,14 @@ class Card170 extends AbstractCard
     self::notifyOthers(clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), $args);
 
     $card = self::drawAndReveal(8);
-    $this->notifications->notifyCardColor($card['color']);
-    if (in_array($card['color'], [$color1, $color2, $color3])) {
+    $this->notifications->notifyCardColor(self::getColor($card));
+    if (in_array(self::getColor($card), [$color1, $color2, $color3])) {
       self::score($card);
-      self::splayUp($card['color']);
+      self::splayUp(self::getColor($card));
     } else {
       self::setMaxSteps(2);
       self::transferToHand($card);
-      self::setAuxiliaryValue($card['color']); // Track the color to return
+      self::setAuxiliaryValue(self::getColor($card)); // Track the color to return
     }
   }
 

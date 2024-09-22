@@ -23,7 +23,7 @@ class Card482 extends AbstractCard
       foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
         if (self::isValuedCard($card)) {
           if ($countsByValue[$card['age']] > 0) {
-            $cardIds[] = $card['id'];
+            $cardIds[] = self::getId($card);
           }
         }
       }

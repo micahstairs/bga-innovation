@@ -37,7 +37,7 @@ class Card173 extends AbstractCard
       $maxValue = self::getMaxValue($topCards);
       foreach ($topCards as $card) {
         if (self::getValue($card) == $maxValue) {
-          $colors[] = $card['color'];
+          $colors[] = self::getColor($card);
         }
       }
       return [

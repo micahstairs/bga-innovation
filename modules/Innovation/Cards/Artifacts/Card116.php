@@ -32,7 +32,7 @@ class Card116 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    $topCard = self::getTopCardOfColor($card['color']);
+    $topCard = self::getTopCardOfColor(self::getColor($card));
     if (self::isFourthEdition() && self::isTheirTurn()) {
       self::superExecute($topCard);
     } else {

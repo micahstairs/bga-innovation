@@ -22,13 +22,13 @@ class Card518 extends AbstractCard
       $maxValueInHand = self::getMaxValueInLocation('hand');
       foreach (self::getCards('hand') as $card) {
         if ($card['age'] < $maxValueInHand) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
       $maxValueInScore = self::getMaxValueInLocation('score');
       foreach (self::getCards('score') as $card) {
         if ($card['age'] < $maxValueInScore) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
       if (count($cardIds) > 0) {

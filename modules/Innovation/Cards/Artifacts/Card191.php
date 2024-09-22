@@ -42,7 +42,7 @@ class Card191 extends AbstractCard
   {
     foreach (self::getTopCards() as $card) {
       if ($card['faceup_age'] == $value) {
-        self::splayUp($card['color']);
+        self::splayUp(self::getColor($card));
       }
     }
     self::setAuxiliaryValue($value); // Track value to return from score piles
@@ -54,7 +54,7 @@ class Card191 extends AbstractCard
       return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     }
     foreach (self::getTopCards() as $card) {
-      if ($card['id'] == CardIds::BATTLESHIP_YAMATO) {
+      if (self::getId($card) == CardIds::BATTLESHIP_YAMATO) {
         return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
       }
     }

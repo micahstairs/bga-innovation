@@ -35,7 +35,7 @@ class Card209 extends AbstractCard
       self::notifyOthers(clienttranslate('${player_name} does not have the most cards in his score pile.'));
       if (self::isFourthEdition()) {
         $card = self::drawAndReveal(11);
-        $color = $card['color'];
+        $color = self::getColor($card);
         $stack = self::getStack($color);
         if ($stack) {
           self::scoreCards($stack);

@@ -48,7 +48,7 @@ class Card126 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::removeFromAuxiliaryArray($card['id']);
+    self::removeFromAuxiliaryArray(self::getId($card));
   }
 
 }

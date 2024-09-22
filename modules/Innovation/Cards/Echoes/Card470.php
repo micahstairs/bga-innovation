@@ -23,7 +23,7 @@ class Card470 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::setAuxiliaryValue($card['id']); // Track card to achieve or score
+    self::setAuxiliaryValue(self::getId($card)); // Track card to achieve or score
     self::setMaxSteps(2);
   }
 
@@ -42,10 +42,10 @@ class Card470 extends AbstractCard
     $card = self::getCard(self::getAuxiliaryValue());
     if ($choice === 2) {
       self::score($card);
-      self::repeatIfForeseen($card['color']);
+      self::repeatIfForeseen(self::getColor($card));
     } else if (in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId()))) {
       self::achieve($card);
-      self::repeatIfForeseen($card['color']);
+      self::repeatIfForeseen(self::getColor($card));
     }
   }
 

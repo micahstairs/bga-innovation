@@ -16,8 +16,8 @@ class Card567 extends AbstractCard
     $colors = [];
     foreach (self::getTopCards() as $card) {
       if ($card['splay_direction'] > 0) {
-        $colors[] = $card['color'];
-        self::unsplay($card['color']);
+        $colors[] = self::getColor($card);
+        self::unsplay(self::getColor($card));
       }
     }
     if (count($colors) > 0) {

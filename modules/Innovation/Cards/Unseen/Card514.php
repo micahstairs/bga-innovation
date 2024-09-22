@@ -18,9 +18,9 @@ class Card514 extends AbstractCard
       self::setMaxSteps(1);
     } else {
       $card = self::drawAndMeld(3);
-      if (self::getBottomCardOfColor($card['color'])['id'] == $card['id']) {
+      if (self::getBottomCardOfColor(self::getColor($card))['id'] == self::getId($card)) {
         self::score($card);
-        self::setAuxiliaryValue($card['color']);
+        self::setAuxiliaryValue(self::getColor($card));
         self::setMaxSteps(1);
       }
     }

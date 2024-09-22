@@ -25,7 +25,7 @@ class Card194 extends AbstractCard
     } else {
       do {
         $card = self::drawAndReveal(8);
-        $color = $card['color'];
+        $color = self::getColor($card);
         $playerIds = $this->game->getOwnersOfTopCardWithColorAndAge($color, $this->game->getMaxAgeOfTopCardOfColor($color));
         if (count($playerIds) === 1) {
           $playerId = $playerIds[0];

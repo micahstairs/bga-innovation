@@ -18,7 +18,7 @@ class Card143 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndReveal(3);
-    $this->notifications->notifyCardColor($card['color']);
+    $this->notifications->notifyCardColor(self::getColor($card));
     if (self::isYellow($card)) {
       self::setAuxiliaryValue(Colors::YELLOW);
       self::setMaxSteps(1);
