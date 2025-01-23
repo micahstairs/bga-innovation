@@ -9429,7 +9429,7 @@ class Innovation extends Table
     }
 
     /** Returns the values of the standard achievements that are currently claimable */
-    function getClaimableStandardAchievementValues($player_id)
+    function getClaimableStandardAchievementValues($player_id): array
     {
         $values = [];
         $unclaimed_achievement_count = self::countCardsInLocationKeyedByAge(0, 'achievements');

@@ -19,17 +19,9 @@ class Card118 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     } else {
-      return [
-        'location'   => Locations::ACHIEVEMENTS,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'age'        => self::getLastSelectedAge(),
-      ];
+      return self::youMust()->value(self::getLastSelectedAge())->fromYourAchievements()->toMine()->build();
     }
   }
 

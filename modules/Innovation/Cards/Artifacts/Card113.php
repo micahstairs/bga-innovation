@@ -29,13 +29,7 @@ class Card113 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => Locations::BOARD,
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => Locations::HAND,
-      'with_icon'     => Icons::AUTHORITY,
-      'age'           => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::AUTHORITY),
-    ];
+    return self::youMust()->highest()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMyHand()->build();
   }
 
   public function afterInteraction()
@@ -43,25 +37,6 @@ class Card113 extends AbstractCard
     if (self::isFourthEdition() && self::isCompel() && self::getNumChosen() === 0) {
       self::junkBaseDeck(self::getMinValue(self::getTopCards()));
     }
-  }
-
-  public function compelMightBeEffective(): bool
-  {
-    $topCards = self::getTopCards();
-    foreach ($topCards as $card) {
-      if (self::hasIcon($card, Icons::AUTHORITY)) {
-        return true;
-      }
-    }
-
-    if (self::isFourthEdition()) {
-      $valueToJunk = self::getMinValue(self::getTopCards());
-      if (self::getBaseDeckCount($valueToJunk) > 0) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
 }

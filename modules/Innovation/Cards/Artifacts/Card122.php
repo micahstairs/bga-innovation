@@ -28,14 +28,9 @@ class Card122 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-        'color'          => [self::getAuxiliaryValue()],
-      ];
+      return self::youMust()->return()->all()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
     }
   }
 
@@ -70,7 +65,7 @@ class Card122 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::addToAuxiliaryArray($card['age']);
+    self::addToAuxiliaryArray(self::getFaceupValue($card));
   }
 
   public function afterInteraction()
@@ -89,6 +84,16 @@ class Card122 extends AbstractCard
         self::notifyAll(clienttranslate('There are no claimable achievements matching the returned values.'));
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    foreach (self::getPlayerIds() as $playerId) {
+      if (self::hasCards(Locations::HAND, $playerId)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

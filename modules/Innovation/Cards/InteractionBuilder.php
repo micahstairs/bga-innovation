@@ -55,6 +55,15 @@ class InteractionBuilder
     return $this;
   }
 
+  function ofType(int|array $types): InteractionBuilder
+  {
+    if (!is_array($types)) {
+      $types = [$types];
+    }
+    $this->interactionOptions['type'] = $types;
+    return $this;
+  }
+
   // NUMBER OF CARDS
 
   function exactly(int $n): InteractionBuilder
@@ -195,6 +204,13 @@ class InteractionBuilder
   function fromAvailableAchievements(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::AVAILABLE_ACHIEVEMENTS;
+    return $this;
+  }
+
+  function fromYourAchievements(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::ACHIEVEMENTS;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }
 
@@ -428,6 +444,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function achieveIfEligible(): InteractionBuilder
+  {
+    $this->interactionOptions['achieve_if_eligible'] = true;
+    return $this;
+  }
+
   // SPECIAL CHOICES
 
   function chooseCardFrom(string $location): InteractionBuilder
@@ -439,6 +461,18 @@ class InteractionBuilder
   function choose(array $choices): InteractionBuilder
   {
     $this->interactionOptions['choices'] = $choices;
+    return $this;
+  }
+
+  function chooseColor(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_color'] = true;
+    return $this;
+  }
+
+  function chooseType(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_type'] = true;
     return $this;
   }
 

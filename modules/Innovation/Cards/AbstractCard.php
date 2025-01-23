@@ -995,6 +995,11 @@ abstract class AbstractCard
     return intval($card['faceup_age']);
   }
 
+  protected static function getCardType(array $card): int
+  {
+    return intval($card['type']);
+  }
+
   protected static function getId(?array $card): int|null
   {
     if (!$card) {

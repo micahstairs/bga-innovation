@@ -15,7 +15,7 @@ class Card29 extends AbstractCard
   //     then you transfer a top card without a [HEALTH] from my board to your board!
   // - 4th edition:
   //   - I DEMAND you transfer a top non-green card with [HEALTH] from your board to my board, and
-  //     then meld a top card without [HEALTH]!
+  //     then meld a top card without [HEALTH] from my board!
 
   public function initialExecution()
   {

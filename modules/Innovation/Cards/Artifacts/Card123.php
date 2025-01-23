@@ -5,6 +5,7 @@ namespace Innovation\Cards\Artifacts;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
+use Innovation\Enums\Locations;
 
 class Card123 extends AbstractCard
 {
@@ -30,15 +31,12 @@ class Card123 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'hand',
-      'location_to'   => 'revealed,deck',
-    ];
+    return self::youMust()->return()->fromYourHandOrRevealed()->build();
   }
 
   public function handleCardChoice(array $returnedCard)
   {
-    $color = $returnedCard['color'];
+    $color = self::getColor($returnedCard);
     foreach (self::getPlayerIds() as $playerId) {
       $hasTopArtifact = false;
       foreach (self::getTopCards($playerId) as $card) {
@@ -71,6 +69,11 @@ class Card123 extends AbstractCard
     if ($card = $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT)) {
       self::transferToHand($card);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND) || $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT);
   }
 
 }

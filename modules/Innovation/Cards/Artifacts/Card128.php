@@ -25,13 +25,7 @@ class Card128 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location'   => Locations::BOARD,
-      'owner_from' => self::getPlayerId(),
-      'owner_to'   => self::getLauncherId(),
-      'with_icon'  => Icons::AUTHORITY,
-      'color'      => Colors::NON_RED,
-    ];
+    return self::youMust()->non(Colors::RED)->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMine()->build();
   }
 
   public function compelMightBeEffective(): bool

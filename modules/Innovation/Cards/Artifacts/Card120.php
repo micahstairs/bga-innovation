@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card120 extends AbstractCard
 {
@@ -17,20 +18,22 @@ class Card120 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'hand',
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromYourHand()->build();
   }
 
   public function handleCardChoice(array $meldedCard)
   {
-    foreach (array_reverse(self::getStack($meldedCard['color'])) as $card) {
-      if (self::getId($card) != $meldedCard['id']) {
+    foreach (array_reverse(self::getStack(self::getColor($meldedCard))) as $card) {
+      if (self::getId($card) != self::getId($meldedCard)) {
         self::score($card);
         self::setNextStep(1);
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

@@ -20,13 +20,9 @@ class Card116 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => Locations::HAND,
-        'location_to'   => Locations::REVEALED_THEN_SCORE,
-        'score_keyword' => true,
-      ];
+      return self::youMust()->revealAndScore()->fromYourHand()->build();
     } else {
-      return ['achieve_if_eligible' => true];
+      return self::youMust()->achieveIfEligible()->build();
     }
   }
 
@@ -38,6 +34,14 @@ class Card116 extends AbstractCard
     } else {
       self::selfExecute($topCard);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::isFirstOrThirdEdition()) {
+      return count($this->game->getClaimableStandardAchievementValues(self::getPlayerId())) > 0;
+    }
+    return self::hasCards(Locations::HAND);
   }
 
 }

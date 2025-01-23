@@ -201,7 +201,7 @@ $this->textual_card_infos = array(
     29  => [
         'name'                            => clienttranslate('Compass'),
         'i_demand_effect_first_and_third' => clienttranslate('${I demand} you transfer a top non-green card with a ${icon_2} from your board to my board, and then you transfer a top card without a ${icon_2} from my board to your board!'),
-        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer a top non-green card with ${icon_2} from your board to my board, and then meld a top card without ${icon_2}!'),
+        'i_demand_effect_fourth'          => clienttranslate('${I demand} you transfer a top non-green card with ${icon_2} from your board to my board, and then meld a top card without ${icon_2} from my board!'),
     ],
 
     30  => [

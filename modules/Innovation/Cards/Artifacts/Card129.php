@@ -6,7 +6,6 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card129 extends AbstractCard
 {
@@ -20,8 +19,7 @@ class Card129 extends AbstractCard
     if (self::isCompel()) {
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
-      $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
-      if ($topYellowCard && $topYellowCard['id'] == CardIds::HOLY_GRAIL) {
+      if (self::holyGrailIsTopCard()) {
         self::win();
       }
     }
@@ -29,12 +27,13 @@ class Card129 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location'   => Locations::BOARD,
-      'owner_from' => self::getPlayerId(),
-      'owner_to'   => self::getLauncherId(),
-      'type'       => [CardTypes::ARTIFACTS],
-    ];
+    return self::youMust()->ofType(CardTypes::ARTIFACTS)->fromYourBoard()->toMine()->build();
+  }
+
+  private function holyGrailIsTopCard(): bool
+  {
+    $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
+    return $topYellowCard && self::getId($topYellowCard) == CardIds::HOLY_GRAIL;
   }
 
   public function compelMightBeEffective(): bool
@@ -45,6 +44,11 @@ class Card129 extends AbstractCard
       }
     }
     return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return $this->holyGrailIsTopCard();
   }
 
 }
