@@ -22,27 +22,13 @@ class Card149_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-        'color'         => [Colors::BLUE],
-      ];
+      return self::youMust()->meld()->withColor(Colors::BLUE)->build();
     } else if (self::isThirdInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->fromYourHand()->build();
     } else {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     }
   }
 

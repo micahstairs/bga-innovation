@@ -22,18 +22,9 @@ class Card132 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-        'without_icon'   => Icons::AUTHORITY,
-      ];
+      return self::youMust()->return()->fromYourBoard()->withoutIcon(Icons::AUTHORITY)->build();
     } else {
-      return [
-        'location_from'    => Locations::HAND,
-        'score_keyword'    => true,
-        'without_icon'     => Icons::AUTHORITY,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->score()->fromYourHand()->withoutIcon(Icons::AUTHORITY)->revealingIfUnable()->build();
     }
   }
 
@@ -56,6 +47,12 @@ class Card132 extends AbstractCard
       }
     }
     return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // If 4th edition, we always do something (for simplicity, let's not check for the situation when the tuck is ineffective)
+    return self::isFirstOrThirdEdition() && self::hasCards(Locations::HAND);
   }
 
 }

@@ -21,18 +21,11 @@ class Card134_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isSplayInteraction()) {
-      return [
-        'owner_from'  => 'any player',
-        'choose_from' => Locations::BOARD,
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->build();
     } else {
-      return [
-        'owner_from'  => 'any player',
-        'choose_from' => Locations::BOARD,
-        'color'       => [Colors::PURPLE],
-        // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
-        'not_id'      => $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'],
-      ];
+      // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
+      $excludedCardId = $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(Colors::PURPLE)->otherThan($excludedCardId)->build();
     }
 
   }
@@ -51,6 +44,13 @@ class Card134_3E extends AbstractCard
   private function isSplayInteraction(): bool
   {
     return self::isSecondInteraction() || self::isPostExecution();
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // There are situations where this is not effective, but it's a complicated check and the vast
+    // majority of the time it will be effective.
+    return true;
   }
 
 }

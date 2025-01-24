@@ -37,12 +37,11 @@ class Card143 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $location = self::getAuxiliaryValue() == Colors::YELLOW ? 'hand' : 'score';
-    return [
-      'n'              => 'all',
-      'location_from'  => $location,
-      'return_keyword' => true,
-    ];
+    if (self::getAuxiliaryValue() == Colors::YELLOW) {
+      return self::youMust()->return()->all()->fromYourHand()->build();
+    } else {
+      return self::youMust()->return()->all()->fromYourScore()->build();
+    }
   }
 
 }

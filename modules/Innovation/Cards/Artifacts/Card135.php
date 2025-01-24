@@ -15,11 +15,7 @@ class Card135 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => 'hand',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourHand()->build();
   }
 
   public function afterInteraction()

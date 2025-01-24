@@ -23,20 +23,12 @@ class Card150_3E extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       if (self::countCards(Locations::HAND) < 4) {
-        return [
-          'n'              => 'all',
-          'location_from'  => Locations::BOARD,
-          'return_keyword' => true,
-          'color'          => Colors::NON_GREEN,
-        ];
+        return self::youMust()->return()->all()->non(Colors::GREEN)->fromYourBoard()->build();
       } else {
         return [];
       }
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->build();
     }
   }
 
@@ -47,6 +39,11 @@ class Card150_3E extends AbstractCard
         self::draw(5);
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card146 extends AbstractCard
 {
@@ -21,24 +22,12 @@ class Card146 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'score',
-        'location_to'   => 'revealed,deck',
-      ];
+      return self::youMust()->revealAndReturn()->fromYourScore()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'n'                               => 2,
-        'location_from'                   => 'revealed',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->exactly(2)->fromYourRevealed()->onlyCardsInAuxiliaryArray()->build();
     } else {
-      return [
-        'location_from'                   => 'hand',
-        'location_to'                     => 'revealed',
-        'card_ids_are_in_auxiliary_array' => true,
-        'enable_autoselection'            => false, // Automating this always reveals hidden info
-      ];
+      // Using autoselection here would always reveals hidden info
+      return self::youMust()->reveal()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
     }
   }
 
@@ -55,17 +44,17 @@ class Card146 extends AbstractCard
         self::reveal($card1);
         self::reveal($card2);
         self::notifyAll(clienttranslate('Neither card has a icon in common with the returned card.'));
-        self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+        self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
         self::setMaxSteps(2);
       } else {
         self::setMaxSteps(3);
         self::setNextStep(3);
         $cardIds = [];
         if ($card1Matches) {
-          $cardIds[] = $card1['id'];
+          $cardIds[] = self::getId($card1);
         }
         if ($card2Matches) {
-          $cardIds[] = $card2['id'];
+          $cardIds[] = self::getId($card2);
         }
         self::setAuxiliaryArray($cardIds);
       }
@@ -75,5 +64,10 @@ class Card146 extends AbstractCard
     } else {
       self::transferToHand($card);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
   }
 }

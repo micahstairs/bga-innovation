@@ -26,29 +26,20 @@ class Card147 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => [1, 2, 3, 4, 6, 7, 8, 9, 10, 11],
-      ];
+      return self::youMust()->chooseValue([1, 2, 3, 4, 6, 7, 8, 9, 10, 11])->build();
     } else {
       $valueToReturn = self::getAuxiliaryValue();
       $numAffectedScorePiles = 0;
       foreach (self::getPlayerIds() as $playerId) {
         foreach (self::getCards(Locations::SCORE, $playerId) as $card) {
-          if ($card['age'] == $valueToReturn) {
+          if (self::getValue($card) == $valueToReturn) {
             $numAffectedScorePiles++;
             break;
           }
         }
       }
       self::setAuxiliaryValue2($numAffectedScorePiles); // Track number of cards to draw and score
-      return [
-        'n'              => 'all',
-        'owner_from'     => 'any player',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'age'            => $valueToReturn,
-      ];
+      return self::youMust()->return()->all()->value($valueToReturn)->fromAnyScore()->build();
     }
   }
 
@@ -72,5 +63,10 @@ class Card147 extends AbstractCard
         self::junkBaseDeck(self::getAuxiliaryValue());
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterWithoutValue(self::getCards(Locations::SCORE), 5)) > 0;
   }
 }

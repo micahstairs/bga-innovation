@@ -22,11 +22,7 @@ class Card145_3E extends AbstractCard
         $numTopCardsWithAuthority++;
       }
     }
-    return [
-      'n'        => $numTopCardsWithAuthority,
-      'location' => Locations::SCORE,
-      'owner_to' => self::getLauncherId(),
-    ];
+    return self::youMust()->exactly($numTopCardsWithAuthority)->fromYourScore()->toMine()->build();
   }
 
   public function compelMightBeEffective(): bool
@@ -39,7 +35,7 @@ class Card145_3E extends AbstractCard
       }
     }
 
-    return $hasIcon && self::countCards(Locations::HAND) > 0;
+    return $hasIcon && self::hasCards(Locations::HAND);
   }
 
 }

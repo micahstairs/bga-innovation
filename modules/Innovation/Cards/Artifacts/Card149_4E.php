@@ -30,18 +30,9 @@ class Card149_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     } else {
-      return [
-        'location_from'    => Locations::HAND,
-        'meld_keyword'     => true,
-        'color'            => [Colors::GREEN],
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->meld()->withColor(Colors::GREEN)->revealingIfUnable()->build();
     }
   }
 

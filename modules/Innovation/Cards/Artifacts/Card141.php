@@ -27,13 +27,7 @@ class Card141 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'player_id'     => self::getLauncherId(),
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => Locations::REVEALED,
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => Locations::BOARD,
-    ];
+    return self::youMust()->fromYourRevealed()->toMyBoard()->ofMyChoice()->build();
   }
 
   public function afterInteraction()

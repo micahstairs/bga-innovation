@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card137 extends AbstractCard
 {
@@ -14,12 +13,7 @@ class Card137 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location'   => Locations::BOARD,
-      'owner_from' => self::getPlayerId(),
-      'owner_to'   => self::getLauncherId(),
-      'color'      => self::getEligibleColors(),
-    ];
+    return self::youMust()->fromYourBoard()->withColor(self::getEligibleColors())->toMine()->build();
   }
 
   private function getEligibleColors(): array

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card131 extends AbstractCard
 {
@@ -13,15 +14,9 @@ class Card131 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourHand()->build();
     } else {
-      return [
-        'age'             => self::getLastSelectedAge(),
-        'achieve_keyword' => true,
-      ];
+      return self::youMust()->achieve()->value(self::getLastSelectedAge())->build();
     }
   }
 
@@ -30,6 +25,11 @@ class Card131 extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setMaxSteps(2);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

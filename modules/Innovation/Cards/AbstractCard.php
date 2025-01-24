@@ -767,10 +767,23 @@ abstract class AbstractCard
     }));
   }
 
-  protected function filterByValue(array $cards, array $values): array
+  protected function filterByValue(array $cards, array|int $values): array
   {
+    if (!is_array($values)) {
+      $values = [$values];
+    }
     return array_values(array_filter($cards, function ($card) use ($values) {
       return in_array(self::getValue($card), $values);
+    }));
+  }
+
+  protected function filterWithoutValue(array $cards, array|int $values): array
+  {
+    if (!is_array($values)) {
+      $values = [$values];
+    }
+    return array_values(array_filter($cards, function ($card) use ($values) {
+      return !in_array(self::getValue($card), $values);
     }));
   }
 
@@ -928,8 +941,13 @@ abstract class AbstractCard
     return $this->game->hasRessource($card, $icon);
   }
 
-  protected function hasDemandEffect(int $cardId): bool
+  protected function hasDemandEffect(array|int $cardOrCardId): bool
   {
+    if (is_array($cardOrCardId)) {
+      $cardId = self::getId($cardOrCardId);
+    } else {
+      $cardId = $cardOrCardId;
+    }
     $card = $this->game->getCardInfo($cardId);
     return $card['has_demand'] == true;
   }

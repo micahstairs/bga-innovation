@@ -59,7 +59,7 @@ class Card100_3E extends AbstractCard
   public function nonDemandsMightBeEffective(): bool
   {
     foreach (self::getTopCards() as $card) {
-      if (self::getId($card) != $this->getCardIdWhichCannotBeChosen()) {
+      if (self::getId($card) != $this->getThisCardId()) {
         return true;
       }
     }

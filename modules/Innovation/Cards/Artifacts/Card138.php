@@ -14,7 +14,7 @@ class Card138 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choose_from' => Locations::BOARD];
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->build();
   }
 
   public function handleCardChoice(array $card)

@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 class Card140 extends AbstractCard
@@ -31,23 +30,16 @@ class Card140 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'splay_direction'     => Directions::RIGHT,
-        'has_splay_direction' => [Directions::UNSPLAYED],
-      ];
+      return self::youMust()->splayRight()->currentlyUnsplayed()->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromAvailableAchievements()->build();
     }
   }
 
   public function afterInteraction()
   {
     if (self::isFirstInteraction()) {
-      $value = self::getNumChosen() > 0 ? self::countCardsKeyedByColor('board')[self::getLastSelectedColor()] : 0;
+      $value = self::getNumChosen() > 0 ? self::countCardsKeyedByColor(Locations::BOARD)[self::getLastSelectedColor()] : 0;
       self::setAuxiliaryValue($value); // Track value to junk
     } else if (self::isSecondInteraction()) {
       if (self::getNumChosen() === 0) {

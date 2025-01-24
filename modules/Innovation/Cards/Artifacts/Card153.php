@@ -24,4 +24,10 @@ class Card153 extends AbstractCard
     }
   }
 
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // NOTE: We could check for colors, but we need to make sure we don't accidentally reveal info about colors in other players' hands.
+    return self::countCards(Locations::HAND) === 5;
+  }
+
 }

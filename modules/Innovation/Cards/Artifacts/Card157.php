@@ -17,10 +17,7 @@ class Card157 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'choose_color' => true,
-      'color'        => self::getEligibleColors(),
-    ];
+    return self::youMust()->chooseColor(self::getEligibleColors())->build();
   }
 
   public function handleColorChoice(int $color)

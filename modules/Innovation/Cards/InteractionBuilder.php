@@ -167,6 +167,18 @@ class InteractionBuilder
     return $this;
   }
 
+  function currentlyUnsplayed(): InteractionBuilder
+  {
+    $this->interactionOptions['has_splay_direction'] = [Directions::UNSPLAYED];
+    return $this;
+  }
+
+  function currentlySplayed(array $directions = Directions::SPLAYED): InteractionBuilder
+  {
+    $this->interactionOptions['has_splay_direction'] = $directions;
+    return $this;
+  }
+
   function currentlySplayedRight(): InteractionBuilder
   {
     $this->interactionOptions['has_splay_direction'] = [Directions::RIGHT];
@@ -320,6 +332,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromAnyPlayer(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_from'] = 'any player';
+    return $this;
+  }
+
   // DESTINATION LOCATION
 
   function toPlayer(int $playerId): InteractionBuilder
@@ -444,9 +462,21 @@ class InteractionBuilder
     return $this;
   }
 
+  function achieve(): InteractionBuilder
+  {
+    $this->interactionOptions['achieve_keyword'] = true;
+    return $this;
+  }
+
   function achieveIfEligible(): InteractionBuilder
   {
     $this->interactionOptions['achieve_if_eligible'] = true;
+    return $this;
+  }
+
+  function includingSpecialAchievements(): InteractionBuilder
+  {
+    $this->interactionOptions['include_special_achievements'] = true;
     return $this;
   }
 
@@ -464,9 +494,12 @@ class InteractionBuilder
     return $this;
   }
 
-  function chooseColor(): InteractionBuilder
+  function chooseColor(?array $colors = null): InteractionBuilder
   {
     $this->interactionOptions['choose_color'] = true;
+    if ($colors !== null) {
+      $this->interactionOptions['color'] = $colors;
+    }
     return $this;
   }
 
@@ -476,7 +509,7 @@ class InteractionBuilder
     return $this;
   }
 
-  function choosePlayer(?array $playerIds): InteractionBuilder
+  function choosePlayer(?array $playerIds = null): InteractionBuilder
   {
     $this->interactionOptions['choose_player'] = true;
     if ($playerIds !== null) {
@@ -491,6 +524,12 @@ class InteractionBuilder
     if ($values !== null) {
       $this->interactionOptions['age'] = $values;
     }
+    return $this;
+  }
+
+  function chooseNonNegativeInteger(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_non_negative_integer'] = true;
     return $this;
   }
 
@@ -530,6 +569,12 @@ class InteractionBuilder
   function revealingIfUnable(): InteractionBuilder
   {
     $this->interactionOptions['reveal_if_unable'] = true;
+    return $this;
+  }
+
+  function withoutAutoselection(): InteractionBuilder
+  {
+    $this->interactionOptions['enable_autoselection'] = false;
     return $this;
   }
 

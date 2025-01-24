@@ -16,16 +16,9 @@ class Card148_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'player_id'    => self::getLauncherId(),
-        'choose_value' => true,
-      ];
+      return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return [
-        'location' => Locations::BOARD,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine()->build();
     }
   }
 

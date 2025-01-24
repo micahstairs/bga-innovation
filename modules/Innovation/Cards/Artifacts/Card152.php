@@ -22,15 +22,11 @@ class Card152 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor()->build();
     } else if (self::isSecondInteraction()) {
-      return ['choose_non_negative_integer' => true];
+      return self::youMust()->chooseNonNegativeInteger()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     }
   }
 
