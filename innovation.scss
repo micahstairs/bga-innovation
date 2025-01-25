@@ -67,6 +67,7 @@
     font-weight: bold;
     font-style: normal;
     color: black;
+
     .action-button & {
         color: white;
     }
@@ -195,7 +196,8 @@
     }
 }
 
-#browse_special_achievements_button, #browse_junk_button {
+#browse_special_achievements_button,
+#browse_junk_button {
     display: flex;
     text-align: center;
     width: fit-content;
@@ -299,11 +301,15 @@
     min-height: 126px;
 }
 
-.progress, .artifacts {
+.progress,
+.artifacts {
     display: flex;
 }
 
-.forecast_container, .score_container, .achievement_container, .safe_container {
+.forecast_container,
+.score_container,
+.achievement_container,
+.safe_container {
     flex-grow: 1;
     vertical-align: top;
     display: inline-block;
@@ -496,7 +502,8 @@
     }
 }
 
-#relics, #achievements {
+#relics,
+#achievements {
     margin-left: 45px;
 }
 
@@ -603,15 +610,19 @@
             &.color_0 {
                 right: 6.5px;
             }
+
             &.color_1 {
                 right: 6px;
             }
+
             &.color_2 {
                 right: 6.5px;
             }
+
             &.color_3 {
                 right: 6px;
             }
+
             &.color_4 {
                 right: 6.5px;
             }
@@ -631,15 +642,19 @@
             &.color_0 {
                 right: 21px;
             }
+
             &.color_1 {
                 right: 21px;
             }
+
             &.color_2 {
                 right: 20px;
             }
+
             &.color_3 {
                 right: 22px;
             }
+
             &.color_4 {
                 right: 22px;
             }
@@ -695,6 +710,7 @@
             top: 5px;
             width: 93px;
             height: 15px;
+
             &.type_2 {
                 left: 50px;
                 top: 54.5px;
@@ -707,6 +723,7 @@
             top: 18px;
             width: 230px;
             height: 37px;
+
             &.type_2 {
                 left: 126px;
                 top: 142px;
@@ -719,13 +736,14 @@
     &.fourth {
         color: white;
         font-family: Futura, "Trebuchet MS", Arial, sans-serif;
-        
+
         &.M {
             left: 50px;
             top: 12px;
             width: 100px;
             height: 11px;
             line-height: 6px;
+
             &.type_2 {
                 left: 50px;
                 top: 54.5px;
@@ -738,6 +756,7 @@
             top: 34px;
             width: 230px;
             height: 33px;
+
             &.type_2 {
                 left: 126px;
                 top: 142px;
@@ -762,9 +781,11 @@
 
 .effect_text {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
+
     &.light {
         color: black;
     }
+
     &.dark {
         color: #e8e8e8;
     }
@@ -786,6 +807,7 @@
         &:nth-of-type(n+2) {
             margin-top: 2px;
         }
+
         padding-left: 9px;
     }
 
@@ -793,6 +815,7 @@
         &:nth-of-type(n+2) {
             margin-top: 10px;
         }
+
         padding-left: 19px;
     }
 
@@ -801,7 +824,7 @@
             line-height: #{$i}px;
         }
     }
-    
+
 }
 
 .card_effects {
@@ -814,6 +837,7 @@
             width: 129px;
             height: 56px;
         }
+
         &.fourth {
             right: 2px;
             top: 28px;
@@ -851,6 +875,7 @@
             width: 334px;
             height: 151px;
         }
+
         &.fourth {
             left: 129px;
             top: 77px;
@@ -1609,15 +1634,19 @@
         &.color_0 {
             background-image: url('img/ultimate_blue_background.png');
         }
+
         &.color_1 {
             background-image: url('img/ultimate_red_background.png');
         }
+
         &.color_2 {
             background-image: url('img/ultimate_green_background.png');
         }
+
         &.color_3 {
             background-image: url('img/ultimate_yellow_background.png');
         }
+
         &.color_4 {
             background-image: url('img/ultimate_purple_background.png');
         }
@@ -1625,12 +1654,15 @@
 
     &.third {
         background-image: url('img/card_backgrounds.jpg');
+
         &.type_2 {
             background-image: url('img/card_backgrounds_cities.jpg');
+
             &.simplified {
                 background-image: url('img/simplified_card_backgrounds_cities.jpg');
             }
         }
+
         &.simplified {
             background-image: url('img/simplified_card_backgrounds.jpg');
         }
@@ -1639,16 +1671,19 @@
     &.M {
         width: 180px;
         height: 124px;
+
         &.third {
             background-size: 920px 128px;
             background-position-y: -2px;
             @include m.generate-color-x-position(0, 4, 2, 184px);
         }
+
         &.fourth {
             background-size: 195.5px 136.5px;
             background-position-x: -7px;
             background-position-y: -5px;
         }
+
         border-radius: 6px;
         box-shadow: 3px 3px grey;
 
@@ -1667,11 +1702,13 @@
         height: 316px;
         border-radius: 16px;
         box-shadow: 5px 5px grey;
+
         &.third {
             background-size: 2308px 323px;
             background-position-y: -2px;
             @include m.generate-color-x-position(0, 4, 0, 462px);
         }
+
         &.fourth {
             background-size: 456px 316px;
         }
@@ -1841,32 +1878,41 @@
             &.top {
                 top: 7px;
             }
+
             &.bottom {
                 bottom: 7px;
             }
+
             &.left {
                 left: 7px;
             }
+
             &.center {
                 left: 72px;
             }
+
             &.right {
                 right: 7px;
             }
         }
+
         &.fourth {
             &.top {
                 top: 7px;
             }
+
             &.bottom {
                 bottom: 5px;
             }
+
             &.left {
                 left: 10px;
             }
+
             &.center {
                 left: 72px;
             }
+
             &.right {
                 right: 9px;
             }
@@ -1945,15 +1991,19 @@
             &.top {
                 top: 25px;
             }
+
             &.bottom {
                 bottom: 23px;
             }
+
             &.left {
                 left: 30px;
             }
+
             &.center {
                 left: 195px;
             }
+
             &.right {
                 right: 26px;
             }
@@ -1963,15 +2013,19 @@
             &.top {
                 top: 34px;
             }
+
             &.bottom {
                 bottom: 34px;
             }
+
             &.left {
                 left: 45px;
             }
+
             &.center {
                 left: 190px;
             }
+
             &.right {
                 right: 45px;
             }
@@ -2110,15 +2164,19 @@
         &.color_0 {
             background-position-x: -1px;
         }
+
         &.color_1 {
             background-position-x: -42px;
         }
+
         &.color_2 {
             background-position-x: -83px;
         }
+
         &.color_3 {
             background-position-x: -124px;
         }
+
         &.color_4 {
             background-position-x: -165px;
         }
@@ -2126,9 +2184,11 @@
         &.bottom {
             bottom: 5px;
         }
+
         &.top {
             top: 5px;
         }
+
         &.center {
             left: 70px;
         }
@@ -2178,15 +2238,19 @@
         &.color_0 {
             background-position-x: -1px;
         }
+
         &.color_1 {
             background-position-x: -83px;
         }
+
         &.color_2 {
             background-position-x: -165px;
         }
+
         &.color_3 {
             background-position-x: -247px;
         }
+
         &.color_4 {
             background-position-x: -331px;
         }
@@ -2194,9 +2258,11 @@
         &.bottom {
             bottom: 22px;
         }
+
         &.top {
             top: 22px;
         }
+
         &.center {
             left: 192px;
         }
@@ -2218,15 +2284,19 @@
                 &.top {
                     top: 15px;
                 }
+
                 &.bottom {
                     bottom: 12px;
                 }
+
                 &.left {
                     left: 14px;
                 }
+
                 &.center {
                     left: 80px;
                 }
+
                 &.right {
                     right: 16px;
                 }
@@ -2236,15 +2306,19 @@
                 &.top {
                     top: 15px;
                 }
+
                 &.bottom {
                     bottom: 12px;
                 }
+
                 &.left {
                     left: 17px;
                 }
+
                 &.center {
                     left: 80px;
                 }
+
                 &.right {
                     right: 19px;
                 }
@@ -2263,15 +2337,19 @@
                 &.top {
                     top: 7px;
                 }
+
                 &.bottom {
                     bottom: 7px;
                 }
+
                 &.left {
                     left: 7px;
                 }
+
                 &.center {
                     left: 73px;
                 }
+
                 &.right {
                     right: 7px;
                 }
@@ -2281,15 +2359,19 @@
                 &.top {
                     top: 7px;
                 }
+
                 &.bottom {
                     bottom: 7px;
                 }
+
                 &.left {
                     left: 10px;
                 }
+
                 &.center {
                     left: 73px;
                 }
+
                 &.right {
                     right: 10px;
                 }
@@ -2310,15 +2392,19 @@
             &.top {
                 top: 44px;
             }
+
             &.bottom {
                 bottom: 35px;
             }
+
             &.left {
                 left: 48px;
             }
+
             &.center {
                 left: 211px;
             }
+
             &.right {
                 right: 41px;
             }
@@ -2336,15 +2422,19 @@
             &.top {
                 top: 25px;
             }
+
             &.bottom {
                 bottom: 23px;
             }
+
             &.left {
                 left: 30px;
             }
+
             &.center {
                 left: 193px;
             }
+
             &.right {
                 right: 26px;
             }
@@ -2367,15 +2457,19 @@
             &.top {
                 top: 2px;
             }
+
             &.bottom {
                 bottom: 1px;
             }
+
             &.left {
                 left: 4px;
             }
+
             &.center {
                 left: 69px;
             }
+
             &.right {
                 right: 2px;
             }
@@ -2385,15 +2479,19 @@
             &.top {
                 top: 5px;
             }
+
             &.bottom {
                 bottom: 0px;
             }
+
             &.left {
                 left: 7px;
             }
+
             &.center {
                 left: 69px;
             }
+
             &.right {
                 right: 4px;
             }
@@ -2409,15 +2507,19 @@
             &.top {
                 top: 17px;
             }
+
             &.bottom {
                 bottom: 11px;
             }
+
             &.left {
                 left: 26px;
             }
+
             &.center {
                 left: 192px;
             }
+
             &.right {
                 right: 15px;
             }
@@ -2427,15 +2529,19 @@
             &.top {
                 top: 30px;
             }
+
             &.bottom {
                 bottom: 24px;
             }
+
             &.left {
                 left: 37px;
             }
+
             &.center {
                 left: 182px;
             }
+
             &.right {
                 right: 34px;
             }
