@@ -1878,15 +1878,10 @@ abstract class AbstractCard
     return $this->game->innovationGameState->get('can_pass');
   }
 
-  private function getThisCardId(): string
+  protected function getThisCardId(): string
   {
     $className = get_class($this);
     return intval(substr($className, strrpos($className, "\\") + 5));
-  }
-
-  private function getThisCard(): array
-  {
-    return self::getCard(self::getThisCardId());
   }
 
   private function coercePlayerId(?int $playerId): int

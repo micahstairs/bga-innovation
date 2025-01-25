@@ -13,15 +13,9 @@ class Card164_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->build();
     } else {
-      return [
-        'age'             => self::getLastSelectedFaceUpAge(),
-        'achieve_keyword' => true,
-      ];
+      return self::youMust()->achieve()->value(self::getLastSelectedFaceUpAge())->build();
     }
   }
 
@@ -30,5 +24,10 @@ class Card164_3E extends AbstractCard
     if (self::isFirstInteraction() && self::getNumChosen() === 1) {
       self::setMaxSteps(2);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 }

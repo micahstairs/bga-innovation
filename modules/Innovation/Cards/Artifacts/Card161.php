@@ -19,7 +19,7 @@ class Card161 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
-      if ($topYellowCard && $topYellowCard['id'] == CardIds::GUJIN_TUSHU_JICHENG) {
+      if ($topYellowCard && self::getId($topYellowCard) == CardIds::GUJIN_TUSHU_JICHENG) {
         self::setMaxSteps(1);
       }
     } else {
@@ -31,14 +31,18 @@ class Card161 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from' => 'any other player',
-      'choose_from' => Locations::BOARD,
-    ];
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyOtherPlayer()->build();
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::superExecute($card);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // Technically, there are situations where this is not effective, but the check is complex and not worth it.
+    return true;
   }
 
 }

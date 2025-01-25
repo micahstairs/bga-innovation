@@ -20,14 +20,11 @@ class Card163 extends AbstractCard
     $this->notifications->notifyCardColor(self::getColor($card));
     self::transferToHand($card);
     if (self::isRed($card)) {
-      return ['achieve_keyword' => true];
+      return self::youMust()->achieve()->build();
     } else if (self::isFirstOrThirdEdition()) {
       return [];
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->build();
     }
   }
 }

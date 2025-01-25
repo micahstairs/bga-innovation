@@ -338,6 +338,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromAnyOtherPlayer(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_from'] = 'any other player';
+    return $this;
+  }
+
   // DESTINATION LOCATION
 
   function toPlayer(int $playerId): InteractionBuilder
@@ -421,6 +427,12 @@ class InteractionBuilder
   function return(): InteractionBuilder
   {
     $this->interactionOptions['return_keyword'] = true;
+    return $this;
+  }
+
+  function topDeck(): InteractionBuilder
+  {
+    $this->interactionOptions['topdeck_keyword'] = true;
     return $this;
   }
 
