@@ -492,6 +492,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function excludingRelics(): InteractionBuilder
+  {
+    $this->interactionOptions['include_relics'] = false;
+    return $this;
+  }
+
   // SPECIAL CHOICES
 
   function chooseCardFrom(string $location): InteractionBuilder

@@ -23,25 +23,16 @@ class Card191 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getSelectableValues(),
-      ];
+      return self::youMust()->chooseValue(self::getSelectableValues())->build();
     } else {
-      return [
-        'n'              => 'all',
-        'owner_from'     => 'any player',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'age'            => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromAnyScore()->build();
     }
   }
 
   public function handleValueChoice(int $value)
   {
     foreach (self::getTopCards() as $card) {
-      if ($card['faceup_age'] == $value) {
+      if (self::getFaceupValue($card) == $value) {
         self::splayUp(self::getColor($card));
       }
     }

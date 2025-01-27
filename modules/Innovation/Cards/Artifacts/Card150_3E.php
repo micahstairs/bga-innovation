@@ -28,7 +28,7 @@ class Card150_3E extends AbstractCard
         return [];
       }
     } else {
-      return self::youMust()->meld()->build();
+      return self::youMust()->meld()->fromYourHand()->build();
     }
   }
 

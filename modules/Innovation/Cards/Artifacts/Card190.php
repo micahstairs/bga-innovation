@@ -15,24 +15,20 @@ class Card190 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'  => 'hand',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->fromYourHand()->build();
   }
 
   public function afterInteraction()
   {
-    $value = 0;
+    $valueToDraw = 0;
     if (self::getNumChosen() > 0) {
-      $value = self::getLastSelectedAge();
+      $valueToDraw = self::getLastSelectedAge();
     }
-    $card1 = self::drawAndScore($value);
-    $card2 = self::drawAndScore($value);
-    $card3 = self::drawAndScore($value);
-
-    if (self::isFourthEdition() && ($card1['age'] != $value || $card2['age'] != $value || $card3['age'] != $value)) {
-      self::junkBaseDeck(max($card1['age'], $card2['age'], $card3['age']));
+    $value1 = self::getValue(self::drawAndScore($valueToDraw));
+    $value2 = self::getValue(self::drawAndScore($valueToDraw));
+    $value3 = self::getValue(self::drawAndScore($valueToDraw));
+    if (self::isFourthEdition() && ($value1 != $valueToDraw || $value2 != $valueToDraw || $value3 != $valueToDraw)) {
+      self::junkBaseDeck(max($value1, $value2, $value3));
     }
   }
 

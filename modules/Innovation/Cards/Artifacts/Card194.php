@@ -47,11 +47,7 @@ class Card194 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'  => Locations::ACHIEVEMENTS,
-      'return_keyword' => true,
-      'include_relics' => false,
-    ];
+    return self::youMust()->return()->fromYourAchievements()->excludingRelics()->build();
   }
 
   public function compelMightBeEffective(): bool

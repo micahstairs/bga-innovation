@@ -28,11 +28,7 @@ class Card197_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'     => Locations::BOARD,
-      'score_keyword'     => true,
-      'has_demand_effect' => true,
-    ];
+    return self::youMust()->score()->fromYourBoard()->withDemandEffect()->build();
   }
 
   public function handleCardChoice(array $card)
@@ -41,6 +37,16 @@ class Card197_4E extends AbstractCard
   }
 
   public function compelMightBeEffective(): bool
+  {
+    return self::hasTopCardWithDemandEffect();
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasTopCardWithDemandEffect();
+  }
+
+  private function hasTopCardWithDemandEffect(): bool
   {
     foreach (self::getTopCards() as $card) {
       if (self::hasDemandEffect($card)) {

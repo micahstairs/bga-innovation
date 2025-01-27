@@ -14,12 +14,7 @@ class Card187 extends AbstractCard
   {
     $card = self::drawAndReveal(8);
     self::transferToHand($card);
-    return [
-      'n'              => 'all',
-      'location_from'  => 'pile',
-      'color'          => [self::getColor($card)],
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourStack(self::getColor($card))->build();
   }
 
 }

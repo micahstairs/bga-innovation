@@ -18,13 +18,9 @@ class Card196 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourScore()->build();
     } else {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     }
   }
 

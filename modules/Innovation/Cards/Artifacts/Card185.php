@@ -35,10 +35,7 @@ class Card185 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-      'junk_keyword'  => true,
-    ];
+    return self::youMust()->junk()->fromAvailableAchievements()->build();
   }
 
 }

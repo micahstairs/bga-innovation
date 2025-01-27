@@ -5,7 +5,6 @@ namespace Innovation\Cards\Artifacts;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card192_3E extends AbstractCard
 {
@@ -15,12 +14,7 @@ class Card192_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location'  => Locations::BOARD,
-      'owner_to'  => self::getLauncherId(),
-      'with_icon' => Icons::EFFICIENCY,
-      'color'     => Colors::NON_YELLOW,
-    ];
+    return self::youMust()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine()->build();
   }
 
   public function handleCardChoice(array $card)
@@ -30,12 +24,7 @@ class Card192_3E extends AbstractCard
 
   public function compelMightBeEffective(): bool
   {
-    foreach (self::getTopCards() as $card) {
-      if (!self::isYellow($card) && self::hasIcon($card, Icons::EFFICIENCY)) {
-        return true;
-      }
-    }
-    return false;
+    return count(self::filterByIcon(self::filterByColor(self::getTopCards(), Colors::NON_YELLOW), Icons::EFFICIENCY)) > 0;
   }
 
 }

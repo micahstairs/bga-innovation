@@ -26,16 +26,9 @@ class Card186_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => Locations::BOARD,
-        'junk_keyword'  => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromYourBoard()->build();
     } else {
-      return [
-        'achieve_keyword'              => true,
-        'include_special_achievements' => true,
-      ];
+      return self::youMust()->achieve()->includingSpecialAchievements()->build();
     }
   }
 
