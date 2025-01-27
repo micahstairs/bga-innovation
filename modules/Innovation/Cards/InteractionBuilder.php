@@ -240,11 +240,11 @@ class InteractionBuilder
     return $this;
   }
 
-  function yourStack(int $color): InteractionBuilder
+  function fromYourStack(int $color): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::PILE;
     $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
-    $this->interactionOptions['color'] = $color;
+    $this->interactionOptions['color'] = [$color];
     return $this;
   }
 
@@ -521,11 +521,11 @@ class InteractionBuilder
     return $this;
   }
 
-  function choosePlayer(?array $playerIds = null): InteractionBuilder
+  function choosePlayer(?array $playerIndexes = null): InteractionBuilder
   {
     $this->interactionOptions['choose_player'] = true;
-    if ($playerIds !== null) {
-      $this->interactionOptions['players'] = $playerIds;
+    if ($playerIndexes !== null) {
+      $this->interactionOptions['players'] = $playerIndexes;
     }
     return $this;
   }
@@ -548,6 +548,12 @@ class InteractionBuilder
   function chooseTwoColors(): InteractionBuilder
   {
     $this->interactionOptions['choose_two_colors'] = true;
+    return $this;
+  }
+
+  function chooseThreeColors(): InteractionBuilder
+  {
+    $this->interactionOptions['choose_three_colors'] = true;
     return $this;
   }
 
@@ -587,6 +593,12 @@ class InteractionBuilder
   function withoutAutoselection(): InteractionBuilder
   {
     $this->interactionOptions['enable_autoselection'] = false;
+    return $this;
+  }
+
+  function forceAutoselection(): InteractionBuilder
+  {
+    $this->interactionOptions['enable_autoselection'] = true;
     return $this;
   }
 

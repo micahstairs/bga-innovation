@@ -16,18 +16,11 @@ class Card171_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location'   => Locations::SCORE,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'age'        => self::getValue(self::getTopCardOfColor(Colors::YELLOW)),
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW));
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     } else {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'age'            => self::getValue(self::getTopCardOfColor(Colors::GREEN))
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::GREEN));
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     }
   }
 

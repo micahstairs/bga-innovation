@@ -13,7 +13,7 @@ class Card179_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choose_value' => true];
+    return self::youMust()->chooseValue()->build();
   }
 
   public function handleValueChoice(int $value)
@@ -21,7 +21,7 @@ class Card179_3E extends AbstractCard
     self::notifyValueChoice($value);
     $card = self::drawAndMeld($value);
     self::splayUp(self::getColor($card));
-    if ($card['faceup_age'] == self::countVisibleCardsInStack(self::getColor($card))) {
+    if (self::getFaceupValue($card) == self::countVisibleCardsInStack(self::getColor($card))) {
       self::win();
     } else {
       self::return($card);

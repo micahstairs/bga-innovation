@@ -18,15 +18,9 @@ class Card166 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {
-      return [
-        'location_from' => Locations::HAND,
-        'location_to'   => Locations::REVEALED_THEN_DECK,
-      ];
+      return self::youMust()->revealAndReturn()->fromYourHand()->build();
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand()->build();
     }
   }
 
@@ -43,5 +37,10 @@ class Card166 extends AbstractCard
     if (self::isFirstOrThirdEdition()) {
       self::splayRight(self::getColor($card));
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 }

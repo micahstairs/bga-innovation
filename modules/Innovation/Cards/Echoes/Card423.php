@@ -21,6 +21,8 @@ class Card423 extends AbstractCard
   //     echo effect during this action, regardless of eligibility. If you do, self-execute the
   //     melded card.
 
+  // TODO: Split this into two separate files. There's also an existing bug here where cards get stuck in the revealed zone.
+
   public function initialExecution()
   {
     if (self::isEcho()) {

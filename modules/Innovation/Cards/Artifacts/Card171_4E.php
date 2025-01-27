@@ -26,21 +26,9 @@ class Card171_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::REVEALED,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'color'         => [Colors::YELLOW],
-      ];
+      return self::youMust()->withColor(Colors::YELLOW)->fromYourRevealed()->toMyScore()->build();
     } else {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::REVEALED,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::HAND,
-        'color'         => [Colors::PURPLE],
-      ];
+      return self::youMust()->withColor(Colors::PURPLE)->fromYourRevealed()->toMyHand()->build();
     }
   }
 
@@ -56,7 +44,7 @@ class Card171_4E extends AbstractCard
   public function compelMightBeEffective(): bool
   {
     // NOTE: The launcher cannot know what colors are in the player's score pile.
-    return self::getTopCardOfColor(Colors::RED) || self::getTopCardOfColor(Colors::GREEN) || self::countCards(Locations::SCORE);
+    return self::getTopCardOfColor(Colors::RED) || self::getTopCardOfColor(Colors::GREEN) || self::hasCards(Locations::SCORE);
   }
 
 }

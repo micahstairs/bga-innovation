@@ -18,23 +18,11 @@ class Card182 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'n'                => 'all',
-        'location_from'    => Locations::SCORE,
-        'tuck_keyword'     => true,
-        'color'            => [self::getLastSelectedColor()],
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->tuck()->all()->fromYourScore()->withColor(self::getLastSelectedColor())->revealingIfUnable()->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->build();
     }
   }
 
@@ -51,6 +39,11 @@ class Card182 extends AbstractCard
     if (self::isFourthEdition() && self::isSecondInteraction() && self::getNumChosen() > 0) {
       self::setMaxSteps(3);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

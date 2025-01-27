@@ -23,7 +23,7 @@ class Card126 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       return self::youMust()->meld()->fromYourHand()->onlyCardsInAuxiliaryArray()->build();
     } else {
-      return self::youMust()->choosePlayer(self::getOpponentIds())->build();
+      return self::youMust()->choosePlayer(self::getOpponents())->build();
     }
   }
 

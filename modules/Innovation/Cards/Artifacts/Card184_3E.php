@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card184_3E extends AbstractCard
 {
@@ -23,16 +22,9 @@ class Card184_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_player' => true,
-        'players'       => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->choosePlayer(self::getAuxiliaryArray())->build();
     } else {
-      return [
-        'location_from' => Locations::REVEALED,
-        'location_to'   => Locations::BOARD,
-        'owner_to'      => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->fromYourRevealed()->toPlayer(self::getAuxiliaryValue())->toBoard()->build();
     }
   }
 

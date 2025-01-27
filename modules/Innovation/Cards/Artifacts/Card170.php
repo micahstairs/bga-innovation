@@ -4,7 +4,6 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card170 extends AbstractCard
 {
@@ -16,14 +15,9 @@ class Card170 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_three_colors' => true];
+      return self::youMust()->chooseThreeColors()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'color'          => [self::getAuxiliaryValue()],
-      ];
+      return self::youMust()->return()->all()->withColor(self::getAuxiliaryValue())->fromYourScore()->build();
     }
   }
 

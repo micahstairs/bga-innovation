@@ -21,7 +21,7 @@ class Card18 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->meld()->minCards(1)->maxCards(2)->fromYourHand()->build();
     } else {
-      return self::youMay()->choosePlayer(self::getOtherPlayerIds())->build();
+      return self::youMay()->choosePlayer(self::getOtherPlayers())->build();
     }
   }
 

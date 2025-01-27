@@ -37,12 +37,7 @@ class Card180 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'    => Locations::HAND,
-      'meld_keyword'     => true,
-      'color'            => [Colors::BLUE],
-      'reveal_if_unable' => true,
-    ];
+    return self::youMust()->meld()->withColor(Colors::BLUE)->revealingIfUnable()->build();
   }
 
   public function afterInteraction()

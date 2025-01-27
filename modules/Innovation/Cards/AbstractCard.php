@@ -1489,14 +1489,29 @@ abstract class AbstractCard
     return $this->game->getActiveOpponentIds(self::coercePlayerId($playerId));
   }
 
+  protected function getOpponents(int $playerId = null): array
+  {
+    return $this->game->getActiveOpponents(self::coercePlayerId($playerId));
+  }
+
   protected function getOtherPlayerIds(int $playerId = null): array
   {
     return $this->game->getOtherActivePlayerIds(self::coercePlayerId($playerId));
   }
 
+  protected function getOtherPlayers(int $playerId = null): array
+  {
+    return $this->game->getOtherActivePlayers(self::coercePlayerId($playerId));
+  }
+
   protected function getPlayerIds(): array
   {
     return $this->game->getAllActivePlayerIds();
+  }
+
+  protected function getPlayers(): array
+  {
+    return $this->game->getAllActivePlayers();
   }
 
   // MISCELLANEOUS HELPERS

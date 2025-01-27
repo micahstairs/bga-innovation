@@ -34,7 +34,7 @@ class Card447 extends AbstractCard
 
     self::setAuxiliaryValue2(0); // Track the sum of the values of the cards being returned
 
-    return self::youMust()->return()->exactly(count($cardIds))->yourStack($color)->onlyCardsInAuxiliaryArray()->build();
+    return self::youMust()->return()->exactly(count($cardIds))->fromYourStack($color)->onlyCardsInAuxiliaryArray()->build();
   }
 
   public function handleAbortedInteraction()

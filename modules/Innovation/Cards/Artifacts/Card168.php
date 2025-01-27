@@ -21,38 +21,23 @@ class Card168 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location'   => Locations::HAND,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'age'        => self::getMaxValueInLocation(Locations::HAND),
-      ];
+      $value = self::getMaxValueInLocation(Locations::HAND);
+      return self::youMust()->value($value)->fromYourHand()->toMine()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location'   => Locations::SCORE,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'age'        => self::getMaxValueInLocation(Locations::SCORE),
-      ];
+      $value = self::getMaxValueInLocation(Locations::SCORE);
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     } else {
-      return [
-        'location'   => Locations::BOARD,
-        'owner_from' => self::getPlayerId(),
-        'owner_to'   => self::getLauncherId(),
-        'age'        => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::INDUSTRY),
-        'with_icon'  => Icons::INDUSTRY,
-      ];
+      $value = $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::INDUSTRY);
+      return self::youMust()->value($value)->fromYourBoard()->toMine()->withIcon(Icons::INDUSTRY)->build();
     }
   }
 
   public function compelMightBeEffective(): bool
   {
-    foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, Icons::INDUSTRY)) {
-        return true;
-      }
+    if (count(self::filterByIcon(self::getTopCards(), Icons::INDUSTRY)) > 0) {
+      return true;
     }
-    return self::countCards(Locations::HAND) > 0 || self::countCards(Locations::SCORE) > 0;
+    return self::hasCards(Locations::HAND) || self::hasCards(Locations::SCORE);
   }
 
 }

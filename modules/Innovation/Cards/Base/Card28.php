@@ -37,13 +37,13 @@ class Card28 extends AbstractCard
   private function getOpponentsWithFewerPoints(): array
   {
     $playerScore = self::getScore();
-    $opponentIds = [];
+    $opponentIndexes = [];
     foreach (self::getOpponentIds() as $opponentId) {
       if (self::getScore($opponentId) < $playerScore) {
-        $opponentIds[] = $opponentId;
+        $opponentIndexes[] = $this->game->playerIdToPlayerIndex($opponentId);
       }
     }
-    return $opponentIds;
+    return $opponentIndexes;
   }
 
   public function handlePlayerChoice(int $playerId)

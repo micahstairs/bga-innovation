@@ -23,7 +23,7 @@ class Card82 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine()->build();
     } else {
-      return self::youMust()->return()->all()->yourStack(self::getAuxiliaryValue())->build();
+      return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue())->build();
     }
   }
 

@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card179_4E extends AbstractCard
 {
@@ -15,13 +14,9 @@ class Card179_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::REVEALED,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourRevealed()->build();
     }
   }
 
@@ -33,13 +28,13 @@ class Card179_4E extends AbstractCard
     $card2 = self::drawAndReveal($value);
     $card3 = self::drawAndReveal($value);
 
-    self::splayUp($card1['color']);
-    self::splayUp($card2['color']);
-    self::splayUp($card3['color']);
+    self::splayUp(self::getColor($card1));
+    self::splayUp(self::getColor($card2));
+    self::splayUp(self::getColor($card3));
 
-    $count1 = self::countVisibleCardsInStack($card1['color']);
-    $count2 = self::countVisibleCardsInStack($card2['color']);
-    $count3 = self::countVisibleCardsInStack($card3['color']);
+    $count1 = self::countVisibleCardsInStack(self::getColor($card1));
+    $count2 = self::countVisibleCardsInStack(self::getColor($card2));
+    $count3 = self::countVisibleCardsInStack(self::getColor($card3));
 
     if ($count1 === $value && $count2 === $value && $count3 === $value) {
       self::win();
