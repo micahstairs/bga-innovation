@@ -24009,8 +24009,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                     if (self::isExecutingAgainDueToEndorsedAction()) {
                         // "meld the card you drew due to Charitable Trust's echo effect"
-                        self::meldCard(self::getCardInfo(self::getAuxiliaryValue()), $player_id);
-                        $card_was_melded = true;
+                        $drawn_card_id = self::getAuxiliaryValue();
+                        if ($drawn_card_id > 0) { // Avoids https://boardgamearena.com/bug?id=87552
+                            self::meldCard(self::getCardInfo($drawn_card_id), $player_id);
+                            $card_was_melded = true;
+                        }
                     }
 
                     // "If you do"
