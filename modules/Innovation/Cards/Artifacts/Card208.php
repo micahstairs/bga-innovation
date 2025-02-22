@@ -24,30 +24,26 @@ class Card208 extends AbstractCard
   {
     if (self::isCompel()) {
       if (self::isFirstInteraction()) {
-        return [
-          'n'              => self::countCards(Locations::HAND) - 2,
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-        ];
+        $n = self::countCards(Locations::HAND) - 2;
+        return self::youMust()->return()->exactly($n)->fromYourHand()->build();
       } else {
-        return [
-          'n'              => self::countCards(Locations::SCORE) - 2,
-          'location_from'  => Locations::SCORE,
-          'return_keyword' => true,
-        ];
+        $n = self::countCards(Locations::SCORE) - 2;
+        return self::youMust()->return()->exactly($n)->fromYourScore()->build();
       }
     } else {
-      return [
-        'n'              => self::countCards(Locations::SCORE) - 4,
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      $n = self::countCards(Locations::SCORE) - 4;
+      return self::youMust()->return()->exactly($n)->fromYourScore()->build();
     }
   }
 
   public function compelMightBeEffective(): bool
   {
     return self::countCards(Locations::HAND) > 2 || self::countCards(Locations::SCORE) > 2;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 4;
   }
 
 }

@@ -15,11 +15,7 @@ class Card200 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => Locations::HAND,
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourHand()->build();
   }
 
   public function afterInteraction()

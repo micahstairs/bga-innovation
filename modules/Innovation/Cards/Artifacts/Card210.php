@@ -15,16 +15,7 @@ class Card210 extends AbstractCard
 
   public function initialExecution()
   {
-    $hasMaxVisibleStackSize = true;
-    $maxVisibleStackSize = self::getMaxVisibleStackSize(self::getPlayerId());
-    foreach (self::getOtherPlayerIds() as $playerId) {
-      if (self::getMaxVisibleStackSize($playerId) > $maxVisibleStackSize) {
-        $hasMaxVisibleStackSize = false;
-        break;
-      }
-    }
-
-    if ($hasMaxVisibleStackSize) {
+    if (self::hasMaxVisibleStackSize()) {
       self::notifyPlayer(clienttranslate('${You} have the most cards of a color showing on your board out of all colors on all boards.'));
       self::notifyOthers(clienttranslate('${player_name} has the most cards of a color showing on his board out of all colors on all boards.'));
       self::win();
@@ -34,6 +25,17 @@ class Card210 extends AbstractCard
     }
   }
 
+  private function hasMaxVisibleStackSize(): bool
+  {
+    $maxVisibleStackSize = self::getMaxVisibleStackSize(self::getPlayerId());
+    foreach (self::getOtherPlayerIds() as $playerId) {
+      if (self::getMaxVisibleStackSize($playerId) > $maxVisibleStackSize) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private function getMaxVisibleStackSize(int $playerId): int
   {
     $maxCount = 0;
@@ -41,6 +43,11 @@ class Card210 extends AbstractCard
       $maxCount = max($maxCount, $count);
     }
     return $maxCount;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasMaxVisibleStackSize();
   }
 
 }
