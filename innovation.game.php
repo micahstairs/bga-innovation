@@ -24157,6 +24157,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards of that value from your hand and score pile to my score pile!"
                     $age_to_transfer = self::getAuxiliaryValue();
                     
+                    if ($age_to_transfer == 0) {
+                        break;
+                    }
+
                     $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand')[$age_to_transfer];
                     for ($i = 0; $i < count($hand_cards); $i++) {
                         $hand_cards[$i] = self::getCardInfo($hand_cards[$i]['id']);
