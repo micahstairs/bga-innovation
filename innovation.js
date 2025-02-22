@@ -293,26 +293,26 @@ define([
                     // Prepend UI elements for debug area
                     main_area.innerHTML =
                         "</br><select id='debug_color_list'></select>"
-                        + "<button id='debug_unsplay' class='action-button debug_button bgabutton bgabutton_red'>UNSPLAY</button>"
-                        + "<button id='debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
-                        + "<button id='debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
-                        + "<button id='debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
+                        + "<button id='innovation_debug_unsplay' class='action-button debug_button bgabutton bgabutton_red'>UNSPLAY</button>"
+                        + "<button id='innovation_debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
+                        + "<button id='innovation_debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
+                        + "<button id='innovation_debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
                         + main_area.innerHTML;
                     if (gamedatas.echoes_expansion_enabled) {
-                        main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
+                        main_area.innerHTML = "<button id='innovation_debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
                     }
                     if (gamedatas.artifacts_expansion_enabled) {
-                        main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
+                        main_area.innerHTML = "<button id='innovation_debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
                     }
                     main_area.innerHTML =
                         "<select id='debug_card_list'></select>"
-                        + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
-                        + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
-                        + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
-                        + "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>"
-                        + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
-                        + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
-                        + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
+                        + "<button id='innovation_debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
+                        + "<button id='innovation_debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
+                        + "<button id='innovation_debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
+                        + "<button id='innovation_debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>"
+                        + "<button id='innovation_debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
+                        + "<button id='innovation_debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
+                        + "<button id='innovation_debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
                         + main_area.innerHTML;
 
                     // Populate dropdown lists
@@ -336,23 +336,23 @@ define([
                     $('debug_color_list').innerHTML += `<option value='4'>Purple</option>`;
 
                     // Trigger events when buttons are clicked
-                    dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
-                    dojo.connect($('debug_meld'), 'onclick', this, 'debug_meld');
-                    dojo.connect($('debug_tuck'), 'onclick', this, 'debug_tuck');
-                    dojo.connect($('debug_score'), 'onclick', this, 'debug_score');
-                    dojo.connect($('debug_achieve'), 'onclick', this, 'debug_achieve');
-                    dojo.connect($('debug_return'), 'onclick', this, 'debug_return');
-                    dojo.connect($('debug_topdeck'), 'onclick', this, 'debug_topdeck');
+                    dojo.connect($('innovation_debug_draw'), 'onclick', this, 'debug_draw');
+                    dojo.connect($('innovation_debug_meld'), 'onclick', this, 'debug_meld');
+                    dojo.connect($('innovation_debug_tuck'), 'onclick', this, 'debug_tuck');
+                    dojo.connect($('innovation_debug_score'), 'onclick', this, 'debug_score');
+                    dojo.connect($('innovation_debug_achieve'), 'onclick', this, 'debug_achieve');
+                    dojo.connect($('innovation_debug_return'), 'onclick', this, 'debug_return');
+                    dojo.connect($('innovation_debug_topdeck'), 'onclick', this, 'debug_topdeck');
                     if (gamedatas.artifacts_expansion_enabled) {
-                        dojo.connect($('debug_dig'), 'onclick', this, 'debug_dig');
+                        dojo.connect($('innovation_debug_dig'), 'onclick', this, 'debug_dig');
                     }
                     if (gamedatas.echoes_expansion_enabled) {
-                        dojo.connect($('debug_foreshadow'), 'onclick', this, 'debug_foreshadow');
+                        dojo.connect($('innovation_debug_foreshadow'), 'onclick', this, 'debug_foreshadow');
                     }
-                    dojo.connect($('debug_unsplay'), 'onclick', this, 'debug_unsplay');
-                    dojo.connect($('debug_splay_left'), 'onclick', this, 'debug_splay_left');
-                    dojo.connect($('debug_splay_right'), 'onclick', this, 'debug_splay_right');
-                    dojo.connect($('debug_splay_up'), 'onclick', this, 'debug_splay_up');
+                    dojo.connect($('innovation_debug_unsplay'), 'onclick', this, 'debug_unsplay');
+                    dojo.connect($('innovation_debug_splay_left'), 'onclick', this, 'debug_splay_left');
+                    dojo.connect($('innovation_debug_splay_right'), 'onclick', this, 'debug_splay_right');
+                    dojo.connect($('innovation_debug_splay_up'), 'onclick', this, 'debug_splay_up');
                 }
                 //******
 
