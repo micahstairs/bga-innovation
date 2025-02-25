@@ -19,7 +19,7 @@ class Card428_4E extends AbstractCard
     if (self::isEcho()) {
       self::setMaxSteps(1);
     } else if (self::isDemand()) {
-      self::setMaxSteps(2);
+      self::setMaxSteps(1);
     } else {
       $hasFewerIcons = true;
       $playerIconCounts = self::getStandardIconCounts();
