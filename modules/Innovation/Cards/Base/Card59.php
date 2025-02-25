@@ -26,6 +26,7 @@ class Card59 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
+    self::transferToHand($card);
     $color = self::getColor($card);
     self::setAuxiliaryValue($color); // Track the chosen color
 

@@ -565,7 +565,7 @@ class InteractionBuilder
 
   function chooseIcon(array $icons): InteractionBuilder
   {
-    $this->interactionOptions['choose_icon'] = true;
+    $this->interactionOptions['choose_icon_type'] = true;
     $this->interactionOptions['icon'] = $icons;
     return $this;
   }
