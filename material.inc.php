@@ -302,8 +302,9 @@ $this->textual_card_infos = array(
     44  => [
         'name'                                => clienttranslate('Reformation'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may tuck a card from your hand for every two ${icon_2} on your board.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may tuck a card from your hand for every splayed color on your board.'),
-        'non_demand_effect_2'                 => clienttranslate('You may splay your yellow or purple cards right.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may splay your yellow or purple cards right.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('You may tuck a card from your hand for every two ${icon_2} on your board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('You may tuck a card from your hand for every splayed color on your board.'),
         'separate_4E_implementation'          => true,
     ],
 
