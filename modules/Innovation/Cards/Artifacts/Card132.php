@@ -52,7 +52,11 @@ class Card132 extends AbstractCard
   public function nonDemandsMightBeEffective(): bool
   {
     // If 4th edition, we always do something (for simplicity, let's not check for the situation when the tuck is ineffective)
-    return self::isFirstOrThirdEdition() && self::hasCards(Locations::HAND);
+    if (self::isFourthEdition()) {
+      return true;
+    }
+
+    return self::hasCards(Locations::HAND);
   }
 
 }
