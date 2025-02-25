@@ -17,18 +17,15 @@ class Card171_4E extends AbstractCard
   {
     self::transferToScorePile(self::getTopCardOfColor(Colors::RED), self::getLauncherId());
     self::transferToBoard(self::getTopCardOfColor(Colors::GREEN), self::getLauncherId());
-    foreach (self::getCards(Locations::SCORE) as $card) {
-      self::reveal($card);
-    }
     self::setMaxSteps(2);
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->withColor(Colors::YELLOW)->fromYourRevealed()->toMyScore()->build();
+      return self::youMust()->withColor(Colors::YELLOW)->fromYourRevealed()->toMyScore()->revealingIfUnable()->build();
     } else {
-      return self::youMust()->withColor(Colors::PURPLE)->fromYourRevealed()->toMyHand()->build();
+      return self::youMust()->withColor(Colors::PURPLE)->fromYourRevealed()->toMyHand()->revealingIfUnable()->build();
     }
   }
 
