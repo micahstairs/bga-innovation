@@ -35,6 +35,7 @@ class Card194 extends AbstractCard
           if (self::isFirstOrThirdEdition()) {
             self::achieve($card, $playerId);
           } else {
+            self::transferToHand($card);
             self::achieve(self::getTopCardOfColor($color), $playerId);
           }
         } else {
