@@ -53,6 +53,7 @@ class Card5 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
+    self::draw(1);
     self::setAuxiliaryValue(1); // Remember that a card was transferred
     self::setNextStep(1);
   }
