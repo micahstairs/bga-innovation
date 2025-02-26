@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Locations;
+use Innovation\Enums\Colors;
 
 class Card544 extends AbstractCard
 {
@@ -22,9 +23,16 @@ class Card544 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
+      // If it's possible for there to be an effective right splay, then reveal the card before returning it
+      $mustReveal = false;
+      foreach (Colors::ALL as $color) {
+        if (self::canSplay($color) && !self::isSplayedRight($color)) {
+          $mustReveal = true;
+        }
+      }
       return [
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
+        'location_from' => Locations::HAND,
+        'location_to'   => $mustReveal ? Locations::REVEALED_THEN_DECK : Locations::DECK,
       ];
     } else if (self::isSecondInteraction()) {
       return [

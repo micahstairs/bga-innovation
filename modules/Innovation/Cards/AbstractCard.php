@@ -1097,6 +1097,11 @@ abstract class AbstractCard
     return self::getSplayDirection($color, self::coercePlayerId($playerId)) > 0;
   }
 
+  protected function isSplayedRight(int $color, int $playerId = null): int
+  {
+    return self::isSplayed($color, self::coercePlayerId($playerId)) === Directions::RIGHT;
+  }
+
   protected function isSplayedUp(int $color, int $playerId = null): int
   {
     return self::getSplayDirection($color, self::coercePlayerId($playerId)) === Directions::UP;
