@@ -68,9 +68,10 @@ class Card407 extends AbstractCard
       if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
         return [
-          'location_from'  => Locations::SCORE,
-          'return_keyword' => true,
-          'with_icon'      => Icons::EFFICIENCY,
+          'location_from'    => Locations::SCORE,
+          'return_keyword'   => true,
+          'with_icon'        => Icons::EFFICIENCY,
+          'reveal_if_unable' => true,
         ];
       } else if (self::isSecondInteraction()) {
         return [
