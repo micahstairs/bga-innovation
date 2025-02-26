@@ -33,7 +33,7 @@ class Card57_3E extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::getStandardIconCount(Icons::INDUSTRY) > 0 || self::canSplayRight([Colors::RED, Colors::PURPLE]);
+    return self::getStandardIconCount(Icons::INDUSTRY) > 0 || self::canSplay([Colors::RED, Colors::PURPLE]);
   }
 
 }

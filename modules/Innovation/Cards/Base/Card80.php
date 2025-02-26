@@ -42,7 +42,7 @@ class Card80 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::hasCards(Locations::HAND) || self::canSplayUp(Colors::PURPLE);
+    return self::hasCards(Locations::HAND) || self::canSplay(Colors::PURPLE);
   }
 
 }

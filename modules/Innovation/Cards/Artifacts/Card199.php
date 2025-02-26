@@ -36,7 +36,7 @@ class Card199 extends AbstractCard
   public function nonDemandsMightBeEffective(): bool
   {
     foreach (Colors::ALL as $color) {
-      if (self::canSplayUp($color)) {
+      if (self::canSplay($color)) {
         return true;
       }
     }

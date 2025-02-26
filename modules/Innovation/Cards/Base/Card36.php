@@ -29,7 +29,7 @@ class Card36 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::hasCards(Locations::SCORE) || self::canSplayRight();
+    return self::hasCards(Locations::SCORE) || self::canSplay();
   }
 
 }

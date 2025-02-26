@@ -35,7 +35,7 @@ class Card51_4E extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::canSplayRight(Colors::YELLOW);
+    return self::canSplay(Colors::YELLOW);
   }
 
 }

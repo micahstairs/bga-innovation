@@ -34,7 +34,7 @@ class Card60 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return (self::getSplayDirection(Colors::GREEN) == Directions::RIGHT && self::canSplayRight(Colors::NON_GREEN)) || self::canSplayRight(Colors::GREEN);
+    return (self::getSplayDirection(Colors::GREEN) == Directions::RIGHT && self::canSplay(Colors::NON_GREEN)) || self::canSplay(Colors::GREEN);
   }
 
 }

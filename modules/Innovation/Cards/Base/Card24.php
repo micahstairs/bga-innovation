@@ -22,7 +22,7 @@ class Card24 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::canSplayLeft() || self::hasCards(Locations::HAND);
+    return self::canSplay() || self::hasCards(Locations::HAND);
   }
 
 }

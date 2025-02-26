@@ -28,7 +28,7 @@ class Card44_3E extends AbstractCard
     if (self::getStandardIconCount(Icons::HEALTH) >= 2 && self::hasCards(Locations::HAND)) {
       return true;
     }
-    return self::canSplayRight([Colors::YELLOW, Colors::PURPLE]);
+    return self::canSplay([Colors::YELLOW, Colors::PURPLE]);
   }
 
 }

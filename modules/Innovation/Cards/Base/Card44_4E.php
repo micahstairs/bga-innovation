@@ -23,7 +23,7 @@ class Card44_4E extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (self::canSplayRight([Colors::YELLOW, Colors::PURPLE])) {
+    if (self::canSplay([Colors::YELLOW, Colors::PURPLE])) {
       return true;
     }
     return self::countSplayedColors() > 0 && self::hasCards(Locations::HAND);

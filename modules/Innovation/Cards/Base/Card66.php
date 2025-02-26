@@ -79,9 +79,9 @@ class Card66 extends AbstractCard
   public function nonDemandsMightBeEffective(): bool
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::canRearrange() || self::canSplayUp([Colors::BLUE, Colors::YELLOW]);
+      return self::canRearrange() || self::canSplay([Colors::BLUE, Colors::YELLOW]);
     } else {
-      return self::hasAvailableOrJunkedSpecialAchievements() || self::canSplayUp([Colors::BLUE, Colors::YELLOW]);
+      return self::hasAvailableOrJunkedSpecialAchievements() || self::canSplay([Colors::BLUE, Colors::YELLOW]);
     }
   }
 

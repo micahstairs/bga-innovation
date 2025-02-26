@@ -1630,27 +1630,7 @@ abstract class AbstractCard
     return count(self::getSplayedColors($directions, $playerId));
   }
 
-  protected function canSplayLeft(array|int $colors = Colors::ALL, int $playerId = null): bool
-  {
-    return self::canSplayInDirection(Directions::LEFT, $colors, $playerId);
-  }
-
-  protected function canSplayRight(array|int $colors = Colors::ALL, int $playerId = null): bool
-  {
-    return self::canSplayInDirection(Directions::RIGHT, $colors, $playerId);
-  }
-
-  protected function canSplayUp(array|int $colors = Colors::ALL, int $playerId = null): bool
-  {
-    return self::canSplayInDirection(Directions::UP, $colors, $playerId);
-  }
-
-  protected function canSplayAslant(array|int $colors = Colors::ALL, int $playerId = null): bool
-  {
-    return self::canSplayInDirection(Directions::ASLANT, $colors, $playerId);
-  }
-
-  protected function canSplayInDirection(int $direction, array|int $colors = Colors::ALL, int $playerId = null): bool
+  protected function canSplay(array|int $colors = Colors::ALL, int $playerId = null): bool
   {
     if (!is_array($colors)) {
       $colors = [$colors];
@@ -1658,7 +1638,7 @@ abstract class AbstractCard
     $playerId = self::coercePlayerId($playerId);
     $cardsKeyedByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
     foreach ($colors as $color) {
-      if (count($cardsKeyedByColor[$color]) >= 2 && $cardsKeyedByColor[$color][0]['splay_direction'] != $direction) {
+      if (count($cardsKeyedByColor[$color]) >= 2) {
         return true;
       }
     }

@@ -36,7 +36,7 @@ class Card94 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::hasCards(Locations::HAND) || self::canSplayUp([Colors::BLUE, Colors::YELLOW]);
+    return self::hasCards(Locations::HAND) || self::canSplay([Colors::BLUE, Colors::YELLOW]);
   }
 
 }

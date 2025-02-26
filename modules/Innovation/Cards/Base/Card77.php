@@ -31,7 +31,7 @@ class Card77 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::canSplayRight(Colors::RED) || (self::isSplayedUp(Colors::RED) && self::canSplayRight(Colors::NON_RED));
+    return self::canSplay(Colors::RED) || (self::isSplayedUp(Colors::RED) && self::canSplay(Colors::NON_RED));
   }
 
 }

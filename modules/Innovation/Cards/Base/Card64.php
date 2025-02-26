@@ -34,7 +34,7 @@ class Card64 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::canSplayRight([Colors::RED, Colors::PURPLE]);
+    return self::canSplay([Colors::RED, Colors::PURPLE]);
   }
 
 }
