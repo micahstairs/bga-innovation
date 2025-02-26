@@ -23,7 +23,7 @@ class Card422_4E extends AbstractCard
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand()) {
-      $bonuses = self::getBonuses();
+      $bonuses = array_unique(self::getBonuses());
       sort($bonuses);
       foreach ($bonuses as $value) {
         self::drawAndMeld($value);
