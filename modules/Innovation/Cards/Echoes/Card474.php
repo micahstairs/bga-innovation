@@ -18,6 +18,7 @@ class Card474 extends AbstractCard
 
   public function handleIconChoice(int $icon)
   {
+    self::notifyIconChoice($icon);
     $maxIconCount = 0;
     $maxIconPlayerId = null;
     $multiplePlayersTied = true;
