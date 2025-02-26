@@ -7676,7 +7676,7 @@ class Innovation extends Table
         self::checkForChainAchievement($player_id);
 
         $card_args = self::getNotificationArgsForCardList([$card]);
-        if (self::getNonDemandEffect($card['id'], 1) === null) {
+        if (self::getNonDemandEffect($card['id'], 1) === null && !self::getCardIdsWithEchoEffectsForNestedExecution($card)) {
             self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
             return false;
         }
