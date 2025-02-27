@@ -33,12 +33,22 @@ class Card151 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => Locations::BOARD,
-      'location_to'   => Locations::SCORE,
-      'score_keyword' => true,
-      'with_icon'     => Icons::PROSPERITY,
-    ];
+    return self::youMust()->score()->fromYourBoard()->withIcon(Icons::PROSPERITY)->build();
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, Icons::PROSPERITY)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByIcon(self::getTopCards(), Icons::PROSPERITY)) > 0;
   }
 
 }

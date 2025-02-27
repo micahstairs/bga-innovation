@@ -10,11 +10,6 @@ class Card590 extends AbstractCard
   // Mystery Box:
   //   - Claim an available standard achievement, regardless of eligibility. Self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

@@ -21,31 +21,23 @@ class Card168 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::HAND,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::HAND,
-        'age'           => self::getMaxValueInLocation(Locations::HAND),
-      ];
+      $value = self::getMaxValueInLocation(Locations::HAND);
+      return self::youMust()->value($value)->fromYourHand()->toMine()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'age'           => self::getMaxValueInLocation(Locations::SCORE),
-      ];
+      $value = self::getMaxValueInLocation(Locations::SCORE);
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     } else {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::BOARD,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::BOARD,
-        'age'           => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::INDUSTRY),
-        'with_icon'     => Icons::INDUSTRY,
-      ];
+      $value = $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::INDUSTRY);
+      return self::youMust()->value($value)->fromYourBoard()->toMine()->withIcon(Icons::INDUSTRY)->build();
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    if (count(self::filterByIcon(self::getTopCards(), Icons::INDUSTRY)) > 0) {
+      return true;
+    }
+    return self::hasCards(Locations::HAND) || self::hasCards(Locations::SCORE);
   }
 
 }

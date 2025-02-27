@@ -15,10 +15,10 @@ class Card552 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndTuck(7);
-    if (self::countVisibleCardsInStack($card['color']) >= 7) {
+    if (self::countVisibleCardsInStack(self::getColor($card)) >= 7) {
       self::draw(9);
     } else {
-      foreach (self::getStack($card['color']) as $card) {
+      foreach (self::getStack(self::getColor($card)) as $card) {
         self::junk($card);
       }
       self::draw(8);

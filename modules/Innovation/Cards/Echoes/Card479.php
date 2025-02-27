@@ -42,7 +42,7 @@ class Card479 extends AbstractCard
         'location_from'                   => Locations::PILE,
         'location_to'                     => self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD,
         'owner_to'                        => self::getLauncherId(),
-        'with_icon'                       => $icon,    
+        'with_icon'                       => $icon,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     }
@@ -69,7 +69,7 @@ class Card479 extends AbstractCard
           $icons = self::getIcons($card, $spots);
         }
         if (in_array($icon, $icons)) {
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
     }

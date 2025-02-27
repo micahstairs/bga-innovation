@@ -93,7 +93,7 @@ class Card392 extends AbstractCard
     $cardIds = [];
     foreach ($cards as $card) {
       if ($card['age'] % 2 == 1) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     return $cardIds;

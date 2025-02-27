@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card116 extends AbstractCard
 {
@@ -16,32 +17,31 @@ class Card116 extends AbstractCard
   //   - Score a card from your hand. If you have a top card matching its color, super-execute
   //     that top card it is your turn, otherwise self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => 'hand',
-        'location_to'   => 'revealed,score',
-        'score_keyword' => true,
-      ];
+      return self::youMust()->revealAndScore()->fromYourHand()->build();
     } else {
-      return ['achieve_if_eligible' => true];
+      return self::youMust()->achieveIfEligible()->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
-    $topCard = self::getTopCardOfColor($card['color']);
+    $topCard = self::getTopCardOfColor(self::getColor($card));
     if (self::isFourthEdition() && self::isTheirTurn()) {
       self::superExecute($topCard);
     } else {
       self::selfExecute($topCard);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::isFirstOrThirdEdition()) {
+      return count($this->game->getClaimableStandardAchievementValues(self::getPlayerId())) > 0;
+    }
+    return self::hasCards(Locations::HAND);
   }
 
 }

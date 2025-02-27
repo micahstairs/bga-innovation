@@ -16,7 +16,7 @@ class Card539 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndReveal(6);
-    $topCard = self::getTopCardOfColor($card['color']);
+    $topCard = self::getTopCardOfColor(self::getColor($card));
     if (self::hasIcon($topCard, Icons::INDUSTRY)) {
       self::tuck($card);
       $secondCard = self::drawAndReveal(7);

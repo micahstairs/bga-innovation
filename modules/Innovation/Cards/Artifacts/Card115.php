@@ -15,14 +15,11 @@ class Card115 extends AbstractCard
   public function initialExecution()
   {
     $card = self::getTopCardOfColor(Colors::GREEN);
-    $value = 0;
-    if ($card) {
-      $value = $card["faceup_age"];
-    }
+    $value = self::getFaceupValue($card);
     $cardIds = [];
     for ($i = 0; $i < 3; $i++) {
       $card = self::draw($value);
-      $cardIds[] = $card['id'];
+      $cardIds[] = self::getId($card);
     }
     self::setAuxiliaryArray($cardIds);
     self::setMaxSteps(2);
@@ -30,12 +27,11 @@ class Card115 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $keyword = self::isFirstInteraction() ? 'return_keyword' : 'score_keyword';
-    return [
-      'location_from'                   => 'hand',
-      $keyword                          => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    if (self::isFirstInteraction()) {
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    } else {
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    }
   }
 
 }

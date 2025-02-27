@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card194 extends AbstractCard
 {
@@ -24,7 +25,7 @@ class Card194 extends AbstractCard
     } else {
       do {
         $card = self::drawAndReveal(8);
-        $color = $card['color'];
+        $color = self::getColor($card);
         $playerIds = $this->game->getOwnersOfTopCardWithColorAndAge($color, $this->game->getMaxAgeOfTopCardOfColor($color));
         if (count($playerIds) === 1) {
           $playerId = $playerIds[0];
@@ -34,6 +35,7 @@ class Card194 extends AbstractCard
           if (self::isFirstOrThirdEdition()) {
             self::achieve($card, $playerId);
           } else {
+            self::transferToHand($card);
             self::achieve(self::getTopCardOfColor($color), $playerId);
           }
         } else {
@@ -46,11 +48,12 @@ class Card194 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'achievements',
-        'return_keyword' => true,
-        'include_relics' => false,
-    ];
+    return self::youMust()->return()->fromYourAchievements()->excludingRelics()->build();
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::ACHIEVEMENTS) > 0;
   }
 
 }

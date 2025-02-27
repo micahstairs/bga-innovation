@@ -13,21 +13,9 @@ class Card449 extends AbstractCard
   //     board! If you transfer any cards, exchange all cards in your score pile with all cards in
   //     my score pile!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'n'                 => 'all',
-      'owner_from'        => self::getPlayerId(),
-      'location_from'     => Locations::BOARD,
-      'owner_to'          => self::getLauncherId(),
-      'location_to'       => Locations::BOARD,
-      'has_demand_effect' => true,
-    ];
+    return self::youMust()->all()->withDemandEffect()->fromYourBoard()->toMine()->build();
   }
 
   public function afterInteraction()
@@ -42,6 +30,16 @@ class Card449 extends AbstractCard
         self::transferToScorePile($card, self::getLauncherId());
       }
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasDemandEffect($card)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

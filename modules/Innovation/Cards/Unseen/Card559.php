@@ -12,11 +12,6 @@ class Card559 extends AbstractCard
   //   - You may choose to either transfer your bottom card of each color to your hand, or tuck all
   //     cards from your score pile, or choose a value and score all cards from your hand of that value.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {

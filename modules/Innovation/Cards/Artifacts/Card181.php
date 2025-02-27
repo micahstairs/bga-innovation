@@ -26,7 +26,7 @@ class Card181 extends AbstractCard
 
     $matches = false;
     foreach (self::getCards(Locations::HAND) as $card) {
-      if ($card['id'] != $drawnCard['id'] && $card['color'] == $drawnCard['color']) {
+      if (self::getId($card) != self::getId($drawnCard) && self::getColor($card) == self::getColor($drawnCard)) {
         $matches = true;
         break;
       }
@@ -43,11 +43,7 @@ class Card181 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => Locations::HAND_OR_SCORE,
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourHandOrScore()->build();
   }
 
 }

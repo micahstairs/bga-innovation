@@ -10,18 +10,15 @@ class Card99_3E extends AbstractCard
   // Databases (3rd edition):
   //   - I DEMAND you return half (rounded up) of the cards in your score pile!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => ceil(self::countCards(Locations::SCORE) / 2),
-      'location_from'  => Locations::SCORE,
-      'return_keyword' => true,
-    ];
+    $numCards = ceil(self::countCards(Locations::SCORE) / 2);
+    return self::youMust()->return()->exactly($numCards)->fromYourScore()->build();
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
   }
 
 }

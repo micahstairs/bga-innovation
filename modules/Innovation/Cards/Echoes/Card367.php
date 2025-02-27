@@ -44,7 +44,7 @@ class Card367 extends AbstractCard
   {
     if (self::isEcho()) {
       return [
-        'owner_from'    => 'any player',
+        'owner_from'  => 'any player',
         'choose_from' => 'board',
       ];
     } else {
@@ -60,7 +60,7 @@ class Card367 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isEcho()) {
-      self::splayLeft($card['color'], $card['owner'], self::getPlayerId());
+      self::splayLeft(self::getColor($card), $card['owner'], self::getPlayerId());
     } else if (self::isDemand()) {
       self::incrementAuxiliaryValue();
     }

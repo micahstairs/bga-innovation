@@ -41,7 +41,7 @@ class Card564 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::splayUp($card['color']);
+    self::splayUp(self::getColor($card));
     if (!self::safeguard($card)) {
       self::transferToScorePile($card);
     }

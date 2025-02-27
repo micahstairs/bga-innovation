@@ -20,28 +20,20 @@ class Card162_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from'                   => Locations::HAND,
-        'topdeck_keyword'                 => true,
-        'card_ids_are_in_auxiliary_array' => true,
-        'enable_autoselection'            => false, // Give the player the chance to read the card
-      ];
+      // Autoselection is disabled to give the player the chance to read the card
+      return self::youMust()->topDeck()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
     } else {
-      return [
-        'can_pass'    => true,
-        'choose_from' => 'board',
-        // Exclude the card currently being executed (it's possible for the effects of The Daily Courant to be executed as if it were on another card)
-        'not_id'      => $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'],
-      ];
+      $excludedCardId = $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'];
+      return self::youMay()->chooseCardFrom(Locations::BOARD)->otherThan($excludedCardId)->build();
     }
   }
 
   public function handleValueChoice(int $value)
   {
     $card = self::draw($value);
-    self::setAuxiliaryArray([$card['id']]);
+    self::setAuxiliaryArray([self::getId($card)]);
   }
 
   public function handleCardChoice(array $card)

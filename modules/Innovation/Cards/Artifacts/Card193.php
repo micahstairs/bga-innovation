@@ -16,11 +16,6 @@ class Card193 extends AbstractCard
   //   - Meld an [8] from your hand. If the melded card has no effects, you win. Otherwise,
   //     self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
@@ -32,7 +27,7 @@ class Card193 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    if ($card['dogma_icon'] === null || (self::isFirstOrThirdEdition() && $card['type'] == CardTypes::CITIES)) {
+    if ($card['dogma_icon'] === null || (self::isFirstOrThirdEdition() && self::getCardType($card) == CardTypes::CITIES)) {
       self::notifyPlayer(clienttranslate('${You} melded a card with no effects.'));
       self::notifyOthers(clienttranslate('${player_name} melded a card with no effects.'));
       self::win();
@@ -41,6 +36,11 @@ class Card193 extends AbstractCard
     } else if (self::isFourthEdition()) {
       self::selfExecute($card);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByValue(self::getCards(Locations::HAND), 8)) > 0;
   }
 
 }

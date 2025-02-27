@@ -21,6 +21,8 @@ class Card423 extends AbstractCard
   //     echo effect during this action, regardless of eligibility. If you do, self-execute the
   //     melded card.
 
+  // TODO: Split this into two separate files. There's also an existing bug here where cards get stuck in the revealed zone.
+
   public function initialExecution()
   {
     if (self::isEcho()) {
@@ -47,7 +49,7 @@ class Card423 extends AbstractCard
       if (self::isFirstOrThirdEdition()) {
         $values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       } else {
-        $values = self::getUniqueValues('hand');
+        $values = self::getUniqueValuesInLocation('hand');
         if (empty($values)) {
           $values[] = 0;
         }
@@ -100,9 +102,9 @@ class Card423 extends AbstractCard
   {
     $card = self::drawAndMeld($value);
     if (self::isFirstOrThirdEdition()) {
-      self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
+      self::addToActionScopedAuxiliaryArray(self::getId($card), self::getPlayerId());
     } else {
-      self::setActionScopedAuxiliaryArray([$card['id']], self::getPlayerId());
+      self::setActionScopedAuxiliaryArray([self::getId($card)], self::getPlayerId());
     }
   }
 

@@ -10,11 +10,6 @@ class Card587 extends AbstractCard
   // Cloaking:
   //   - I DEMAND you transfer one of your claimed standard achievements to my safe!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

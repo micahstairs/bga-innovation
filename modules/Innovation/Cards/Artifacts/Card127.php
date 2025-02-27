@@ -51,4 +51,12 @@ class Card127 extends AbstractCard
     return $iconCountsByPlayer[self::getPlayerId()][$icon] === $minIcons;
   }
 
+  public function nonDemandsMightBeEffective(): bool
+  {
+    $iconCountsByPlayer = self::getStandardIconCountsOfAllPlayers();
+    return self::hasLeastIcons($iconCountsByPlayer, Icons::AUTHORITY)
+      || self::hasLeastIcons($iconCountsByPlayer, Icons::PROSPERITY)
+      || self::hasLeastIcons($iconCountsByPlayer, Icons::CONCEPT);
+  }
+
 }

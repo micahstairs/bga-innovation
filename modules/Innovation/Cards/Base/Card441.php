@@ -16,7 +16,7 @@ class Card441 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndMeld(11);
-    $color = $card['color'];
+    $color = self::getColor($card);
     $stack = self::getStack($color);
     if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];
@@ -33,13 +33,7 @@ class Card441 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'                               => 'all',
-      'location_from'                   => 'pile',
-      'return_keyword'                  => true,
-      'color'                           => [self::getAuxiliaryValue()],
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourBoard()->withColor(self::getAuxiliaryValue())->onlyCardsInAuxiliaryArray()->build();
   }
 
   public function afterInteraction()

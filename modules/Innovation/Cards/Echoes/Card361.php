@@ -23,13 +23,10 @@ class Card361 extends AbstractCard
       self::drawAndMeld(3);
     } else if (self::isFirstNonDemand()) {
       $hasAuthority = false;
-      $hasIndustry = false;
       foreach (self::getTopCards() as $card) {
         if (self::hasIcon($card, Icons::AUTHORITY)) {
           $hasAuthority = true;
-        }
-        if (self::hasIcon($card, Icons::INDUSTRY)) {
-          $hasIndustry = true;
+          break;
         }
       }
       if ($hasAuthority) {
@@ -37,8 +34,12 @@ class Card361 extends AbstractCard
       } else {
         self::draw(4);
       }
-      if ($hasIndustry) {
-        self::junkBaseDeck(4);
+    } else if (self::isSecondNonDemand()) {
+      foreach (self::getTopCards() as $card) {
+        if (self::hasIcon($card, Icons::INDUSTRY)) {
+          self::junkBaseDeck(4);
+          return;
+        }
       }
     }
   }

@@ -13,24 +13,12 @@ class Card148_4E extends AbstractCard
   //     my score pile! If you transfer any, transfer a top card on your board of that value to my board!
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'player_id' => self::getLauncherId(),
-        'choose_value' => true,
-      ];
+      return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return [
-        'location' => Locations::BOARD,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine()->build();
     }
   }
 
@@ -47,6 +35,11 @@ class Card148_4E extends AbstractCard
       self::setAuxiliaryValue($value); // Track values to transfer
       self::setMaxSteps(2);
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
   }
 
 }

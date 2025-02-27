@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card348 extends AbstractCard
 {
@@ -20,8 +21,14 @@ class Card348 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::isEcho() && self::isFirstOrThirdEdition()) {
-      self::drawAndForeshadow(2);
+    if (self::isEcho()) {
+      if (self::isFirstOrThirdEdition()) {
+        self::drawAndForeshadow(2);
+      } else if (self::getBaseDeckCount(2) > 0 || self::getBaseDeckCount(3) > 0) {
+        self::setMaxSteps(1);
+      } else {
+        self::drawAndForeshadow(2); // Doesn't matter which is chosen since the player will be drawing up past [3] anyway
+      }
     } else {
       self::setMaxSteps(1);
     }
@@ -32,13 +39,13 @@ class Card348 extends AbstractCard
     if (self::isEcho()) {
       return [
         'can_pass' => true,
-        'choices'  => [1, 2],
+        'choices'  => [2, 3],
       ];
     } else {
       return [
-        'location_from' => 'board',
+        'location_from' => Locations::BOARD,
         'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'board',
+        'location_to'   => Locations::BOARD,
         'without_icons' => [Icons::AUTHORITY, Icons::INDUSTRY],
       ];
     }
@@ -47,17 +54,18 @@ class Card348 extends AbstractCard
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::renderValue(2)],
-      2 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::renderValue(3)],
+      2 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::renderValue(2)],
+      3 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::renderValue(3)],
     ]);
   }
 
   public function handleListChoice(int $choice)
   {
-    if ($choice === 1) {
-      self::drawAndForeshadow(2);
-    } else {
+    // TODO(LATER): Simplify this to `self::drawAndForeshadow($choice);` after this hits production.
+    if ($choice === 3) {
       self::drawAndForeshadow(3);
+    } else {
+      self::drawAndForeshadow(2);
     }
   }
 

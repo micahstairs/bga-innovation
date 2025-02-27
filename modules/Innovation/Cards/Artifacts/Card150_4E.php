@@ -15,29 +15,16 @@ class Card150_4E extends AbstractCard
   //   - Meld a card from your hand.
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      if (self::countCards(Locations::HAND) < 4) {
-        return [
-          'n'              => 'all',
-          'location_from'  => Locations::BOARD,
-          'return_keyword' => true,
-          'color'          => Colors::NON_GREEN,
-        ];
+      if (self::hasCards(Locations::HAND)) {
+        return self::youMust()->return()->all()->non(Colors::GREEN)->fromYourBoard()->build();
       } else {
         return [];
       }
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     }
   }
 
@@ -48,6 +35,11 @@ class Card150_4E extends AbstractCard
         self::draw(5);
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

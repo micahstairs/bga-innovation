@@ -56,7 +56,7 @@ class Card592 extends AbstractCard
     $cardIds = [];
     foreach (self::getTopCards() as $card) {
       if (self::hasIcon($card, Icons::PROSPERITY) || self::hasIcon($card, Icons::INDUSTRY)) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     return $cardIds;

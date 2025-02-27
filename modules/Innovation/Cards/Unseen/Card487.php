@@ -11,11 +11,6 @@ class Card487 extends AbstractCard
   //   - Return a card from your score pile. If you do, draw a card of value one higher than the card you return.
   //   - Transfer a card from your hand to the hand of the player on your left.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

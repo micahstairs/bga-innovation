@@ -11,21 +11,17 @@ class Card179_3E extends AbstractCard
   //     If the number of cards of that color visible on your board is exactly equal to the card's
   //     value, you win. Otherwise, return the melded card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return ['choose_value' => true];
+    return self::youMust()->chooseValue()->build();
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     self::notifyValueChoice($value);
     $card = self::drawAndMeld($value);
-    self::splayUp($card['color']);
-    if ($card['faceup_age'] == self::countVisibleCardsInStack($card['color'])) {
+    self::splayUp(self::getColor($card));
+    if (self::getFaceupValue($card) == self::countVisibleCardsInStack(self::getColor($card))) {
       self::win();
     } else {
       self::return($card);

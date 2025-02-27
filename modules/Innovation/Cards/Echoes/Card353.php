@@ -20,7 +20,7 @@ class Card353 extends AbstractCard
   public function initialExecution()
   {
     $card = self::isFirstOrThirdEdition() ? self::drawAndReveal(3) : self::drawAndForeshadow(3);
-    self::setAuxiliaryValue($card['id']); // Track the drawn card
+    self::setAuxiliaryValue(self::getId($card)); // Track the drawn card
     self::setMaxSteps(1);
   }
 

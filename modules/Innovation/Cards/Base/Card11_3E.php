@@ -13,26 +13,24 @@ class Card11_3E extends AbstractCard
   //   - You may meld any number of cards from your hand, each with a [AUTHORITY]. If you melded
   //     four or more cards in this way, claim the Monument achievement.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'      => true,
-      'n_min'         => 1,
-      'n_max'         => 'all',
-      'location_from' => Locations::HAND,
-      'meld_keyword'  => true,
-      'with_icon'     => Icons::AUTHORITY,
-    ];
+    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY)->build();
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::getNumChosen() >= 4) {
       self::claim(CardIds::MONUMENT);
+    }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::isLauncher()) {
+      return count(self::filterByIcon(self::getCards(Locations::HAND), Icons::AUTHORITY)) > 0;
+    } else {
+      return self::hasCards(Locations::HAND);
     }
   }
 

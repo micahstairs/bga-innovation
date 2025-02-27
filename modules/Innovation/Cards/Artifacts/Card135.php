@@ -13,21 +13,13 @@ class Card135 extends AbstractCard
   // - 4th edition:
   //   - Return all cards from your hand. Draw a card of value equal to the number of cards you return.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => 'hand',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourHand()->build();
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     self::draw(self::getNumChosen());
   }
 

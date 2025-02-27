@@ -15,7 +15,8 @@ class Strings
 
         return str_replace(
             array_map(function ($k) {
-                return '{' . $k . '}'; }, array_keys($vars)),
+                return '{' . $k . '}';
+            }, array_keys($vars)),
             array_values($vars),
             $msg
         );

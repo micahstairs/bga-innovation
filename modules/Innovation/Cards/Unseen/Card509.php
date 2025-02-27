@@ -14,11 +14,6 @@ class Card509 extends AbstractCard
   //     regardless of eligibility; yellow, score it; blue, draw a [5]. Otherwise, safeguard
   //     the top card of the [4] deck.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
@@ -30,7 +25,7 @@ class Card509 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    switch ($card['color']) {
+    switch (self::getColor($card)) {
       case Colors::BLUE:
         self::draw(5);
         self::safeguard($card);

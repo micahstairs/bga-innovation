@@ -16,11 +16,6 @@ class Card513 extends AbstractCard
   //     Anonymity achievement.
   //   - You may splay your purple cards left.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

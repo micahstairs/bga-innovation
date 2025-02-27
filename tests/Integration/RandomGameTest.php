@@ -121,7 +121,7 @@ class RandomGameTest extends BaseIntegrationTest
       ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
       ->passArtifactOnDisplay();
     $this->tableInstance->advanceGame();
-    
+
     // Return artifacts, if prompted
     self::executeInteractions();
   }

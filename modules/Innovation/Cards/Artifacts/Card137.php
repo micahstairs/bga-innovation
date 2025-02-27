@@ -11,27 +11,26 @@ class Card137 extends AbstractCard
   //   - I COMPEL you to transfer a top card of higher value than my top card of the same color
   //     from your board to my board!
 
-  public function initialExecution()
+  public function getInteractionOptions(): array
   {
-    self::setMaxSteps(1);
+    return self::youMust()->fromYourBoard()->withColor(self::getEligibleColors())->toMine()->build();
   }
 
-  public function getInteractionOptions(): array
+  private function getEligibleColors(): array
   {
     $colors = [];
     foreach (self::getTopCards() as $playerCard) {
-      $launcherCard = self::getTopCardOfColor($playerCard['color'], self::getLauncherId());
-      if ($launcherCard === null || $playerCard['faceup_age'] > $launcherCard['faceup_age']) {
-        $colors[] = $playerCard['color'];
+      $launcherCard = self::getTopCardOfColor(self::getColor($playerCard), self::getLauncherId());
+      if ($launcherCard === null || self::getValue($playerCard) > self::getValue($launcherCard)) {
+        $colors[] = self::getColor($playerCard);
       }
     }
-    return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'board',
-      'color'         => $colors,
-    ];
+    return $colors;
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return count($this->getEligibleColors()) > 0;
   }
 
 }

@@ -18,15 +18,19 @@ class Card477 extends AbstractCard
     foreach (Colors::NON_YELLOW as $color) {
       $topCard = self::getTopCardOfColor($color);
       if ($topCard) {
-        $values[] = $topCard['faceup_age'];
+        $values[] = self::getFaceupValue($topCard);
       }
     }
     sort($values);
+    $drewDesiredValues = true;
     foreach ($values as $value) {
-      self::drawAndScore($value);
+      $drawnValue = self::drawAndScore($value);
+      if ($drawnValue != $value) {
+        $drewDesiredValues = false;
+      }
     }
 
-    if ($values && self::wasForeseen()) {
+    if ($values && $drewDesiredValues && self::wasForeseen()) {
       self::win();
     }
   }

@@ -17,7 +17,7 @@ class Card442 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       $revealedCard = self::drawAndReveal(11);
-      $color = $revealedCard['color'];
+      $color = self::getColor($revealedCard);
       if (self::splayAslant($color)) {
         $stack = self::getStack($color);
         for ($i = 0; $i < count($stack) - 4; $i++) {

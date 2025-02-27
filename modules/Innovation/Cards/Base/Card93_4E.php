@@ -22,18 +22,9 @@ class Card93_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'player_id'    => self::getLauncherId(),
-        'choose_value' => true,
-      ];
+      return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return [
-        'owner_from'    => self::getLauncherId(),
-        'location_from' => Locations::BOARD,
-        'owner_to'      => self::getPlayerId(),
-        'location_to'   => Locations::HAND,
-        'without_icon'  => Icons::HEALTH,
-      ];
+      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYourHand()->build();
     }
   }
 
@@ -42,6 +33,11 @@ class Card93_4E extends AbstractCard
     foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
       self::transferToHand($card, self::getLauncherId());
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
   }
 
 }

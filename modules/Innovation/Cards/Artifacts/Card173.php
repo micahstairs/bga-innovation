@@ -19,7 +19,7 @@ class Card173 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       self::setMaxSteps(2);
-      if (self::countCards(Locations::BOARD) === 0) {
+      if (!self::hasCards(Locations::BOARD)) {
         self::setNextStep(2);
       }
     } else if (self::isFirstNonDemand()) {
@@ -37,26 +37,26 @@ class Card173 extends AbstractCard
       $maxValue = self::getMaxValue($topCards);
       foreach ($topCards as $card) {
         if (self::getValue($card) == $maxValue) {
-          $colors[] = $card['color'];
+          $colors[] = self::getColor($card);
         }
       }
-      return [
-        'choose_color' => true,
-        'color'        => $colors,
-      ];
+      return self::youMust()->chooseColor($colors)->build();
     } else if (self::isFirstInteraction()) {
-      return ['achieve_keyword' => true];
+      return self::youMust()->achieve()->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->build();
     }
   }
 
   public function handleColorChoice(int $color)
   {
     self::meld(self::getBottomCardOfColor($color));
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // There are cases where this card is ineffective, but it's not worth checking for them.
+    return true;
   }
 
 }

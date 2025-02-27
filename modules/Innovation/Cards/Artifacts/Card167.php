@@ -11,25 +11,12 @@ class Card167 extends AbstractCard
   //   - I COMPEL you to reveal a card in your hand! If you do, and its value is equal to the value
   //     of any of my top cards, return it and all cards of its color from your board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'location_to'   => Locations::REVEALED,
-      ];
+      return self::youMust()->reveal()->fromYourHand()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::PILE,
-        'return_keyword' => true,
-        'color'          => [self::getLastSelectedColor()],
-      ];
+      return self::youMust()->return()->all()->fromYourStack(self::getLastSelectedColor())->build();
     }
   }
 
@@ -44,4 +31,10 @@ class Card167 extends AbstractCard
       }
     }
   }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::HAND) > 0;
+  }
+
 }

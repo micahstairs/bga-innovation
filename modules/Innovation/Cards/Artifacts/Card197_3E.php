@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card197_3E extends AbstractCard
 {
@@ -17,7 +16,7 @@ class Card197_3E extends AbstractCard
       self::setMaxSteps(1);
     } else {
       foreach (self::getTopCards() as $card) {
-        if ($card['has_demand'] == true) {
+        if (self::hasDemandEffect($card)) {
           self::draw(10);
           return;
         }
@@ -27,14 +26,27 @@ class Card197_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'                 => 'all',
-      'owner_from'        => self::getPlayerId(),
-      'location_from'     => Locations::BOARD,
-      'owner_to'          => self::getLauncherId(),
-      'location_to'       => Locations::SCORE,
-      'has_demand_effect' => true,
-    ];
+    return self::youMust()->all()->fromMyBoard()->toYourScore()->withDemandEffect()->build();
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::hasTopCardWithDemandEffect();
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasTopCardWithDemandEffect();
+  }
+
+  private function hasTopCardWithDemandEffect(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasDemandEffect($card)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

@@ -12,22 +12,13 @@ class Card448 extends AbstractCard
   //   - Reveal and junk a card in your hand. Return from your hand all cards of value equal to the
   //     value of the junked card. Draw three cards of that value. Self-execute the junked card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_from' => Locations::HAND];
+      self::setAuxiliaryValue(-1); // Track the ID of the junked card
+      return self::youMust()->chooseCardFrom(Locations::HAND)->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-        'age'            => self::getLastSelectedFaceUpAge(),
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->value(self::getLastSelectedFaceUpAge())->build();
     }
   }
 
@@ -36,7 +27,7 @@ class Card448 extends AbstractCard
     if (self::isFirstInteraction()) {
       $this->game->revealCardWithoutMoving(self::getPlayerId(), $card);
       self::junk($card);
-      self::setAuxiliaryValue($card['id']);
+      self::setAuxiliaryValue(self::getId($card));
       self::setMaxSteps(2);
     }
   }
@@ -45,9 +36,10 @@ class Card448 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       $card = self::getCard(self::getAuxiliaryValue());
-      self::draw($card['faceup_age']);
-      self::draw($card['faceup_age']);
-      self::draw($card['faceup_age']);
+      $value = self::getFaceupValue($card);
+      self::draw($value);
+      self::draw($value);
+      self::draw($value);
       self::selfExecute($card);
     }
   }

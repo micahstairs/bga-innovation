@@ -16,18 +16,13 @@ class Card425 extends AbstractCard
   //   - Claim one available standard achievement, if eligible, doubling your current score for the
   //     purpose of checking eligibility. If you do, and Artifical Heart was foreseen, repeat this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $cardIds = [];
     $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
     foreach ($this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId(), 2) as $value) {
       foreach ($achievementsByValue[$value] as $card) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     self::setAuxiliaryArray($cardIds);

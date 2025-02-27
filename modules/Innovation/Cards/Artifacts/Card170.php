@@ -4,7 +4,6 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card170 extends AbstractCard
 {
@@ -13,22 +12,12 @@ class Card170 extends AbstractCard
   //     colors, score it and splay up that color on your board. Otherwise, return all cards of
   //     that color from your score pile, and unsplay that color.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_three_colors' => true];
+      return self::youMust()->chooseThreeColors()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'color'          => [self::getAuxiliaryValue()],
-      ];
+      return self::youMust()->return()->all()->withColor(self::getAuxiliaryValue())->fromYourScore()->build();
     }
   }
 
@@ -44,14 +33,14 @@ class Card170 extends AbstractCard
     self::notifyOthers(clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), $args);
 
     $card = self::drawAndReveal(8);
-    $this->notifications->notifyCardColor($card['color']);
-    if (in_array($card['color'], [$color1, $color2, $color3])) {
+    $this->notifications->notifyCardColor(self::getColor($card));
+    if (in_array(self::getColor($card), [$color1, $color2, $color3])) {
       self::score($card);
-      self::splayUp($card['color']);
+      self::splayUp(self::getColor($card));
     } else {
       self::setMaxSteps(2);
       self::transferToHand($card);
-      self::setAuxiliaryValue($card['color']); // Track the color to return
+      self::setAuxiliaryValue(self::getColor($card)); // Track the color to return
     }
   }
 

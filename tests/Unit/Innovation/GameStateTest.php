@@ -66,7 +66,7 @@ class GameStateTest extends BaseTest
 
     public function testSetFromArray()
     {
-        $input = [1,2,3,4,5];
+        $input = [1, 2, 3, 4, 5];
         $expectedSetValue = Arrays::encode($input);
         $this->game->expects($this->once())->method('setGameStateValue')->with('test', $expectedSetValue);
         $this->game->method('getGameStateValue')->with('test')->willReturn($expectedSetValue);
@@ -88,7 +88,7 @@ class GameStateTest extends BaseTest
 
     public function testGetAsArrayFromSetFromArray()
     {
-        $input = [1,2,3,4,5];
+        $input = [1, 2, 3, 4, 5];
 
         $expectedSetValue = Arrays::encode($input);
         $this->game->expects($this->once())->method('setGameStateValue')->with('test', $expectedSetValue);

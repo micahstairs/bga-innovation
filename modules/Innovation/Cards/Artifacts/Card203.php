@@ -39,4 +39,9 @@ class Card203 extends AbstractCard
     self::selfExecute(self::getTopCardOfColor(Colors::BLUE));
   }
 
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::getTopCardOfColor(Colors::BLUE) !== null;
+  }
+
 }

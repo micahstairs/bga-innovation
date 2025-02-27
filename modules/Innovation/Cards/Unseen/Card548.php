@@ -11,11 +11,6 @@ class Card548 extends AbstractCard
   //   - You may choose to either draw and junk two [7], or exchange all cards in your score pile
   //     with all valued cards in the junk.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

@@ -13,30 +13,22 @@ class Card190 extends AbstractCard
   //   - Return a card from your hand. Draw and score three cards of the returned card's value. If
   //     you don't, junk all cards in the deck of value equal to the highest scored card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'hand',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->fromYourHand()->build();
   }
 
-  public function afterInteraction() {
-    $value = 0;
+  public function afterInteraction()
+  {
+    $valueToDraw = 0;
     if (self::getNumChosen() > 0) {
-      $value = self::getLastSelectedAge();
+      $valueToDraw = self::getLastSelectedAge();
     }
-    $card1 = self::drawAndScore($value);
-    $card2 = self::drawAndScore($value);
-    $card3 = self::drawAndScore($value);
-
-    if (self::isFourthEdition() && ($card1['age'] != $value || $card2['age'] != $value || $card3['age'] != $value)) {
-      self::junkBaseDeck(max($card1['age'], $card2['age'], $card3['age']));
+    $value1 = self::getValue(self::drawAndScore($valueToDraw));
+    $value2 = self::getValue(self::drawAndScore($valueToDraw));
+    $value3 = self::getValue(self::drawAndScore($valueToDraw));
+    if (self::isFourthEdition() && ($value1 != $valueToDraw || $value2 != $valueToDraw || $value3 != $valueToDraw)) {
+      self::junkBaseDeck(max($value1, $value2, $value3));
     }
   }
 

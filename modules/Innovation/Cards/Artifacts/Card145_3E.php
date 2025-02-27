@@ -14,11 +14,6 @@ class Card145_3E extends AbstractCard
   //     with a [AUTHORITY] on your board!
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $numTopCardsWithAuthority = 0;
@@ -27,11 +22,20 @@ class Card145_3E extends AbstractCard
         $numTopCardsWithAuthority++;
       }
     }
-    return [
-      'n'        => $numTopCardsWithAuthority,
-      'location' => Locations::SCORE,
-      'owner_to' => self::getLauncherId(),
-    ];
+    return self::youMust()->exactly($numTopCardsWithAuthority)->fromYourScore()->toMine()->build();
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    $hasIcon = false;
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, Icons::AUTHORITY)) {
+        $hasIcon = true;
+        break;
+      }
+    }
+
+    return $hasIcon && self::hasCards(Locations::HAND);
   }
 
 }

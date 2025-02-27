@@ -29,13 +29,7 @@ class Card113 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => Locations::BOARD,
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => Locations::HAND,
-      'with_icon'     => Icons::AUTHORITY,
-      'age'           => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::AUTHORITY),
-    ];
+    return self::youMust()->highest()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMyHand()->build();
   }
 
   public function afterInteraction()

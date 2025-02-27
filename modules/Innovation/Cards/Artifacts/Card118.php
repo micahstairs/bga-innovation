@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card118 extends AbstractCard
 {
@@ -15,33 +16,19 @@ class Card118 extends AbstractCard
   //   - I COMPEL you to return a card from your score pile! If you do, transfer an achievement of
   //     the same value from your achievements to mine, and junk all cards in the deck of that value!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     } else {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'achievements',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'achievements',
-        'age'           => self::getLastSelectedAge(),
-      ];
+      return self::youMust()->value(self::getLastSelectedAge())->fromYourAchievements()->toMine()->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($card['age']);
+      self::setAuxiliaryValue(self::getValue($card));
       self::setMaxSteps(2);
     }
   }
@@ -51,6 +38,11 @@ class Card118 extends AbstractCard
     if (self::isFourthEdition() && self::isSecondInteraction()) {
       self::junkBaseDeck(self::getAuxiliaryValue());
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
   }
 
 }

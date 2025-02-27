@@ -26,28 +26,21 @@ class Card56_4E extends AbstractCard
       if (self::isFirstInteraction()) {
         return ['choose_value' => true];
       } else {
-        return [
-          'can_pass'      => true,
-          'n'             => 'all',
-          'location_from' => Locations::SCORE,
-          'meld_keyword'  => true,
-          'age'           => self::getAuxiliaryValue(),
-        ];
+        return self::youMay()->meld()->all()->value(self::getAuxiliaryValue())->fromYourScore()->build();
       }
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword' => true,
-        'age_min'       => 5,
-        'age_max'       => 7,
-      ];
+      return self::youMay()->junk()->fromAvailableAchievements()->range(5, 7)->build();
     }
   }
 
   public function handleValueChoice(int $value)
   {
     self::setAuxiliaryValue($value);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE) || self::getBaseDeckCount(5) > 0 || self::getBaseDeckCount(6) > 0 || self::getBaseDeckCount(7) > 0;
   }
 
 }

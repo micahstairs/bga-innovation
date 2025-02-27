@@ -34,6 +34,6 @@ class CardTypes
       default:
         return '';
     }
-    
+
   }
 }

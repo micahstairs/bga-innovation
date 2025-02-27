@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card432 extends AbstractCard
 {
@@ -35,13 +36,14 @@ class Card432 extends AbstractCard
           'can_pass'       => true,
           'n_min'          => 1,
           'n_max'          => 'all',
-          'location_from'  => 'hand',
+          'location_from'  => Locations::HAND,
           'return_keyword' => true,
         ];
       } else {
         return [
           'n'                   => self::getAuxiliaryValue(),
           'achieve_if_eligible' => true,
+          'refresh_selection'   => true, // Eligibility needs to be rechecked after each achievement is achieved
         ];
       }
     } else {

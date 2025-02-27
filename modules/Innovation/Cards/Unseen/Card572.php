@@ -18,8 +18,8 @@ class Card572 extends AbstractCard
     if (self::isDemand()) {
       self::revealHand(self::getPlayerId());
       self::revealHand(self::getLauncherId());
-      $playerColors = self::getUniqueColors('hand', self::getPlayerId());
-      $launcherColors = self::getUniqueColors('hand', self::getLauncherId());
+      $playerColors = self::getUniqueColorsInLocation('hand', self::getPlayerId());
+      $launcherColors = self::getUniqueColorsInLocation('hand', self::getLauncherId());
       if (count($playerColors) > 0 && Arrays::isUnorderedEqual($playerColors, $launcherColors)) {
         self::win(self::getLauncherId());
       }

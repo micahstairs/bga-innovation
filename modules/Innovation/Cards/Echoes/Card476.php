@@ -14,8 +14,8 @@ class Card476 extends AbstractCard
   public function initialExecution()
   {
     $card = self::transferToHand(self::drawAndReveal(11));
-    $this->notifications->notifyCardColor($card['color']);
-    self::setAuxiliaryValue($card['color']); // Track color to return
+    $this->notifications->notifyCardColor(self::getColor($card));
+    self::setAuxiliaryValue(self::getColor($card)); // Track color to return
     self::setMaxSteps(1);
   }
 
@@ -29,7 +29,8 @@ class Card476 extends AbstractCard
     ];
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     // Prove that there are no cards of the drawn color left in the score pile
     if (self::countCards('score') > 0) {
       self::revealScorePile();

@@ -18,14 +18,26 @@ class Card201 extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      foreach (self::getTopCards() as $card) {
-        if (self::hasIcon($card, Icons::EFFICIENCY)) {
-          self::drawAndScore(9);
-        }
+      $numCardsToDraw = self::countTopCardsWithEfficiency();
+      for ($i = 0; $i < $numCardsToDraw; $i++) {
+        self::drawAndScore(9);
       }
     } else if (self::isSecondNonDemand()) {
       self::junkBaseDeck(self::countCards(Locations::SCORE));
     }
+  }
+
+  private function countTopCardsWithEfficiency(): int
+  {
+    return count(self::filterByIcon(self::getTopCards(), Icons::EFFICIENCY));
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::isFourthEdition() && self::getBaseDeckCount(self::getMinValue(self::getCards(Locations::SCORE))) > 0) {
+      return true;
+    }
+    return self::countTopCardsWithEfficiency() > 0;
   }
 
 }

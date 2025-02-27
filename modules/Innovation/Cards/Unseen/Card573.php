@@ -12,11 +12,6 @@ class Card573 extends AbstractCard
   //   - I demand you meld a card from my score pile! If the melded card has
   //     no [PROSPERITY], repeat this effect!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [

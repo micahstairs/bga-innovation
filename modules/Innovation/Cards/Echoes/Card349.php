@@ -20,12 +20,12 @@ class Card349 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::isEcho() || self::isSecondNonDemand()) {
+    if (self::isEcho()) {
       self::setMaxSteps(1);
-    } else {
+    } else if (self::isFirstNonDemand()) {
       $minValue = null;
       foreach (self::getTopCards() as $card) {
-        if ($card['color'] != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
+        if (self::getColor($card) != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
           $minValue = $card['faceup_age'];
         }
       }
@@ -33,6 +33,8 @@ class Card349 extends AbstractCard
         $minValue = 0;
       }
       self::drawAndForeshadow($minValue + 3);
+    } else if (self::getBaseDeckCount(2) > 0 || self::getBaseDeckCount(3) > 0) {
+      self::setMaxSteps(1);
     }
   }
 

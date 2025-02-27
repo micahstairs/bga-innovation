@@ -46,7 +46,7 @@ class Card413 extends AbstractCard
       return [
         'location_from'  => 'hand',
         'return_keyword' => true,
-        'age' => self::getMinValueInLocation('hand'),
+        'age'            => self::getMinValueInLocation('hand'),
       ];
     }
   }
@@ -54,7 +54,7 @@ class Card413 extends AbstractCard
   public function handleValueChoice($value)
   {
     $card = self::draw($value);
-    self::setActionScopedAuxiliaryArray(array_merge(self::getActionScopedAuxiliaryArray(), [$card['id']]));
+    self::setActionScopedAuxiliaryArray(array_merge(self::getActionScopedAuxiliaryArray(), [self::getId($card)]));
     $remainingValues = Arrays::removeElement(self::getAuxiliaryArray(), $value);
     if (count($remainingValues) > 0) {
       self::setAuxiliaryArray($remainingValues);
@@ -66,7 +66,8 @@ class Card413 extends AbstractCard
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     $numCardsLeftToReturn = self::getAuxiliaryValue() - 1;
     if ($numCardsLeftToReturn > 0) {
       self::setAuxiliaryValue($numCardsLeftToReturn);
@@ -74,19 +75,23 @@ class Card413 extends AbstractCard
     }
   }
 
-  private function getEvenBonuses(): array {
+  private function getEvenBonuses(): array
+  {
     return array_filter(self::getBonuses(), [$this, 'isEven']);
   }
 
-  private function isEven(int $value): bool {
+  private function isEven(int $value): bool
+  {
     return $value % 2 === 0;
   }
 
-  private function getOddBonuses(): array {
+  private function getOddBonuses(): array
+  {
     return array_filter(self::getBonuses(), [$this, 'isOdd']);
   }
 
-  private function isOdd(int $value): bool {
+  private function isOdd(int $value): bool
+  {
     return $value % 2 === 1;
   }
 

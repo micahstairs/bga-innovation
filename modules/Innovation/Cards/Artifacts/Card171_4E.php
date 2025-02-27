@@ -17,30 +17,15 @@ class Card171_4E extends AbstractCard
   {
     self::transferToScorePile(self::getTopCardOfColor(Colors::RED), self::getLauncherId());
     self::transferToBoard(self::getTopCardOfColor(Colors::GREEN), self::getLauncherId());
-    foreach (self::getCards(Locations::SCORE) as $card) {
-      self::reveal($card);
-    }
     self::setMaxSteps(2);
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::REVEALED,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'color'         => [Colors::YELLOW],
-      ];
+      return self::youMust()->withColor(Colors::YELLOW)->fromYourRevealed()->toMyScore()->revealingIfUnable()->build();
     } else {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::REVEALED,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::HAND,
-        'color'         => [Colors::PURPLE],
-      ];
+      return self::youMust()->withColor(Colors::PURPLE)->fromYourRevealed()->toMyHand()->revealingIfUnable()->build();
     }
   }
 
@@ -51,6 +36,12 @@ class Card171_4E extends AbstractCard
         self::transferToScorePile($card);
       }
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    // NOTE: The launcher cannot know what colors are in the player's score pile.
+    return self::getTopCardOfColor(Colors::RED) || self::getTopCardOfColor(Colors::GREEN) || self::hasCards(Locations::SCORE);
   }
 
 }

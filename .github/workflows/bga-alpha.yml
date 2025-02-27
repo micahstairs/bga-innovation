@@ -27,6 +27,7 @@ jobs:
         with:
          username: ${{ secrets.BGA_USERNAME }}
          server: '1.studio.boardgamearena.com'
+         port: 2022
          password: ${{ secrets.BGA_PASSWORD }} 
          local_path: './innovationalpha'
          remote_path: '.'

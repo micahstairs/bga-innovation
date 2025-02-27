@@ -5,13 +5,11 @@
   "description": "BoardGameArena implementation of Innovation",
   "minimum-stability": "dev",
   "autoload": {
-    "psr-4": {
-    },
-    "files": [
-    ]
+    "psr-4": {},
+    "files": []
   },
   "require": {
-    "php": ">=7.4.0",
+    "php": ">=8.2.0",
     "ext-mysqli": "*",
     "ext-pdo_mysql": "*"
   },

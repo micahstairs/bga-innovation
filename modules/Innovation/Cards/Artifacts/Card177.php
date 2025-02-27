@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card177 extends AbstractCard
 {
@@ -19,29 +18,22 @@ class Card177 extends AbstractCard
   public function initialExecution()
   {
     $meldedCard = self::drawAndMeld(7);
-    $bottomCard = self::getBottomCardOfColor($meldedCard['color']);
-    $this->game->revealCardWithoutMoving(self::getPlayerId(), $bottomCard, /*mentionLocation=*/false);
+    $bottomCard = self::getBottomCardOfColor(self::getColor($meldedCard));
+    $this->game->revealCardWithoutMoving(self::getPlayerId(), $bottomCard, /*mentionLocation=*/ false);
 
-    if (self::isFirstOrThirdEdition()) {
-      $mustReturnCards = $bottomCard['faceup_age'] === 1;
-    } else {
-      $mustReturnCards = $bottomCard['faceup_age'] % 2 === 0;
-    }
+    $mustReturnCards = self::isFirstOrThirdEdition()
+      ? self::getFaceupValue($bottomCard) === 1
+      : self::getFaceupValue($bottomCard) % 2 === 0;
 
     if ($mustReturnCards) {
-      self::setAuxiliaryValue($meldedCard['color']); // Track color to return
+      self::setAuxiliaryValue(self::getColor($meldedCard)); // Track color to return
       self::setMaxSteps(1);
     }
   }
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => Locations::PILE,
-      'color'          => [self::getAuxiliaryValue()],
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue())->build();
   }
 
 }

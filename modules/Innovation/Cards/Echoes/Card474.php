@@ -11,11 +11,6 @@ class Card474 extends AbstractCard
   //   - Choose an icon type. Transfer all cards with that featured icon from all hands and score
   //     piles to the hand of the single player with the most of the chosen icon on their board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return ['choose_icon_type' => true];
@@ -23,6 +18,7 @@ class Card474 extends AbstractCard
 
   public function handleIconChoice(int $icon)
   {
+    self::notifyIconChoice($icon);
     $maxIconCount = 0;
     $maxIconPlayerId = null;
     $multiplePlayersTied = true;

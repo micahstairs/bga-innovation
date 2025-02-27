@@ -25,23 +25,16 @@ class Card174 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'             => 2,
-        'location_from' => Locations::HAND,
-        'location_to'   => Locations::REVEALED_THEN_DECK,
-      ];
+      return self::youMust()->revealAndReturn()->exactly(2)->fromYourHand()->build();
     } else {
-      return [
-        'achieve_keyword'              => true,
-        'include_special_achievements' => true,
-      ];
+      return self::youMust()->achieve()->includingSpecialAchievements()->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::addToAuxiliaryArray($card['id']);
+      self::addToAuxiliaryArray(self::getId($card));
     }
   }
 
@@ -56,13 +49,13 @@ class Card174 extends AbstractCard
         $card1 = self::getCard($cardIds[0]);
         $card2 = self::getCard($cardIds[1]);
 
-        if ($card1['age'] == $card2['age']) {
+        if (self::getValue($card1) == self::getValue($card2)) {
           self::notifyAll(clienttranslate('The cards both have the same value.'));
-          self::draw($card1['age'] + 1);
+          self::draw(self::getValue($card1) + 1);
         } else {
           self::notifyAll(clienttranslate('The cards do not both have the same value.'));
         }
-        if ($card1['color'] == $card2['color']) {
+        if (self::getColor($card1) == self::getColor($card2)) {
           self::notifyAll(clienttranslate('The cards both have the same color.'));
           self::setMaxSteps(2);
         } else {

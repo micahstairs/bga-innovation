@@ -91,7 +91,7 @@ class Card359 extends AbstractCard
   {
     if (self::isEcho()) {
       $card = self::draw($choice);
-      self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
+      self::addToActionScopedAuxiliaryArray(self::getId($card), self::getPlayerId());
     } else if (self::isFirstInteraction()) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
       $card = self::getCard($cardIds[$choice]);

@@ -22,7 +22,7 @@ class Card394 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       $card = self::drawAndMeld(7);
-      self::setAuxiliaryValue($card['color']);
+      self::setAuxiliaryValue(self::getColor($card));
       self::setMaxSteps(1);
     } else {
       self::setMaxSteps(1);

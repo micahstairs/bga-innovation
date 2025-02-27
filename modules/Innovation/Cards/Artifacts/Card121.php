@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card121 extends AbstractCard
 {
@@ -21,17 +22,9 @@ class Card121 extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(-1);
       self::setAuxiliaryValue2(-1);
-      return [
-        'n'             => 3,
-        'location_from' => 'hand',
-        'location_to'   => 'revealed'
-      ];
+      return self::youMust()->reveal()->exactly(3)->fromYourHand()->build();
     } else {
-      return [
-        'n'             => 2,
-        'location_from' => 'revealed',
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->exactly(2)->fromYourRevealed()->build();
     }
   }
 
@@ -39,9 +32,9 @@ class Card121 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === -1) {
-        self::setAuxiliaryValue($card['color']); // Track color of first scored card
+        self::setAuxiliaryValue(self::getColor($card)); // Track color of first scored card
       } else {
-        self::setAuxiliaryValue2($card['color']); // Track color of second scored card
+        self::setAuxiliaryValue2(self::getColor($card)); // Track color of second scored card
       }
     }
   }
@@ -61,6 +54,11 @@ class Card121 extends AbstractCard
         self::notifyAll(clienttranslate('The scored cards were not the same color.'));
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

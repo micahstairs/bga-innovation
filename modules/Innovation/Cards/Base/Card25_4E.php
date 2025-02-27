@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -41,22 +40,17 @@ class Card25_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHandOrRevealed()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'score_keyword' => true
-      ];
+      return self::youMust()->score()->fromYourHand()->build();
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::getStandardIconCount(Icons::AUTHORITY) > 0 || self::hasCards(Locations::HAND);
   }
 
 }

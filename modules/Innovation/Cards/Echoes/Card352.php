@@ -18,11 +18,6 @@ class Card352 extends AbstractCard
   //   - Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of
   //     value equal to the tucked card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {

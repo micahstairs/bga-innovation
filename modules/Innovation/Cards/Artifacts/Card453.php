@@ -19,9 +19,15 @@ class Card453 extends AbstractCard
       self::notifyOthers(clienttranslate('${player_name} junked all cards on his board.'));
     }
 
+    # TODO(FIGURES): Handle age 0 cards.
     for ($i = 1; $i <= 11; $i++) {
       self::drawAndMeld($i);
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::BOARD) > 0;
   }
 
 }

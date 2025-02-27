@@ -44,4 +44,9 @@ class Card119 extends AbstractCard
     return self::isTheirTurn();
   }
 
+  // public function compelMightBeEffective(): bool
+  // {
+  //   TODO(4E): Implement this.
+  // }
+
 }

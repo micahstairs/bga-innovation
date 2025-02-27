@@ -22,11 +22,6 @@ class Card368 extends AbstractCard
   //     to my achievements!
   //   - You may splay your purple cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
@@ -61,7 +56,7 @@ class Card368 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isDemand() && self::isFourthEdition()) {
-      self::addToAuxiliaryArray($card['id']);
+      self::addToAuxiliaryArray(self::getId($card));
     }
   }
 

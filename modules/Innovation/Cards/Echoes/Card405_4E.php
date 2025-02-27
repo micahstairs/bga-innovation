@@ -22,14 +22,14 @@ class Card405_4E extends AbstractCard
     foreach (Colors::ALL as $color) {
       if (self::getIconCountInStack($color, Icons::CONCEPT) > 0) {
         $card = self::draw(9);
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     if (self::wasForeseen()) {
       foreach (Colors::ALL as $color) {
         if (self::getIconCountInStack($color, Icons::CONCEPT) > 0) {
           $card = self::draw(10);
-          $cardIds[] = $card['id'];
+          $cardIds[] = self::getId($card);
         }
       }
     }
@@ -60,10 +60,10 @@ class Card405_4E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      if ($card['id'] == CardIds::AI) {
+      if (self::getId($card) == CardIds::AI) {
         self::win();
       } else {
-        self::removeFromAuxiliaryArray($card['id']);
+        self::removeFromAuxiliaryArray(self::getId($card));
       }
     }
   }

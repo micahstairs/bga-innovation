@@ -17,11 +17,6 @@ class Card346 extends AbstractCard
   //   - Draw a card of value equal to a bonus on any board, if there is one. If you do, and
   //     Linguistics was foreseen, junk all available achievements of that value.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {

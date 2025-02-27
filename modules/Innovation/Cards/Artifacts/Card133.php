@@ -34,13 +34,9 @@ class Card133 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_player' => true];
+      return self::youMust()->choosePlayer(self::getPlayers())->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->value(self::getAuxiliaryValue())->build();
     }
   }
 

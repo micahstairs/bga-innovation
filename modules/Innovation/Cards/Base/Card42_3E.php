@@ -12,26 +12,13 @@ class Card42_3E extends AbstractCard
   //   - You may return a card from your hand. If you do, score a card from your hand for every
   //     two [CONCEPT] on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourHand()->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'n'             => $this->game->intDivision(self::getStandardIconCount(Icons::CONCEPT), 2),
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::CONCEPT), 2);
+      return self::youMay()->score()->exactly($numCards)->fromYourHand()->build();
     }
   }
 
@@ -40,6 +27,11 @@ class Card42_3E extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setMaxSteps(2);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

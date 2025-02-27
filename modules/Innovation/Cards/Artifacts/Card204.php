@@ -29,23 +29,12 @@ class Card204 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'      => true,
-          'location_from' => Locations::HAND,
-          'score_keyword' => true,
-        ];
+        return self::youMust()->score()->fromYourHand()->build();
       } else {
-        return [
-          'can_pass'      => true,
-          'location_from' => Locations::SCORE,
-          'location_to'   => Locations::HAND,
-        ];
+        return self::youMay()->fromYourScore()->toYourHand()->build();
       }
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->build();
     }
   }
 

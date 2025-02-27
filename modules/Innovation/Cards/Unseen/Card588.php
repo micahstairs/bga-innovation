@@ -53,7 +53,7 @@ class Card588 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::getEffectNumber() === 1) {
-      self::unsplay($card['color'], $card['owner'], self::getPlayerId());
+      self::unsplay(self::getColor($card), $card['owner'], self::getPlayerId());
     }
   }
 

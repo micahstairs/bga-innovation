@@ -16,7 +16,7 @@ class Card178_4E extends AbstractCard
       self::drawAndScore(8);
     } else if (self::isSecondNonDemand()) {
       $card = self::drawAndMeld(8);
-      if ($card['faceup_age'] == 8) {
+      if (self::getFaceupValue($card) == 8) {
         self::setMaxSteps(1);
       }
     }
@@ -24,10 +24,11 @@ class Card178_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choose_value' => true];
+    return self::youMust()->chooseValue()->build();
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     self::junkBaseDeck($value);
   }
 

@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card160 extends AbstractCard
 {
@@ -26,18 +27,20 @@ class Card160 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'score',
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromYourScore()->build();
   }
 
   public function handleCardChoice(array $card)
   {
-    self::splayRight($card['color']);
+    self::splayRight(self::getColor($card));
     if (self::isFourthEdition()) {
-      self::junkBaseDeck($card['faceup_age']);
+      self::junkBaseDeck(self::getFaceupValue($card));
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::BOARD) || self::hasCards(Locations::SCORE);
   }
 
 }

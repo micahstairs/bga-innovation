@@ -27,11 +27,12 @@ class Card148_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location' => Locations::BOARD,
-      'owner_to' => self::getLauncherId(),
-      'age'      => self::getAuxiliaryValue(),
-    ];
+    return self::youMust()->all()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine()->build();
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countCards(Locations::SCORE) > 0;
   }
 
 }

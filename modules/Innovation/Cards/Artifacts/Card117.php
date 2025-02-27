@@ -15,7 +15,7 @@ class Card117 extends AbstractCard
   {
     while (true) {
       $card = self::drawAndReveal(3);
-      if (self::getTopCardOfColor($card['color'])) {
+      if (self::getTopCardOfColor(self::getColor($card))) {
         self::transferToHand($card);
         return;
       } else {

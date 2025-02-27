@@ -16,9 +16,9 @@ class Card445 extends AbstractCard
   {
     do {
       $card = self::drawAndTuck(11);
-      $color = $card['color'];
+      $color = self::getColor($card);
       $stack = self::getStack($color);
-      
+
       if (count($stack) >= 2 && self::getValue($stack[1]) === 11) {
         self::lose();
         return;

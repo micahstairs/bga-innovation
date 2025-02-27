@@ -50,7 +50,7 @@ class Card336 extends AbstractCard
       $revealedCards[] = self::drawAndReveal(1);
     }
     foreach ($revealedCards as $card) {
-      if ($card['color'] == $color) {
+      if (self::getColor($card) == $color) {
         self::transferToHand($card);
       }
     }

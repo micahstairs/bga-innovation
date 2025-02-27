@@ -58,7 +58,7 @@ class Card350 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isNonDemand()) {
-      self::setAuxiliaryValue2($card['id']); // Tracks card to meld or score
+      self::setAuxiliaryValue2(self::getId($card)); // Tracks card to meld or score
       self::setMaxSteps(self::getMaxSteps() + 1);
     }
   }

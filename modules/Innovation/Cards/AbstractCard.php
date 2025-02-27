@@ -3,6 +3,7 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
@@ -32,13 +33,37 @@ abstract class AbstractCard
     // Even if the card is endorsed, this method will still only be called once.
   }
 
-  public abstract function initialExecution();
+  public function initialExecution()
+  {
+    // Subclasses are expected to override this method unless every effect has exactly one interaction.
+    self::setMaxSteps(1);
+  }
 
   public function getInteractionOptions(): array
   {
     // Subclasses are expected to override this method if the card has any interactions.
     $cardId = self::getThisCardId();
     throw new \RuntimeException("Unimplemented getInteractionOptions for card=$cardId");
+  }
+
+  public function updateInteractionOptions(): array
+  {
+    // Subclasses can override this method if the card has any interactions that use 'refresh_selection' and the default behavior is not sufficient.
+    $options = static::getInteractionOptions();
+    // Clear the options that have to do with the number of cards being returned (only the
+    // initial getInteractionOptions call should set these)
+    unset($options['n'], $options['n_min'], $options['n_max']);
+    return $options;
+  }
+
+  public function youMay(): InteractionBuilder
+  {
+    return (new InteractionBuilder($this->state))->canPass(true);
+  }
+
+  public function youMust(): InteractionBuilder
+  {
+    return (new InteractionBuilder($this->state))->canPass(false);
   }
 
   public final function getSpecialChoicePrompt(): array
@@ -55,6 +80,8 @@ abstract class AbstractCard
         return static::getPromptForColorChoice();
       case 5: // choose_two_colors
         return static::getPromptForTwoColorChoice();
+      case 6: // choose_rearrange
+        return static::getPromptForRearrangeChoice();
       case 8; // choose_type
         return static::getPromptForTypeChoice();
       case 9: // choose_three_colors
@@ -65,6 +92,8 @@ abstract class AbstractCard
         return static::getPromptForNumberChoice();
       case 12: // choose_icon_type
         return static::getPromptForIconChoice();
+      case 13: // choose_special_achievement
+        return static::getPromptForSpecialAchievementChoice();
       default:
         $cardId = self::getThisCardId();
         throw new \RuntimeException("Unhandled value in getSpecialChoicePrompt: $choiceType for card=$cardId");
@@ -96,7 +125,7 @@ abstract class AbstractCard
     // Subclasses can optionally override this function if any extra handling is needed after each individual card is chosen.
   }
 
-  public function handleSplayChoice(array $card)
+  public function handleSplayChoice(int $color, bool $splayChanged)
   {
     // Subclasses can optionally override this function if any extra handling is needed after a splay is chosen.
   }
@@ -108,25 +137,40 @@ abstract class AbstractCard
       // TODO:(LATER): Remove choose_yes_or_no.
       case 1: // choose_from_list
       case 7: // choose_yes_or_no
-        return static::handleListChoice($choice);
+        static::handleListChoice($choice);
+        break;
       case 3: // choose_value
-        return static::handleValueChoice($choice);
+        static::handleValueChoice($choice);
+        break;
       case 4: // choose_color
-        return static::handleColorChoice($choice);
+        static::handleColorChoice($choice);
+        break;
       case 5: // choose_two_colors
         $colors = Arrays::decode($choice);
-        return static::handleTwoColorChoice($colors[0], $colors[1]);
+        static::handleTwoColorChoice($colors[0], $colors[1]);
+        break;
+      case 6: // choose_rearrange
+        static::handleRearrangeChoice($choice);
+        break;
       case 8; // choose_type
-        return static::handleTypeChoice($choice);
+        static::handleTypeChoice($choice);
+        break;
       case 9: // choose_two_colors
         $colors = Arrays::decode($choice);
-        return static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
+        static::handleThreeColorChoice($colors[0], $colors[1], $colors[2]);
+        break;
       case 10: // choose_player
-        return static::handlePlayerChoice($choice);
+        static::handlePlayerChoice($choice);
+        break;
       case 11: // choose_non_negative_integer
-        return static::handleNumberChoice($choice);
+        static::handleNumberChoice($choice);
+        break;
       case 12: // choose_icon_type
-        return static::handleIconChoice($choice);
+        static::handleIconChoice($choice);
+        break;
+      case 13: // choose_special_achievement
+        static::handleSpecialAchievementChoice($choice);
+        break;
       default:
         $cardId = self::getThisCardId();
         throw new \RuntimeException("Unhandled value in handleSpecialChoice: $choiceType for card=$cardId");
@@ -196,6 +240,20 @@ abstract class AbstractCard
     throw new \RuntimeException("Unimplemented handleIconChoice for card=$cardId");
   }
 
+  protected function handleRearrangeChoice(int $choice)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_rearrange' interactions.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleRearrangeChoice for card=$cardId");
+  }
+
+  protected function handleSpecialAchievementChoice(int $specialAchievementId)
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_special_achievement' interactions.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented handleSpecialAchievementChoice for card=$cardId");
+  }
+
   public function afterInteraction()
   {
     // Subclasses can optionally override this function if any extra handling needs to be done
@@ -205,10 +263,48 @@ abstract class AbstractCard
     // See handleAbortedInteraction() for that.
   }
 
+  public function atEndOfEffect()
+  {
+    // Subclasses can optionally override this function if any extra handling needs to be done at the end of the effect.
+  }
+
   public function hasPostExecutionLogic(): bool
   {
     // Subclasses are expected to override this method and return true if the card needs to do any more logic after executing a card.
     return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when the non-demands are executed.
+    if (static::nonDemandEffectivenessDependsOnDemand()) {
+      return false;
+    }
+    return true;
+  }
+
+  protected function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    // Subclasses should override this method and return true if the card's effectiveness when non-demands are executed only if the demand is effective.
+    return false;
+  }
+
+  public function echoMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when the echo effect is executed.
+    return true;
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when "I demand" is executed.
+    return true;
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    // Subclasses should override this method and return false if the card is guaranteed not to have an effect when "I compel" is executed.
+    return true;
   }
 
   // EXECUTION HELPERS
@@ -357,7 +453,7 @@ abstract class AbstractCard
 
   protected function drawType(int $age, int $type, int $playerId = null)
   {
-    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
+    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, Locations::HAND, /*bottom_to=*/ false, /*type=*/ $type);
   }
 
   protected function transferToHand(?array $card, int $playerId = null)
@@ -365,7 +461,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::HAND);
   }
 
   protected function score(?array $card, int $playerId = null)
@@ -378,7 +474,7 @@ abstract class AbstractCard
 
   protected function scoreCards(array $cards, int $playerId = null): bool
   {
-    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), 'score', ['score_keyword' => true]);
+    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), Locations::SCORE, ['score_keyword' => true]);
   }
 
   protected function transferToScorePile(?array $card, int $playerId = null)
@@ -386,12 +482,12 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'score');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::SCORE);
   }
 
   protected function transferCardsToScorePile(array $cards, int $playerId = null): bool
   {
-    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), 'score');
+    return $this->game->bulkTransferCards($cards, self::coercePlayerId($playerId), Locations::SCORE);
   }
 
   protected function meld(?array $card, int $playerId = null)
@@ -407,7 +503,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'board');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::BOARD);
   }
 
   protected function tuck(?array $card, int $playerId = null)
@@ -423,7 +519,7 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::REVEALED);
   }
 
   protected function safeguard(?array $card, int $playerId = null)
@@ -447,10 +543,11 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements", ["achieve_keyword" => true]);
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::ACHIEVEMENTS, ["achieve_keyword" => true]);
   }
 
-  protected function claim(int $cardId, int $playerId = null): ?array {
+  protected function claim(int $cardId, int $playerId = null): ?array
+  {
     if (!self::isSpecialAchievement(self::getCard($cardId))) {
       return null;
     }
@@ -478,7 +575,15 @@ abstract class AbstractCard
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), Locations::ACHIEVEMENTS);
+  }
+
+  protected function transferToAvailableAchievements(?array $card)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, 0, Locations::ACHIEVEMENTS);
   }
 
   protected function return(?array $card): ?array
@@ -576,11 +681,11 @@ abstract class AbstractCard
   protected function drawAndSafeguard(int $age, int $playerId = null): ?array
   {
     $playerId = self::coercePlayerId($playerId);
-    if (self::isFourthEdition() && self::countCards('safe') >= $this->game->getForecastAndSafeLimit($playerId)) {
+    if (self::isFourthEdition() && self::countCards(Locations::SAFE) >= $this->game->getForecastAndSafeLimit($playerId)) {
       $card = self::draw($age, $playerId);
-      $this->notifications->notifyLocationFull(clienttranslate('safe'), $playerId);
+      $this->notifications->notifyLocationFull(clienttranslate(Locations::SAFE), $playerId);
     } else {
-      $card = $this->game->executeDraw($playerId, $age, 'safe');
+      $card = $this->game->executeDraw($playerId, $age, Locations::SAFE);
     }
     return $card;
   }
@@ -588,11 +693,11 @@ abstract class AbstractCard
   protected function drawAndForeshadow(int $age, int $playerId = null): ?array
   {
     $playerId = self::coercePlayerId($playerId);
-    if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
+    if (self::isFourthEdition() && self::countCards(Locations::FORECAST) >= $this->game->getForecastAndSafeLimit($playerId)) {
       $card = self::draw($age, $playerId);
-      $this->notifications->notifyLocationFull(clienttranslate('forecast'), $playerId);
+      $this->notifications->notifyLocationFull(clienttranslate(Locations::FORECAST), $playerId);
     } else {
-      $card = $this->game->executeDraw($playerId, $age, 'forecast');
+      $card = $this->game->executeDraw($playerId, $age, Locations::FORECAST);
     }
     return $card;
   }
@@ -631,10 +736,27 @@ abstract class AbstractCard
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function filterByColor(array $cards, array $colors): array
+  protected function filterWithoutIcon(array $cards, int $icon): array
   {
+    return array_values(array_filter($cards, function ($card) use ($icon) {
+      return !self::hasIcon($card, $icon);
+    }));
+  }
+
+  protected function filterByIcon(array $cards, int $icon): array
+  {
+    return array_values(array_filter($cards, function ($card) use ($icon) {
+      return self::hasIcon($card, $icon);
+    }));
+  }
+
+  protected function filterByColor(array $cards, int|array $colors): array
+  {
+    if (!is_array($colors)) {
+      $colors = [$colors];
+    }
     return array_values(array_filter($cards, function ($card) use ($colors) {
-      return in_array($card['color'], $colors);
+      return in_array(self::getColor($card), $colors);
     }));
   }
 
@@ -642,6 +764,26 @@ abstract class AbstractCard
   {
     return array_values(array_filter($cards, function ($card) use ($types) {
       return in_array($card['type'], $types);
+    }));
+  }
+
+  protected function filterByValue(array $cards, array|int $values): array
+  {
+    if (!is_array($values)) {
+      $values = [$values];
+    }
+    return array_values(array_filter($cards, function ($card) use ($values) {
+      return in_array(self::getValue($card), $values);
+    }));
+  }
+
+  protected function filterWithoutValue(array $cards, array|int $values): array
+  {
+    if (!is_array($values)) {
+      $values = [$values];
+    }
+    return array_values(array_filter($cards, function ($card) use ($values) {
+      return !in_array(self::getValue($card), $values);
     }));
   }
 
@@ -658,11 +800,12 @@ abstract class AbstractCard
     return Arrays::getRepeatedValues($values);
   }
 
-  public function getColorsMatchingValues(array $cards, array $values): array {
+  public function getColorsMatchingValues(array $cards, array $values): array
+  {
     $colors = [];
     foreach ($cards as $card) {
       if (in_array(self::getValue($card), $values)) {
-        $colors[] = $card['color'];
+        $colors[] = self::getColor($card);
       }
     }
     return $colors;
@@ -690,24 +833,45 @@ abstract class AbstractCard
 
   protected function getRevealedCard(int $playerId = null): ?array
   {
-    $cards = self::getCards('revealed');
+    $cards = self::getCards(Locations::REVEALED);
     if (count($cards) === 0) {
       return null;
     }
     return $cards[0];
   }
 
-  protected function getCards(string $location, int $playerId = null): array
+  protected function getCards(string|array $locations, int $playerId = null): array
   {
-    return $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+    $cards = [];
+    if (!is_array($locations)) {
+      $locations = [$locations];
+    }
+    foreach ($locations as $location) {
+      $cards = array_merge($cards, $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location));
+    }
+    return $cards;
   }
 
   protected function getAvailableStandardAchievements(): array
   {
-    $achievements = $this->game->getCardsInLocation(0, Locations::ACHIEVEMENTS);
+    $achievements = self::getCards(Locations::AVAILABLE_ACHIEVEMENTS);
     return array_values(array_filter($achievements, function ($card) {
       return self::isValuedCard($card);
     }));
+  }
+
+  protected function getAvailableSpecialAchievements(): array
+  {
+    $achievements = self::getCards(Locations::AVAILABLE_ACHIEVEMENTS);
+    return array_values(array_filter($achievements, function ($card) {
+      return self::isSpecialAchievement($card);
+    }));
+  }
+
+  protected function isAvailable(int $cardId): bool
+  {
+    $card = $this->game->getCardInfo($cardId);
+    return $card['owner'] == 0 && $card['location'] === Locations::ACHIEVEMENTS;
   }
 
   // BULK CARD HELPERS
@@ -724,17 +888,17 @@ abstract class AbstractCard
 
   protected function revealHand(int $playerId = null): void
   {
-    $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');
+    $this->game->revealLocation(self::coercePlayerId($playerId), Locations::HAND);
   }
 
   protected function revealScorePile(int $playerId = null): void
   {
-    $this->game->revealLocation(self::coercePlayerId($playerId), 'score');
+    $this->game->revealLocation(self::coercePlayerId($playerId), Locations::SCORE);
   }
 
   protected function revealForecast(int $playerId = null): void
   {
-    $this->game->revealLocation(self::coercePlayerId($playerId), 'forecast');
+    $this->game->revealLocation(self::coercePlayerId($playerId), Locations::FORECAST);
   }
 
   // CARD ACCESSOR HELPERS
@@ -749,12 +913,43 @@ abstract class AbstractCard
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location, 'MAX');
   }
 
+  protected function getLowestCards(string $location, int $playerId = null): array
+  {
+    return self::filterByValue(self::getCards($location), [self::getMinValueInLocation($location)]);
+  }
+
+  protected function getHighestCards(string $location, int $playerId = null): array
+  {
+    return self::filterByValue(self::getCards($location), [self::getMaxValueInLocation($location)]);
+  }
+
+  protected function hasAnyIcons(array $card, array $icons): bool
+  {
+    foreach ($icons as $icon) {
+      if (self::hasIcon($card, $icon)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   protected function hasIcon(?array $card, int $icon): bool
   {
     if (!$card) {
       return false;
     }
     return $this->game->hasRessource($card, $icon);
+  }
+
+  protected function hasDemandEffect(array|int $cardOrCardId): bool
+  {
+    if (is_array($cardOrCardId)) {
+      $cardId = self::getId($cardOrCardId);
+    } else {
+      $cardId = $cardOrCardId;
+    }
+    $card = $this->game->getCardInfo($cardId);
+    return $card['has_demand'] == true;
   }
 
   protected function getBonuses(int $playerId = null): array
@@ -772,29 +967,34 @@ abstract class AbstractCard
     return $card && $card['age'] === null && $card['id'] < 1000;
   }
 
+  protected static function getColor(array $card): int
+  {
+    return $card['color'];
+  }
+
   protected static function isBlue(?array $card): bool
   {
-    return $card && $card['color'] == Colors::BLUE;
+    return $card && self::getColor($card) == Colors::BLUE;
   }
 
   protected static function isRed(?array $card): bool
   {
-    return $card && $card['color'] == Colors::RED;
+    return $card && self::getColor($card) == Colors::RED;
   }
 
   protected static function isGreen(?array $card): bool
   {
-    return $card && $card['color'] == Colors::GREEN;
+    return $card && self::getColor($card) == Colors::GREEN;
   }
 
   protected static function isYellow(?array $card): bool
   {
-    return $card && $card['color'] == Colors::YELLOW;
+    return $card && self::getColor($card) == Colors::YELLOW;
   }
 
   protected static function isPurple(?array $card): bool
   {
-    return $card && $card['color'] == Colors::PURPLE;
+    return $card && self::getColor($card) == Colors::PURPLE;
   }
 
   protected static function getValue(?array $card): int
@@ -803,6 +1003,27 @@ abstract class AbstractCard
       return 0;
     }
     return Locations::isFaceup($card['location']) ? intval($card['faceup_age']) : intval($card['age']);
+  }
+
+  protected static function getFaceupValue(?array $card): int
+  {
+    if (!$card) {
+      return 0;
+    }
+    return intval($card['faceup_age']);
+  }
+
+  protected static function getCardType(array $card): int
+  {
+    return intval($card['type']);
+  }
+
+  protected static function getId(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['id']);
   }
 
   protected function getCard(int $cardId): ?array
@@ -874,6 +1095,16 @@ abstract class AbstractCard
   protected function isSplayed(int $color, int $playerId = null): int
   {
     return self::getSplayDirection($color, self::coercePlayerId($playerId)) > 0;
+  }
+
+  protected function isSplayedRight(int $color, int $playerId = null): int
+  {
+    return self::isSplayed($color, self::coercePlayerId($playerId)) === Directions::RIGHT;
+  }
+
+  protected function isSplayedUp(int $color, int $playerId = null): int
+  {
+    return self::getSplayDirection($color, self::coercePlayerId($playerId)) === Directions::UP;
   }
 
   // SELECTION HELPERS
@@ -1160,6 +1391,20 @@ abstract class AbstractCard
     return $options;
   }
 
+  protected function getPromptForRearrangeChoice(): array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_rearrange' choices.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented getPromptForRearrangeChoice for card=$cardId");
+  }
+
+  protected function getPromptForSpecialAchievementChoice(): array
+  {
+    // Subclasses are expected to override this method if the card has any 'choose_special_achievement' choices.
+    $cardId = self::getThisCardId();
+    throw new \RuntimeException("Unimplemented getPromptForSpecialAchievementChoice for card=$cardId");
+  }
+
   // PLAYER HELPERS
 
   protected function win(int $playerId = null): void
@@ -1249,14 +1494,29 @@ abstract class AbstractCard
     return $this->game->getActiveOpponentIds(self::coercePlayerId($playerId));
   }
 
+  protected function getOpponents(int $playerId = null): array
+  {
+    return $this->game->getActiveOpponents(self::coercePlayerId($playerId));
+  }
+
   protected function getOtherPlayerIds(int $playerId = null): array
   {
     return $this->game->getOtherActivePlayerIds(self::coercePlayerId($playerId));
   }
 
+  protected function getOtherPlayers(int $playerId = null): array
+  {
+    return $this->game->getOtherActivePlayers(self::coercePlayerId($playerId));
+  }
+
   protected function getPlayerIds(): array
   {
     return $this->game->getAllActivePlayerIds();
+  }
+
+  protected function getPlayers(): array
+  {
+    return $this->game->getAllActivePlayers();
   }
 
   // MISCELLANEOUS HELPERS
@@ -1271,12 +1531,12 @@ abstract class AbstractCard
     return $this->game->countCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
-  protected function hasCards(string $location, int $playerId = null): int
+  protected function hasCards(string $location, int $playerId = null): bool
   {
     return self::countCards($location, $playerId) > 0;
   }
 
-  protected function getUniqueValues(string $location, int $playerId = null): array
+  protected function getUniqueValuesInLocation(string $location, int $playerId = null): array
   {
     $values = [];
     foreach (self::countCardsKeyedByValue($location, $playerId) as $value => $count) {
@@ -1287,7 +1547,7 @@ abstract class AbstractCard
     return $values;
   }
 
-  protected function getUniqueColors(string $location, int $playerId = null): array
+  protected function getUniqueColorsInLocation(string $location, int $playerId = null): array
   {
     $colors = [];
     foreach (self::countCardsKeyedByColor($location, $playerId) as $color => $count) {
@@ -1296,6 +1556,15 @@ abstract class AbstractCard
       }
     }
     return $colors;
+  }
+
+  protected function getUniqueColors(array $cards): array
+  {
+    $colors = [];
+    foreach ($cards as $card) {
+      $colors[] = self::getColor($card);
+    }
+    return array_unique($colors);
   }
 
   protected function getCardsKeyedByValue(string $location, int $playerId = null): array
@@ -1311,7 +1580,7 @@ abstract class AbstractCard
 
   protected function getBaseDecks(): array
   {
-    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE);
+    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/ 0, 'deck', CardTypes::BASE);
   }
 
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
@@ -1347,15 +1616,38 @@ abstract class AbstractCard
     return $numColors;
   }
 
-  protected function countSplayedColors(int $playerId = null): int
+  protected function getSplayedColors(array|int $directions = Directions::SPLAYED, int $playerId = null): array
   {
-    $numColors = 0;
+    if (!is_array($directions)) {
+      $directions = [$directions];
+    }
+    $colors = [];
     foreach (Colors::ALL as $color) {
-      if (self::isSplayed($color, $playerId)) {
-        $numColors++;
+      if (in_array(self::getSplayDirection($color, $playerId), $directions)) {
+        $colors[] = $color;
       }
     }
-    return $numColors;
+    return $colors;
+  }
+
+  protected function countSplayedColors(array|int $directions = Directions::SPLAYED, int $playerId = null): int
+  {
+    return count(self::getSplayedColors($directions, $playerId));
+  }
+
+  protected function canSplay(array|int $colors = Colors::ALL, int $playerId = null): bool
+  {
+    if (!is_array($colors)) {
+      $colors = [$colors];
+    }
+    $playerId = self::coercePlayerId($playerId);
+    $cardsKeyedByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
+    foreach ($colors as $color) {
+      if (count($cardsKeyedByColor[$color]) >= 2) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected function getStandardIconCount(int $icon, int $playerId = null): int
@@ -1380,7 +1672,7 @@ abstract class AbstractCard
   protected function getAllIconCounts(int $playerId = null): array
   {
     $icons = [];
-    $cardsByColor = self::getCardsKeyedByColor('board', $playerId);
+    $cardsByColor = self::getCardsKeyedByColor(Locations::BOARD, $playerId);
     foreach ($cardsByColor as $stack) {
       if (count($stack) > 1) {
         $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));
@@ -1579,22 +1871,17 @@ abstract class AbstractCard
     return $this->game->renderPlayerName(self::coercePlayerId($playerId));
   }
 
-// PRIVATE HELPERS
+  // PRIVATE HELPERS
 
   private function canPass(): bool
   {
     return $this->game->innovationGameState->get('can_pass');
   }
 
-  private function getThisCardId(): string
+  protected function getThisCardId(): string
   {
     $className = get_class($this);
     return intval(substr($className, strrpos($className, "\\") + 5));
-  }
-
-  private function getThisCard(): array
-  {
-    return self::getCard(self::getThisCardId());
   }
 
   private function coercePlayerId(?int $playerId): int

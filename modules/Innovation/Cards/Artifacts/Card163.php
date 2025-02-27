@@ -14,25 +14,17 @@ class Card163 extends AbstractCard
   //   - Draw and reveal a [6]. If it is red, claim an available standard achievement, ignoring
   //     eligibility. Otherwise, junk an available standard achievement.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     $card = self::drawAndReveal(6);
-    $this->notifications->notifyCardColor($card['color']);
+    $this->notifications->notifyCardColor(self::getColor($card));
     self::transferToHand($card);
     if (self::isRed($card)) {
-      return ['achieve_keyword' => true];
+      return self::youMust()->achieve()->build();
     } else if (self::isFirstOrThirdEdition()) {
       return [];
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->build();
     }
   }
 }

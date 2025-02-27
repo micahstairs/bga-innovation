@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 class Card51_4E extends AbstractCard
@@ -13,24 +12,12 @@ class Card51_4E extends AbstractCard
   //   - I DEMAND you transfer all the cards of the value of my choice in your score pile to your hand!
   //   - You may splay your yellow cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'player_id' => self::getLauncherId(),
-        'choose_value' => true,
-      ];
+      return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
     }
   }
 
@@ -39,6 +26,16 @@ class Card51_4E extends AbstractCard
     foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
       self::transferToHand($card);
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::canSplay(Colors::YELLOW);
   }
 
 }

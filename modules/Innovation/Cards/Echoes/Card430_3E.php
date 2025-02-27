@@ -14,11 +14,6 @@ class Card430_3E extends AbstractCard
   //   - I DEMAND you return four cards from your score pile!
   //   - Return a card from your score pile. If you do, you may splay any one color of your cards up.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

@@ -23,7 +23,7 @@ class Card422_4E extends AbstractCard
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand()) {
-      $bonuses = self::getBonuses();
+      $bonuses = array_unique(self::getBonuses());
       sort($bonuses);
       foreach ($bonuses as $value) {
         self::drawAndMeld($value);
@@ -43,7 +43,7 @@ class Card422_4E extends AbstractCard
       foreach (self::getCardsKeyedByColor(Locations::BOARD) as $stack) {
         foreach ($stack as $card) {
           if ($card['position'] > 0) {
-            $cardIds[] = $card['id'];
+            $cardIds[] = self::getId($card);
           }
         }
       }

@@ -16,7 +16,7 @@ class Card519 extends AbstractCard
     self::setAuxiliaryArray([]);
     foreach (self::getCards('hand') as $card) {
       self::reveal($card);
-      self::addToAuxiliaryArray($card['id']);
+      self::addToAuxiliaryArray(self::getId($card));
     }
     self::setMaxSteps(2);
   }
@@ -61,7 +61,7 @@ class Card519 extends AbstractCard
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     $cardId = self::getAuxiliaryArray()[$choice];
-    $this->game->selfExecute(self::getCard($cardId), /*replace_may_with_must=*/true);
+    $this->game->selfExecute(self::getCard($cardId), /*replace_may_with_must=*/ true);
   }
 
   public function afterInteraction()
@@ -72,7 +72,7 @@ class Card519 extends AbstractCard
     }
     self::revealScorePile();
     foreach (self::getCards('score') as $card) {
-      self::addToAuxiliaryArray($card['id']);
+      self::addToAuxiliaryArray(self::getId($card));
     }
   }
 

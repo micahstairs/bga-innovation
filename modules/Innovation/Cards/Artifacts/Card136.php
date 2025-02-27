@@ -4,7 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card136 extends AbstractCard
 {
@@ -17,32 +17,18 @@ class Card136 extends AbstractCard
   //   - Reveal a card from your hand. If you do, splay left its color on your board, then choose a
   //     top card other than Yata No Kagami of that color on any board and self-execute it.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      $keyword = self::isFirstOrThirdEdition() ? 'tuck_keyword' : 'reveal_keyword';
-      return [
-        'location_from' => 'hand',
-        $keyword        => true,
-      ];
+      if (self::isFirstOrThirdEdition()) {
+        return self::youMust()->tuck()->fromYourHand()->build();
+      } else {
+        return self::youMust()->reveal()->fromYourHand()->build();
+      }
     } else if (self::isFirstOrThirdEdition()) {
-      return [
-        'owner_from'          => 'any player',
-        'choose_from'         => 'board',
-        'has_splay_direction' => [Directions::LEFT, Directions::RIGHT, Directions::UP, Directions::ASLANT],
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->currentlySplayed()->build();
     } else {
-      return [
-        'owner_from'  => 'any player',
-        'choose_from' => 'board',
-        'color'       => [self::getAuxiliaryValue()],
-        'not_id'      => CardIds::YATA_NO_KAGAMI,
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getAuxiliaryValue())->otherThan(CardIds::YATA_NO_KAGAMI)->build();
     }
   }
 
@@ -51,13 +37,18 @@ class Card136 extends AbstractCard
     if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       if (self::isFourthEdition()) {
         self::transferToHand($card);
-        self::setAuxiliaryValue($card['color']); // Track color to self-execute
+        self::setAuxiliaryValue(self::getColor($card)); // Track color to self-execute
       }
-      self::splayLeft($card['color']);
+      self::splayLeft(self::getColor($card));
       self::setMaxSteps(2);
     } else if (self::isSecondInteraction()) {
       self::selfExecute($card);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

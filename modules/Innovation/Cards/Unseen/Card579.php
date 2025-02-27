@@ -14,11 +14,6 @@ class Card579 extends AbstractCard
   //     and score a [10].
   //   - You may splay your red cards up.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {

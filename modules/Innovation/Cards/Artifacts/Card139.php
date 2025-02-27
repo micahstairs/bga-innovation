@@ -18,24 +18,12 @@ class Card139 extends AbstractCard
   //     cards you score.
 
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourHand()->build();
     } else {
-      return [
-        'n'             => self::getLastSelectedAge(),
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->exactly(self::getLastSelectedAge())->fromYourHand()->build();
     }
   }
 
@@ -59,6 +47,11 @@ class Card139 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       self::junkBaseDeck(self::getAuxiliaryValue());
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

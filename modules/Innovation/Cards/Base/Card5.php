@@ -8,7 +8,7 @@ use Innovation\Enums\Locations;
 
 class Card5 extends AbstractCard
 {
-  //
+  // Oars:
   // - 3rd edition:
   //   - I DEMAND you transfer a card with a [PROSPERITY] from your hand to my score pile! If you
   //     do, draw a [1], and repeat this dogma effect!
@@ -48,17 +48,12 @@ class Card5 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'    => Locations::HAND,
-      'owner_to'         => self::getLauncherId(),
-      'location_to'      => Locations::SCORE,
-      'with_icon'        => Icons::PROSPERITY,
-      'reveal_if_unable' => true,
-    ];
+    return self::youMust()->withIcon(Icons::PROSPERITY)->fromYourHand()->toMyScore()->revealingIfUnable()->build();
   }
 
   public function handleCardChoice(array $card)
   {
+    self::draw(1);
     self::setAuxiliaryValue(1); // Remember that a card was transferred
     self::setNextStep(1);
   }

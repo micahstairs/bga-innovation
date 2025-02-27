@@ -26,21 +26,16 @@ class Card62_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_from'  => Locations::SCORE];
+      return ['choose_from' => Locations::SCORE];
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'age'            => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue(self::getValue($card));
+      self::setAuxiliaryValue(self::getValue($card)); // Remember the value of the chosen card
       self::setMaxSteps(2);
     }
   }
@@ -51,6 +46,16 @@ class Card62_4E extends AbstractCard
       self::drawAndMeld(6);
       self::setAuxiliaryValue(1); // Remember that a card was returned
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    return true;
   }
 
 }

@@ -12,11 +12,6 @@ class Card585 extends AbstractCard
   //   - Return a bottom card from your board. Splay that color on your board aslant. Score all
   //     cards on your board of that color without [HEALTH].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     return [
@@ -28,7 +23,7 @@ class Card585 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    $color = $card['color'];
+    $color = self::getColor($card);
     self::splayAslant($color);
     foreach (self::getStack($color) as $card) {
       if (!self::hasIcon($card, Icons::HEALTH)) {

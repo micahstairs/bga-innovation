@@ -21,17 +21,17 @@ class Card483 extends AbstractCard
       $card = self::drawAndReveal(1);
       if (self::hasIcon($card, Icons::AUTHORITY)) {
         self::transferToScorePile($card, self::getLauncherId());
-        self::transferToScorePile(self::getTopCardOfColor($card['color']), self::getLauncherId());
+        self::transferToScorePile(self::getTopCardOfColor(self::getColor($card)), self::getLauncherId());
       } else {
         self::transferToHand($card);
       }
     } else {
       $isGreenCardOnAnyBoard = false;
       foreach (self::getPlayerIds() as $player) {
-          if (self::getTopCardOfColor(Colors::GREEN, $player)) {
-            $isGreenCardOnAnyBoard = true;
-            break;
-          }
+        if (self::getTopCardOfColor(Colors::GREEN, $player)) {
+          $isGreenCardOnAnyBoard = true;
+          break;
+        }
       }
       if (!$isGreenCardOnAnyBoard) {
         self::claim(CardIds::CONFIDENCE);

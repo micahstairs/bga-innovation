@@ -169,7 +169,8 @@
   box-shadow: inset 0px 0px 5px #676767;
 }
 
-#browse_special_achievements_button, #browse_junk_button {
+#browse_special_achievements_button,
+#browse_junk_button {
   display: flex;
   text-align: center;
   width: fit-content;
@@ -270,11 +271,15 @@
   min-height: 126px;
 }
 
-.progress, .artifacts {
+.progress,
+.artifacts {
   display: flex;
 }
 
-.forecast_container, .score_container, .achievement_container, .safe_container {
+.forecast_container,
+.score_container,
+.achievement_container,
+.safe_container {
   flex-grow: 1;
   vertical-align: top;
   display: inline-block;
@@ -286,10 +291,16 @@
   background-color: white;
   border: 1px solid black;
 }
-.forecast_container div, .score_container div, .achievement_container div, .safe_container div {
+.forecast_container div,
+.score_container div,
+.achievement_container div,
+.safe_container div {
   height: 100%;
 }
-.forecast_container p, .score_container p, .achievement_container p, .safe_container p {
+.forecast_container p,
+.score_container p,
+.achievement_container p,
+.safe_container p {
   font-style: italic;
   padding-right: 3px;
   font-size: 0.8em;
@@ -452,7 +463,8 @@
   line-height: 22px;
 }
 
-#relics, #achievements {
+#relics,
+#achievements {
   margin-left: 45px;
 }
 

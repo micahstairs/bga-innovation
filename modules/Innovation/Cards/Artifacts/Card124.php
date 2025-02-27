@@ -24,21 +24,12 @@ class Card124 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor()->build();
     } else if (self::isSecondInteraction()) {
       self::draw(1);
-      return [
-        'location_from'    => 'hand',
-        'meld_keyword'     => true,
-        'color'            => [self::getAuxiliaryValue()],
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->meld()->withColor(self::getAuxiliaryValue())->fromYourHand()->revealingIfUnable()->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => self::getLastSelectedAge(),
-      ];
+      return self::youMust()->junk()->fromAvailableAchievements()->value(self::getLastSelectedFaceUpAge())->build();
     }
   }
 
@@ -47,9 +38,10 @@ class Card124 extends AbstractCard
     self::setAuxiliaryValue($color); // Track color to meld
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isSecondInteraction()) {
-      self::splayLeft($card['color']);
+      self::splayLeft(self::getColor($card));
       if (self::isFourthEdition()) {
         self::setMaxSteps(3);
       }

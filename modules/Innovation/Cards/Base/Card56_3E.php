@@ -11,20 +11,14 @@ class Card56_3E extends AbstractCard
   //   - You may meld all the highest cards in your score pile. If you meld one of the highest, you
   //     must meld all of the highest.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'      => true,
-      'n'             => 'all',
-      'location_from' => Locations::SCORE,
-      'meld_keyword'  => true,
-      'age'           => self::getMaxValueInLocation(Locations::SCORE),
-    ];
+    return self::youMay()->meld()->all()->highest()->fromYourScore()->build();
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
   }
 
 }

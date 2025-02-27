@@ -14,7 +14,7 @@ class Card112 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndReveal(4);
-    $topCard = self::getTopCardOfColor($card['color']);
+    $topCard = self::getTopCardOfColor(self::getColor($card));
     if ($topCard === null) {
       self::transferToHand($card);
     } else if ($this->game->comesAlphabeticallyBefore($topCard, $card)) {
@@ -34,16 +34,12 @@ class Card112 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => 'revealed,score',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourRevealedAndScore()->build();
   }
 
   private function getCardName(array $card): string
   {
-    return $this->game->getCardName($card['id']);
+    return $this->game->getCardName(self::getId($card));
   }
 
 }

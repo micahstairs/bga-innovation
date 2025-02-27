@@ -17,7 +17,7 @@ class Card472 extends AbstractCard
     do {
       $repeat = false;
       $card = self::transferToHand(self::drawAndReveal(10));
-      $color = $card['color'];
+      $color = self::getColor($card);
       if (self::countCardsKeyedByColor('board')[$color] < 6) {
         self::splayAslant($color);
       } else {

@@ -42,7 +42,7 @@ class Card541 extends AbstractCard
     } else {
       return [
         'choose_value' => true,
-        'age'          => self::getUniqueValues(Locations::SCORE),
+        'age'          => self::getUniqueValuesInLocation(Locations::SCORE),
       ];
     }
   }

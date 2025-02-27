@@ -15,21 +15,12 @@ class Card158 extends AbstractCard
   //   - If you have no cards in your score pile, choose a color and score all cards of that color
   //     on your board. Otherwise, return all cards from your score pile.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::countCards(Locations::SCORE) === 0) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourScore()->build();
     }
   }
 
@@ -38,5 +29,10 @@ class Card158 extends AbstractCard
     foreach (array_reverse(self::getStack($color)) as $card) {
       self::score($card);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE) || self::hasCards(Locations::BOARD);
   }
 }

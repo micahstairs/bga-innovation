@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-
+use Innovation\Enums\Locations;
 class Card154 extends AbstractCard
 {
 
@@ -15,7 +15,7 @@ class Card154 extends AbstractCard
   {
     $values = [];
     foreach (self::getTopCards() as $card) {
-      $values[] = $card['faceup_age'];
+      $values[] = self::getFaceupValue($card);
     }
     sort($values);
     foreach (array_count_values($values) as $value => $count) {
@@ -23,6 +23,11 @@ class Card154 extends AbstractCard
         self::drawAndScore($value);
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::BOARD);
   }
 
 }

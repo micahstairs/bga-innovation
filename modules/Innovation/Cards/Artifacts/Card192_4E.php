@@ -22,7 +22,7 @@ class Card192_4E extends AbstractCard
         self::achieve($this->game->getIfTopCardOnBoard(CardIds::ACTION_COMICS));
       } else if (self::hasIcon($card, Icons::EFFICIENCY)) {
         self::return($card);
-        $topCard = self::getTopCardOfColor($card['color']);
+        $topCard = self::getTopCardOfColor(self::getColor($card));
         if (self::hasIcon($topCard, Icons::EFFICIENCY)) {
           self::transferToAchievements($topCard, self::getLauncherId());
           $repeat = true;

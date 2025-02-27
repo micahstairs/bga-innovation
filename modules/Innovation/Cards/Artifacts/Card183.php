@@ -16,18 +16,10 @@ class Card183 extends AbstractCard
   //   - Meld the highest card from your score pile. Draw and score two cards of value equal to the
   //     melded card. Self-execute the melded card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => Locations::SCORE,
-      'meld_keyword'  => true,
-      'age'           => self::getMaxValueInLocation(Locations::SCORE),
-    ];
+    $value = self::getMaxValueInLocation(Locations::SCORE);
+    return self::youMust()->meld()->value($value)->fromYourScore()->build();
   }
 
   public function afterInteraction()

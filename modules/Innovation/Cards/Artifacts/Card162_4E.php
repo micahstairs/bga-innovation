@@ -13,9 +13,9 @@ class Card162_4E extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndReveal(6);
-    $this->notifications->notifyCardColor($card['color']);
+    $this->notifications->notifyCardColor(self::getColor($card));
     self::return($card);
-    $value = self::getValue(self::getTopCardOfColor($card['color']));
+    $value = self::getValue(self::getTopCardOfColor(self::getColor($card)));
     self::selfExecute(self::drawAndMeld($value));
   }
 

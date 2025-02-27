@@ -23,24 +23,18 @@ class Card155 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(0); // Track value of first returned card
-      return [
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-        'age'            => self::getMinValueInLocation(Locations::HAND),
-      ];
+      $value = self::getMinValueInLocation(Locations::HAND);
+      return self::youMust()->return()->value($value)->fromYourHand()->build();
     } else {
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-        'age'            => self::getMinValue(self::getTopCards()),
-      ];
+      $value = self::getMinValue(self::getTopCards());
+      return self::youMust()->return()->value($value)->fromYourBoard()->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($card['age']);
+      self::setAuxiliaryValue(self::getValue($card));
     }
   }
 

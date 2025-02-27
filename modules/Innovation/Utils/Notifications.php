@@ -1,6 +1,7 @@
 <?php
 
 namespace Innovation\Utils;
+
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -27,9 +28,27 @@ class Notifications
     self::notifyGeneralInfo(clienttranslate('It does not have a ${icon}.'), ['icon' => Icons::render($icon)]);
   }
 
+  public function notifyPlayerIconCount(int $player, int $icon, int $count)
+  {
+    $renderedCount = $this->game->renderNumber($count);
+    $renderedIcon = Icons::render($icon);
+    self::notifyPlayer(
+      $player,
+      'log',
+      clienttranslate('${You} have ${n} ${icon}.'),
+      ['i18n' => ['n'], 'You' => 'You', 'n' => $renderedCount, 'icon' => $renderedIcon]
+    );
+    self::notifyAllPlayersBut(
+      $player,
+      'log',
+      clienttranslate('${player_name} has ${n} ${icon}.'),
+      ['i18n' => ['n'], 'player_name' => self::renderPlayerName($player), 'n' => $renderedCount, 'icon' => $renderedIcon]
+    );
+  }
+
   public function notifyCardColor(int $color)
   {
-    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($color)));
+    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), ['i18n' => ['color'], 'color' => Colors::render($color)]);
   }
 
   // MISCELLANEOUS NOTIFICATIONS
@@ -57,11 +76,15 @@ class Notifications
 
   public function notifyLocationFull(string $location, int $playerId): void
   {
-    self::notifyPlayer($playerId, 'log',
+    self::notifyPlayer(
+      $playerId,
+      'log',
       clienttranslate('${Your} ${location} was already full so the card was not transferred to your ${location}.'),
       ['i18n' => ['location'], 'Your' => 'Your', 'location' => $location],
     );
-    self::notifyAllPlayersBut($playerId, 'log',
+    self::notifyAllPlayersBut(
+      $playerId,
+      'log',
       clienttranslate('${player_name}\'s ${location} was already full so the card was not transferred to his ${location}.'),
       ['i18n' => ['location'], 'player_name' => self::renderPlayerName($playerId), 'location' => $location],
     );
@@ -69,10 +92,11 @@ class Notifications
 
   public function notifyPlayerLoses(int $playerId): void
   {
-    self::notifyPlayer($playerId, 'log', clienttranslate('${You} lose.'),  ['You' => 'You']);
+    self::notifyPlayer($playerId, 'log', clienttranslate('${You} lose.'), ['You' => 'You']);
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} loses.'), array(
       'player_name' => self::renderPlayerName($playerId)
-    ));
+    )
+    );
   }
 
   public function notifyTeamLoses(int $playerId1, int $playerId2): void

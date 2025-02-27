@@ -25,10 +25,22 @@ class Card199 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'               => 2,
-      'splay_direction' => Directions::UP,
-    ];
+    return self::youMust()->splayUp()->exactly(2)->build();
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    return self::countSplayedColors() > 0;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    foreach (Colors::ALL as $color) {
+      if (self::canSplay($color)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

@@ -19,10 +19,10 @@ class Card176 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndTuck(8);
-    self::splayUp($card['color']);
+    self::splayUp(self::getColor($card));
 
-    $numCards = self::countVisibleCardsInStack($card['color']);
-    $args = ['i18n' => ['color'], 'number' => $numCards, 'color' => Colors::render($card['color'])];
+    $numCards = self::countVisibleCardsInStack(self::getColor($card));
+    $args = ['i18n' => ['color'], 'number' => $numCards, 'color' => Colors::render(self::getColor($card))];
     self::notifyPlayer(clienttranslate('There are ${number} ${color} card(s) visible on ${your} board.'), $args);
     self::notifyOthers(clienttranslate('There are ${number} ${color} card(s) visible on ${player_name}\'s board.'), $args);
     self::drawAndScore($numCards);

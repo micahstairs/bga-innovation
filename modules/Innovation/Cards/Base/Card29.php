@@ -5,7 +5,6 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card29 extends AbstractCard
 {
@@ -16,7 +15,7 @@ class Card29 extends AbstractCard
   //     then you transfer a top card without a [HEALTH] from my board to your board!
   // - 4th edition:
   //   - I DEMAND you transfer a top non-green card with [HEALTH] from your board to my board, and
-  //     then meld a top card without [HEALTH]!
+  //     then meld a top card without [HEALTH] from my board!
 
   public function initialExecution()
   {
@@ -26,25 +25,22 @@ class Card29 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => Locations::BOARD,
-        'owner_from'    => self::getPlayerId(),
-        'location_to'   => Locations::BOARD,
-        'owner_to'      => self::getLauncherId(),
-        'color'         => Colors::NON_GREEN,
-        'with_icon'     => Icons::HEALTH,
-      ];
+      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::HEALTH)->fromYourBoard()->toMine()->build();
+    } else if (self::isFirstOrThirdEdition()) {
+      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYours()->build();
     } else {
-      return [
-        'location_from' => Locations::BOARD,
-        'owner_from'    => self::getLauncherId(),
-        'location_to'   => Locations::BOARD,
-        'owner_to'      => self::getPlayerId(),
-        'color'         => Colors::NON_GREEN,
-        'without_icon'  => Icons::HEALTH,
-        'meld_keyword'  => self::isFourthEdition(),
-      ];
+      return self::youMust()->meld()->withoutIcon(Icons::HEALTH)->fromMyBoard()->build();
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::isGreen($card) && self::hasIcon($card, Icons::HEALTH)) {
+        return true;
+      }
+    }
+    return count(self::filterByIcon(self::getTopCards(self::getLauncherId()), Icons::HEALTH)) > 0;
   }
 
 }

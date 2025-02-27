@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card444 extends AbstractCard
 {
@@ -26,25 +25,17 @@ class Card444 extends AbstractCard
     if (self::isFirstInteraction()) {
       $topCards = self::getTopCards();
       $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-        'color'          => $colors,
-      ];
+      return self::youMust()->return()->fromYourBoard()->withColor($colors)->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-        'age'            => self::getLastSelectedFaceUpAge(),
-      ];
+      return self::youMust()->return()->fromYourBoard()->value(self::getAuxiliaryValue())->non(self::getLastSelectedColor())->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND_OR_SCORE,
-        'return_keyword' => true,
-        'age_max'        => self::getLastSelectedFaceUpAge(),
-      ];
+      return self::youMust()->return()->all()->fromYourHandOrScore()->maxValue(self::getAuxiliaryValue())->build();
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return count(self::getRepeatedValues(self::getTopCards())) > 0;
   }
 
 }

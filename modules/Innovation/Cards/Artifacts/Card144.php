@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card144 extends AbstractCard
 {
@@ -27,34 +28,20 @@ class Card144 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'hand',
-        'location_to'   => 'revealed,deck',
-      ];
+      return self::youMust()->revealAndReturn()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'color'          => [self::getLastSelectedColor()],
-      ];
+      return self::youMust()->return()->fromAnyBoard()->withColor(self::getLastSelectedColor())->build();
     } else if (self::isThirdInteraction()) {
-      return [
-        'location_from' => 'score',
-        'location_to'   => 'revealed,deck',
-        'color'         => [self::getLastSelectedColor()],
-      ];
+      return self::youMust()->revealAndReturn()->fromYourScore()->withColor(self::getLastSelectedColor())->build();
     } else {
-      return [
-        'achieve_keyword'              => true,
-        'include_special_achievements' => true,
-      ];
+      return self::youMust()->achieve()->includingSpecialAchievements()->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      $this->notifications->notifyCardColor($card['color']);
+      $this->notifications->notifyCardColor(self::getColor($card));
       self::setMaxSteps(3);
     }
     self::incrementAuxiliaryValue();
@@ -70,6 +57,11 @@ class Card144 extends AbstractCard
         self::setMaxSteps(4);
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

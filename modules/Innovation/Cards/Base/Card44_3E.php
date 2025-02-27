@@ -4,7 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 use Innovation\Enums\Icons;
 
 class Card44_3E extends AbstractCard
@@ -13,26 +13,22 @@ class Card44_3E extends AbstractCard
   //   - You may tuck a card from your hand for every two [HEALTH] on your board.
   //   - You may splay your yellow or purple cards right.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'             => $this->game->intDivision(self::getStandardIconCount(Icons::HEALTH), 2),
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::HEALTH), 2);
+      return self::youMay()->tuck()->exactly($numCards)->fromYourHand()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::YELLOW, Colors::PURPLE],
-      ];
+      return self::youMay()->splayRight()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    if (self::getStandardIconCount(Icons::HEALTH) >= 2 && self::hasCards(Locations::HAND)) {
+      return true;
+    }
+    return self::canSplay([Colors::YELLOW, Colors::PURPLE]);
   }
 
 }

@@ -19,18 +19,11 @@ class Card126 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_type' => true];
+      return self::youMust()->chooseType()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from'                   => 'hand',
-        'meld_keyword'                    => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->onlyCardsInAuxiliaryArray()->build();
     } else {
-      return [
-        'choose_player' => true,
-        'players'       => $this->game->getActiveOpponents(self::getPlayerId()),
-      ];
+      return self::youMust()->choosePlayer(self::getOpponents())->build();
     }
   }
 
@@ -38,7 +31,7 @@ class Card126 extends AbstractCard
   {
     $card1 = self::drawType(2, $type);
     $card2 = self::drawType(2, $type);
-    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+    self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
   }
 
   public function handlePlayerChoice(int $playerId)
@@ -48,7 +41,7 @@ class Card126 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::removeFromAuxiliaryArray($card['id']);
+    self::removeFromAuxiliaryArray(self::getId($card));
   }
 
 }

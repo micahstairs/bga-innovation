@@ -13,7 +13,7 @@ class Card488 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else {
       self::setMaxSteps(1);
@@ -24,24 +24,25 @@ class Card488 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
         'location_from' => 'hand',
         'meld_keyword'  => true,
       ];
     } else {
       return [
-        'can_pass'      => self::getAuxiliaryValue() === 1,
-        'location_from' => 'hand',
-        'color'         => self::getAuxiliaryArray(),
-        'score_keyword' => true,
+        'can_pass'         => self::getAuxiliaryValue() === 1,
+        'location_from'    => 'hand',
+        'color'            => self::getAuxiliaryArray(),
+        'score_keyword'    => true,
+        'reveal_if_unable' => true,
       ];
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 2 && self::getNumChosen() > 0) {
+    if (self::isSecondNonDemand() && self::getNumChosen() > 0) {
       // Do not allow the player to pass when the interaction is repeated
       self::setAuxiliaryValue(0);
       // Do not allow the same color to be chosen again
@@ -54,8 +55,8 @@ class Card488 extends AbstractCard
   {
     $colors = [];
     foreach (self::getTopCards() as $card) {
-      if (!in_array($card['color'], $colors)) {
-        $colors[] = $card['color'];
+      if (!in_array(self::getColor($card), $colors)) {
+        $colors[] = self::getColor($card);
       }
     }
     return $colors;

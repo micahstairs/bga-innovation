@@ -65,7 +65,7 @@ class Card431 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isThirdNonDemand()) {
-      self::splayUp($card['color']);
+      self::splayUp(self::getColor($card));
     }
   }
 

@@ -42,12 +42,12 @@ class Card506 extends AbstractCard
     if (self::isFirstInteraction()) {
       // Keep track of the colors of the cards being returned
       $colors = Arrays::decode(self::getAuxiliaryValue());
-      $colors[] = $card['color'];
+      $colors[] = self::getColor($card);
       self::setAuxiliaryValue(Arrays::encode(array_unique($colors)));
     } else {
       // Score the other card
       $cardIds = self::getAuxiliaryArray();
-      $cardIdToScore = $card['id'] == $cardIds[0] ? $cardIds[1] : $cardIds[0];
+      $cardIdToScore = self::getId($card) == $cardIds[0] ? $cardIds[1] : $cardIds[0];
       self::score(self::getCard($cardIdToScore));
     }
   }

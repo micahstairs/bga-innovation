@@ -5,6 +5,7 @@ namespace Innovation\Cards\Artifacts;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card132 extends AbstractCard
 {
@@ -18,26 +19,12 @@ class Card132 extends AbstractCard
   //   - Score a card from your hand with no [AUTHORITY]. If you do, junk all cards in the deck of
   //     value equal to the scored card. Otherwise, tuck Terracotta Army.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
-      return [
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'without_icon'   => Icons::AUTHORITY,
-      ];
+      return self::youMust()->return()->fromYourBoard()->withoutIcon(Icons::AUTHORITY)->build();
     } else {
-      return [
-        'location_from'    => 'hand',
-        'score_keyword'    => true,
-        'without_icon'     => Icons::AUTHORITY,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->score()->fromYourHand()->withoutIcon(Icons::AUTHORITY)->revealingIfUnable()->build();
     }
   }
 
@@ -50,6 +37,26 @@ class Card132 extends AbstractCard
         self::tuck(self::getCard(CardIds::TERRACOTTA_ARMY));
       }
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::hasIcon($card, Icons::AUTHORITY)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    // If 4th edition, we always do something (for simplicity, let's not check for the situation when the tuck is ineffective)
+    if (self::isFourthEdition()) {
+      return true;
+    }
+
+    return self::hasCards(Locations::HAND);
   }
 
 }

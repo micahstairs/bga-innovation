@@ -22,7 +22,7 @@ class Card351 extends AbstractCard
   public function initialExecution()
   {
     if (self::isEcho()) {
-      $values = self::getUniqueValues('hand');
+      $values = self::getUniqueValuesInLocation('hand');
       if (count($values) > 0) {
         self::setMaxSteps(2);
         self::setAuxiliaryArray($values);
@@ -88,7 +88,7 @@ class Card351 extends AbstractCard
   public function handleListChoice(int $choice)
   {
     if (self::isFirstOrThirdEdition()) {
-      $this->game->executeDraw(0, /*age=*/2, 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
+      $this->game->executeDraw(0, /*age=*/ 2, 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
     } else {
       self::junkBaseDeck(2);
       self::setMaxSteps(2);

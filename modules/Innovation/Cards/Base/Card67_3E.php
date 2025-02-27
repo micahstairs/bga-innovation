@@ -25,11 +25,18 @@ class Card67_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'        => $this->game->intDivision(self::getStandardIconCount(Icons::PROSPERITY), 4),
-      'location' => Locations::SCORE,
-      'owner_to' => self::getLauncherId(),
-    ];
+    $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::PROSPERITY), 4);
+    return self::youMust()->exactly($numCards)->fromYourScore()->toMine()->build();
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::getStandardIconCount(Icons::PROSPERITY, self::getLauncherId()) >= 4 && self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::getCardsKeyedByColor(Locations::BOARD)[Colors::RED]) > 0;
   }
 
 }

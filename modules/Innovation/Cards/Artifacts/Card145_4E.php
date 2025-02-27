@@ -15,11 +15,6 @@ class Card145_4E extends AbstractCard
   //     [AUTHORITY] on your board!
   //   - Junk an available achievement of value equal to the number of [AUTHORITY] on your board.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
@@ -29,18 +24,28 @@ class Card145_4E extends AbstractCard
           $numStacksWithAuthority++;
         }
       }
-      return [
-        'n'        => $numStacksWithAuthority,
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-      ];
+      return self::youMust()->exactly($numStacksWithAuthority)->fromYourScore()->toMine()->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => self::getStandardIconCount(Icons::AUTHORITY),
-      ];
+      return self::youMust()->junk()->value(self::getStandardIconCount(Icons::AUTHORITY))->fromAvailableAchievements()->build();
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    $hasIcon = false;
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, Icons::AUTHORITY)) {
+        $hasIcon = true;
+        break;
+      }
+    }
+    return $hasIcon && self::countCards(Locations::HAND) > 0;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    $value = self::getStandardIconCount(Icons::AUTHORITY);
+    return count(self::filterByValue(self::getCards(Locations::AVAILABLE_ACHIEVEMENTS), $value)) > 0;
   }
 
 }

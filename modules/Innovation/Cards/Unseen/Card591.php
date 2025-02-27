@@ -18,7 +18,7 @@ class Card591 extends AbstractCard
   {
     if (self::isDemand()) {
       $card = self::drawAndReveal(11);
-      self::setAuxiliaryValue($card['color']); // Tracks which color needs to be scored
+      self::setAuxiliaryValue(self::getColor($card)); // Tracks which color needs to be scored
       self::score($card);
     }
     self::setMaxSteps(1);

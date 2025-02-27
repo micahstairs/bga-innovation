@@ -47,9 +47,10 @@ class Card370_4E extends AbstractCard
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isFirstNonDemand()) {
-      self::addToAuxiliaryArray($card['color']);
+      self::addToAuxiliaryArray(self::getColor($card));
     }
   }
 

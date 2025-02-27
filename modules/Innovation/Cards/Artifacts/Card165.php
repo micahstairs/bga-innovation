@@ -24,15 +24,9 @@ class Card165 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourHand()->build();
     } else {
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourBoard()->build();
     }
   }
 
@@ -51,6 +45,11 @@ class Card165 extends AbstractCard
         self::junkBaseDeck($sum);
       }
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND) || self::hasCards(Locations::BOARD);
   }
 
 }

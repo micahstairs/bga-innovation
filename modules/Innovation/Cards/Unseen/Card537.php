@@ -19,10 +19,10 @@ class Card537 extends AbstractCard
       self::setMaxSteps(1);
     } else {
       $card = self::drawAndTuck(6);
-      if (self::getSplayDirection($card['color']) == self::getSplayDirection(Colors::RED)) {
-        self::splayUp($card['color']);
+      if (self::getSplayDirection(self::getColor($card)) == self::getSplayDirection(Colors::RED)) {
+        self::splayUp(self::getColor($card));
       } else {
-        self::unsplay($card['color']);
+        self::unsplay(self::getColor($card));
       }
     }
   }

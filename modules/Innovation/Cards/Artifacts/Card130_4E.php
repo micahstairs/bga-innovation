@@ -21,23 +21,17 @@ class Card130_4E extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(-1);
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->fromYourHand()->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-        self::setAuxiliaryValue(self::getValue($card)); // Track value of melded card
-        self::setMaxSteps(2);
+      self::setAuxiliaryValue(self::getValue($card)); // Track value of melded card
+      self::setMaxSteps(2);
     } else if (self::isSecondInteraction()) {
       $meldedValue = self::getAuxiliaryValue();
       $scoredValue = self::getValue($card);
@@ -45,8 +39,13 @@ class Card130_4E extends AbstractCard
         self::junkBaseDeck($meldedValue);
         self::junkBaseDeck($scoredValue);
       }
-      
+
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

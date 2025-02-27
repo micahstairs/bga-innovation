@@ -13,18 +13,13 @@ class Card370_3E extends AbstractCard
   //     any color left; two, right; three, up. If you returned at least one card, draw and
   //     foreshadow a [6].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
       return [
         'can_pass'     => true,
         'choose_color' => true,
-        'color'        => self::getUniqueColors(Locations::HAND),
+        'color'        => self::getUniqueColorsInLocation(Locations::HAND),
       ];
     } else if (self::isSecondInteraction()) {
       return [

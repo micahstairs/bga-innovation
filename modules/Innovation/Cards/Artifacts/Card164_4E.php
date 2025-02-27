@@ -12,23 +12,12 @@ class Card164_4E extends AbstractCard
   //     eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available
   //     achievement, if there is one.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     } else {
-      return [
-        'age'             => self::getLastSelectedFaceUpAge(),
-        'achieve_keyword' => true,
-      ];
+      return self::youMust()->achieve()->value(self::getLastSelectedFaceUpAge())->build();
     }
   }
 
@@ -38,14 +27,27 @@ class Card164_4E extends AbstractCard
       if (self::getNumChosen() === 1) {
         self::setMaxSteps(2);
       } else {
-        $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
-        foreach ($achievementsByValue as $achievements) {
-          if ($achievements) {
-            self::junkBaseDeck(self::getValue($achievements[0]));
-            break;
-          }
+        $value = self::getLowestAvailableAchievementValue();
+        if ($value) {
+          self::junkBaseDeck($value);
         }
       }
     }
+  }
+
+  private function getLowestAvailableAchievementValue(): ?int
+  {
+    $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
+    foreach ($achievementsByValue as $achievements) {
+      if ($achievements) {
+        return self::getValue($achievements[0]);
+      }
+    }
+    return null;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND) || self::getBaseDeckCount(self::getLowestAvailableAchievementValue()) > 0;
   }
 }

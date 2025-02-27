@@ -30,7 +30,7 @@ class Card456 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::removeFromAuxiliaryArray($card['id']);
+    self::removeFromAuxiliaryArray(self::getId($card));
     $other_card_id = self::getAuxiliaryArray()[0];
     $other_card = self::meld(self::getCard($other_card_id));
     if (self::isTheirTurn()) {

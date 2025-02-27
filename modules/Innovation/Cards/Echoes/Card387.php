@@ -28,7 +28,7 @@ class Card387 extends AbstractCard
     if (self::isEcho()) {
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
-      if (count(self::getUniqueValues('score')) >= 2) {
+      if (count(self::getUniqueValuesInLocation('score')) >= 2) {
         self::setMaxSteps(1);
       }
     } else {

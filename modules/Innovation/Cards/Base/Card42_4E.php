@@ -13,19 +13,10 @@ class Card42_4E extends AbstractCard
   //   - You may return a card from your hand. If you do, score a card from your hand for every
   //     color on your board with [CONCEPT].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourHand()->build();
     } else {
       $numCardsToScore = 0;
       foreach (Colors::ALL as $color) {
@@ -33,12 +24,7 @@ class Card42_4E extends AbstractCard
           $numCardsToScore++;
         }
       }
-      return [
-        'can_pass'      => true,
-        'n'             => $numCardsToScore,
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->exactly($numCardsToScore)->fromYourHand()->build();
     }
   }
 
@@ -47,6 +33,11 @@ class Card42_4E extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setMaxSteps(2);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 
 }

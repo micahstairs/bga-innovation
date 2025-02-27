@@ -19,8 +19,7 @@ class Card129 extends AbstractCard
     if (self::isCompel()) {
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
-      $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
-      if ($topYellowCard && $topYellowCard['id'] == CardIds::HOLY_GRAIL) {
+      if (self::holyGrailIsTopCard()) {
         self::win();
       }
     }
@@ -28,13 +27,28 @@ class Card129 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'board',
-      'type'          => [CardTypes::ARTIFACTS],
-    ];
+    return self::youMust()->ofType(CardTypes::ARTIFACTS)->fromYourBoard()->toMine()->build();
+  }
+
+  private function holyGrailIsTopCard(): bool
+  {
+    $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
+    return $topYellowCard && self::getId($topYellowCard) == CardIds::HOLY_GRAIL;
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if ($card['type'] == CardTypes::ARTIFACTS) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return $this->holyGrailIsTopCard();
   }
 
 }

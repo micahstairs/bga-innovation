@@ -14,11 +14,6 @@ class Card424 extends AbstractCard
   //     green card, I win!
   //   - You may score a top card on your board. If Paper is your top green card, you win.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {

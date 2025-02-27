@@ -13,29 +13,14 @@ class Card171_3E extends AbstractCard
   //     your score pile to mine! If you do, return a card from your score pile of value equal to
   //     the top green card on your board!
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      $topYellowCard = self::getTopCardOfColor(Colors::YELLOW);
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => Locations::SCORE,
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => Locations::SCORE,
-        'age'           => $topYellowCard ? $topYellowCard['faceup_age'] : 0,
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW));
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     } else {
-      $topGreenCard = self::getTopCardOfColor(Colors::YELLOW);
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-        'age'            => $topGreenCard['faceup_age'],
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::GREEN));
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     }
   }
 
@@ -44,6 +29,12 @@ class Card171_3E extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setMaxSteps(2);
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW));
+    return self::countCardsKeyedByValue(Locations::SCORE)[$value] > 0;
   }
 
 }

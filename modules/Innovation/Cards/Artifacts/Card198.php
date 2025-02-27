@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card198 extends AbstractCard
 {
@@ -16,37 +15,17 @@ class Card198 extends AbstractCard
   //     from your score pile to my score pile! If you do neither, I win!
   //   - Score your highest top card.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
       if (self::isFirstInteraction()) {
-        return [
-          'owner_from'    => self::getPlayerId(),
-          'location_from' => Locations::HAND,
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => Locations::HAND,
-          'age'           => 9,
-        ];
+        return self::youMust()->value(9)->fromYourHand()->toMine()->build();
       } else {
-        return [
-          'owner_from'    => self::getPlayerId(),
-          'location_from' => Locations::SCORE,
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => Locations::SCORE,
-          'age'           => 9,
-        ];
+        return self::youMust()->value(9)->fromYourScore()->toMine()->build();
       }
     } else {
-      return [
-        'location_from' => Locations::BOARD,
-        'age'           => self::getMaxValue(self::getTopCards()),
-        'score_keyword' => true,
-      ];
+      $value = self::getMaxValue(self::getTopCards());
+      return self::youMust()->score()->fromYourBoard()->value($value)->build();
     }
   }
 

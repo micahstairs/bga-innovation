@@ -57,7 +57,7 @@ abstract class BaseIntegrationTest extends BaseTest
     $testName = $this->getName();
 
     // Randomly pick 3rd or 4th edition (unless the test name specifies a specific edition)
-    $game_rules = array_rand([1,3]);
+    $game_rules = array_rand([1, 3]);
     if (strpos($testName, 'thirdEdition')) {
       $game_rules = 1;
     }
@@ -71,7 +71,7 @@ abstract class BaseIntegrationTest extends BaseTest
     } else if (strpos($testName, 'artifacts')) {
       $artifacts = 2; // enabled
     }
-    
+
     $cities = 1; // disabled
     if (strpos($testName, 'cities')) {
       $cities = 2; // enabled
@@ -232,7 +232,8 @@ abstract class BaseIntegrationTest extends BaseTest
       $players = $db->fetchAllAssociative("SELECT player_id FROM player");
     });
     return array_map(function ($player) {
-      return intval($player['player_id']); }, $players);
+      return intval($player['player_id']);
+    }, $players);
   }
 
   protected function getCurrentStateName(): string

@@ -20,22 +20,15 @@ class Card186_4E extends AbstractCard
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     }
-    
+
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => Locations::BOARD,
-        'junk_keyword'  => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromYourBoard()->build();
     } else {
-      return [
-        'achieve_keyword'              => true,
-        'include_special_achievements' => true,
-      ];
+      return self::youMust()->achieve()->includingSpecialAchievements()->build();
     }
   }
 
@@ -44,7 +37,7 @@ class Card186_4E extends AbstractCard
     if (self::decrementAuxiliaryValue() >= 0) { // Decrement the value to return next
       self::setNextStep(1);
     } else {
-      $junkedValues = array_filter(self::getUniqueValues(Locations::JUNK), function($value) {
+      $junkedValues = array_filter(self::getUniqueValuesInLocation(Locations::JUNK), function ($value) {
         return $value < 9;
       });
       if (count($junkedValues) === 8) {

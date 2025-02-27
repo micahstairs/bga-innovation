@@ -15,7 +15,7 @@ class Card172 extends AbstractCard
   {
     do {
       $card = self::drawAndMeld(6);
-      $numCards = self::countVisibleCardsInStack($card['color']);
+      $numCards = self::countVisibleCardsInStack(self::getColor($card));
       foreach (Colors::ALL as $color) {
         if ($numCards > self::countVisibleCardsInStack($color)) {
           return;

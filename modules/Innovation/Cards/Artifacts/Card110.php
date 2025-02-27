@@ -16,28 +16,33 @@ class Card110 extends AbstractCard
   //   - I COMPEL you to return a top card with a demand effect of each color from your board!
   //   - Score a top, non-blue card from your board with a demand effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
-      return [
-        'n'                 => 'all',
-        'location_from'     => 'board',
-        'return_keyword'    => true,
-        'has_demand_effect' => true,
-      ];
+      return self::youMust()->all()->withDemandEffect()->fromYourBoard()->build();
     } else {
-      return [
-        'location_from'     => 'board',
-        'score_keyword'     => true,
-        'color'             => Colors::NON_BLUE,
-        'has_demand_effect' => true,
-      ];
+      return self::youMust()->return()->all()->non(Colors::BLUE)->fromYourBoard()->withDemandEffect()->build();
     }
+  }
+
+  public function compelMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasDemandEffect($card)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    foreach (self::getTopCards() as $card) {
+      if (!self::isBlue($card) && self::hasDemandEffect($card)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

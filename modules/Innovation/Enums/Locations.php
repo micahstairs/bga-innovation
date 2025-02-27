@@ -22,8 +22,9 @@ class Locations
   // Special values which represent multiple locations
   const HAND_OR_SCORE = 'hand,score';
 
-  // Special values which are used to reveal cards on their way to another location
+  // Special values which are used to reveal cards on their way to (or from) another location
   const REVEALED_THEN_DECK = 'revealed,deck';
+  const REVEALED_THEN_SCORE = 'revealed,score';
 
   // Special values which are used for interaction options but cannot be encoded/decoded
   const AVAILABLE_ACHIEVEMENTS = 'available achievements';
@@ -92,7 +93,7 @@ class Locations
         return 6;
       case self::PILE:
         return 7;
-      case 'revealed,score':
+      case self::REVEALED_THEN_SCORE:
         return 8;
       case self::ACHIEVEMENTS:
         return 9;
@@ -106,7 +107,7 @@ class Locations
         return 13;
       case self::FORECAST:
         return 14;
-      case Locations::HAND_OR_SCORE:
+      case self::HAND_OR_SCORE:
         return 15;
       case self::JUNK:
         return 16;
@@ -143,7 +144,7 @@ class Locations
       case 7:
         return self::PILE;
       case 8:
-        return 'revealed,score';
+        return self::REVEALED_THEN_SCORE;
       case 9:
         return self::ACHIEVEMENTS;
       case 10:
@@ -157,7 +158,7 @@ class Locations
       case 14:
         return self::FORECAST;
       case 15:
-        return Locations::HAND_OR_SCORE;
+        return self::HAND_OR_SCORE;
       case 16:
         return self::JUNK;
       case 17:

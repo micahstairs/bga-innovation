@@ -111,9 +111,9 @@ abstract class BaseCardIntegrationTest extends BaseIntegrationTest
     }
     $card = $this->tableInstance->getTable()->getDeckTopCard($age, \Innovation\Enums\CardTypes::BASE);
     $this->tableInstance
-        ->createActionInstanceForCurrentPlayer($playerId)
-        ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])
-        ->debug_transfer();
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])
+      ->debug_transfer();
     return $this->tableInstance->getTable()->getCardInfo($card['id']);
   }
 

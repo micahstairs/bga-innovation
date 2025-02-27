@@ -10,13 +10,13 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   public function test_allDogmas_thirdEdition_base()
   {
-    error_log("*** test_allDogmas_thirdEdition_echoes ***");
+    error_log("*** test_allDogmas_thirdEdition_base ***");
     self::executeCards(range(1, 104));
   }
 
   public function test_allDogmas_fourthEdition_base()
   {
-    error_log("*** test_allDogmas_fourthEdition_echoes ***");
+    error_log("*** test_allDogmas_fourthEdition_base ***");
     self::executeCards(array_merge(range(1, 104), range(440, 449)));
   }
 
@@ -69,19 +69,27 @@ class CompleteDogmaTest extends BaseIntegrationTest
       }
 
       $card = $this->tableInstance->getTable()->getCardInfo($cardId);
-      $meldedCard = $this->tableInstance->getTable()->meldCard($card, self::getActivePlayerId());
-      self::dogma($meldedCard['id']);
-      $numCardsTested++;
 
-      if (self::getCurrentStateName() === 'gameEnd') {
-        error_log("*** GAME ENDED PREMATURELY ***");
-        break;
-      }
+      try {
+        $meldedCard = $this->tableInstance->getTable()->meldCard($card, self::getActivePlayerId());
+        self::dogma($meldedCard['id']);
+        $numCardsTested++;
 
-      foreach (self::getPlayerIds() as $playerId) {
-        if (self::getCards(Locations::REVEALED, $playerId)) {
-          throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+        if (self::getCurrentStateName() === 'gameEnd') {
+          error_log("*** GAME ENDED PREMATURELY ***");
+          break;
         }
+
+        foreach (self::getPlayerIds() as $playerId) {
+          if (self::getCards(Locations::REVEALED, $playerId)) {
+            throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
+          }
+        }
+      } catch (\Exception $e) {
+        error_log("FAILED: " . $e->getMessage() . " " . $e->getTraceAsString());
+        $totalCards = count($cardIds);
+        error_log("*** TESTED $numCardsTested/$totalCards CARDS ***");
+        throw $e;
       }
     }
 
@@ -101,7 +109,10 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
   private function dogma($cardId)
   {
+    $card = $this->tableInstance->getTable()->getCardInfo($cardId);
     $cardName = $this->tableInstance->getTable()->getCardName($cardId);
+    $dogmaEffectInfo = $this->tableInstance->getTable()->getDogmaEffectInfo($card, self::getActivePlayerId());
+    $expecting_no_effect = $dogmaEffectInfo['no_effect'];
     error_log("* DOGMA $cardName");
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
@@ -110,6 +121,10 @@ class CompleteDogmaTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
 
     self::executeInteractions();
+
+    if ($expecting_no_effect && self::getGlobalVariable('dogma_had_impact') == 1) {
+      throw new \RuntimeException("Expected " . $cardName . " to have no effect, but it had an impact");
+    }
   }
 
 }

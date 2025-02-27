@@ -13,11 +13,6 @@ class Card505 extends AbstractCard
   //     Brethren of Purity during this action. If you meld over a card with a [CONCEPT], repeat
   //     this effect.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     // The array will either contain a single value (if a card has been melded due to Brethren of
@@ -39,7 +34,7 @@ class Card505 extends AbstractCard
   {
     $card = self::drawAndMeld(self::getAuxiliaryValue());
     self::setActionScopedAuxiliaryArray([$card['age']]);
-    $stack = self::getStack($card['color']);
+    $stack = self::getStack(self::getColor($card));
     $numCards = count($stack);
     if ($numCards >= 2 && self::hasIcon($stack[$numCards - 2], Icons::CONCEPT)) {
       self::setNextStep(1);

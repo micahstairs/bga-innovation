@@ -25,12 +25,7 @@ class Card62_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => Locations::SCORE,
-      'return_keyword' => true,
-      'age'            => self::getMinValueInLocation(Locations::SCORE),
-    ];
+    return self::youMay()->return()->all()->lowest()->fromYourScore()->build();
   }
 
   public function afterInteraction()
@@ -39,6 +34,16 @@ class Card62_3E extends AbstractCard
       self::drawAndMeld(6);
       self::setAuxiliaryValue(1); // Remember that a card was returned
     }
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
+  }
+
+  public function nonDemandEffectivenessDependsOnDemand(): bool
+  {
+    return true;
   }
 
 }

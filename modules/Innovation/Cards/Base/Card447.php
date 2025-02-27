@@ -27,20 +27,14 @@ class Card447 extends AbstractCard
     $cardIds = [];
     foreach (self::getStack($color) as $card) {
       if ($card['position'] < 3) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     self::setAuxiliaryArray($cardIds);
 
     self::setAuxiliaryValue2(0); // Track the sum of the values of the cards being returned
 
-    return [
-      'n'                               => count($cardIds),
-      'location_from'                   => Locations::PILE,
-      'color'                           => [$color],
-      'return_keyword'                  => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->return()->exactly(count($cardIds))->fromYourStack($color)->onlyCardsInAuxiliaryArray()->build();
   }
 
   public function handleAbortedInteraction()
@@ -51,14 +45,14 @@ class Card447 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::incrementAuxiliaryValue2($card['faceup_age']);
+    self::incrementAuxiliaryValue2(self::getFaceupValue($card));
   }
 
   public function afterInteraction()
   {
     $card = self::drawAndMeld(ceil(self::getAuxiliaryValue2() / 2));
     if (self::getNumChosen() === 3) {
-      self::setAuxiliaryValue($card['color']);
+      self::setAuxiliaryValue(self::getColor($card));
       self::setNextStep(1);
     }
   }

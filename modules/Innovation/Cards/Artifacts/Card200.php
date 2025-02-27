@@ -13,18 +13,9 @@ class Card200 extends AbstractCard
   // - 4th edition:
   //   - Return all cards from your hand. Draw and reveal five [9]. If you reveal five colors, you win.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => Locations::HAND,
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromYourHand()->build();
   }
 
   public function afterInteraction()
@@ -33,7 +24,7 @@ class Card200 extends AbstractCard
       self::drawAndReveal(9);
     }
 
-    $numColors = count(self::getUniqueColors(Locations::REVEALED));
+    $numColors = count(self::getUniqueColorsInLocation(Locations::REVEALED));
     $args = ['i18n' => ['n'], 'n' => self::renderNumber($numColors)];
     self::notifyPlayer(clienttranslate('${You} revealed ${n} colors.'), $args);
     self::notifyOthers(clienttranslate('${player_name} revealed ${n} colors.'), $args);

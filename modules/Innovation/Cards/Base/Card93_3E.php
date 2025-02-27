@@ -23,13 +23,12 @@ class Card93_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from'    => self::getLauncherId(),
-      'location_from' => Locations::BOARD,
-      'owner_to'      => self::getPlayerId(),
-      'location_to'   => Locations::HAND,
-      'without_icon'  => Icons::HEALTH,
-    ];
+    return self::youMust()->fromMyBoard()->withoutIcon(Icons::HEALTH)->toYourHand()->build();
+  }
+
+  public function demandMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::SCORE);
   }
 
 }

@@ -11,11 +11,6 @@ class Card338 extends AbstractCard
   //   - ECHO: You may meld a card from your hand.
   //   - Return any number of cards from your hand. Score two cards from your hand for every card you return.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {

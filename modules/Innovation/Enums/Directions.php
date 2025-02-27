@@ -10,6 +10,8 @@ class Directions
   const UP = 3;
   const ASLANT = 4;
 
+  const SPLAYED = [self::LEFT, self::RIGHT, self::UP, self::ASLANT];
+
   public static function render(int $direction): string
   {
     switch ($direction) {

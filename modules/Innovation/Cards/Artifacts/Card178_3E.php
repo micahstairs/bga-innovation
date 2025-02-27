@@ -19,10 +19,7 @@ class Card178_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'achieve_keyword' => true,
-      'age' => 8,
-    ];
+    return self::youMust()->achieve()->value(8)->build();
   }
 
 }

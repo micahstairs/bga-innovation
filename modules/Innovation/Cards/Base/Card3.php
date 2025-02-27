@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card3 extends AbstractCard
 {
@@ -19,26 +18,24 @@ class Card3 extends AbstractCard
   {
     if (self::isDemand()) {
       self::draw(1);
+      self::setMaxSteps(1);
+    } else {
+      self::setMaxSteps(1);
     }
-    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'hand',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'hand',
-        'age'           => self::getMaxValueInLocation('hand'),
-      ];
+      return self::youMust()->highest()->fromYourHand()->toMine()->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age_min'       => 1,
-        'age_max'       => 2,
-      ];
+      return self::youMust()->junk()->range(1, 2)->fromAvailableAchievements()->build();
     }
   }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::filterByValue(self::getAvailableStandardAchievements(), [1, 2])) > 0;
+  }
+
 }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card65 extends AbstractCard
 {
@@ -11,30 +12,19 @@ class Card65 extends AbstractCard
   //   - You may choose to either draw and score an [8] and then return a card from your score pile,
   //     or draw a card of value one higher than the highest card in your score pile.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [0, 1],
-      ];
+      return self::youMay()->choose([0, 1])->build();
     } else {
-      return [
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     }
   }
 
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      0 => [clienttranslate('Draw a ${age}'), 'age' => self::renderValue(self::getMaxValueInLocation('score') + 1)],
+      0 => [clienttranslate('Draw a ${age}'), 'age' => self::renderValue(self::getMaxValueInLocation(Locations::SCORE) + 1)],
       1 => [clienttranslate('Draw and score a ${age}'), 'age' => self::renderValue(8)],
     ]);
   }
@@ -42,7 +32,7 @@ class Card65 extends AbstractCard
   public function handleListChoice(int $choice): void
   {
     if ($choice === 0) {
-      self::draw(self::getMaxValueInLocation('score') + 1);
+      self::draw(self::getMaxValueInLocation(Locations::SCORE) + 1);
     } else {
       self::drawAndScore(8);
       self::setMaxSteps(2);

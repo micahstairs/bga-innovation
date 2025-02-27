@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card1 extends AbstractCard
 {
@@ -11,27 +12,12 @@ class Card1 extends AbstractCard
   //   - You may return three cards from your hand. If you do, draw and meld a [3].
   //   - You may return a [3] from your hand. If you do, draw three [1].
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'       => true,
-        'n'              => 3,
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->exactly(3)->fromYourHand()->build();
     } else {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-        'age'            => 3,
-      ];
+      return self::youMay()->return()->value(3)->fromYourHand()->build();
     }
   }
 
@@ -44,5 +30,10 @@ class Card1 extends AbstractCard
       self::draw(1);
       self::draw(1);
     }
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return self::hasCards(Locations::HAND);
   }
 }

@@ -26,19 +26,9 @@ class Card175 extends AbstractCard
     if (self::getAuxiliaryValue() === -1) {
       $topCards = self::getTopCards();
       $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
-      return [
-        'n'                    => 2,
-        'choose_from'          => Locations::BOARD,
-        'color'                => $colors,
-        'refresh_selection'    => true,
-        'enable_autoselection' => true,
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->exactly(2)->withColor($colors)->refreshingSelection()->forceAutoselection()->build();
     } else {
-      return [
-        'choose_from' => Locations::BOARD,
-        'not_id'      => self::getLastSelectedId(),
-        'age'         => self::getLastSelectedFaceUpAge(),
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(self::getLastSelectedId())->value(self::getLastSelectedFaceUpAge())->build();
     }
   }
 
@@ -48,12 +38,12 @@ class Card175 extends AbstractCard
     self::notifyPlayer(clienttranslate('${You} choose ${card}.'), $args);
     self::notifyOthers(clienttranslate('${player_name} chose ${card}'), $args);
     if (self::getAuxiliaryValue() === -1) {
-      self::setAuxiliaryValue($card['color']);
+      self::setAuxiliaryValue(self::getColor($card));
     } else {
       $color1 = self::getAuxiliaryValue();
-      $color2 = $card['color'];
+      $color2 = self::getColor($card);
       $meldedCard = self::drawAndMeld(self::getValue($card) + 1);
-      if ($meldedCard['color'] == $color1 || $meldedCard['color'] == $color2) {
+      if (self::getColor($meldedCard) == $color1 || self::getColor($meldedCard) == $color2) {
         if (count(self::getRepeatedValues(self::getTopCards())) >= 1) {
           self::setNextStep(1);
           self::setAuxiliaryValue(-1); // Indicate that the first color has not been chosen yet
@@ -68,6 +58,11 @@ class Card175 extends AbstractCard
   {
     self::notifyPlayer(clienttranslate('${You} have no top cards with the same value.'));
     self::notifyOthers(clienttranslate('${player_name} has no top cards with the same value.'));
+  }
+
+  public function nonDemandsMightBeEffective(): bool
+  {
+    return count(self::getRepeatedValues(self::getTopCards())) >= 1;
   }
 
 }

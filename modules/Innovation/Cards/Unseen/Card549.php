@@ -14,11 +14,6 @@ class Card549 extends AbstractCard
   //     achievements. You may meld a revealed card with no [EFFICIENCY] or [AVATAR]. Return each
   //     revealed card you do not meld.
 
-  public function initialExecution()
-  {
-    self::setMaxSteps(1);
-  }
-
   public function getInteractionOptions(): array
   {
 
@@ -75,7 +70,7 @@ class Card549 extends AbstractCard
     $cardIds = [];
     foreach (self::getCards('revealed') as $card) {
       if (!self::hasIcon($card, Icons::EFFICIENCY) && !self::hasIcon($card, Icons::AVATAR)) {
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
     }
     return $cardIds;

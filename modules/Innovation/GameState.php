@@ -65,6 +65,9 @@ class GameState
      */
     public function setFromArray(string $key, array $array)
     {
+        if (!is_array($array)) {
+            throw new \InvalidArgumentException("Value for" . $key . " must be an array");
+        }
         $this->set($key, Arrays::encode($array));
     }
 

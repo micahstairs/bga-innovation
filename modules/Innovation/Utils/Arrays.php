@@ -23,7 +23,7 @@ class Arrays
     {
         $encodedValue = 0;
         foreach ($array as $value) {
-            $encodedValue += pow(2, $value);
+            $encodedValue += (int) round(pow(2, $value));
         }
         return $encodedValue;
     }
@@ -37,10 +37,10 @@ class Arrays
         $array = [];
         $value = 0;
         while ($encodedValue > 0) {
-            if ($encodedValue % 2 == 1) {
+            if ((int) round($encodedValue % 2) == 1) {
                 $array[] = $value;
             }
-            $encodedValue /= 2;
+            $encodedValue = (int) ($encodedValue / 2);
             $value++;
         }
         return $array;
@@ -110,7 +110,7 @@ class Arrays
     public static function getRepeatedValues(array $array): array
     {
         $counts = array_count_values($array);
-        return array_keys(array_filter($counts, function($count) {
+        return array_keys(array_filter($counts, function ($count) {
             return $count > 1;
         }));
     }

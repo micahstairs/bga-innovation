@@ -73,7 +73,7 @@ class Card211 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       $card = self::getBottomCardOfColor(Colors::YELLOW);
-      if ($card && $card['id'] == CardIds::DOMESTICATION) {
+      if ($card && self::getId($card) == CardIds::DOMESTICATION) {
         self::notifyPlayer(clienttranslate('${Your} bottom yellow card is Domestication.'));
         self::notifyOthers(clienttranslate('${player_name}\'s bottom yellow card is Domestication.'));
         self::win();

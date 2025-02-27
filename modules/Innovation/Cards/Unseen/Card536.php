@@ -21,7 +21,7 @@ class Card536 extends AbstractCard
       $cardIds = array();
       for ($i = 0; $i < 3; $i++) {
         $card = self::drawAndReveal(7);
-        $cardIds[] = $card['id'];
+        $cardIds[] = self::getId($card);
       }
       self::setAuxiliaryArray($cardIds);
       self::setMaxSteps(2);
