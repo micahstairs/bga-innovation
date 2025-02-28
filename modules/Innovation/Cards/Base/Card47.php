@@ -28,7 +28,7 @@ class Card47 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstNonDemand()) {
+    if (self::isSecondNonDemand()) {
       return self::youMay()->splayRight()->withColor(Colors::RED)->build();
     } else {
       return self::youMay()->score()->fromYourBoard()->build();
