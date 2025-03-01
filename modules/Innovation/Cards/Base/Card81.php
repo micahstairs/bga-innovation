@@ -19,6 +19,7 @@ class Card81 extends AbstractCard
   public function initialExecution()
   {
     self::setAuxiliaryValue(Arrays::encode([])); // Keep track of which values have been returned
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
