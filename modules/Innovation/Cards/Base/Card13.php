@@ -30,13 +30,13 @@ class Card13 extends AbstractCard
   private function getColorsOnBoard(): array
   {
     $countsByColor = self::countCardsKeyedByColor(Locations::BOARD);
-    $colors = 0;
+    $colors = [];
     foreach (Colors::ALL as $color) {
-      if (count(self::countCardsKeyedByColor($color)) > 0) {
-        $colors++;
+      if ($countsByColor[$color] > 0) {
+        $colors[] = $color;
       }
     }
-    return $countsByColor;
+    return $colors;
   }
 
   public function nonDemandsMightBeEffective(): bool
