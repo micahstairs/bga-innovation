@@ -26,21 +26,23 @@ class Card59 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::transferToHand($card);
-    $color = self::getColor($card);
-    self::setAuxiliaryValue($color); // Track the chosen color
+    if (self::isFirstInteraction()) {
+      self::transferToHand($card);
+      $color = self::getColor($card);
+      self::setAuxiliaryValue($color); // Track the chosen color
 
-    self::revealHand();
-    foreach (self::getOtherPlayerIds() as $otherPlayerId) {
-      self::revealHand($otherPlayerId);
-      foreach (self::getCards(Locations::HAND, $otherPlayerId) as $otherCard) {
-        if (self::getColor($card) == $color) {
-          self::transferToHand($otherCard);
+      self::revealHand();
+      foreach (self::getOtherPlayerIds() as $otherPlayerId) {
+        self::revealHand($otherPlayerId);
+        foreach (self::getCards(Locations::HAND, $otherPlayerId) as $otherCard) {
+          if (self::getColor($otherCard) == $color) {
+            self::transferToHand($otherCard);
+          }
         }
       }
-    }
 
-    self::setMaxSteps(2);
+      self::setMaxSteps(2);
+    }
   }
 
   public function nonDemandsMightBeEffective(): bool
