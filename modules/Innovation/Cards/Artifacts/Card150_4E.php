@@ -18,7 +18,7 @@ class Card150_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      if (self::hasCards(Locations::HAND)) {
+      if (self::countCards(Locations::HAND) < 4) {
         return self::youMust()->return()->all()->non(Colors::GREEN)->fromYourBoard()->build();
       } else {
         return [];
