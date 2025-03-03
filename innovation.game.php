@@ -11309,7 +11309,7 @@ class Innovation extends Table
             || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age'])))
             || (array_key_exists('choices', $options) && empty($options['choices']))
             || (array_key_exists('color', $options) && empty($options['color']))
-            || (array_key_exists('choose_player', $options) && empty($options['player_array']))
+            || (array_key_exists('choose_player', $options) && empty($options['players']))
         ) {
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
