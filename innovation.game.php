@@ -8081,7 +8081,7 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $relic = self::getCardInfo($this->innovationGameState->get('relic_id'));
 
-        if (!self::canSeizeRelicToHand($relic, $player_id)) {
+        if (!self::canSeizeRelicToAchievements($relic, $player_id)) {
             self::throwInvalidChoiceException();
         }
 
