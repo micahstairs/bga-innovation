@@ -355,6 +355,7 @@ class InteractionBuilder
   function toYours(): InteractionBuilder
   {
     $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
+    $this->interactionOptions['location_to'] = $this->interactionOptions['location_from'];
     return $this;
   }
 

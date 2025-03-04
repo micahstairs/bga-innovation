@@ -15,7 +15,7 @@ class Card70 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->return()->all()->fromYourBoard()->withIcon(Icons::INDUSTRY)->build();
+    return self::youMust()->return()->all()->fromYourBoard()->withoutIcon(Icons::INDUSTRY)->build();
   }
 
   public function afterInteraction()

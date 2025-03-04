@@ -41,10 +41,7 @@ class Card347 extends AbstractCard
       return $options;
     } else if (self::isFirstInteraction()) {
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
-      return [
-        'choose_player' => true,
-        'players'       => $players,
-      ];
+      return self::youMust()->choosePlayer($players)->build();
     } else {
       return [
         'location_from' => 'hand',

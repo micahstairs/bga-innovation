@@ -38,8 +38,8 @@ class Card184_4E extends AbstractCard
   {
     if (count(self::getAuxiliaryArray()) > 1) {
       // Remove the selected player from the list of options
-      $playerId = $this->game->playerIdToPlayerIndex(self::getAuxiliaryValue());
-      self::removeFromAuxiliaryArray($playerId);
+      $playerIndex = $this->game->playerIdToPlayerIndex(self::getAuxiliaryValue());
+      self::removeFromAuxiliaryArray($playerIndex);
       self::setNextStep(1);
     }
   }
