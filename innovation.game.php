@@ -5720,17 +5720,17 @@ class Innovation extends Table
                     $count += 1;
                 }
             }
-            if ($splayed_right || $splayed_up) {
+            if ($splayed_right || $splayed_up || $splayed_aslant) {
                 if ($card['spot_2'] !== null && $card['spot_2'] == $icon) {
                     $count += 1;
                 }
             }
-            if ($splayed_up) {
+            if ($splayed_up || $splayed_aslant) {
                 if ($card['spot_3'] !== null && $card['spot_3'] == $icon) {
                     $count += 1;
                 }
             }
-            if ($splayed_left || $splayed_up) {
+            if ($splayed_left || $splayed_up || $splayed_aslant) {
                 if ($card['spot_4'] !== null && $card['spot_4'] == $icon) {
                     $count += 1;
                 }
