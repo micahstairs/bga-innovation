@@ -2176,7 +2176,8 @@ var Innovation = /** @class */ (function (_super) {
         var condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), { 'age': this.square('N', 'age', card.age), 'n': 5 * card.age });
         this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
     };
-    Innovation.prototype.createAdjustedContent = function (content, HTML_class, size, font_max) {
+    Innovation.prototype.createAdjustedContent = function (content, HTML_class, size, font_max, div_id) {
+        if (div_id === void 0) { div_id = ''; }
         // Create temporary DOM element to experiment with
         var tempParentId = 'temp_parent';
         var tempId = 'temp';
@@ -2201,7 +2202,7 @@ var Innovation = /** @class */ (function (_super) {
             font_size--;
         }
         dojo.destroy(elementParent);
-        return "<div class='".concat(HTML_class, " ").concat(size, "'><span class='font_size_").concat(font_size, "'>").concat(content, "</span></div>");
+        return "<div id='".concat(div_id, "' class='").concat(HTML_class, " ").concat(size, "'><span class='font_size_").concat(font_size, "'>").concat(content, "</span></div>");
     };
     Innovation.prototype.createDogmaEffectText = function (text, dogma_symbol, size, color, shade, other_classes) {
         return "<div class='effect ".concat(size, " ").concat(shade, " ").concat(other_classes, "'><span class='dogma_symbol color_").concat(color, " ").concat(size, " icon_").concat(dogma_symbol, "'></span><span class='effect_text ").concat(shade, " ").concat(size, "'>").concat(this.parseForRichedText(text, size), "<span></div>");
@@ -3016,7 +3017,7 @@ var Innovation = /** @class */ (function (_super) {
         var icon6 = this.getIconDiv(card_data, card_data.spot_6, "top center ".concat(edition), size);
         var card_age = this.createAdjustedContent(card.faceup_age, "card_age type_".concat(card_data.type, " color_").concat(card_data.color, " ").concat(edition), size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
         var title = _(card_data.name).toUpperCase();
-        var card_title = this.createAdjustedContent(title, "card_title type_".concat(card_data.type, " ").concat(edition), size, size == 'M' ? 11 : 30);
+        var card_title = this.createAdjustedContent(title, "card_title type_".concat(card_data.type, " ").concat(edition), size, size == 'M' ? 11 : 30, "card_title_".concat(card.id));
         var i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
         var i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
         var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color) : "";
