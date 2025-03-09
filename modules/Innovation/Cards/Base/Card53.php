@@ -24,9 +24,9 @@ class Card53 extends AbstractCard
         $this->notifications->notifyCardColor($color);
         if (self::isGreen($card) || self::isBlue($card)) {
           self::meld($card);
-          return;
         } else {
           self::transferToHand($card);
+          return;
         }
       }
     } else if (self::isSecondNonDemand()) {
