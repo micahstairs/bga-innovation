@@ -327,7 +327,7 @@ class InteractionBuilder
 
   function fromYourHandOrRevealed(): InteractionBuilder
   {
-    $this->interactionOptions['location_from'] = 'revealed,hand';
+    $this->interactionOptions['location_from'] = Locations::REVEALED_THEN_HAND;
     $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }

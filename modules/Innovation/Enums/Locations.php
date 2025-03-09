@@ -25,6 +25,7 @@ class Locations
   // Special values which are used to reveal cards on their way to (or from) another location
   const REVEALED_THEN_DECK = 'revealed,deck';
   const REVEALED_THEN_SCORE = 'revealed,score';
+  const REVEALED_THEN_HAND = 'revealed,hand';
 
   // Special values which are used for interaction options but cannot be encoded/decoded
   const AVAILABLE_ACHIEVEMENTS = 'available achievements';
@@ -87,7 +88,7 @@ class Locations
         return 3;
       case self::REVEALED:
         return 4;
-      case 'revealed,hand':
+      case self::REVEALED_THEN_HAND:
         return 5;
       case self::REVEALED_THEN_DECK:
         return 6;
@@ -138,7 +139,7 @@ class Locations
       case 4:
         return self::REVEALED;
       case 5:
-        return 'revealed,hand';
+        return self::REVEALED_THEN_HAND;
       case 6:
         return self::REVEALED_THEN_DECK;
       case 7:
