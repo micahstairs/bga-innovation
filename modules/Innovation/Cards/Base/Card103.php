@@ -16,7 +16,7 @@ class Card103 extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::drawAndScore(10);
     } else if (self::isSecondNonDemand()) {
-      if ($this->game->isTopBoardCard(self::getCard(CardIds::ROBOTICS)) || $this->game->isTopBoardCard(self::getCard(CardIds::SOFTWARE))) {
+      if ($this->game->isTopBoardCard(self::getCard(CardIds::ROBOTICS)) && $this->game->isTopBoardCard(self::getCard(CardIds::SOFTWARE))) {
         $playerWithLowestScore = self::getPlayerWithLowestScore();
         if ($playerWithLowestScore !== null) {
           self::notifyPlayer(clienttranslate('${You} have the lowest score.'), [], $playerWithLowestScore);
