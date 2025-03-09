@@ -915,12 +915,12 @@ abstract class AbstractCard
 
   protected function getLowestCards(string $location, int $playerId = null): array
   {
-    return self::filterByValue(self::getCards($location), [self::getMinValueInLocation($location)]);
+    return self::filterByValue(self::getCards($location, $playerId), [self::getMinValueInLocation($location)]);
   }
 
   protected function getHighestCards(string $location, int $playerId = null): array
   {
-    return self::filterByValue(self::getCards($location), [self::getMaxValueInLocation($location)]);
+    return self::filterByValue(self::getCards($location, $playerId), [self::getMaxValueInLocation($location)]);
   }
 
   protected function hasAnyIcons(array $card, array $icons): bool

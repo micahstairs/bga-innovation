@@ -317,20 +317,20 @@ class Innovation extends BgaGame {
             dojo.connect($('debug_splay_aslant'), 'onclick', (_) => this.debugSplay(4));
 
             // Make drop-down searchable
-            document.getElementById("search_card_list")!.addEventListener("input", function() {
+            document.getElementById("search_card_list")!.addEventListener("input", function () {
                 const input = this as HTMLInputElement;
                 const filter = input.value.toUpperCase();
                 const select = document.getElementById("debug_card_list")!;
                 const options = select.getElementsByTagName("option");
                 for (let i = 0; i < options.length; i++) {
-                  const option = options[i];
-                  if (option.textContent!.toUpperCase().indexOf(filter) > -1) {
-                    option.style.display = "";
-                  } else {
-                    option.style.display = "none";
-                  }
+                    const option = options[i];
+                    if (option.textContent!.toUpperCase().indexOf(filter) > -1) {
+                        option.style.display = "";
+                    } else {
+                        option.style.display = "none";
+                    }
                 }
-              });
+            });
         }
         //******
 
@@ -346,7 +346,7 @@ class Innovation extends BgaGame {
         // GENERAL INFO
         this.cards = [];
         let self = this;
-        Object.keys(gamedatas.cards).forEach(function(id) {
+        Object.keys(gamedatas.cards).forEach(function (id) {
             self.cards[id] = parseCard(gamedatas.cards[id]);
         });
         this.players = gamedatas.players;
@@ -2273,7 +2273,7 @@ class Innovation extends BgaGame {
         this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
     }
 
-    createAdjustedContent(content: string, HTML_class: string, size: string, font_max: number): string {
+    createAdjustedContent(content: string, HTML_class: string, size: string, font_max: number, div_id: string = ''): string {
         // Create temporary DOM element to experiment with
         const tempParentId = 'temp_parent';
         const tempId = 'temp';
@@ -2300,7 +2300,7 @@ class Innovation extends BgaGame {
         }
         dojo.destroy(elementParent);
 
-        return `<div class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
+        return `<div id='${div_id}' class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
     }
 
     createDogmaEffectText(text: string, dogma_symbol: number, size: string, color: number, shade: string, other_classes: string) {
@@ -2719,6 +2719,7 @@ class Innovation extends BgaGame {
             top_card = card_being_melded;
         }
         if (top_card != null) {
+            console.log(getAllIcons(top_card));
             bonus_icons.concat(getBonusIconValues(getAllIcons(top_card)));
         }
 
@@ -2728,6 +2729,8 @@ class Innovation extends BgaGame {
             let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
             bonus_icons.concat(getBonusIconValues(this.getVisibleBonusIconsInPile(pile_card, splay_direction)));
         }
+
+        console.log(bonus_icons);
 
         return bonus_icons.filter(val => val > 0); // Remove the zeroes
     }
@@ -3206,7 +3209,7 @@ class Innovation extends BgaGame {
         const card_age = this.createAdjustedContent(card.faceup_age, `card_age type_${card_data.type} color_${card_data.color} ${edition}`, size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
 
         const title = _(card_data.name).toUpperCase();
-        const card_title = this.createAdjustedContent(title, `card_title type_${card_data.type} ${edition}`, size, size == 'M' ? 11 : 30);
+        const card_title = this.createAdjustedContent(title, `card_title type_${card_data.type} ${edition}`, size, size == 'M' ? 11 : 30, `card_title_${card.id}`);
 
         const i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
         const i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
@@ -3565,7 +3568,7 @@ class Innovation extends BgaGame {
             return { 'x': x, 'y': y, 'w': w, 'h': h };
         }
     }
-    
+
     setPlacementRulesForPlayerMuseums(zone: Zone) {
         let self = this;
         zone.itemIdToCoordsGrid = function (i: number, control_width: number) {

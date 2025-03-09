@@ -37,7 +37,7 @@ class Card180 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->withColor(Colors::BLUE)->revealingIfUnable()->build();
+    return self::youMust()->meld()->fromYourHand()->withColor(Colors::BLUE)->revealingIfUnable()->build();
   }
 
   public function afterInteraction()

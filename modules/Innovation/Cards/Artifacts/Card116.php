@@ -38,8 +38,8 @@ class Card116 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    if (self::isFirstOrThirdEdition()) {
-      return count($this->game->getClaimableStandardAchievementValues(self::getPlayerId())) > 0;
+    if (self::isFirstOrThirdEdition() && count($this->game->getClaimableStandardAchievementValues(self::getPlayerId())) > 0) {
+      return true;
     }
     return self::hasCards(Locations::HAND);
   }
