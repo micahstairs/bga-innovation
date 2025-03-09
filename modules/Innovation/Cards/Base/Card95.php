@@ -45,7 +45,7 @@ class Card95 extends AbstractCard
   {
     $threshold = self::isFourthEdition() ? 2 : 3;
     foreach (self::getPlayerIds() as $playerId) {
-      if (self::getStandardIconCount(Icons::HEALTH) < $threshold) {
+      if (self::getStandardIconCount(Icons::HEALTH, $playerId) < $threshold) {
         return true;
       }
     }
