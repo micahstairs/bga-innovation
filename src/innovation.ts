@@ -2719,6 +2719,7 @@ class Innovation extends BgaGame {
             top_card = card_being_melded;
         }
         if (top_card != null) {
+            console.log(getAllIcons(top_card));
             bonus_icons.concat(getBonusIconValues(getAllIcons(top_card)));
         }
 
@@ -2728,6 +2729,8 @@ class Innovation extends BgaGame {
             let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
             bonus_icons.concat(getBonusIconValues(this.getVisibleBonusIconsInPile(pile_card, splay_direction)));
         }
+
+        console.log(bonus_icons);
 
         return bonus_icons.filter(val => val > 0); // Remove the zeroes
     }

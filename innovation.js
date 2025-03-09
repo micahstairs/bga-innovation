@@ -258,7 +258,6 @@ var Innovation = /** @class */ (function (_super) {
         _this._actionTimerFunction = function () { };
         _this._actionTimerId = undefined;
         _this.isLoadingComplete = false;
-        console.log('innovation constructor');
         return _this;
     }
     Innovation.prototype.debugTransfer = function (action) {
@@ -311,12 +310,12 @@ var Innovation = /** @class */ (function (_super) {
             // Prepend UI elements for debug area
             main_area.innerHTML =
                 "</br><select id='debug_color_list'></select>"
-                    + "<button id='debug_unsplay' class='action-button debug_button bgabutton bgabutton_red'>UNSPLAY</button>"
-                    + "<button id='debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
-                    + "<button id='debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
-                    + "<button id='debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
-                    + "<button id='debug_splay_aslant' class='action-button debug_button bgabutton bgabutton_red'>SPLAY ASLANT</button>"
-                    + main_area.innerHTML;
+                + "<button id='debug_unsplay' class='action-button debug_button bgabutton bgabutton_red'>UNSPLAY</button>"
+                + "<button id='debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
+                + "<button id='debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
+                + "<button id='debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
+                + "<button id='debug_splay_aslant' class='action-button debug_button bgabutton bgabutton_red'>SPLAY ASLANT</button>"
+                + main_area.innerHTML;
             if (gamedatas.echoes_expansion_enabled) {
                 main_area.innerHTML = "<button id='debug_empty_forecast' class='action-button debug_button bgabutton bgabutton_red'>EMPTY FORECAST</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
@@ -330,15 +329,15 @@ var Innovation = /** @class */ (function (_super) {
             }
             main_area.innerHTML =
                 "<input type=\"text\" id=\"search_card_list\" placeholder=\"Search cards...\"></br><select id='debug_card_list'></select>"
-                    + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
-                    + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
-                    + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
-                    + "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>"
-                    + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
-                    + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
-                    + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
-                    + "<button id='debug_junk' class='action-button debug_button bgabutton bgabutton_red'>JUNK</button>"
-                    + main_area.innerHTML;
+                + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
+                + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
+                + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
+                + "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>"
+                + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
+                + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
+                + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
+                + "<button id='debug_junk' class='action-button debug_button bgabutton bgabutton_red'>JUNK</button>"
+                + main_area.innerHTML;
             // Populate dropdown lists
             for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
                 var key = Object.keys(gamedatas.cards)[i];
@@ -958,7 +957,6 @@ var Innovation = /** @class */ (function (_super) {
         };
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
-        console.log("Ending game setup");
     };
     /* [Undocumented] Override BGA framework functions to call onLoadingComplete when loading is done */
     Innovation.prototype.setLoader = function (value, max) {
@@ -2582,15 +2580,15 @@ var Innovation = /** @class */ (function (_super) {
             top_card = card_being_melded;
         }
         if (top_card != null) {
-            bonus_icons.concat(getBonusIconValues(getAllIcons(top_card)));
+            bonus_icons = bonus_icons.concat(getBonusIconValues(getAllIcons(top_card)));
         }
         // Cards underneath
         var pile_length = card_being_melded == null ? pile.length : pile.length + 1;
         for (var i = 0; i < pile_length - 1; i++) {
             var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
-            bonus_icons.concat(getBonusIconValues(this.getVisibleBonusIconsInPile(pile_card, splay_direction)));
+            bonus_icons = bonus_icons.concat(getBonusIconValues(this.getVisibleBonusIconsInPile(pile_card, splay_direction)));
         }
-        return bonus_icons.filter(function (val) { return val > 0; }); // Remove the zeroes
+        return bonus_icons.filter(val => val > 0); // Remove the zeroes
     };
     /** Computes what the player's total score would be given a score pile and list of bonus icons.  */
     Innovation.prototype.computeTotalScore = function (score_pile, bonus_icons) {
@@ -3630,8 +3628,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/seizeRelicToHand.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForSeizeRelicToAchievements = function () {
         if (!this.checkAction('seizeRelicToAchievements')) {
@@ -3641,8 +3641,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/seizeRelicToAchievements.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForPassSeizeRelic = function () {
         if (!this.checkAction('passSeizeRelic')) {
@@ -3652,8 +3654,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/passSeizeRelic.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForDogmaArtifact = function () {
         if (!this.checkAction('dogmaArtifactOnDisplay')) {
@@ -3663,8 +3667,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/dogmaArtifactOnDisplay.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForReturnArtifact = function () {
         if (!this.checkAction('returnArtifactOnDisplay')) {
@@ -3674,8 +3680,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/returnArtifactOnDisplay.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForPassArtifact = function () {
         if (!this.checkAction('passArtifactOnDisplay')) {
@@ -3685,8 +3693,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/passArtifactOnDisplay.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickForPassPromote = function () {
         if (!this.checkAction('passPromoteCard')) {
@@ -3696,8 +3706,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/passPromoteCard.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickForPromote = function (event) {
         if (!this.checkAction('promoteCard')) {
@@ -3709,8 +3721,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/promoteCard.html", {
             lock: true,
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickCardBackForPromote = function (event) {
         if (!this.checkAction('promoteCard')) {
@@ -3734,8 +3748,10 @@ var Innovation = /** @class */ (function (_super) {
             type: type,
             is_relic: is_relic,
             position: position
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickForPassDogmaPromoted = function () {
         if (!this.checkAction('passDogmaPromotedCard')) {
@@ -3745,8 +3761,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/passDogmaPromotedCard.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickForDogmaPromoted = function () {
         if (!this.checkAction('dogmaPromotedCard')) {
@@ -3756,8 +3774,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/dogmaPromotedCard.html", {
             lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickButtonForAchieveStandardAchievement = function (event) {
         if (!this.checkAction('achieve')) {
@@ -3772,8 +3792,10 @@ var Innovation = /** @class */ (function (_super) {
             owner: 0,
             location: 'achievements',
             age: age,
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickButtonForAchieveSecret = function (event) {
         if (!this.checkAction('achieve')) {
@@ -3788,8 +3810,10 @@ var Innovation = /** @class */ (function (_super) {
             owner: this.player_id,
             location: 'safe',
             age: age,
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickCardBackForAchieve = function (event) {
         if (!this.checkAction('achieve')) {
@@ -3820,8 +3844,10 @@ var Innovation = /** @class */ (function (_super) {
             type: type,
             is_relic: is_relic,
             position: position
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForDraw = function (event) {
         if (!this.checkAction('draw')) {
@@ -3831,8 +3857,10 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         this.ajaxcall("/innovation/innovation/draw.html", {
             lock: true,
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickMeld = function (event) {
         this.stopActionTimer();
@@ -3887,8 +3915,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/meld.html", {
             lock: true,
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickDogma = function (event_or_html_id, via_alternate_prompt, card_id_to_return) {
         if (via_alternate_prompt === void 0) { via_alternate_prompt = null; }
@@ -4003,8 +4033,10 @@ var Innovation = /** @class */ (function (_super) {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
         var self = this;
-        this.ajaxcall("/innovation/innovation/dogma.html", payload, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        this.ajaxcall("/innovation/innovation/dogma.html", payload, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickNonAdjacentDogma = function (event) {
         this.deactivateClickEvents();
@@ -4109,8 +4141,10 @@ var Innovation = /** @class */ (function (_super) {
             lock: true,
             card_to_endorse_id: card_to_endorse_id,
             payment_card_id: payment_card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickForChooseFront = function (event) {
         this.stopActionTimer();
@@ -4155,8 +4189,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/choose.html", {
             lock: true,
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     // TODO(LATER): Remove this once we have a personal preference for confirming card choices.
     Innovation.prototype.action_clicForChoose = function (event) {
@@ -4194,8 +4230,10 @@ var Innovation = /** @class */ (function (_super) {
             type: type,
             is_relic: is_relic,
             position: position
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clickButtonToDecreaseIntegers = function (event) {
         if (!this.checkAction('choose')) {
@@ -4274,8 +4312,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/chooseSpecialOption.html", {
             lock: true,
             choice: choice
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForPassOrStop = function () {
         if (!this.checkAction('choose')) {
@@ -4301,8 +4341,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/choose.html", {
             lock: true,
             card_id: -1
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_clicForSplay = function (event) {
         if (!this.checkAction('choose')) {
@@ -4315,8 +4357,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/choose.html", {
             lock: true,
             card_id: this.getCardIdFromHTMLId(this.zone["board"][this.player_id][color].items[0].id) // A choose for splay is equivalent as selecting a board card of the right color, by design
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.action_publicationClicForRearrange = function (event) {
         if (!this.checkAction('choose')) {
@@ -4344,8 +4388,10 @@ var Innovation = /** @class */ (function (_super) {
             lock: true,
             color: permuted_color,
             permutations_done: permutations_done.join(";"),
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.publicationClicForMove = function (event) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
@@ -4487,8 +4533,10 @@ var Innovation = /** @class */ (function (_super) {
         this.ajaxcall("/innovation/innovation/chooseSpecialOption.html", {
             lock: true,
             choice: card_id,
-        }, this, function (result) { }, function (is_error) { if (is_error)
-            self.resurrectClickEvents(true); });
+        }, this, function (result) { }, function (is_error) {
+            if (is_error)
+                self.resurrectClickEvents(true);
+        });
     };
     Innovation.prototype.decrementMap = function (map, keys) {
         keys.forEach(function (key) {
