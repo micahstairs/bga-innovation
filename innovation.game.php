@@ -2528,7 +2528,7 @@ class Innovation extends Table
         }
 
         // Update text based on where the card is going to
-        if ($location_to === 'board') {
+        if ($location_to === Locations::BOARD) {
             $visible_for_player = true;
             $visible_for_others = true;
             if ($meld_keyword) {
@@ -2554,7 +2554,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your board');
                 $to_somewhere_for_others = clienttranslate(' to his board');
             }
-        } else if ($location_to === 'display') {
+        } else if ($location_to === Locations::DISPLAY) {
             $visible_for_player = true;
             $visible_for_others = true;
             $action_for_player = clienttranslate('dig');
@@ -2566,7 +2566,7 @@ class Innovation extends Table
             $visible_for_others = true;
             $to_somewhere_for_player = clienttranslate(' into a museum');
             $to_somewhere_for_others = clienttranslate(' into a museum');
-        } else if ($location_to === 'forecast') {
+        } else if ($location_to === Locations::FORECAST) {
             $visible_for_player = true;
             if ($draw_keyword) {
                 $action_for_player = clienttranslate('draw and foreshadow');
@@ -2575,7 +2575,7 @@ class Innovation extends Table
                 $action_for_player = clienttranslate('foreshadow');
                 $action_for_others = clienttranslate('foreshadows');
             }
-        } else if ($location_to === 'revealed') {
+        } else if ($location_to === Locations::REVEALED) {
             $visible_for_player = true;
             $visible_for_others = true;
             if ($draw_keyword) {
@@ -2585,7 +2585,7 @@ class Innovation extends Table
                 $action_for_player = clienttranslate('reveal');
                 $action_for_others = clienttranslate('reveals');
             }
-        } else if ($location_to === 'achievements') {
+        } else if ($location_to === Locations::ACHIEVEMENTS) {
             if ($owner_to == 0) {
                 $to_somewhere_for_player = clienttranslate(' to the available achievements');
                 $to_somewhere_for_others = clienttranslate(' to the available achievements');
@@ -2600,7 +2600,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your achievements');
                 $to_somewhere_for_others = clienttranslate(' to his achievements');
             }
-        } else if ($location_to === 'score') {
+        } else if ($location_to === Locations::SCORE) {
             $visible_for_player = true;
             if ($draw_keyword) {
                 $action_for_player = clienttranslate('draw and score');
@@ -2612,11 +2612,11 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your score pile');
                 $to_somewhere_for_others = clienttranslate(' to his score pile');
             }
-        } else if ($location_to === 'hand') {
+        } else if ($location_to === Locations::HAND) {
             $visible_for_player = true;
             $to_somewhere_for_player = clienttranslate(' to your hand');
             $to_somewhere_for_others = clienttranslate(' to his hand');
-        } else if ($location_to === 'safe') {
+        } else if ($location_to === Locations::SAFE) {
             if ($draw_keyword) {
                 $visible_for_player = true;
                 $action_for_player = clienttranslate('draw and safeguard');
@@ -2628,7 +2628,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your safe');
                 $to_somewhere_for_others = clienttranslate(' to his safe');
             }
-        } else if ($location_to === 'deck') {
+        } else if ($location_to === Locations::DECK) {
             if ($bottom_to) {
                 $action_for_player = clienttranslate('return');
                 $action_for_others = clienttranslate('returns');
@@ -2638,10 +2638,10 @@ class Innovation extends Table
                 $action_for_others = clienttranslate('places');
                 $to_somewhere_for_others = clienttranslate(' on top of its deck');
             }
-        } else if ($location_to === 'relics') {
+        } else if ($location_to === Locations::RELICS) {
             $action_for_player = clienttranslate('return');
             $action_for_others = clienttranslate('returns');
-        } else if ($location_to === 'junk') {
+        } else if ($location_to === Locations::JUNK) {
             $action_for_player = clienttranslate('junk');
             $action_for_others = clienttranslate('junks');
         } else if ($location_to === 'removed') {
@@ -2828,7 +2828,7 @@ class Innovation extends Table
         } else if ($location_from === Locations::HAND_OR_SCORE) {
             $from_somewhere_for_player = clienttranslate(' from your hand and score pile');
             $from_somewhere_for_others = clienttranslate(' from his hand and score pile');
-        } else if ($location_from === 'revealed,hand') {
+        } else if ($location_from === Locations::REVEALED_THEN_HAND) {
             $from_somewhere_for_player = clienttranslate(' that you revealed and from your hand');
             $from_somewhere_for_others = clienttranslate(' that he revealed and from his hand');
         } else if ($location_from === Locations::REVEALED_THEN_SCORE) {
@@ -2892,7 +2892,7 @@ class Innovation extends Table
             $action = clienttranslate('junk');
         } else if ($location_to === 'junk,safe') {
             $action = clienttranslate('junk then safeguard');
-        } else if ($location_to === 'revealed') {
+        } else if ($location_to === 'revealed' || ($location_from === Locations::HAND && $location_to === Locations::REVEALED_THEN_HAND)) {
             $action = clienttranslate('reveal');
         } else if ($location_to === Locations::REVEALED_THEN_SCORE) {
             $action = clienttranslate('reveal and score');
@@ -6131,7 +6131,7 @@ class Innovation extends Table
             if ($is_being_super_executed) {
                 $player_query = self::format(
                     "player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
-                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                    array('launcher_id' => $launcher_id)
                 );
             } else {
                 $player_query = self::format(
@@ -6887,7 +6887,7 @@ class Innovation extends Table
 
         // Condition for location
         $location_from = Locations::decode($this->innovationGameState->get('location_from'));
-        if ($location_from == 'revealed,hand') {
+        if ($location_from == Locations::REVEALED_THEN_HAND) {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == Locations::REVEALED_THEN_SCORE) {
             $condition_for_location = "location IN ('revealed', 'score')";
@@ -7800,7 +7800,7 @@ class Innovation extends Table
         $as_if_on = $card['id'];
         if ($execute_demand_effects) {
             if ($this->innovationGameState->usingFourthEditionRules()) {
-                $super_execute = $nested_card_state['super_execute'];
+                $super_execute = true;
             } else {
                 // Every 1st/3rd edition card that says "execute the effects" also says "as if they were on this card"
                 $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
@@ -12012,14 +12012,14 @@ class Innovation extends Table
                             }
                             if ($code !== null && self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
                                 // Do nothing since the card transfer was overridden
-                            } else if ($location_to == 'revealed,hand') {
-                                $card = self::transferCardFromTo($card, $owner_to, 'revealed');
-                                self::transferCardFromTo($card, $owner_to, 'hand');
-                            } else if ($location_to == 'revealed,deck') {
-                                $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                            } else if ($location_to == Locations::REVEALED_THEN_HAND) {
+                                $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
+                                self::transferCardFromTo($card, $owner_to, Locations::HAND);
+                            } else if ($location_to == Locations::REVEALED_THEN_DECK) {
+                                $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
                                 self::returnCard($card);
                             } else if ($location_to == Locations::REVEALED_THEN_SCORE) {
-                                $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                                $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
                                 self::scoreCard($card, $owner_to);
                             } else if ($location_to == 'junk,safe') {
                                 $card = self::junkCard($card);

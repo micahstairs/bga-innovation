@@ -15,6 +15,7 @@ class Card84_3E extends AbstractCard
   public function initialExecution()
   {
     self::setAuxiliaryValue(0); // Track how many purple cards have been tucked
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array

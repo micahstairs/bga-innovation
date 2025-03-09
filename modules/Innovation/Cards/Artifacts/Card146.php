@@ -24,7 +24,7 @@ class Card146 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->revealAndReturn()->fromYourScore()->build();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->return()->exactly(2)->fromYourRevealed()->onlyCardsInAuxiliaryArray()->build();
+      return self::youMust()->return()->exactly(2)->fromYourHand()->onlyCardsInAuxiliaryArray()->build();
     } else {
       // Using autoselection here would always reveals hidden info
       return self::youMust()->reveal()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
@@ -41,8 +41,8 @@ class Card146 extends AbstractCard
       $card2Matches = self::hasIconInCommon($card, $card2);
 
       if (!$card1Matches && !$card2Matches) {
-        self::reveal($card1);
-        self::reveal($card2);
+        $this->game->revealCardWithoutMoving(self::getPlayerId(), $card1);
+        $this->game->revealCardWithoutMoving(self::getPlayerId(), $card2);
         self::notifyAll(clienttranslate('Neither card has a icon in common with the returned card.'));
         self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
         self::setMaxSteps(2);

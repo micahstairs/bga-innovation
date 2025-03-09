@@ -43,8 +43,8 @@ class Card542 extends AbstractCard
   public function afterInteraction()
   {
     if (self::getNumChosen() > 0 && self::isFirstInteraction()) {
-      self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+      self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));
       foreach (self::getCards('revealed') as $card) {
         self::transferToHand($card);
       }
