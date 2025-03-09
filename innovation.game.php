@@ -6131,7 +6131,7 @@ class Innovation extends Table
             if ($is_being_super_executed) {
                 $player_query = self::format(
                     "player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
-                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                    array('launcher_id' => $launcher_id)
                 );
             } else {
                 $player_query = self::format(
@@ -7800,7 +7800,7 @@ class Innovation extends Table
         $as_if_on = $card['id'];
         if ($execute_demand_effects) {
             if ($this->innovationGameState->usingFourthEditionRules()) {
-                $super_execute = $nested_card_state['super_execute'];
+                $super_execute = true;
             } else {
                 // Every 1st/3rd edition card that says "execute the effects" also says "as if they were on this card"
                 $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
