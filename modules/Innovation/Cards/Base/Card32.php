@@ -30,7 +30,7 @@ class Card32 extends AbstractCard
       if (self::isFirstInteraction()) {
         return self::youMust()->highest()->fromYourScore()->toMine()->build();
       } else {
-        return self::youMust()->lowest()->fromMyScore()->toYours()->build();
+        return self::youMust()->lowest()->fromMyScore()->toYours()->ofMyChoice()->build();
       }
     } else {
       return self::youMust()->junk()->fromAvailableAchievements()->range(3, 4)->build();
@@ -42,6 +42,7 @@ class Card32 extends AbstractCard
     if (self::isDemand() && self::isFirstInteraction()) {
       // Delay the transfer so that the players cannot choose the same card
       self::setAuxiliaryValue(self::getId($card));
+      return true;
     }
     return false;
   }
@@ -49,8 +50,8 @@ class Card32 extends AbstractCard
   public function afterInteraction()
   {
     if (self::isDemand() && self::isSecondInteraction()) {
-      $this->game->gamestate->changeActivePlayer(self::getLauncherId());
-      self::transferToScorePile(self::getCard(self::getAuxiliaryValue()));
+      $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+      self::transferToScorePile(self::getCard(self::getAuxiliaryValue()), self::getLauncherId());
     }
   }
 
