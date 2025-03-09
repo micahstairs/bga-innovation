@@ -15,7 +15,7 @@ class Card36 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
+    if (self::isFirstNonDemand()) {
       return self::youMay()->return()->fromYourScore()->build();
     } else {
       return self::youMay()->splayRight()->withColor(Colors::BLUE)->build();
