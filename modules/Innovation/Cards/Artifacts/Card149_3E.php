@@ -4,7 +4,6 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card149_3E extends AbstractCard
 {
@@ -24,7 +23,7 @@ class Card149_3E extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->return()->all()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->meld()->withColor(Colors::BLUE)->build();
+      return self::youMust()->meld()->withColor(Colors::BLUE)->fromYourHand()->build();
     } else if (self::isThirdInteraction()) {
       return self::youMust()->score()->fromYourHand()->build();
     } else {

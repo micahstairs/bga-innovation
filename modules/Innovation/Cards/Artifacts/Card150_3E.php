@@ -43,7 +43,10 @@ class Card150_3E extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::hasCards(Locations::HAND);
+    if (self::hasCards(Locations::HAND)) {
+      return true;
+    }
+    return self::countCards(Locations::BOARD) < 4 && count(self::filterByColor(self::getCards(Locations::BOARD), Colors::NON_GREEN)) > 0;
   }
 
 }

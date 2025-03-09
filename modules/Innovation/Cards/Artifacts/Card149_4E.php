@@ -32,7 +32,7 @@ class Card149_4E extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMust()->return()->all()->fromYourHand()->build();
     } else {
-      return self::youMust()->meld()->withColor(Colors::GREEN)->revealingIfUnable()->build();
+      return self::youMust()->meld()->withColor(Colors::GREEN)->fromYourHand()->revealingIfUnable()->build();
     }
   }
 
