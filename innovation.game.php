@@ -8253,7 +8253,7 @@ class Innovation extends Table
         self::checkAction('passPromoteCard');
 
         // Promoting became mandatory in 4th edition
-        if (!$this->innovationGameState->usingFourthEditionRules()) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             self::throwInvalidChoiceException();
         }
 
