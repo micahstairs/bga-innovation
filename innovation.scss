@@ -2679,8 +2679,15 @@
             &.age_8,
             &.age_9,
             &.age_10 {
+                // &.fourth {
+                //     background-image: url("img/ultimate_card_backs_portrait.jpg");
+                //     background-size: 380px 306px;
+                // }
+
+                // &.third {
                 background-image: url("img/card_backs_portrait.jpg");
                 background-size: 380px 256px;
+                // }
             }
 
             &.age_1 {
@@ -2723,6 +2730,10 @@
                 background-position-x: -312px;
             }
 
+            &.age_11 {
+                background-position-x: -347px;
+            }
+
             &.type_0 {
                 background-position-y: -3px;
             }
@@ -2757,9 +2768,16 @@
             font-family: system-ui;
         }
 
+        line-height: v.$recto-S-height;
+        text-align: center;
+
+        // &.fourth:not(.simplified_card_back) {
+        //     color: #000;
+        //     text-shadow: 0 0 5px #fff, 0 0 7px #fff, 0 0 10px #fff;
+        // }
+
+        // &.third {
         &.simplified_card_back {
-            line-height: v.$recto-S-height;
-            text-align: center;
 
             &.type_0 {
                 background-color: #f0d68c;
@@ -2790,6 +2808,8 @@
                 box-shadow: inset 0px 0px 0px 5px #000;
             }
         }
+
+        // }
     }
 }
 
