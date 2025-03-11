@@ -206,7 +206,7 @@ extract_hexagon "25" "$TL" "024"
 
 # Age 3
 extract_hexagon "32" "$BC" "025"
-extract_hexagon "33" "$BC" "026"
+extract_hexagon "33" "$BL" "026"
 extract_hexagon "26" "$BL" "027"
 extract_hexagon "27" "$TL" "028"
 extract_hexagon "30" "$BR" "029"
@@ -564,6 +564,304 @@ temp/0{10..99}.png \
 temp/{100..114}.png \
 -trim -tile 115x1 -geometry 60x60+5+5 -background 'none' temp/ultimate_echoes_hexagons.png
 
+# Extract figures hexagons
+echo "Extracting figures hexagons..."
+READ_PATH="../ultimate/Figures/Figures"
+
+# Age 1
+extract_hexagon "13" "$TL" "000"
+extract_hexagon "14" "$BR" "001"
+extract_hexagon "15" "$TL" "002"
+extract_hexagon "7" "$BR" "003"
+extract_hexagon "8" "$BC" "004"
+extract_hexagon "9" "$BC" "005"
+extract_hexagon "4" "$TL" "006"
+extract_hexagon "5" "$BC" "007"
+extract_hexagon "6" "$TL" "008"
+extract_hexagon "1" "$BC" "009"
+extract_hexagon "2" "$BL" "010"
+extract_hexagon "3" "$TL" "011"
+extract_hexagon "10" "$BL" "012"
+extract_hexagon "11" "$BL" "013"
+extract_hexagon "12" "$BR" "014"
+
+# Age 2
+extract_hexagon "24" "$TL" "015"
+extract_hexagon "25" "$BL" "016"
+extract_hexagon "20" "$TL" "017"
+extract_hexagon "21" "$BL" "018"
+extract_hexagon "18" "$BC" "019"
+extract_hexagon "19" "$BR" "020"
+extract_hexagon "16" "$BC" "021"
+extract_hexagon "17" "$BC" "022"
+extract_hexagon "22" "$BL" "023"
+extract_hexagon "23" "$BR" "024"
+
+# Age 3
+extract_hexagon "34" "$BL" "025"
+extract_hexagon "35" "$TL" "026"
+extract_hexagon "30" "$BL" "027"
+extract_hexagon "31" "$BC" "028"
+extract_hexagon "28" "$BC" "029"
+extract_hexagon "29" "$TL" "030"
+extract_hexagon "26" "$TL" "031"
+extract_hexagon "27" "$BL" "032"
+extract_hexagon "32" "$BR" "033"
+extract_hexagon "33" "$BC" "034"
+
+# Age 4
+extract_hexagon "44" "$BR" "035"
+extract_hexagon "45" "$BC" "036"
+extract_hexagon "40" "$TL" "037"
+extract_hexagon "41" "$BC" "038"
+extract_hexagon "38" "$BC" "039"
+extract_hexagon "39" "$BL" "040"
+extract_hexagon "36" "$BR" "041"
+extract_hexagon "37" "$BL" "042"
+extract_hexagon "42" "$BR" "043"
+extract_hexagon "43" "$TL" "044"
+
+# Age 5
+extract_hexagon "54" "$BC" "045"
+extract_hexagon "55" "$BL" "046"
+extract_hexagon "50" "$BC" "047"
+extract_hexagon "51" "$BL" "048"
+extract_hexagon "48" "$BC" "049"
+extract_hexagon "49" "$TL" "050"
+extract_hexagon "46" "$BR" "051"
+extract_hexagon "47" "$BR" "052"
+extract_hexagon "52" "$TL" "053"
+extract_hexagon "53" "$BR" "054"
+
+# Age 6
+extract_hexagon "64" "$BR" "055"
+extract_hexagon "65" "$TL" "056"
+extract_hexagon "60" "$BL" "057"
+extract_hexagon "61" "$BC" "058"
+extract_hexagon "58" "$TL" "059"
+extract_hexagon "59" "$BR" "060"
+extract_hexagon "56" "$TL" "061"
+extract_hexagon "57" "$BL" "062"
+extract_hexagon "62" "$BR" "063"
+extract_hexagon "63" "$BC" "064"
+
+# Age 7
+extract_hexagon "74" "$TL" "065"
+extract_hexagon "75" "$BR" "066"
+extract_hexagon "70" "$BR" "067"
+extract_hexagon "71" "$BL" "068"
+extract_hexagon "68" "$BC" "069"
+extract_hexagon "69" "$TL" "070"
+extract_hexagon "66" "$BL" "071"
+extract_hexagon "67" "$TL" "072"
+extract_hexagon "72" "$BC" "073"
+extract_hexagon "73" "$TL" "074"
+
+# Age 8
+extract_hexagon "84" "$BC" "075"
+extract_hexagon "85" "$BR" "076"
+extract_hexagon "80" "$BC" "077"
+extract_hexagon "81" "$BR" "078"
+extract_hexagon "78" "$BL" "079"
+extract_hexagon "79" "$BR" "080"
+extract_hexagon "76" "$BL" "081"
+extract_hexagon "77" "$TL" "082"
+extract_hexagon "82" "$BC" "083"
+extract_hexagon "83" "$TL" "084"
+
+# Age 9
+extract_hexagon "94" "$TL" "085"
+extract_hexagon "95" "$BL" "086"
+extract_hexagon "90" "$BR" "087"
+extract_hexagon "91" "$TL" "088"
+extract_hexagon "88" "$BC" "089"
+extract_hexagon "89" "$TL" "090"
+extract_hexagon "86" "$BC" "091"
+extract_hexagon "87" "$BR" "092"
+extract_hexagon "92" "$BL" "093"
+extract_hexagon "93" "$BR" "094"
+
+# Age 10
+extract_hexagon	"104" "$BL" "095"
+extract_hexagon	"105" "$TL" "096"
+extract_hexagon	"100" "$BC" "097"
+extract_hexagon "101" "$TL" "098"
+extract_hexagon "98" "$BL" "099"
+extract_hexagon "99" "$TL" "100"
+extract_hexagon "96" "$BR" "101"
+extract_hexagon "97" "$BR" "102"
+extract_hexagon "102" "$BC" "103"
+extract_hexagon	"103" "$BR" "104"
+
+# Age 11
+extract_hexagon "114" "$TL" "105"
+extract_hexagon "115" "$BC" "106"
+extract_hexagon "110" "$TL" "107"
+extract_hexagon "111" "$BL" "108"
+extract_hexagon "108" "$TL" "109"
+extract_hexagon "109" "$BC" "110"
+extract_hexagon "106" "$BR" "111"
+extract_hexagon "107" "$BC" "112"
+extract_hexagon "112" "$BR" "113"
+extract_hexagon "113" "$BC" "114"
+
+# Combine figures hexagons into a single spritesheet
+echo "Combining figures hexagons..."
+magick montage \
+temp/00{0..9}.png \
+temp/0{10..99}.png \
+temp/{100..114}.png \
+-trim -tile 115x1 -geometry 60x60+5+5 -background 'none' temp/ultimate_figures_hexagons.png
+
+# Extract unseen hexagons
+echo "Extracting unseen hexagons..."
+READ_PATH="../ultimate/Unseen/Unseen"
+
+# Age 1
+extract_hexagon "13" "$TL" "000"
+extract_hexagon "14" "$TL" "001"
+extract_hexagon "15" "$BC" "002"
+extract_hexagon "7" "$BC" "003"
+extract_hexagon "8" "$BC" "004"
+extract_hexagon "9" "$BR" "005"
+extract_hexagon "4" "$TL" "006"
+extract_hexagon "5" "$BL" "007"
+extract_hexagon "6" "$BC" "008"
+extract_hexagon "1" "$BL" "009"
+extract_hexagon "2" "$BC" "010"
+extract_hexagon "3" "$BC" "011"
+extract_hexagon "10" "$BL" "012"
+extract_hexagon "11" "$BC" "013"
+extract_hexagon "12" "$TL" "014"
+
+# Age 2
+extract_hexagon "24" "$BL" "015"
+extract_hexagon "25" "$TL" "016"
+extract_hexagon "20" "$TL" "017"
+extract_hexagon "21" "$BR" "018"
+extract_hexagon "18" "$BL" "019"
+extract_hexagon "19" "$BC" "020"
+extract_hexagon "16" "$BC" "021"
+extract_hexagon "17" "$TL" "022"
+extract_hexagon "22" "$BC" "023"
+extract_hexagon "23" "$BR" "024"
+
+# Age 3
+extract_hexagon "34" "$BC" "025"
+extract_hexagon "35" "$BC" "026"
+extract_hexagon "30" "$BR" "027"
+extract_hexagon "31" "$BC" "028"
+extract_hexagon "28" "$BL" "029"
+extract_hexagon "29" "$BR" "030"
+extract_hexagon "26" "$TL" "031"
+extract_hexagon "27" "$BC" "032"
+extract_hexagon "32" "$BR" "033"
+extract_hexagon "33" "$BL" "034"
+
+# Age 4
+extract_hexagon "44" "$BR" "035"
+extract_hexagon "45" "$TL" "036"
+extract_hexagon "40" "$TL" "037"
+extract_hexagon "41" "$BC" "038"
+extract_hexagon "38" "$TL" "039"
+extract_hexagon "39" "$BR" "040"
+extract_hexagon "36" "$BC" "041"
+extract_hexagon "37" "$BL" "042"
+extract_hexagon "42" "$TL" "043"
+extract_hexagon "43" "$BC" "044"
+
+# Age 5
+extract_hexagon "54" "$TL" "045"
+extract_hexagon "55" "$BL" "046"
+extract_hexagon "50" "$BC" "047"
+extract_hexagon "51" "$BR" "048"
+extract_hexagon "48" "$BC" "049"
+extract_hexagon "49" "$BR" "050"
+extract_hexagon "46" "$TL" "051"
+extract_hexagon "47" "$BR" "052"
+extract_hexagon "52" "$BR" "053"
+extract_hexagon "53" "$TL" "054"
+
+# Age 6
+extract_hexagon "64" "$BL" "055"
+extract_hexagon "65" "$BC" "056"
+extract_hexagon "60" "$BC" "057"
+extract_hexagon "61" "$BR" "058"
+extract_hexagon "58" "$BL" "059"
+extract_hexagon "59" "$TL" "060"
+extract_hexagon "56" "$BL" "061"
+extract_hexagon "57" "$BC" "062"
+extract_hexagon "62" "$BR" "063"
+extract_hexagon "63" "$BL" "064"
+
+# Age 7
+extract_hexagon "74" "$TL" "065"
+extract_hexagon "75" "$BR" "066"
+extract_hexagon "70" "$TL" "067"
+extract_hexagon "71" "$BR" "068"
+extract_hexagon "68" "$BL" "069"
+extract_hexagon "69" "$BR" "070"
+extract_hexagon "66" "$BL" "071"
+extract_hexagon "67" "$TL" "072"
+extract_hexagon "72" "$BC" "073"
+extract_hexagon "73" "$BR" "074"
+
+# Age 8
+extract_hexagon "84" "$BR" "075"
+extract_hexagon "85" "$BC" "076"
+extract_hexagon "80" "$TL" "077"
+extract_hexagon "81" "$BR" "078"
+extract_hexagon "78" "$BL" "079"
+extract_hexagon "79" "$TL" "080"
+extract_hexagon "76" "$TL" "081"
+extract_hexagon "77" "$BC" "082"
+extract_hexagon "82" "$TL" "083"
+extract_hexagon "83" "$BR" "084"
+
+# Age 9
+extract_hexagon "94" "$BC" "085"
+extract_hexagon "95" "$BL" "086"
+extract_hexagon "90" "$BL" "087"
+extract_hexagon "91" "$BR" "088"
+extract_hexagon "88" "$TL" "089"
+extract_hexagon "89" "$BR" "090"
+extract_hexagon "86" "$TL" "091"
+extract_hexagon "87" "$BR" "092"
+extract_hexagon "92" "$TL" "093"
+extract_hexagon "93" "$TL" "094"
+
+# Age 10
+extract_hexagon	"104" "$BR" "095"
+extract_hexagon	"105" "$TL" "096"
+extract_hexagon	"100" "$BR" "097"
+extract_hexagon "101" "$BC" "098"
+extract_hexagon "98" "$BR" "099"
+extract_hexagon "99" "$TL" "100"
+extract_hexagon "96" "$TL" "101"
+extract_hexagon "97" "$BC" "102"
+extract_hexagon "102" "$TL" "103"
+extract_hexagon	"103" "$BL" "104"
+
+# Age 11
+extract_hexagon "114" "$BC" "105"
+extract_hexagon "115" "$BR" "106"
+extract_hexagon "110" "$BR" "107"
+extract_hexagon "111" "$TL" "108"
+extract_hexagon "108" "$BR" "109"
+extract_hexagon "109" "$TL" "110"
+extract_hexagon "106" "$TL" "111"
+extract_hexagon "107" "$BL" "112"
+extract_hexagon "112" "$BR" "113"
+extract_hexagon "113" "$BC" "114"
+
+# Combine unseen hexagons into a single spritesheet
+echo "Combining unseen hexagons..."
+magick montage \
+temp/00{0..9}.png \
+temp/0{10..99}.png \
+temp/{100..114}.png \
+-trim -tile 115x1 -geometry 60x60+5+5 -background 'none' temp/ultimate_unseen_hexagons.png
+
 # Combine everything into a single spritesheet
 echo "Combining everything into a single spritesheet..."
 magick convert \
@@ -571,6 +869,8 @@ temp/ultimate_base_hexagons.png \
 temp/ultimate_artifacts_hexagons.png \
 temp/ultimate_cities_hexagons.png \
 temp/ultimate_echoes_hexagons.png \
+temp/ultimate_figures_hexagons.png \
+temp/ultimate_unseen_hexagons.png \
 -append -background 'none' ../../img/ultimate_hexagon_icons.png
 
 # Cleanup
