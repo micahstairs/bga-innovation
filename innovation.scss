@@ -668,6 +668,7 @@
 
     &.fourth {
         font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+        letter-spacing: -1.5px;
         color: black;
 
         &.M {
@@ -675,7 +676,7 @@
             height: 14px;
             line-height: 16px;
             top: 9px;
-            right: 9px;
+            right: 9.5px;
         }
 
         &.L {
@@ -683,7 +684,7 @@
             height: 30px;
             line-height: 14px;
             top: 44px;
-            right: 40px;
+            right: 41px;
         }
     }
 }
@@ -2445,15 +2446,23 @@
 }
 
 .hexagon_card_icon {
-    background-image: url("img/hexagon_icons.png");
     position: absolute;
 
+    &.third {
+        background-image: url("img/hexagon_icons.png");
+    }
+
+    &.fourth {
+        background-image: url("img/ultimate_hexagon_icons.png");
+    }
+
     &.M {
-        background-size: 735px, auto;
         width: 45px;
         height: 45px;
 
         &.third {
+            background-size: 735px, auto;
+
             &.top {
                 top: 2px;
             }
@@ -2476,6 +2485,8 @@
         }
 
         &.fourth {
+            background-size: 5500px, auto;
+
             &.top {
                 top: 5px;
             }
@@ -2499,11 +2510,12 @@
     }
 
     &.L {
-        background-size: 1511px, auto;
         width: 90px;
         height: 90px;
 
         &.third {
+            background-size: 1511px, auto;
+
             &.top {
                 top: 17px;
             }
@@ -2526,6 +2538,8 @@
         }
 
         &.fourth {
+            background-size: 11000px, auto;
+
             &.top {
                 top: 30px;
             }
@@ -2679,8 +2693,15 @@
             &.age_8,
             &.age_9,
             &.age_10 {
+                // &.fourth {
+                //     background-image: url("img/ultimate_card_backs_portrait.jpg");
+                //     background-size: 380px 306px;
+                // }
+
+                // &.third {
                 background-image: url("img/card_backs_portrait.jpg");
                 background-size: 380px 256px;
+                // }
             }
 
             &.age_1 {
@@ -2723,6 +2744,10 @@
                 background-position-x: -312px;
             }
 
+            &.age_11 {
+                background-position-x: -347px;
+            }
+
             &.type_0 {
                 background-position-y: -3px;
             }
@@ -2757,9 +2782,16 @@
             font-family: system-ui;
         }
 
+        line-height: v.$recto-S-height;
+        text-align: center;
+
+        // &.fourth:not(.simplified_card_back) {
+        //     color: #000;
+        //     text-shadow: 0 0 5px #fff, 0 0 7px #fff, 0 0 10px #fff;
+        // }
+
+        // &.third {
         &.simplified_card_back {
-            line-height: v.$recto-S-height;
-            text-align: center;
 
             &.type_0 {
                 background-color: #f0d68c;
@@ -2790,6 +2822,8 @@
                 box-shadow: inset 0px 0px 0px 5px #000;
             }
         }
+
+        // }
     }
 }
 
@@ -2802,166 +2836,304 @@
 
 /* hexagon card icons */
 
-$M_offset: 49;
-$M_x_position: 3;
-$M_y_position: 3;
-$L_offset: 100.5;
-$L_x_position: 8;
-$L_y_position: 8;
+.third {
 
-.hexagon_card_icon {
+    $M_offset: 49;
+    $M_x_position: 3;
+    $M_y_position: 3;
+    $L_offset: 100.5;
+    $L_x_position: 8;
+    $L_y_position: 8;
 
-    // Base cards
-    @for $i from 0 through 104 {
-        @if $i <=14 {
-            &.hexagon_icon_#{$i} {
-                &.M {
-                    background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+    &.hexagon_card_icon {
+
+        // Base cards
+        @for $i from 0 through 104 {
+            @if $i <=14 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+                    }
                 }
+            }
 
-                &.L {
-                    background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+            @if $i >14 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $L_offset}px;
+                    }
                 }
             }
         }
 
-        @if $i >14 {
+        // Artifact cards
+        @for $i from 110 through 214 {
+            @if $i <=124 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + 10 * $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + 10 * $L_offset}px;
+                    }
+                }
+            }
+
+            @if $i >124 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))) * $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))) * $L_offset}px;
+                    }
+                }
+            }
+        }
+
+        // Relic cards
+        @for $i from 215 through 219 {
             &.hexagon_icon_#{$i} {
                 &.M {
-                    background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $M_offset}px;
+                    background-position: -#{$M_x_position + ($i + 5) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 100),10)))) * $M_offset}px;
                 }
 
                 &.L {
-                    background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $L_offset}px;
+                    background-position: -#{$L_x_position + ($i + 5) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 100),10)))) * $L_offset}px;
                 }
+            }
+        }
+
+        // City cards
+        @for $i from 220 through 324 {
+            @if $i <=234 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $M_offset}px -#{$M_y_position + $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $L_offset}px -#{$L_y_position + $L_offset}px;
+                    }
+                }
+            }
+
+            @if $i >=235 and $i <=314 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $M_offset}px -#{$M_y_position + (2 + math.floor(math.div($i - 235, 10))) * $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $L_offset}px -#{$L_y_position + (2 + math.floor(math.div($i - 235, 10))) * $L_offset}px;
+                    }
+                }
+            }
+
+            @if $i >=315 {
+                &.hexagon_icon_#{$i} {
+                    &.M {
+                        background-position: -#{$M_x_position + (10 + math.floor(math.div($i - 315, 2))) * $M_offset}px -#{$M_y_position + 12 * $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + (10 + math.floor(math.div($i - 315, 2))) * $L_offset}px -#{$L_y_position + 12 * $L_offset}px;
+                    }
+                }
+            }
+        }
+
+        // Echo cards
+        // Since the icons are in their own png, we have to offset i by 330 and 345 back to '0' for calulation purposes
+        @for $i from 330 through 434 {
+            @if $i <=344 {
+                &.hexagon_icon_#{$i} {
+                    background-image: url("img/hexagon_icons_echoes.png");
+
+                    &.M {
+                        background-position: -#{$M_x_position + ($i - 330) * $M_offset}px -#{$M_y_position}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + ($i - 330) * $L_offset}px -#{$L_y_position}px;
+                    }
+                }
+            }
+
+            @if $i >=345 {
+                &.hexagon_icon_#{$i} {
+                    background-image: url("img/hexagon_icons_echoes.png");
+
+                    &.M {
+                        background-position: -#{$M_x_position + ($i - 345) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
+                    }
+
+                    &.L {
+                        background-position: -#{$L_x_position + ($i - 345) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.fourth {
+    $M_offset: 47.82;
+    $M_x_position: 3;
+    $M_y_position: 3;
+    $L_offset: 95.658;
+    $L_x_position: 3;
+    $L_y_position: 8;
+
+    // Base cards
+    @for $i from 0 through 104 {
+        &.hexagon_icon_#{$i} {
+
+            &.M {
+                background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+            }
+
+            &.L {
+                background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+            }
+        }
+    }
+
+    @for $i from 440 through 449 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + ($i - 335) * $M_offset}px -#{$M_y_position}px;
+            }
+
+            &.L {
+                background-position: -#{$L_x_position + ($i - 335) * $L_offset}px -#{$L_y_position}px;
             }
         }
     }
 
     // Artifact cards
     @for $i from 110 through 214 {
-        @if $i <=124 {
-            &.hexagon_icon_#{$i} {
-                &.M {
-                    background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + 10 * $M_offset}px;
-                }
-
-                &.L {
-                    background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + 10 * $L_offset}px;
-                }
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + ($i - 110) * $M_offset}px -#{$M_y_position + $M_offset}px;
             }
-        }
 
-        @if $i >124 {
-            &.hexagon_icon_#{$i} {
-                &.M {
-                    background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))) * $M_offset}px;
-                }
-
-                &.L {
-                    background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))) * $L_offset}px;
-                }
+            &.L {
+                background-position: -#{$L_x_position + ($i - 110) * $L_offset}px -#{$L_y_position + $L_offset}px;
             }
         }
     }
 
-    // Relic cards
-    @for $i from 215 through 219 {
+    @for $i from 450 through 459 {
         &.hexagon_icon_#{$i} {
             &.M {
-                background-position: -#{$M_x_position + ($i + 5) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 100),10)))) * $M_offset}px;
+                background-position: -#{$M_x_position + ($i - 345) * $M_offset}px -#{$M_y_position + $M_offset}px;
             }
 
             &.L {
-                background-position: -#{$L_x_position + ($i + 5) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 100),10)))) * $L_offset}px;
+                background-position: -#{$L_x_position + ($i - 345) * $L_offset}px -#{$L_y_position + $L_offset}px;
             }
         }
     }
 
     // City cards
-    @for $i from 220 through 324 {
-        @if $i <=234 {
-            &.hexagon_icon_#{$i} {
-                &.M {
-                    background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $M_offset}px -#{$M_y_position + $M_offset}px;
-                }
+    @for $i from 220 through 234 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + math.floor(math.div(($i - 220), 3)) * $M_offset}px -#{$M_y_position + 2 * $M_offset}px;
+            }
 
-                &.L {
-                    background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $L_offset}px -#{$L_y_position + $L_offset}px;
-                }
+            &.L {
+                background-position: -#{$L_x_position + math.floor(math.div(($i - 220), 3)) * $L_offset}px -#{$L_y_position + 2 * $L_offset}px;
             }
         }
+    }
 
-        @if $i >=235 and $i <=314 {
-            &.hexagon_icon_#{$i} {
-                &.M {
-                    background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $M_offset}px -#{$M_y_position + (2 + math.floor(math.div($i - 235, 10))) * $M_offset}px;
-                }
+    @for $i from 235 through 324 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + math.floor(math.div(($i - 225), 2)) * $M_offset}px -#{$M_y_position + 2 * $M_offset}px;
+            }
 
-                &.L {
-                    background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $L_offset}px -#{$L_y_position + (2 + math.floor(math.div($i - 235, 10))) * $L_offset}px;
-                }
+            &.L {
+                background-position: -#{$L_x_position + math.floor(math.div(($i - 225), 2)) * $L_offset}px -#{$L_y_position + 2 * $L_offset}px;
             }
         }
+    }
 
-        @if $i >=315 {
-            &.hexagon_icon_#{$i} {
-                &.M {
-                    background-position: -#{$M_x_position + (10 + math.floor(math.div($i - 315, 2))) * $M_offset}px -#{$M_y_position + 12 * $M_offset}px;
-                }
+    @for $i from 460 through 469 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + math.floor(math.div(($i - 410), 2)) * $M_offset}px -#{$M_y_position + 2 * $M_offset}px;
+            }
 
-                &.L {
-                    background-position: -#{$L_x_position + (10 + math.floor(math.div($i - 315, 2))) * $L_offset}px -#{$L_y_position + 12 * $L_offset}px;
-                }
+            &.L {
+                background-position: -#{$L_x_position + math.floor(math.div(($i - 410), 2)) * $L_offset}px -#{$L_y_position + 2 * $L_offset}px;
             }
         }
     }
 
     // Echo cards
-    // Since the icons are in their own png, we have to offset i by 330 and 345 back to '0' for calulation purposes
     @for $i from 330 through 434 {
-        @if $i <=344 {
-            &.hexagon_icon_#{$i} {
-                background-image: url("img/hexagon_icons_echoes.png");
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + ($i - 330) * $M_offset}px -#{$M_y_position + 3 * $M_offset}px;
+            }
 
-                &.M {
-                    background-position: -#{$M_x_position + ($i - 330) * $M_offset}px -#{$M_y_position}px;
-                }
-
-                &.L {
-                    background-position: -#{$L_x_position + ($i - 330) * $L_offset}px -#{$L_y_position}px;
-                }
+            &.L {
+                background-position: -#{$L_x_position + ($i - 330) * $L_offset}px -#{$L_y_position + 3 * $L_offset}px;
             }
         }
+    }
 
-        @if $i >=345 {
-            &.hexagon_icon_#{$i} {
-                background-image: url("img/hexagon_icons_echoes.png");
+    @for $i from 470 through 479 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + ($i - 365) * $M_offset}px -#{$M_y_position + 3 * $M_offset}px;
+            }
 
-                &.M {
-                    background-position: -#{$M_x_position + ($i - 345) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
-                }
+            &.L {
+                background-position: -#{$L_x_position + ($i - 365) * $L_offset}px -#{$L_y_position + 3 * $L_offset}px;
+            }
+        }
+    }
 
-                &.L {
-                    background-position: -#{$L_x_position + ($i - 345) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
-                }
+    // Unseen cards
+    @for $i from 480 through 594 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + ($i - 480) * $M_offset}px -#{$M_y_position + 5 * $M_offset}px;
+            }
+
+            &.L {
+                background-position: -#{$L_x_position + ($i - 480) * $L_offset}px -#{$L_y_position + 5 * $L_offset}px;
             }
         }
     }
 
     // Age 11 cards and Unseen cards
     // TODO(4E): Add real hex icons once we have the graphics
-    @for $i from 440 through 594 {
-        &.hexagon_icon_#{$i} {
-            filter: brightness(0%);
+    // @for $i from 440 through 594 {
+    //     &.hexagon_icon_#{$i} {
+    //         filter: brightness(0%);
 
-            &.M {
-                background-position: -3px -3px;
-            }
+    //         &.M {
+    //             background-position: -3px -3px;
+    //         }
 
-            &.L {
-                background-position: -8px -8px;
-            }
-        }
-    }
+    //         &.L {
+    //             background-position: -8px -8px;
+    //         }
+    //     }
+    // }
 }

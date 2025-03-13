@@ -3103,6 +3103,7 @@ class Innovation extends BgaGame {
         if (simplified_card_layout) {
             classes.push("simplified");
         }
+        // TODO(4E): Finish updating City graphics
         if (this.gamedatas.fourth_edition && type != 2) {
             classes.push("fourth");
         } else {
@@ -3197,7 +3198,7 @@ class Innovation extends BgaGame {
     writeOverCard(card, size: string, HTML_id: string): string {
         const card_data: Card = this.cards[card.id];
 
-        const edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
+        var edition = this.gamedatas.fourth_edition ? 'fourth' : 'third';
 
         const icon1 = this.getIconDiv(card_data, card_data.spot_1, `top left ${edition}`, size);
         const icon2 = this.getIconDiv(card_data, card_data.spot_2, `bottom left ${edition}`, size);
@@ -3205,6 +3206,9 @@ class Innovation extends BgaGame {
         const icon4 = this.getIconDiv(card_data, card_data.spot_4, `bottom right ${edition}`, size);
         const icon5 = this.getIconDiv(card_data, card_data.spot_5, `top right ${edition}`, size);
         const icon6 = this.getIconDiv(card_data, card_data.spot_6, `top center ${edition}`, size);
+
+        // TODO(4E): Remove this once the City graphics are in
+        edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
 
         const card_age = this.createAdjustedContent(card.faceup_age, `card_age type_${card_data.type} color_${card_data.color} ${edition}`, size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
 
