@@ -19,9 +19,9 @@ class Card110 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isCompel()) {
-      return self::youMust()->all()->withDemandEffect()->fromYourBoard()->build();
+      return self::youMust()->return()->all()->withDemandEffect()->fromYourBoard()->build();
     } else {
-      return self::youMust()->return()->all()->non(Colors::BLUE)->fromYourBoard()->withDemandEffect()->build();
+      return self::youMust()->score()->non(Colors::BLUE)->fromYourBoard()->withDemandEffect()->build();
     }
   }
 
