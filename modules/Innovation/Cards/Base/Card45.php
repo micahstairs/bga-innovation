@@ -27,7 +27,7 @@ class Card45 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->splayRight()->withColor(Colors::BLUE)->build();
     } else {
-      return self::youMay()->return()->fromYourScore()->build();
+      return self::youMust()->return()->fromYourScore()->build();
     }
   }
 
