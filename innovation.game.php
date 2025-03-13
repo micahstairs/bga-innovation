@@ -9112,6 +9112,11 @@ class Innovation extends Table
                 }
                 $player_index = self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
                 if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'))) {
+                    // TODO(4E): Remove debugging once the bug is gone.
+                    if (self::getGameStateValue('debug_mode') >= 1) {
+                        self::trace("Invalid player index: $player_index");
+                        self::trace("Valid player indexes: " . implode(", ", $this->innovationGameState->getAsArray('player_array')));
+                    }
                     self::throwInvalidChoiceException();
                 }
                 break;

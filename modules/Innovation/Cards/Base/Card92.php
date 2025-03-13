@@ -11,9 +11,9 @@ class Card92 extends AbstractCard
 {
   // Suburbia:
   // - 3rd edition:
-  //   - You may tuck any number of cards from your hand. Draw and score a 1 for each card you tucked.
+  //   - You may tuck any number of cards from your hand. Draw and score a [1] for each card you tucked.
   // - 4th edition:
-  //   - You may tuck any number of cards from your hand. Draw and score a 1 for each card you tuck.
+  //   - You may tuck any number of cards from your hand. Draw and score a [1] for each card you tuck.
   //   - You may junk all cards in the [9] deck.
 
   public function initialExecution()
@@ -29,6 +29,16 @@ class Card92 extends AbstractCard
       return self::youMay()->tuck()->anyNumber()->fromYourHand()->build();
     } else {
       return self::youMay()->choose([9])->build();
+    }
+  }
+
+  public function afterInteraction()
+  {
+    if (self::isFirstNonDemand()) {
+      $numCardsToTuck = self::getNumChosen();
+      for ($i = 0; $i < $numCardsToTuck; $i++) {
+        self::drawAndScore(1);
+      }
     }
   }
 
