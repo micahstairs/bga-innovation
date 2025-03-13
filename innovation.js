@@ -2922,6 +2922,7 @@ var Innovation = /** @class */ (function (_super) {
         if (simplified_card_layout) {
             classes.push("simplified");
         }
+        // TODO(4E): Finish updating City graphics
         if (this.gamedatas.fourth_edition && type != 2) {
             classes.push("fourth");
         }
@@ -3010,13 +3011,15 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.writeOverCard = function (card, size, HTML_id) {
         var card_data = this.cards[card.id];
-        var edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
+        var edition = this.gamedatas.fourth_edition ? 'fourth' : 'third';
         var icon1 = this.getIconDiv(card_data, card_data.spot_1, "top left ".concat(edition), size);
         var icon2 = this.getIconDiv(card_data, card_data.spot_2, "bottom left ".concat(edition), size);
         var icon3 = this.getIconDiv(card_data, card_data.spot_3, "bottom center ".concat(edition), size);
         var icon4 = this.getIconDiv(card_data, card_data.spot_4, "bottom right ".concat(edition), size);
         var icon5 = this.getIconDiv(card_data, card_data.spot_5, "top right ".concat(edition), size);
         var icon6 = this.getIconDiv(card_data, card_data.spot_6, "top center ".concat(edition), size);
+        // TODO(4E): Remove this once the City graphics are in
+        edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
         var card_age = this.createAdjustedContent(card.faceup_age, "card_age type_".concat(card_data.type, " color_").concat(card_data.color, " ").concat(edition), size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
         var title = _(card_data.name).toUpperCase();
         var card_title = this.createAdjustedContent(title, "card_title type_".concat(card_data.type, " ").concat(edition), size, size == 'M' ? 11 : 30, "card_title_".concat(card.id));
