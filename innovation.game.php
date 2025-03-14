@@ -9114,8 +9114,8 @@ class Innovation extends Table
                 if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'))) {
                     // TODO(4E): Remove debugging once the bug is gone.
                     if (self::getGameStateValue('debug_mode') >= 1) {
-                        self::trace("Invalid player index: $player_index");
-                        self::trace("Valid player indexes: " . implode(", ", $this->innovationGameState->getAsArray('player_array')));
+                        error_log("Invalid player index: $player_index");
+                        error_log("Valid player indexes: " . implode(", ", $this->innovationGameState->getAsArray('player_array')));
                     }
                     self::throwInvalidChoiceException();
                 }
