@@ -19,9 +19,9 @@ class Card80 extends AbstractCard
       if (self::isFirstInteraction()) {
         return self::youMay()->return()->fromYourHand()->build();
       } else if (self::isSecondInteraction()) {
-        return self::youMay()->chooseValue()->build();
+        return self::youMust()->chooseValue()->build();
       } else {
-        return self::youMay()->return()->all()->value(self::getAuxiliaryValue())->fromAnyScore()->build();
+        return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromAnyScore()->build();
       }
     } else {
       return self::youMay()->splayUp()->withColor(Colors::PURPLE)->build();
