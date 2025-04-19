@@ -16,11 +16,7 @@ class Card440 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::isDemand()) {
-      self::setMaxSteps(3);
-    } else {
-      self::setMaxSteps(2);
-    }
+    self::setMaxSteps(2);
   }
 
   public function getInteractionOptions(): array
