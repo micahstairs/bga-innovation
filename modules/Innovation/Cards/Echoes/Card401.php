@@ -38,7 +38,7 @@ class Card401 extends AbstractCard
     } else if (self::isFirstInteraction()) {
       return [
         'choose_value' => true,
-        'age'          => count(self::getUniqueValuesInLocation('score')),
+        'age'          => self::getUniqueValuesInLocation('score'),
       ];
     } else {
       return ['choices' => [1, 2]];
