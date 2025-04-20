@@ -28,6 +28,9 @@ class Card97 extends AbstractCard
   {
     if (self::getValue($card) == 10) {
       $numUniqueValues = self::getUniqueValuesInLocation(Locations::SCORE);
+      $args = ['number' => $numUniqueValues];
+      self::notifyPlayer(clienttranslate('${You} have ${number} unique values in your score pile.'), $args);
+      self::notifyOthers(clienttranslate('${player_name} has ${number} unique values in his score pile.'), $args);
       for ($i = 0; $i < $numUniqueValues; $i++) {
         self::draw(10);
       }
