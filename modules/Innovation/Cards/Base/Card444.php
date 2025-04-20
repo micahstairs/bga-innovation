@@ -33,6 +33,13 @@ class Card444 extends AbstractCard
     }
   }
 
+  public function handleCardChoice(array $card)
+  {
+    if (self::isFirstInteraction()) {
+      self::setAuxiliaryValue(self::getValue($card));
+    }
+  }
+
   public function demandMightBeEffective(): bool
   {
     return count(self::getRepeatedValues(self::getTopCards())) > 0;
