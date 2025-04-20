@@ -475,6 +475,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function safeguard(): InteractionBuilder
+  {
+    $this->interactionOptions['safeguard_keyword'] = true;
+    return $this;
+  }
+
   function achieve(): InteractionBuilder
   {
     $this->interactionOptions['achieve_keyword'] = true;

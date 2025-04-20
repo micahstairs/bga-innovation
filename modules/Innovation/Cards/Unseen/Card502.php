@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
 class Card502 extends AbstractCard
@@ -27,31 +26,13 @@ class Card502 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::RED, Colors::YELLOW],
-      ];
+      return self::youMay()->splayLeft()->withColor([Colors::RED, Colors::YELLOW])->build();
     } else if (self::isFirstInteraction()) {
-      $numSplayedColors = 0;
-      foreach (self::getTopCards() as $card) {
-        if ($card['splay_direction'] != Directions::UNSPLAYED) {
-          $numSplayedColors++;
-        }
-      }
-      return [
-        'safeguard_keyword' => true,
-        'age'               => $numSplayedColors,
-      ];
+      return self::youMust()->safeguard()->value(self::countSplayedColors())->build();
     } else if (self::isSecondInteraction()) {
-      return ['choose_player' => true];
+      return self::youMust()->choosePlayer()->build();
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'owner_to'      => self::getAuxiliaryValue2(),
-        'location_to'   => Locations::BOARD,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->value(self::getAuxiliaryValue())->fromYourHand()->toPlayer(self::getAuxiliaryValue2())->toBoard()->build();
     }
   }
 
