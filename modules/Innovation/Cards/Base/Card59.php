@@ -20,7 +20,7 @@ class Card59 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->reveal()->fromYourHand()->build();
     } else {
-      return self::youMay()->meld()->all()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
+      return self::youMust()->meld()->all()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
     }
   }
 
