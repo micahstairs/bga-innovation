@@ -30,7 +30,7 @@ class Card144 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->revealAndReturn()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->return()->fromAnyBoard()->withColor(self::getLastSelectedColor())->build();
+      return self::youMust()->return()->fromYourBoard()->withColor(self::getLastSelectedColor())->build();
     } else if (self::isThirdInteraction()) {
       return self::youMust()->revealAndReturn()->fromYourScore()->withColor(self::getLastSelectedColor())->build();
     } else {
