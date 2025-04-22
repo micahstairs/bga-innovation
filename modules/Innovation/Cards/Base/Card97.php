@@ -27,7 +27,10 @@ class Card97 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::getValue($card) == 10) {
-      $numUniqueValues = self::getUniqueValuesInLocation(Locations::SCORE);
+      $numUniqueValues = count(self::getUniqueValuesInLocation(Locations::SCORE));
+      $args = ['number' => $numUniqueValues];
+      self::notifyPlayer(clienttranslate('${You} have ${number} different values in your score pile.'), $args);
+      self::notifyOthers(clienttranslate('${player_name} has ${number} different values in his score pile.'), $args);
       for ($i = 0; $i < $numUniqueValues; $i++) {
         self::draw(10);
       }

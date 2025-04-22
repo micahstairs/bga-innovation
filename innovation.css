@@ -1,4 +1,3 @@
-@import "../../../css/csslayer.css";
 /* codex for numbers and symbols
  *
  * **Icons**
@@ -612,12 +611,20 @@
   top: 9px;
   right: 9.5px;
 }
+.card_age.fourth.M.type_2 {
+  top: 54px;
+  right: 18px;
+}
 .card_age.fourth.L {
   width: 30px;
   height: 30px;
   line-height: 14px;
   top: 44px;
   right: 41px;
+}
+.card_age.fourth.L.type_2 {
+  top: 154px;
+  right: 50px;
 }
 
 .card_type {
@@ -662,6 +669,24 @@
 .card_title.fourth {
   color: white;
   font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+}
+.card_title.fourth.type_2 {
+  font-weight: bold;
+}
+.card_title.fourth.type_2.color_0 {
+  color: #0e2a50;
+}
+.card_title.fourth.type_2.color_1 {
+  color: #5a090c;
+}
+.card_title.fourth.type_2.color_2 {
+  color: #122c18;
+}
+.card_title.fourth.type_2.color_3 {
+  color: #8b6a28;
+}
+.card_title.fourth.type_2.color_4 {
+  color: #220e40;
 }
 .card_title.fourth.M {
   left: 50px;
@@ -1612,17 +1637,32 @@
 .card.fourth.color_0 {
   background-image: url("img/ultimate_blue_background.png");
 }
+.card.fourth.color_0.type_2 {
+  background-image: url("img/ultimate_cities_blue_background.png");
+}
 .card.fourth.color_1 {
   background-image: url("img/ultimate_red_background.png");
+}
+.card.fourth.color_1.type_2 {
+  background-image: url("img/ultimate_cities_red_background.png");
 }
 .card.fourth.color_2 {
   background-image: url("img/ultimate_green_background.png");
 }
+.card.fourth.color_2.type_2 {
+  background-image: url("img/ultimate_cities_green_background.png");
+}
 .card.fourth.color_3 {
   background-image: url("img/ultimate_yellow_background.png");
 }
+.card.fourth.color_3.type_2 {
+  background-image: url("img/ultimate_cities_yellow_background.png");
+}
 .card.fourth.color_4 {
   background-image: url("img/ultimate_purple_background.png");
+}
+.card.fourth.color_4.type_2 {
+  background-image: url("img/ultimate_cities_purple_background.png");
 }
 .card.third {
   background-image: url("img/card_backgrounds.jpg");

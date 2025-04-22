@@ -21,7 +21,7 @@ class Card46 extends AbstractCard
       $card = self::drawAndReveal(6);
       $cards[] = $card;
     }
-    if (self::getUniqueColors($cards) < 3) {
+    if (count(self::getUniqueColors($cards)) < 3) {
       self::setMaxSteps(1);
     } else {
       foreach ($cards as $card) {

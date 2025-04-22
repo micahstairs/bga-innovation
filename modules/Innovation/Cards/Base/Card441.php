@@ -33,7 +33,7 @@ class Card441 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->return()->all()->fromYourBoard()->withColor(self::getAuxiliaryValue())->onlyCardsInAuxiliaryArray()->build();
+    return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue())->onlyCardsInAuxiliaryArray()->build();
   }
 
   public function afterInteraction()

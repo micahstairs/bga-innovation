@@ -9111,7 +9111,12 @@ class Innovation extends Table
                     self::throwInvalidChoiceException();
                 }
                 $player_index = self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
-                if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'))) {
+                if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'), false)) {
+                    // TODO(4E): Remove debugging once the bug is gone.
+                    if (self::getGameStateValue('debug_mode') >= 1) {
+                        error_log("Invalid player index: $player_index");
+                        error_log("Valid player indexes: " . implode(", ", $this->innovationGameState->getAsArray('player_array')));
+                    }
                     self::throwInvalidChoiceException();
                 }
                 break;
@@ -11309,7 +11314,7 @@ class Innovation extends Table
             || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age'])))
             || (array_key_exists('choices', $options) && empty($options['choices']))
             || (array_key_exists('color', $options) && empty($options['color']))
-            || (array_key_exists('choose_player', $options) && empty($options['players']))
+            || (array_key_exists('players', $options) && empty($options['players']))
         ) {
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());

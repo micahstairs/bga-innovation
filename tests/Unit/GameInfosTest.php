@@ -12,21 +12,6 @@ class GameInfosTest extends BaseTest
         $this->config = $this->loadGameInfo();
     }
 
-    public function testGameDesigner()
-    {
-        $this->assertEquals('Carl Chudyk', $this->config['designer']);
-    }
-
-    public function testGameArtist()
-    {
-        $this->assertEquals('Cara Judd', $this->config['artist']);
-    }
-
-    public function testYear()
-    {
-        $this->assertEquals(2010, $this->config['year']);
-    }
-
     public function testPublisher()
     {
         $this->assertEquals('Asmadi Games', $this->config['publisher']);

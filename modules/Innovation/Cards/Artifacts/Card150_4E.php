@@ -42,7 +42,7 @@ class Card150_4E extends AbstractCard
     if (self::hasCards(Locations::HAND)) {
       return true;
     }
-    return self::countCards(Locations::BOARD) < 4 && count(self::filterByColor(self::getCards(Locations::BOARD), Colors::NON_GREEN)) > 0;
+    return self::countCards(Locations::HAND) < 4 && count(self::filterByColor(self::getCards(Locations::BOARD), Colors::NON_GREEN)) > 0;
   }
 
 }

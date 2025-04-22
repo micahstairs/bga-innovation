@@ -3022,7 +3022,7 @@ var Innovation = /** @class */ (function (_super) {
         edition = this.gamedatas.fourth_edition && card.type != 2 ? 'fourth' : 'third';
         var card_age = this.createAdjustedContent(card.faceup_age, "card_age type_".concat(card_data.type, " color_").concat(card_data.color, " ").concat(edition), size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
         var title = _(card_data.name).toUpperCase();
-        var card_title = this.createAdjustedContent(title, "card_title type_".concat(card_data.type, " ").concat(edition), size, size == 'M' ? 11 : 30, "card_title_".concat(card.id));
+        var card_title = this.createAdjustedContent(title, "card_title type_".concat(card_data.type, " color_").concat(card_data.color, " ").concat(edition), size, size == 'M' ? 11 : 30, "card_title_".concat(card.id));
         var i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
         var i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
         var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color) : "";
