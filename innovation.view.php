@@ -24,7 +24,7 @@
  *
  */
 
-require_once (APP_BASE_PATH . "view/common/game.view.php");
+require_once(APP_BASE_PATH . "view/common/game.view.php");
 
 class view_innovation_innovation extends game_view
 {
@@ -56,8 +56,7 @@ class view_innovation_innovation extends game_view
         $players = $this->game->loadPlayersBasicInfos();
 
         // Get my id
-        global $g_user;
-        $my_id = $g_user->get_id();
+        $my_id = $this->getCurrentPlayerId();
 
         /*********** Place your code below:  ************/
 
