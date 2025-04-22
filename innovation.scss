@@ -23,6 +23,18 @@
  * color_4 - purple
  */
 
+$light-color-0: #b2def2;
+$light-color-1: #f7c3d2;
+$light-color-2: #9dd19b;
+$light-color-3: #f4f4be;
+$light-color-4: #b4bcd8;
+
+$dark-color-0: #0e2a50;
+$dark-color-1: #5a090c;
+$dark-color-2: #122c18;
+$dark-color-3: #8b6a28;
+$dark-color-4: #220e40;
+
 
 #main_area_wrapper {
     display: flex;
@@ -676,6 +688,11 @@
             line-height: 16px;
             top: 9px;
             right: 9.5px;
+
+            &.type_2 {
+                top: 54px;
+                right: 18px;
+            }
         }
 
         &.L {
@@ -684,6 +701,11 @@
             line-height: 14px;
             top: 44px;
             right: 41px;
+
+            &.type_2 {
+                top: 154px;
+                right: 50px;
+            }
         }
     }
 }
@@ -736,6 +758,30 @@
     &.fourth {
         color: white;
         font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+
+        &.type_2 {
+            font-weight: bold;
+
+            &.color_0 {
+                color: $dark-color-0;
+            }
+
+            &.color_1 {
+                color: $dark-color-1;
+            }
+
+            &.color_2 {
+                color: $dark-color-2;
+            }
+
+            &.color_3 {
+                color: $dark-color-3;
+            }
+
+            &.color_4 {
+                color: $dark-color-4;
+            }
+        }
 
         &.M {
             left: 50px;
@@ -890,88 +936,88 @@
     border-width: 1px;
 
     &.color_0 {
-        background-color: #b2def2;
-        border-color: #0e2a50;
+        background-color: $light-color-0;
+        border-color: $dark-color-0;
     }
 
     &.color_1 {
-        background-color: #f7c3d2;
-        border-color: #5a090c;
+        background-color: $light-color-1;
+        border-color: $dark-color-1;
     }
 
     &.color_2 {
-        background-color: #9dd19b;
-        border-color: #122c18;
+        background-color: $light-color-2;
+        border-color: $dark-color-2;
     }
 
     &.color_3 {
-        background-color: #f4f4be;
-        border-color: #8b6a28;
+        background-color: $light-color-3;
+        border-color: $dark-color-3;
     }
 
     &.color_4 {
-        background-color: #b4bcd8;
-        border-color: #220e40;
+        background-color: $light-color-4;
+        border-color: $dark-color-4;
     }
 }
 
 .effect.color_0 {
-    border-color: #0e2a50;
+    border-color: $dark-color-0;
 
     &.light {
-        background-color: #b2def2;
+        background-color: $light-color-0;
     }
 
     &.dark {
-        background-color: #0e2a50;
+        background-color: $dark-color-0;
     }
 }
 
 .effect.color_1 {
-    border-color: #5a090c;
+    border-color: $dark-color-1;
 
     &.light {
-        background-color: #f7c3d2;
+        background-color: $light-color-1;
     }
 
     &.dark {
-        background-color: #5a090c;
+        background-color: $dark-color-1;
     }
 }
 
 .effect.color_2 {
-    border-color: #122c18;
+    border-color: $dark-color-2;
 
     &.light {
-        background-color: #9dd19b;
+        background-color: $light-color-2;
     }
 
     &.dark {
-        background-color: #122c18;
+        background-color: $dark-color-2;
     }
 }
 
 .effect.color_3 {
-    border-color: #8b6a28;
+    border-color: $dark-color-3;
 
     &.light {
-        background-color: #f4f4be;
+        background-color: $light-color-3;
     }
 
     &.dark {
-        background-color: #8b6a28;
+        background-color: $dark-color-3;
     }
 }
 
 .effect.color_4 {
-    border-color: #220e40;
+    border-color: $dark-color-4;
 
     &.light {
-        background-color: #b4bcd8;
+        background-color: $light-color-4;
     }
 
     &.dark {
-        background-color: #220e40;
+        background-color: $dark-color-4;
     }
 }
 
@@ -1633,22 +1679,42 @@
     &.fourth {
         &.color_0 {
             background-image: url('img/ultimate_blue_background.png');
+
+            &.type_2 {
+                background-image: url('img/ultimate_cities_blue_background.png');
+            }
         }
 
         &.color_1 {
             background-image: url('img/ultimate_red_background.png');
+
+            &.type_2 {
+                background-image: url('img/ultimate_cities_red_background.png');
+            }
         }
 
         &.color_2 {
             background-image: url('img/ultimate_green_background.png');
+
+            &.type_2 {
+                background-image: url('img/ultimate_cities_green_background.png');
+            }
         }
 
         &.color_3 {
             background-image: url('img/ultimate_yellow_background.png');
+
+            &.type_2 {
+                background-image: url('img/ultimate_cities_yellow_background.png');
+            }
         }
 
         &.color_4 {
             background-image: url('img/ultimate_purple_background.png');
+
+            &.type_2 {
+                background-image: url('img/ultimate_cities_purple_background.png');
+            }
         }
     }
 
@@ -3119,20 +3185,4 @@
             }
         }
     }
-
-    // Age 11 cards and Unseen cards
-    // TODO(4E): Add real hex icons once we have the graphics
-    // @for $i from 440 through 594 {
-    //     &.hexagon_icon_#{$i} {
-    //         filter: brightness(0%);
-
-    //         &.M {
-    //             background-position: -3px -3px;
-    //         }
-
-    //         &.L {
-    //             background-position: -8px -8px;
-    //         }
-    //     }
-    // }
 }

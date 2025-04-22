@@ -3213,7 +3213,7 @@ class Innovation extends BgaGame {
         const card_age = this.createAdjustedContent(card.faceup_age, `card_age type_${card_data.type} color_${card_data.color} ${edition}`, size, size == 'M' ? (this.gamedatas.fourth_edition ? 11 : card.age >= 10 ? 7 : 9) : 30);
 
         const title = _(card_data.name).toUpperCase();
-        const card_title = this.createAdjustedContent(title, `card_title type_${card_data.type} ${edition}`, size, size == 'M' ? 11 : 30, `card_title_${card.id}`);
+        const card_title = this.createAdjustedContent(title, `card_title type_${card_data.type} color_${card_data.color} ${edition}`, size, size == 'M' ? 11 : 30, `card_title_${card.id}`);
 
         const i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
         const i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
