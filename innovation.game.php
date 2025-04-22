@@ -9111,8 +9111,8 @@ class Innovation extends Table
                     self::throwInvalidChoiceException();
                 }
                 $player_index = self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
-                if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'), false)) {
-                    // TODO(4E): Remove debugging once the bug is gone.
+                if ($player_index === null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'))) {
+                    // TODO(4E): Remove debugging once the bug is gone (I think it will be fixed now that I changed == to === above)
                     if (self::getGameStateValue('debug_mode') >= 1) {
                         error_log("Invalid player index: $player_index");
                         error_log("Valid player indexes: " . implode(", ", $this->innovationGameState->getAsArray('player_array')));
