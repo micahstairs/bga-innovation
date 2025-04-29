@@ -35,14 +35,26 @@ class Card82 extends AbstractCard
       if (self::getTopCardOfColor($color)) {
         self::setMaxSteps(2);
         self::setAuxiliaryValue($color); // Remember the color for the second interaction
+      } else {
+        self::returnSkyscrapersIfNeeded();
       }
     }
   }
 
-  public function atEndOfEffect()
+  public function afterInteraction()
+  {
+    if (self::isDemand() && self::isSecondInteraction()) {
+      $this->returnSkyscrapersIfNeeded();
+    }
+  }
+
+  private function returnSkyscrapersIfNeeded(): void
   {
     if (self::isFourthEdition()) {
-      self::transferToHand(self::getCard(CardIds::SKYSCRAPERS), self::getLauncherId());
+      $skyscrapersCard = $this->game->getIfTopCardOnBoard(CardIds::SKYSCRAPERS);
+      if ($skyscrapersCard) {
+        self::transferToHand($skyscrapersCard, self::getLauncherId());
+      }
     }
   }
 
