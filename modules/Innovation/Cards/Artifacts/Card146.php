@@ -61,8 +61,6 @@ class Card146 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       self::setNextStep(1);
       self::setMaxSteps(1);
-    } else {
-      self::transferToHand($card);
     }
   }
 
