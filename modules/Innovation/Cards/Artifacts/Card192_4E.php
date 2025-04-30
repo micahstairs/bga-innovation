@@ -19,6 +19,7 @@ class Card192_4E extends AbstractCard
       $repeat = false;
       $card = self::drawAndReveal(8);
       if (self::isGreen($card)) {
+        self::transferToHand($card);
         self::achieve($this->game->getIfTopCardOnBoard(CardIds::ACTION_COMICS));
       } else if (self::hasIcon($card, Icons::EFFICIENCY)) {
         self::return($card);
