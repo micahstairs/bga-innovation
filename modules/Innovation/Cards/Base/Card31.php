@@ -21,7 +21,7 @@ class Card31 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand()) {
-      $playerCards = self::getHighestCards(Locations::HAND, self::getPlayerId());
+      $playerCards = self::getCards(Locations::HAND, self::getPlayerId());
       $launcherCards = self::getHighestCards(Locations::HAND, self::getLauncherId());
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
       foreach ($playerCards as $card) {

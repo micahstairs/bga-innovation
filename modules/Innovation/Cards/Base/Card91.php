@@ -30,13 +30,16 @@ class Card91 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    if (self::isFirstNonDemand()) {
-      if (self::isFirstInteraction()) {
-        self::setMaxSteps(2);
-      } else if (self::isSecondInteraction()) {
-        self::draw(10);
-        self::draw(10);
-      }
+    if (self::isFirstNonDemand() && self::isFirstInteraction()) {
+      self::setMaxSteps(2);
+    }
+  }
+
+  public function afterInteraction()
+  {
+    if (self::isFirstNonDemand() && self::isSecondInteraction()) {
+      self::draw(10);
+      self::draw(10);
     }
   }
 
