@@ -8601,71 +8601,80 @@ class Innovation extends Table
 
     function stDigArtifact()
     {
-        $player_id = self::getActivePlayerId();
-        $melded_card = self::getCardInfo($this->innovationGameState->get('melded_card_id'));
+        try {
 
-        if ($this->innovationGameState->citiesExpansionEnabled()) {
-            // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
-            if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, CardTypes::CITIES);
+            $player_id = self::getActivePlayerId();
+            $melded_card = self::getCardInfo($this->innovationGameState->get('melded_card_id'));
+
+            if ($this->innovationGameState->citiesExpansionEnabled()) {
+                // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
+                if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES) == 0) {
+                    self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, CardTypes::CITIES);
+                }
             }
-        }
 
-        if (!$this->innovationGameState->artifactsExpansionEnabled() || self::getArtifactOnDisplay($player_id)) {
-            self::trace('digArtifact->promoteCard');
-            $this->gamestate->nextState('promoteCard');
-            return;
-        }
-
-        $stack = self::getCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
-        if (count($stack) >= 2) {
-            $previous_top_card = $stack[count($stack) - 2];
-        } else {
-            $previous_top_card = null;
-        }
-
-        // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
-        $new_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['faceup_age'] >= $melded_card['faceup_age'];
-        $overlapping_icons = $previous_top_card !== null && self::haveOverlappingHexagonIcons($previous_top_card, $melded_card);
-        $eligible_for_dig = $new_card_has_lower_or_equal_value || $overlapping_icons;
-
-        $card_ids = [];
-        if ($eligible_for_dig) {
-            // You first draw up through any empty ages (base cards) before looking at the relevant artifact deck
-            $age_after_drawing_up = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
-            $top_artifact_card = self::getDeckTopCard($age_after_drawing_up, CardTypes::ARTIFACTS);
-            if ($top_artifact_card) {
-                $card_ids[] = $top_artifact_card['id'];
+            if (!$this->innovationGameState->artifactsExpansionEnabled() || self::getArtifactOnDisplay($player_id)) {
+                self::trace('digArtifact->promoteCard');
+                $this->gamestate->nextState('promoteCard');
+                return;
             }
-            if ($this->innovationGameState->usingFourthEditionRules()) {
-                foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                    foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
-                        if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
-                            $card_ids[] = $card['id'];
+
+            $stack = self::getCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
+            if (count($stack) >= 2) {
+                $previous_top_card = $stack[count($stack) - 2];
+            } else {
+                $previous_top_card = null;
+            }
+
+            // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
+            $new_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['faceup_age'] >= $melded_card['faceup_age'];
+            $overlapping_icons = $previous_top_card !== null && self::haveOverlappingHexagonIcons($previous_top_card, $melded_card);
+            $eligible_for_dig = $new_card_has_lower_or_equal_value || $overlapping_icons;
+
+            $card_ids = [];
+            if ($eligible_for_dig) {
+                // You first draw up through any empty ages (base cards) before looking at the relevant artifact deck
+                $age_after_drawing_up = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
+                $top_artifact_card = self::getDeckTopCard($age_after_drawing_up, CardTypes::ARTIFACTS);
+                if ($top_artifact_card) {
+                    $card_ids[] = $top_artifact_card['id'];
+                }
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                        foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
+                            if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
+                                $card_ids[] = $card['id'];
+                            }
                         }
                     }
                 }
             }
-        }
 
-        if ($card_ids) {
-            self::setAuxiliaryArray($card_ids);
-            $options = [
-                'player_id'        => $player_id,
-                'choose_from_list' => true,
-                'choices'          => range(0, count($card_ids) - 1),
-            ];
-            self::setSelectionRange($options);
-            self::trace('digArtifact->preSelectionMove');
-            $this->gamestate->nextState('preSelectionMove');
+            if ($card_ids) {
+                self::setAuxiliaryArray($card_ids);
+                $options = [
+                    'player_id'        => $player_id,
+                    'choose_from_list' => true,
+                    'choices'          => range(0, count($card_ids) - 1),
+                ];
+                self::setSelectionRange($options);
+                self::trace('digArtifact->preSelectionMove');
+                $this->gamestate->nextState('preSelectionMove');
+                return;
+            } else if ($eligible_for_dig) {
+                self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_after_drawing_up)));
+            }
+
+            self::trace('digArtifact->promoteCard');
+            $this->gamestate->nextState('promoteCard');
             return;
-        } else if ($eligible_for_dig) {
-            self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_after_drawing_up)));
-        }
 
-        self::trace('digArtifact->promoteCard');
-        $this->gamestate->nextState('promoteCard');
-        return;
+        } catch (EndOfGame $e) {
+            self::trace('EOG bubbled from self::digArtifact');
+            self::trace('digArtifact->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
     }
 
     function stPromoteCard()
