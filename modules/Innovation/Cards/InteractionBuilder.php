@@ -262,6 +262,19 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromBottom(): InteractionBuilder
+  {
+    $this->interactionOptions['bottom_from'] = true;
+    return $this;
+  }
+
+  function fromBoard($playerId): InteractionBuilder
+  {
+    $this->interactionOptions['choose_from'] = Locations::BOARD;
+    $this->interactionOptions['owner_from'] = $playerId;
+    return $this;
+  }
+
   function fromAnyBoard(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::BOARD;
