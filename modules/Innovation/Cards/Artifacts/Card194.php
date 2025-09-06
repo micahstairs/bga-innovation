@@ -36,7 +36,7 @@ class Card194 extends AbstractCard
             self::achieve($card, $playerId);
           } else {
             self::transferToHand($card);
-            self::achieve(self::getTopCardOfColor($color), $playerId);
+            self::achieve(self::getTopCardOfColor($color, $playerId), $playerId);
           }
         } else {
           self::transferToHand($card);
