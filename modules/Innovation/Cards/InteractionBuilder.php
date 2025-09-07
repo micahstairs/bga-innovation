@@ -273,7 +273,6 @@ class InteractionBuilder
     return $this;
   }
 
-
   function fromYourRevealed(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::REVEALED;
