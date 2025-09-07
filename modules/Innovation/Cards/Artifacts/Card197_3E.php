@@ -26,7 +26,7 @@ class Card197_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->all()->fromMyBoard()->toYourScore()->withDemandEffect()->build();
+    return self::youMust()->all()->fromYourBoard()->toMyScore()->withDemandEffect()->build();
   }
 
   public function compelMightBeEffective(): bool

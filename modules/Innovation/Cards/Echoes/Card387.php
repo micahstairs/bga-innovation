@@ -70,7 +70,7 @@ class Card387 extends AbstractCard
       if (self::isFirstInteraction()) {
         $cardIds = [];
         foreach (self::getCards('score') as $scoreCard) {
-          if ($scoreCard['age'] != $card['age']) {
+          if ($scoreCard['age'] != self::getValue($card)) {
             $cardIds[] = $scoreCard['id'];
           }
         }

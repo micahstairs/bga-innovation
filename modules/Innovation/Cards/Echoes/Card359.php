@@ -121,9 +121,9 @@ class Card359 extends AbstractCard
     if (self::isFirstOrThirdEdition()) {
       self::setAuxiliaryValue($topGreenCard['id']); // Track card ID which will be returned or achieved
       self::setMaxSteps(2);
-    } else if ($card['age'] == 3) {
+    } else if (self::getValue($card) == 3) {
       self::achieveIfEligible($topGreenCard);
-    } else if ($card['age'] == 4) {
+    } else if (self::getValue($card) == 4) {
       self::return($topGreenCard);
     }
   }

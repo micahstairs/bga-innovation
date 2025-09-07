@@ -61,7 +61,7 @@ class Card352 extends AbstractCard
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand() && self::wasForeseen()) {
-      while ($topCard = $this->game->getDeckTopCard($card['age'], CardTypes::BASE)) {
+      while ($topCard = $this->game->getDeckTopCard(self::getValue($card), CardTypes::BASE)) {
         self::tuck($topCard);
       }
     }

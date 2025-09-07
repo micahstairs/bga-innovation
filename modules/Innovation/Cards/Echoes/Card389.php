@@ -36,7 +36,7 @@ class Card389 extends AbstractCard
     foreach ($playerIds as $playerId) {
       $achievementCounts = self::countCardsKeyedByValue('achievements', $playerId);
       foreach (self::getTopCards($playerId) as $card) {
-        if ($achievementCounts[$card['faceup_age']] > 0) {
+        if ($achievementCounts[self::getFaceupValue($card)] > 0) {
           $cardIds[] = self::getId($card);
         }
       }

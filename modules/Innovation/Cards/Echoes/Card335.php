@@ -27,15 +27,11 @@ class Card335 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $options = [
-      'location_from' => 'board',
-      'score_keyword' => true,
-      'bottom_from'   => true,
-    ];
     if (self::isFourthEdition()) {
-      $options['color'] = [Colors::BLUE];
+      return self::youMust()->score()->withColor(Colors::BLUE)->fromBottom()->fromYourBoard()->build();
+    } else {
+      return self::youMust()->score()->fromBottom()->fromYourBoard()->build();
     }
-    return $options;
   }
 
 }

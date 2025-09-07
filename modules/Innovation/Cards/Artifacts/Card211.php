@@ -35,7 +35,7 @@ class Card211 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->score()->withColor(Colors::YELLOW)->fromBottom()->fromMyBoard()->build();
+      return self::youMay()->score()->withColor(Colors::YELLOW)->fromBottom()->fromYourBoard()->build();
     } else if (self::isSecondInteraction()) {
       return self::youMay()->choose([1])->build();
     } else {

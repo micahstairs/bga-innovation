@@ -144,13 +144,40 @@ class InteractionBuilder
     return $this;
   }
 
+  function withIcons(array $icons): InteractionBuilder
+  {
+    $this->interactionOptions['with_icons'] = $icons;
+    return $this;
+  }
+
   function withoutIcon(string $icon): InteractionBuilder
   {
     $this->interactionOptions['without_icon'] = $icon;
     return $this;
   }
 
+  function withoutIcons(array $icons): InteractionBuilder
+  {
+    $this->interactionOptions['without_icons'] = $icons;
+    return $this;
+  }
+
   // COLOR OF CARDS
+
+  function withBonus(): InteractionBuilder
+  {
+    $this->interactionOptions['with_bonus'] = true;
+    return $this;
+  }
+
+  function withTypes(int|array $types): InteractionBuilder
+  {
+    if (!is_array($types)) {
+      $types = [$types];
+    }
+    $this->interactionOptions['type'] = $types;
+    return $this;
+  }
 
   function withColor(int|array $colors): InteractionBuilder
   {
@@ -213,6 +240,12 @@ class InteractionBuilder
 
   // SOURCE LOCATION
 
+  function fromJunk(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::JUNK;
+    return $this;
+  }
+
   function fromAvailableAchievements(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::AVAILABLE_ACHIEVEMENTS;
@@ -222,6 +255,13 @@ class InteractionBuilder
   function fromYourAchievements(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::ACHIEVEMENTS;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    return $this;
+  }
+
+  function fromYourForecast(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::FORECAST;
     $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }
@@ -345,6 +385,13 @@ class InteractionBuilder
     return $this;
   }
 
+  function entirePile(): InteractionBuilder
+  {
+    $this->interactionOptions['n'] = 'all';
+    $this->interactionOptions['location_from'] = Locations::PILE;
+    return $this;
+  }
+
   function fromAnyPlayer(): InteractionBuilder
   {
     $this->interactionOptions['owner_from'] = 'any player';
@@ -354,6 +401,13 @@ class InteractionBuilder
   function fromAnyOtherPlayer(): InteractionBuilder
   {
     $this->interactionOptions['owner_from'] = 'any other player';
+    return $this;
+  }
+
+  function fromAnyHand(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_from'] = 'any player';
+    $this->interactionOptions['location_from'] = Locations::HAND;
     return $this;
   }
 
@@ -435,6 +489,12 @@ class InteractionBuilder
   function toHand(): InteractionBuilder
   {
     $this->interactionOptions['location_to'] = Locations::HAND;
+    return $this;
+  }
+
+  function foreshadow(): InteractionBuilder
+  {
+    $this->interactionOptions['foreshadow_keyword'] = true;
     return $this;
   }
 

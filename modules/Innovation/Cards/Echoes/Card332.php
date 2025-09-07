@@ -30,12 +30,11 @@ class Card332 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $keyword = self::isFirstInteraction() ? 'foreshadow_keyword' : 'return_keyword';
-    return [
-      'location_from'                   => 'hand',
-      $keyword                          => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    if (self::isFirstInteraction()) {
+      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    } else {
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    }
   }
 
   public function handleCardChoice(array $card)

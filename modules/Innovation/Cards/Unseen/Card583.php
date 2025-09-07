@@ -67,7 +67,7 @@ class Card583 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isSecondInteraction()) {
-      self::setAuxiliaryValue($card['age']);
+      self::setAuxiliaryValue(self::getValue($card));
     } else {
       self::incrementAuxiliaryValue();
     }

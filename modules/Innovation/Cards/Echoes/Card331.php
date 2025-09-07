@@ -42,25 +42,21 @@ class Card331 extends AbstractCard
     foreach ($playerCards as $playerCard) {
       $matchFound = false;
       foreach ($launcherCards as $launcherCard) {
-        if ($playerCard['faceup_age'] == $launcherCard['faceup_age']) {
+        if (self::getFaceupValue($playerCard) == self::getFaceupValue($launcherCard)) {
           $matchFound = true;
           break;
         }
       }
       if (!$matchFound) {
-        $colors[] = $playerCard['color'];
+        $colors[] = self::getColor($playerCard);
       }
     }
-    return [
-      'location' => 'board',
-      'owner_to' => self::getLauncherId(),
-      'color'    => $colors,
-    ];
+    return self::youMust()->withColor($colors)->fromYourBoard()->toMyBoard()->build();
   }
 
   public function handleCardChoice(array $card)
   {
-    self::drawAndMeld($card['faceup_age']);
+    self::drawAndMeld(self::getFaceupValue($card));
   }
 
 }

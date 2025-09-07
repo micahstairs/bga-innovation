@@ -24,21 +24,11 @@ class Card336 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'revealed',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourRevealed()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'owner_from'     => 'any player',
-        'location_from'  => 'pile',
-        'return_keyword' => true,
-        'color'          => [self::getAuxiliaryValue()],
-      ];
+      return self::youMust()->return()->entirePile()->withColor(self::getAuxiliaryValue())->fromAnyPlayer()->build();
     }
   }
 

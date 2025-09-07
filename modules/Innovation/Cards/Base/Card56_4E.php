@@ -24,7 +24,7 @@ class Card56_4E extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return ['choose_value' => true];
+        return self::youMust()->chooseValue()->build();
       } else {
         return self::youMay()->meld()->all()->value(self::getAuxiliaryValue())->fromYourScore()->build();
       }

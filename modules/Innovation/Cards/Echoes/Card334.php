@@ -40,20 +40,9 @@ class Card334 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {
-      return [
-        'location'         => 'hand',
-        'owner_to'         => self::getLauncherId(),
-        'with_icon'        => Icons::AUTHORITY,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourHand()->toMine()->revealingIfUnable()->build();
     } else {
-      return [
-        'location'                        => 'hand',
-        'owner_to'                        => self::getLauncherId(),
-        'with_icons'                      => [Icons::AUTHORITY, Icons::CONCEPT],
-        'enable_autoselection'            => false,
-        'reveal_if_unable'                => true,
-      ];
+      return self::youMust()->withIcons([Icons::AUTHORITY, Icons::CONCEPT])->fromYourHand()->toMine()->revealingIfUnable()->withoutAutoselection()->build();
     }
   }
 
