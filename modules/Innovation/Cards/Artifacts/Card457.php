@@ -29,7 +29,7 @@ class Card457 extends AbstractCard
       }
       return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getLastSelectedColor())->build();
     } else {
-      return self::youMay()->return()->exactly(2)->fromMyHand()->build();
+      return self::youMay()->return()->exactly(2)->fromYourHand()->build();
     }
   }
 

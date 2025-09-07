@@ -52,7 +52,7 @@ class Card372_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue(max(self::getAuxiliaryValue(), $card['age']));
+      self::setAuxiliaryValue(max(self::getAuxiliaryValue(), self::getValue($card)));
     } else if (self::isSecondInteraction()) {
       self::removeFromAuxiliaryArray(self::getId($card));
     }

@@ -33,7 +33,7 @@ class Card430_4E extends AbstractCard
       $values = self::getActionScopedAuxiliaryArray();
       $cardIds = [];
       foreach (self::getCards('score') as $card) {
-        if (in_array($card['age'], $values)) {
+        if (in_array(self::getValue($card), $values)) {
           $cardIds[] = self::getId($card);
         }
       }
@@ -54,7 +54,7 @@ class Card430_4E extends AbstractCard
   function handleCardChoice(array $card)
   {
     if (self::isDemand()) {
-      $remainingValues = self::removeFromActionScopedAuxiliaryArray($card['age']);
+      $remainingValues = self::removeFromActionScopedAuxiliaryArray(self::getValue($card));
       if (count($remainingValues) > 0) {
         self::setNextStep(1);
       }

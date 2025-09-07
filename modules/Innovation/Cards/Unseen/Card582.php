@@ -14,13 +14,13 @@ class Card582 extends AbstractCard
   {
     $values = [];
     foreach (self::getTopCards() as $card) {
-      if (!in_array($card['faceup_age'], $values)) {
-        $values[] = $card['faceup_age'];
+      if (!in_array(self::getFaceupValue($card), $values)) {
+        $values[] = self::getFaceupValue($card);
       }
     }
     foreach (self::getCards('score') as $card) {
-      if (!in_array($card['age'], $values)) {
-        $values[] = $card['age'];
+      if (!in_array(self::getValue($card), $values)) {
+        $values[] = self::getValue($card);
       }
     }
     // For each value, in ascending order, if that value is not a value of a top card on your board or a card in your score pile, draw and score a card of that value.

@@ -20,7 +20,7 @@ class Card456 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromMyHand()->build();
+    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
   }
 
   public function handleCardChoice(array $card)

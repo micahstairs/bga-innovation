@@ -37,9 +37,10 @@ class Card402 extends AbstractCard
     }
   }
 
-  public function handleCardChoice(array $card) {
-    if (self::isFirstNonDemand()&& self::isFirstInteraction()) {
-      $value = $card['age'];
+  public function handleCardChoice(array $card)
+  {
+    if (self::isFirstNonDemand() && self::isFirstInteraction()) {
+      $value = self::getValue($card);
       foreach (self::getPlayerIds() as $playerId) {
         foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $scoreCard) {
           self::transferToHand($scoreCard);
@@ -48,8 +49,9 @@ class Card402 extends AbstractCard
     }
   }
 
-  public function handleValueChoice($value) {
+  public function handleValueChoice($value)
+  {
     self::drawAndForeshadow($value);
   }
-  
+
 }

@@ -27,13 +27,7 @@ class Card345 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'n_min'          => 1,
-        'n_max'          => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->anyNumber()->fromYourHand()->build();
     } else {
       $valuesToDraw = self::getAuxiliaryArray();
       $values = [];
@@ -42,10 +36,7 @@ class Card345 extends AbstractCard
           $values[] = $i;
         }
       }
-      return [
-        'choose_value' => true,
-        'age'          => $values,
-      ];
+      return self::youMust()->chooseValue($values)->build();
     }
   }
 

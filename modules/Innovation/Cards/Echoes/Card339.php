@@ -33,16 +33,10 @@ class Card339 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
+      return self::youMay()->choose([1])->build();
     } else {
-      return [
-        'location_from'       => Locations::JUNK,
-        'achieve_if_eligible' => true,
-        'age'                 => self::getMaxValueInLocation(Locations::JUNK),
-      ];
+      $value = self::getMaxValueInLocation(Locations::JUNK);
+      return self::youMust()->achieveIfEligible()->value($value)->fromJunk()->build();
     }
   }
 
@@ -68,7 +62,7 @@ class Card339 extends AbstractCard
     if (self::isEcho()) {
       self::drawAndForeshadow(1);
     } else if (self::isFirstOrThirdEdition()) {
-      $this->game->executeDraw(0, /*age=*/1, Locations::ACHIEVEMENTS, /*bottom_to=*/false, /*type=*/0, /*bottom_from=*/true);
+      $this->game->executeDraw(0, /*age=*/ 1, Locations::ACHIEVEMENTS, /*bottom_to=*/ false, /*type=*/ 0, /*bottom_from=*/ true);
     } else {
       self::junkBaseDeck(1);
       self::setMaxSteps(2);

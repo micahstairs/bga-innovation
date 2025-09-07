@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 
 class Card356 extends AbstractCard
@@ -41,32 +41,18 @@ class Card356 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourHand()->build();
     } else if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'     => true,
-          'choose_value' => true,
-          'age'          => Arrays::decode(self::getAuxiliaryValue()),
-        ];
+        $values = Arrays::decode(self::getAuxiliaryValue());
+        return self::youMay()->chooseValue($values)->build();
       } else {
-        return [
-          'can_pass'       => true,
-          'n'              => 3,
-          'location_from'  => 'hand',
-          'return_keyword' => true,
-          'age'            => self::getAuxiliaryValue(),
-        ];
+        $value = self::getAuxiliaryValue();
+        return self::youMay()->return()->exactly(3)->value($value)->fromYourHand()->build();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::YELLOW, Colors::BLUE],
-      ];
+      $colors = [Colors::YELLOW, Colors::BLUE];
+      return self::youMay()->splayLeft()->withColor($colors)->build();
     }
   }
 
@@ -84,7 +70,7 @@ class Card356 extends AbstractCard
 
   private function getValuesWithThreeOrMoreInHand(): array
   {
-    $cardsByValue = self::getCardsKeyedByValue('hand');
+    $cardsByValue = self::getCardsKeyedByValue(Locations::HAND);
     $values = [];
     for ($i = 1; $i <= 11; $i++) {
       if (count($cardsByValue[$i]) >= 3) {

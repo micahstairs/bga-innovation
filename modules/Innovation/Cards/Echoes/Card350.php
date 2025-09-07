@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card350 extends AbstractCard
 {
@@ -37,21 +38,11 @@ class Card350 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'bottom_from'   => true,
-        'location_to'   => 'hand',
-      ];
+      return self::youMust()->fromYourBoard()->fromBottom()->toYourHand()->build();
     } else if (self::isFirstInteraction() || self::isThirdInteraction()) {
-      return [
-        'can_pass'    => true,
-        'choose_from' => 'hand',
-      ];
+      return self::youMay()->chooseCardFrom(Locations::HAND)->build();
     } else {
-      return [
-        'can_pass' => true,
-        'choices'  => [1, 2],
-      ];
+      return self::youMay()->choose([1, 2])->build();
     }
   }
 
@@ -81,7 +72,7 @@ class Card350 extends AbstractCard
     } else {
       self::score($card);
     }
-    if (self::isSecondInteraction() && self::countCards("hand") > 0) {
+    if (self::isSecondInteraction() && self::countCards(Locations::HAND) > 0) {
       self::setMaxSteps(self::getMaxSteps() + 1);
     }
   }

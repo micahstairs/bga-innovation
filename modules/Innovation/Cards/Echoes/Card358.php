@@ -29,12 +29,7 @@ class Card358 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'score',
-      'with_icon'     => Icons::AUTHORITY,
-    ];
+    return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMyScore()->build();
   }
 
   public function handleCardChoice(array $card)

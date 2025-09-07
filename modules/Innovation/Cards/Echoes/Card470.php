@@ -43,7 +43,7 @@ class Card470 extends AbstractCard
     if ($choice === 2) {
       self::score($card);
       self::repeatIfForeseen(self::getColor($card));
-    } else if (in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId()))) {
+    } else if (in_array(self::getValue($card), $this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId()))) {
       self::achieve($card);
       self::repeatIfForeseen(self::getColor($card));
     }
