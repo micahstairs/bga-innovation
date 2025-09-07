@@ -38,7 +38,7 @@ class Card535 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     self::incrementAuxiliaryValue();
-    if ($card['age'] == 7) {
+    if (self::getValue($card) == 7) {
       self::setAuxiliaryValue2(self::getAuxiliaryValue2() + 1);
     }
   }

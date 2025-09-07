@@ -5181,6 +5181,7 @@ class Innovation extends BgaGame {
         dojo.subscribe('transferedCard', this, "notif_transferedCard");
         this.notifqueue.setSynchronous('transferedCard', reasonnable_delay);   // Wait X milliseconds after executing the transferedCard handler
         dojo.subscribe('transferedCardNoDelay', this, "notif_transferedCard");
+        this.notifqueue.setSynchronous('transferedCardNoDelay', reasonnable_delay);   // To unbreak replays which already exist
 
         dojo.subscribe('logWithCardTooltips', this, "notif_logWithCardTooltips");  // This kind of notification does not need any delay
 

@@ -27,24 +27,11 @@ class Card362 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() === 1 && self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'n_min'          => 1,
-        'n_max'          => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->anyNumber()->fromYourHand()->build();
     } else if (self::isFirstOrThirdEdition() || self::getEffectNumber() === 2) {
-      return [
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     } else {
-      return [
-        'n'                  => 'all',
-        'location_from'      => 'hand',
-        'foreshadow_keyword' => true,
-      ];
+      return self::youMust()->foreshadow()->all()->fromYourHand()->build();
     }
   }
 

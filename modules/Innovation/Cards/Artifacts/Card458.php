@@ -17,14 +17,10 @@ class Card458 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'choose_color' => true,
-        'color'        => self::getUniqueColorsInLocation(Locations::BOARD),
-      ];
+      $colors = self::getUniqueColorsInLocation(Locations::BOARD);
+      return self::youMust()->chooseColor($colors)->build();
     } else {
-      return [
-        'choose_from' => Locations::JUNK,
-      ];
+      return self::youMust()->chooseCardFrom(Locations::JUNK)->build();
     }
   }
 

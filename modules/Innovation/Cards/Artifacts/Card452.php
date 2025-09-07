@@ -16,10 +16,7 @@ class Card452 extends AbstractCard
   {
     $presentValues = array_unique(self::getValues(self::getTopCards()));
     $absentValues = array_diff(range(1, 11), $presentValues);
-    return [
-      'choose_value' => true,
-      'age'          => $absentValues,
-    ];
+    return self::youMust()->chooseValue($absentValues)->build();
   }
 
   public function handleValueChoice(int $value)

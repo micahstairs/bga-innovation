@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card364 extends AbstractCard
 {
@@ -34,11 +35,7 @@ class Card364 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'color'         => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->score()->withColor(self::getAuxiliaryArray())->fromYourHand()->build();
     } else {
       $choices = [];
       $purpleSplayDirection = self::getSplayDirection(Colors::PURPLE);
@@ -52,10 +49,7 @@ class Card364 extends AbstractCard
           $choices[] = 5 + $color;
         }
       }
-      return [
-        'can_pass' => true,
-        'choices'  => $choices,
-      ];
+      return self::youMay()->choose($choices)->build();
     }
   }
 
@@ -93,7 +87,7 @@ class Card364 extends AbstractCard
 
   private function mayBeSplayedInDirection(int $color, int $splayDirection): bool
   {
-    return $splayDirection > 0 && self::countCardsKeyedByColor('board')[$color] >= 2 && self::getSplayDirection($color) != $splayDirection;
+    return $splayDirection > 0 && self::countCardsKeyedByColor(Locations::BOARD)[$color] >= 2 && self::getSplayDirection($color) != $splayDirection;
   }
 
 }

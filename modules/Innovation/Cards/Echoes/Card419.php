@@ -50,8 +50,8 @@ class Card419 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    $scoredCard = self::drawAndScore($card['faceup_age']);
-    if ($scoredCard['age'] == $card['faceup_age'] && self::wasForeseen()) {
+    $scoredCard = self::drawAndScore(self::getFaceupValue($card));
+    if ($scoredCard['age'] == self::getFaceupValue($card) && self::wasForeseen()) {
       self::setNextStep(1);
     }
   }

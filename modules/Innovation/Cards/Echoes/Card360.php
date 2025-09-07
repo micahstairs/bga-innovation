@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card360 extends AbstractCard
 {
@@ -22,9 +23,9 @@ class Card360 extends AbstractCard
   {
     if (self::isDemand()) {
       $cardIds = [];
-      $handCounts = self::countCardsKeyedByValue('hand', self::getLauncherId());
+      $handCounts = self::countCardsKeyedByValue(Locations::HAND, self::getLauncherId());
       foreach (self::getCards('score') as $card) {
-        if ($handCounts[$card['age']] > 0) {
+        if ($handCounts[self::getValue($card)] > 0) {
           $cardIds[] = self::getId($card);
         }
       }
@@ -39,18 +40,9 @@ class Card360 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'n'                               => 2,
-        'location_from'                   => 'score',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->exactly(2)->onlyCardsInAuxiliaryArray()->fromYourScore()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::RED, Colors::GREEN],
-      ];
+      return self::youMay()->splayLeft()->withColor([Colors::RED, Colors::GREEN])->build();
     }
   }
 

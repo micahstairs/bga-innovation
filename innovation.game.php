@@ -59,6 +59,24 @@ class Innovation extends Table
     const COMPEL_EFFECT = 2;
     const ECHO_EFFECT = 3;
 
+    static function stripTransferInfoForNotification(array $transferInfo): array {
+        // dereference transferInfo
+        $transferInfo = (array) $transferInfo;
+        unset($transferInfo['splay_direction_from']);
+        unset($transferInfo['bottom_from']);
+        unset($transferInfo['bottom_to']);
+        unset($transferInfo['score_keyword']);
+        unset($transferInfo['meld_keyword']);
+        unset($transferInfo['achieve_keyword']);
+        unset($transferInfo['draw_keyword']);
+        unset($transferInfo['safeguard_keyword']);
+        unset($transferInfo['return_keyword']);
+        unset($transferInfo['foreshadow_keyword']);
+        //unset($transferInfo['player_id']);
+        //unset($transferInfo['opponent_id']);
+        return $transferInfo;
+    }
+
     function __construct()
     {
         // Your global variables labels:
@@ -2416,6 +2434,7 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
         }
 
+        $transferInfo = self::stripTransferInfoForNotification($transferInfo);
         $info = array_merge($transferInfo, $progressInfo);
 
         $notif_args = array_merge($info, self::getDelimiterMeanings($message, $card['id']));
@@ -2423,11 +2442,7 @@ class Innovation extends Table
         $notif_args['type'] = $card['type'];
         $notif_args['is_relic'] = $card['is_relic'];
 
-        if ($bulk_transfer) {
-            self::notifyAllPlayers("transferedCardNoDelay", "", $notif_args);
-        } else {
-            self::notifyAllPlayers("transferedCard", $message, $notif_args);
-        }
+        self::notifyAllPlayers("transferedCard", $message, $notif_args);
     }
 
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo)
@@ -2719,18 +2734,15 @@ class Innovation extends Table
             }
         }
 
+        $player_id = $transferInfo['player_id'];
+        $transferInfo = self::stripTransferInfoForNotification($transferInfo);
         $info = array_merge($transferInfo, $progressInfo);
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
         $notif_args_for_player = array_merge($notif_args_for_player, $info, $delimiters_for_player);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
         $notif_args_for_others = array_merge($notif_args_for_others, $info, $delimiters_for_others);
-        if ($bulk_transfer) {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_player);
-            self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_others);
-        } else {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
-            self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCard", $message_for_others, $notif_args_for_others);
-        }
+        self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
+        self::notifyAllPlayersBut($player_id, "transferedCard", $message_for_others, $notif_args_for_others);
     }
 
     function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $achieve_keyword, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code)
@@ -3255,20 +3267,18 @@ class Innovation extends Table
             $notif_args_for_others['is_relic'] = $card['is_relic'];
         }
 
+        $player_id = $transferInfo['player_id'];
+        $opponent_id = $transferInfo['opponent_id'];
+        $transferInfo = self::stripTransferInfoForNotification($transferInfo);
         $info = array_merge($transferInfo, $progressInfo);
         $notif_args_for_player = array_merge($notif_args_for_player, $info, self::getDelimiterMeanings($message_for_player, $card['id']));
         $notif_args_for_opponent = array_merge($notif_args_for_opponent, $info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
         $notif_args_for_others = array_merge($notif_args_for_others, $info, self::getDelimiterMeanings($message_for_others, $card['id']));
 
-        if ($bulk_transfer) {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_player);
-            self::notifyPlayer($transferInfo['opponent_id'], "transferedCardNoDelay", "", $notif_args_for_opponent);
-            self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCardNoDelay", "", $notif_args_for_others);
-        } else {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
-            self::notifyPlayer($transferInfo['opponent_id'], "transferedCard", $message_for_opponent, $notif_args_for_opponent);
-            self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCard", $message_for_others, $notif_args_for_others);
-        }
+
+        self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
+        self::notifyPlayer($opponent_id, "transferedCard", $message_for_opponent, $notif_args_for_opponent);
+        self::notifyAllPlayersBut(array($player_id, $opponent_id), "transferedCard", $message_for_others, $notif_args_for_others);
     }
 
     function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $opponent_id_is_owner_from, $opponent_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards)

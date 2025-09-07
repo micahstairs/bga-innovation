@@ -33,18 +33,9 @@ class Card342 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->fromYourHand()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'owner_from'     => 'any player',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromAnyHand()->build();
     }
   }
 

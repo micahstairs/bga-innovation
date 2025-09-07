@@ -28,26 +28,17 @@ class Card347 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      $options = [
-        'location_from' => 'hand',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'score',
-      ];
       if (self::isFirstOrThirdEdition()) {
-        $options['with_bonus'] = true;
+        return self::youMust()->withBonus()->fromYourHand()->toMyScore()->build();
       } else {
-        $options['type'] = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
+        $types = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
+        return self::youMust()->withTypes($types)->fromYourHand()->toMyScore()->build();
       }
-      return $options;
     } else if (self::isFirstInteraction()) {
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
       return self::youMust()->choosePlayer($players)->build();
     } else {
-      return [
-        'location_from' => 'hand',
-        'owner_to'      => self::getAuxiliaryValue(),
-        'location_to'   => 'board',
-      ];
+      return self::youMust()->fromMyHand()->toPlayer(self::getAuxiliaryValue())->toBoard()->build();
     }
   }
 
