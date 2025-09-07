@@ -26,21 +26,11 @@ class Card353 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $color = self::getCard(self::getAuxiliaryValue())['color'];
+    $color = self::getColor(self::getCard(self::getAuxiliaryValue()));
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'      => self::isFourthEdition(),
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'color'         => [$color],
-      ];
+      return self::youMay()->tuck()->fromYourHand()->withColor([$color])->build();
     } else {
-      return [
-        'n'             => 'all',
-        'owner_from'    => 'any other player',
-        'location_from' => 'pile',
-        'color'         => [$color],
-      ];
+      return self::youMust()->return()->entirePile()->withColor([$color])->fromAnyPlayer()->build();
     }
   }
 

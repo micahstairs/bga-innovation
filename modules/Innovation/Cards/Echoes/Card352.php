@@ -22,29 +22,14 @@ class Card352 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return [
-          'location_from'    => 'hand',
-          'tuck_keyword'     => true,
-          'with_bonus'       => true,
-          'reveal_if_unable' => true,
-        ];
+        return self::youMust()->tuck()->withBonus()->fromYourHand()->revealingIfUnable()->build();
       } else {
-        return [
-          'can_pass'       => true,
-          'location_from'  => 'hand',
-          'return_keyword' => true,
-        ];
+        return self::youMay()->return()->fromYourHand()->build();
       }
     } else if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getBonuses(),
-      ];
+      return self::youMust()->chooseValue(self::getBonuses())->build();
     } else {
-      return [
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand()->build();
     }
   }
 

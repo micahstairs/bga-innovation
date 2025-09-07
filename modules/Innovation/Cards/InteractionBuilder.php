@@ -266,6 +266,14 @@ class InteractionBuilder
     return $this;
   }
 
+  function fromForecast(int $playerId): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::FORECAST;
+    $this->interactionOptions['owner_from'] = $playerId;
+    return $this;
+  }
+
+
   function fromYourRevealed(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::REVEALED;
@@ -308,7 +316,7 @@ class InteractionBuilder
     return $this;
   }
 
-  function fromBoard($playerId): InteractionBuilder
+  function fromBoard(int $playerId): InteractionBuilder
   {
     $this->interactionOptions['choose_from'] = Locations::BOARD;
     $this->interactionOptions['owner_from'] = $playerId;
