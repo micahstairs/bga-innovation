@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card371 extends AbstractCard
 {
@@ -26,7 +27,7 @@ class Card371 extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       $bonuses = [];
       foreach (self::getPlayerIds() as $playerId) {
-        $bonuses = array_merge( $bonuses, self::getBonuses($playerId));
+        $bonuses = array_merge($bonuses, self::getBonuses($playerId));
       }
       if ($bonuses) {
         $valuesToDraw = [];
@@ -38,11 +39,7 @@ class Card371 extends AbstractCard
       } else if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(2);
       }
-    } else if (self::isSecondNonDemand() && self::hasCards('forecast')) {
-      $destinyCard = self::getCard(CardIds::DESTINY);
-      $destinyIsAvailable = $destinyCard['owner'] == 0 && $destinyCard['location'] == 'achievements';
-      self::setAuxiliaryValue($destinyIsAvailable ? 1 : 0); // Track whether to prompt to reveal a blue card
-      self::setAuxiliaryValue2(0); // Tracks whether a blue card was returned
+    } else if (self::isSecondNonDemand() && self::hasCards(Locations::FORECAST)) {
       self::setMaxSteps(1);
     }
   }
@@ -50,41 +47,15 @@ class Card371 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'forecast',
-        'location_to'   => 'hand',
-        'age'           => 5,
-      ];
+      return self::youMust()->value(5)->fromYourForecast()->toHand()->build();
     } else if (self::isFirstNonDemand()) {
       // TODO(#472): The value here could be as high as 14 with a visible bonus of 12 which
       // would end the game. This could be presented as a game-ending option like with Evolution.
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
-    } else if (self::getAuxiliaryValue() === 0) {
-      return [
-        'can_pass'       => true,
-        'n'              => 'all',
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->chooseValue($this->getAuxiliaryArray())->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
-    } else if (self::isSecondInteraction()) {
-      return [
-        'choose_from' => 'forecast',
-        'color'       => [Colors::BLUE],
-      ];
+      return self::youMay()->choose([1])->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourForecast()->build();
     }
   }
 
@@ -102,25 +73,22 @@ class Card371 extends AbstractCard
 
   public function handleListChoice(int $choice)
   {
-    self::setMaxSteps(3);
+    if (self::filterByColor(self::getCards(Locations::FORECAST), Colors::BLUE)) {
+      $destinyCard = self::getCard(CardIds::DESTINY);
+      $destinyIsAvailable = $destinyCard['owner'] == 0 && $destinyCard['location'] == Locations::ACHIEVEMENTS;
+      if ($destinyIsAvailable) {
+        self::revealForecast();
+        self::setAuxiliaryValue(1); // Remember that we should claim the Destiny achievement
+      }
+    }
+
+    self::setMaxSteps(2);
   }
 
   public function afterInteraction()
   {
-    if (self::isSecondNonDemand()) {
-      if (self::isFirstInteraction() && self::getAuxiliaryValue() === 1 && self::getNumChosen() === 1) {
-        self::setMaxSteps(3);
-      } else if (self::isSecondInteraction()) {
-        if (self::getNumChosen() === 0) {
-          // Prove that there were no blue cards in the forecast
-          self::revealForecast();
-        } else {
-          $this->game->revealCardWithoutMoving(self::getPlayerId(), self::getLastSelectedCard());
-          self::setAuxiliaryValue2(1);
-        }
-      } else if (self::isThirdInteraction() && self::getAuxiliaryValue2() === 1) {
-        self::claim(CardIds::DESTINY);
-      }
+    if (self::isSecondNonDemand() && self::isSecondInteraction() && self::getAuxiliaryValue() === 1) {
+      self::claim(CardIds::DESTINY);
     }
   }
 
