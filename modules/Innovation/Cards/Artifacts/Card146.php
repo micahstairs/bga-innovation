@@ -27,7 +27,7 @@ class Card146 extends AbstractCard
       return self::youMust()->return()->exactly(2)->fromYourHand()->onlyCardsInAuxiliaryArray()->build();
     } else {
       // Using autoselection here would always reveals hidden info
-      return self::youMust()->reveal()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
+      return self::youMust()->revealAndPlaceInHand()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
     }
   }
 

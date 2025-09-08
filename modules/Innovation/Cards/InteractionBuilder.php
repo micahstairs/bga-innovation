@@ -499,6 +499,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function toForecast(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::FORECAST;
+    return $this;
+  }
+
   function foreshadow(): InteractionBuilder
   {
     $this->interactionOptions['foreshadow_keyword'] = true;
@@ -520,6 +526,12 @@ class InteractionBuilder
   function reveal(): InteractionBuilder
   {
     $this->interactionOptions['location_to'] = Locations::REVEALED;
+    return $this;
+  }
+
+  function revealAndPlaceInHand(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::REVEALED_THEN_HAND;
     return $this;
   }
 
