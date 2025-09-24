@@ -21,7 +21,7 @@ class Card94 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMust()->reveal()->fromYourHand()->build();
     } else {
-      return self::youMay()->splayUp()->withColor([Colors::BLUE, Colors::YELLOW])->build();
+      return self::youMay()->splayUp([Colors::BLUE, Colors::YELLOW])->build();
     }
   }
 

@@ -42,13 +42,7 @@ class Card389 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'can_pass'                        => true,
-      'owner_from'                      => 'any player',
-      'location_from'                   => 'board',
-      'achieve_if_eligible'             => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMay()->achieveIfEligible()->fromAnyBoard()->onlyCardsInAuxiliaryArray()->build();
   }
 
   public function afterInteraction()

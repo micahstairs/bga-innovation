@@ -39,11 +39,7 @@ class Card409_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::UP,
-      'color'           => [Colors::RED],
-    ];
+    return self::youMay()->splayUp(Colors::RED)->build();
   }
 
 }

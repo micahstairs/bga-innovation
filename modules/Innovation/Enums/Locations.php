@@ -21,6 +21,7 @@ class Locations
 
   // Special values which represent multiple locations
   const HAND_OR_SCORE = 'hand,score';
+  const PILE_OR_SCORE = 'pile,score';
 
   // Special values which are used to reveal cards on their way to (or from) another location
   const REVEALED_THEN_DECK = 'revealed,deck';
@@ -116,7 +117,7 @@ class Locations
         return 17;
       case 'junk,safe':
         return 18;
-      case 'pile,score':
+      case self::PILE_OR_SCORE:
         return 19;
       case self::MUSEUMS:
         return 20;
@@ -167,7 +168,7 @@ class Locations
       case 18:
         return 'junk,safe';
       case 19:
-        return 'pile,score';
+        return self::PILE_OR_SCORE;
       case 20:
         return self::MUSEUMS;
       default:

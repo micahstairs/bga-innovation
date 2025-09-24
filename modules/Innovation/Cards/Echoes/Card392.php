@@ -42,26 +42,14 @@ class Card392 extends AbstractCard
   {
     if (self::isEcho()) {
       self::setAuxiliaryArray(self::getOddValuedCardIds(self::getCards('hand')));
-      return [
-        'location_from'                   => 'hand',
-        'score_keyword'                   => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     } else if (self::isDemand()) {
       $cardIds = self::getOddValuedCardIds(self::getCards('hand'));
       self::setAuxiliaryArray($cardIds);
-      return [
-        'n'                               => count($cardIds),
-        'location_from'                   => 'hand',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $numCards = count($cardIds);
+      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED],
-      ];
+      return self::youMay()->splayRight(Colors::RED)->build();
     }
   }
 

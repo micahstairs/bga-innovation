@@ -24,7 +24,7 @@ class Card80 extends AbstractCard
         return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromAnyScore()->build();
       }
     } else {
-      return self::youMay()->splayUp()->withColor(Colors::PURPLE)->build();
+      return self::youMay()->splayUp(Colors::PURPLE)->build();
     }
   }
 

@@ -20,17 +20,10 @@ class Card416_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::AVAILABLE_ACHIEVEMENTS,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromAvailableAchievements()->build();
     } else {
-      return [
-        'n'              => ceil(self::countCards(Locations::SCORE) / 2),
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      $numCards = ceil(self::countCards(Locations::SCORE) / 2);
+      return self::youMust()->return()->exactly($numCards)->fromYourScore()->build();
     }
   }
 

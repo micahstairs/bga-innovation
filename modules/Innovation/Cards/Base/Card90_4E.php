@@ -31,7 +31,7 @@ class Card90_4E extends AbstractCard
       if (self::isFirstInteraction()) {
         return self::youMust()->return()->all()->fromYourHand()->build();
       } else {
-        return self::youMay()->splayUp()->withColor(Colors::PURPLE)->build();
+        return self::youMay()->splayUp(Colors::PURPLE)->build();
       }
     } else {
       return self::youMust()->meld()->fromYourHand()->build();

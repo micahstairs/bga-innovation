@@ -32,19 +32,11 @@ class Card394 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [self::getAuxiliaryValue()],
-      ];
+      return self::youMay()->splayRight(self::getAuxiliaryValue())->build();
     } else {
       $count = self::getStandardIconCount(Icons::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => $count,
-      ];
+      return self::youMust()->junk()->value($count)->fromAvailableAchievements()->build();
     }
   }
 

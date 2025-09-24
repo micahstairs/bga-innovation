@@ -27,13 +27,9 @@ class Card402 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourHand()->build();
     } else {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     }
   }
 

@@ -26,19 +26,9 @@ class Card417 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'  => 'any player',
-        'choose_from' => 'board',
-        'not_id'      => CardIds::HELICOPTER,
-      ];
+      return self::youMust()->chooseCardFrom('board')->otherThan(CardIds::HELICOPTER)->fromAnyPlayer()->build();
     } else {
-      return [
-        'can_pass'                        => true,
-        'location_from'                   => 'hand',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-        'enable_autoselection'            => false,
-      ];
+      return self::youMay()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->withoutAutoselection()->build();
     }
   }
 
@@ -49,7 +39,7 @@ class Card417 extends AbstractCard
       $cardIds = [];
       foreach (self::getCards('hand') as $cardInHand) {
         if (self::hasIconInCommon($cardInHand, $card)) {
-          $cardIds[] = $cardInHand['id'];
+          $cardIds[] = self::getId($cardInHand);
         }
       }
       self::setAuxiliaryArray($cardIds);

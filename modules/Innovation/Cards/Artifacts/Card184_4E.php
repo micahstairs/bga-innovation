@@ -25,7 +25,7 @@ class Card184_4E extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->choosePlayer(self::getAuxiliaryArray())->build();
     } else {
-      return self::youMust()->fromYourRevealed()->toPlayer(self::getAuxiliaryValue())->toBoard()->build();
+      return self::youMust()->fromYourRevealed()->toBoard(self::getAuxiliaryValue())->build();
     }
   }
 

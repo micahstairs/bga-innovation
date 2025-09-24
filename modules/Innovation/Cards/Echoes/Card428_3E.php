@@ -40,22 +40,12 @@ class Card428_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'color'         => Colors::NON_RED,
-      ];
+      return self::youMust()->score()->non(Colors::RED)->fromYourBoard()->build();
     } else {
       if (self::isFirstInteraction()) {
-        return ['choose_icon_type' => true];
+        return self::youMust()->chooseIcon()->build();
       } else {
-        return [
-          'n'             => 'all',
-          'location_from' => 'board',
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => 'score',
-          'without_icon'  => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->all()->withoutIcon(self::getAuxiliaryValue())->fromYourBoard()->toMyScore()->build();
       }
     }
   }

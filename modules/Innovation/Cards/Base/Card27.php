@@ -32,7 +32,7 @@ class Card27 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayLeft()->withColor(Colors::RED)->build();
+    return self::youMay()->splayLeft(Colors::RED)->build();
   }
 
   public function demandMightBeEffective(): bool

@@ -51,7 +51,7 @@ class Card363 extends AbstractCard
     if (self::isEcho()) {
       return self::youMust()->return()->all()->fromYourForecast()->build();
     } else {
-      return self::youMay()->splayLeft()->withColor([Colors::PURPLE])->build();
+      return self::youMay()->splayLeft([Colors::PURPLE])->build();
     }
   }
 

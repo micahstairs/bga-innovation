@@ -22,7 +22,7 @@ class Card55 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor(Colors::BLUE)->build();
+    return self::youMay()->splayRight(Colors::BLUE)->build();
   }
 
 }

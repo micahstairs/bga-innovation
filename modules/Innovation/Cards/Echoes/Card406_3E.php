@@ -33,13 +33,9 @@ class Card406_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayUp(Colors::YELLOW)->build();
     }
   }
 

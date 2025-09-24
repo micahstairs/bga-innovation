@@ -35,22 +35,14 @@ class Card427 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n' => 'all',
-        'location_from' => 'hand',
-        'meld_keyword' => true,
-        'age' => 9,
-      ];
+      return self::youMust()->meld()->all()->value(9)->fromYourHand()->build();
     } else {
-      return [
-        'n' => 'all',
-        'location_from' => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isSecondInteraction()) {
       self::draw(9);
       self::draw(9);

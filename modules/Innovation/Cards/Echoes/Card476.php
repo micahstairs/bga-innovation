@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card476 extends AbstractCard
 {
@@ -21,12 +22,7 @@ class Card476 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => 'pile,score',
-      'color'          => [self::getAuxiliaryValue()],
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromLocation(Locations::PILE_OR_SCORE)->withColor(self::getAuxiliaryValue())->build();
   }
 
   public function afterInteraction()

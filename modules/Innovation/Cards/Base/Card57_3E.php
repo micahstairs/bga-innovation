@@ -28,7 +28,7 @@ class Card57_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor([Colors::RED, Colors::PURPLE])->build();
+    return self::youMay()->splayRight([Colors::RED, Colors::PURPLE])->build();
   }
 
   public function nonDemandsMightBeEffective(): bool

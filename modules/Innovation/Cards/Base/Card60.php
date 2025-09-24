@@ -28,7 +28,7 @@ class Card60 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->splayRight()->build();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
+      return self::youMay()->splayRight(Colors::GREEN)->build();
     }
   }
 

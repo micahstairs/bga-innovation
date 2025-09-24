@@ -33,25 +33,16 @@ class Card419 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'board',
-        'location_to'   => 'hand',
-        'color'         => Colors::NON_GREEN,
-      ];
+      return self::youMay()->non(Colors::GREEN)->fromYourBoard()->toYourHand()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayUp(Colors::GREEN)->build();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     $scoredCard = self::drawAndScore(self::getFaceupValue($card));
-    if ($scoredCard['age'] == self::getFaceupValue($card) && self::wasForeseen()) {
+    if (self::getValue($scoredCard) == self::getFaceupValue($card) && self::wasForeseen()) {
       self::setNextStep(1);
     }
   }

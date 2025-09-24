@@ -23,7 +23,7 @@ class Card43 extends AbstractCard
     if (self::isDemand()) {
       return self::youMust()->non(Colors::PURPLE)->withIcon(Icons::PROSPERITY)->fromYourBoard()->toMine()->build();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
+      return self::youMay()->splayRight(Colors::GREEN)->build();
     }
   }
 

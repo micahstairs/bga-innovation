@@ -34,7 +34,7 @@ class Card66 extends AbstractCard
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
       return self::youMay()->chooseSpecialAchievement()->build();
     } else {
-      return self::youMay()->splayUp()->withColor([Colors::BLUE, Colors::YELLOW])->build();
+      return self::youMay()->splayUp([Colors::BLUE, Colors::YELLOW])->build();
     }
   }
 

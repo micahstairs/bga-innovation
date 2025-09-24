@@ -38,11 +38,7 @@ class Card420 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'choose_from' => 'board',
-      'age'         => self::getAuxiliaryValue(),
-      'color'       => Colors::NON_GREEN,
-    ];
+    return self::youMust()->chooseCardFrom('board')->non(Colors::GREEN)->value(self::getAuxiliaryValue())->build();
   }
 
   public function handleCardChoice(array $card)

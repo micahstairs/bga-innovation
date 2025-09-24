@@ -37,11 +37,11 @@ class Card375 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'       => self::isFirstOrThirdEdition(),
-      'location_from'  => 'board',
-      'return_keyword' => true,
-    ];
+    if (self::isFirstOrThirdEdition()) {
+      return self::youMay()->return()->fromYourBoard()->build();
+    } else {
+      return self::youMust()->return()->fromYourBoard()->build();
+    }
   }
 
 }

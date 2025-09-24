@@ -42,7 +42,7 @@ class Card360 extends AbstractCard
     if (self::isDemand()) {
       return self::youMust()->return()->exactly(2)->onlyCardsInAuxiliaryArray()->fromYourScore()->build();
     } else {
-      return self::youMay()->splayLeft()->withColor([Colors::RED, Colors::GREEN])->build();
+      return self::youMay()->splayLeft([Colors::RED, Colors::GREEN])->build();
     }
   }
 

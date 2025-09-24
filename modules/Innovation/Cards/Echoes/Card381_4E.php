@@ -25,28 +25,13 @@ class Card381_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'meld_keyword' => true,
-      ];
+      return self::youMust()->meld()->all()->fromYourHand()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
     } else {
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromAvailableAchievements()->build();
     }
   }
 

@@ -52,11 +52,7 @@ class Card404 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::UP,
-      'color'           => [Colors::PURPLE],
-    ];
+    return self::youMay()->splayUp(Colors::PURPLE)->build();
   }
 
   private function bottomLeftIconVisible($card)

@@ -38,16 +38,9 @@ class Card430_4E extends AbstractCard
         }
       }
       self::setAuxiliaryArray($cardIds);
-      return [
-        'location_from'                   => 'score',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourScore()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-      ];
+      return self::youMay()->splayUp()->build();
     }
   }
 

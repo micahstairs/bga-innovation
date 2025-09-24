@@ -25,7 +25,7 @@ class Card45 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayRight()->withColor(Colors::BLUE)->build();
+      return self::youMay()->splayRight(Colors::BLUE)->build();
     } else {
       return self::youMust()->return()->fromYourScore()->build();
     }

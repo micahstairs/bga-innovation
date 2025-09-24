@@ -38,7 +38,7 @@ class Card347 extends AbstractCard
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
       return self::youMust()->choosePlayer($players)->build();
     } else {
-      return self::youMust()->fromMyHand()->toPlayer(self::getAuxiliaryValue())->toBoard()->build();
+      return self::youMust()->fromMyHand()->toBoard(self::getAuxiliaryValue())->build();
     }
   }
 

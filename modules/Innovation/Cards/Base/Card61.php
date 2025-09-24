@@ -21,7 +21,7 @@ class Card61 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->choose([1])->build();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
+      return self::youMay()->splayRight(Colors::YELLOW)->build();
     }
   }
 

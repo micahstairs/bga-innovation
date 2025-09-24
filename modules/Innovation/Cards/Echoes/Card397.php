@@ -36,28 +36,12 @@ class Card397 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'n'             => 'all',
-          'location_from' => 'board',
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => 'score',
-          'with_bonus'    => true,
-        ];
+        return self::youMust()->all()->withBonus()->fromYourBoard()->toMyScore()->build();
       } else {
-        return [
-          'n'                            => 4,
-          'location_from'                => Locations::AVAILABLE_ACHIEVEMENTS,
-          'include_special_achievements' => true,
-          'junk_keyword'                 => true,
-        ];
+        return self::youMust()->junk()->exactly(4)->fromAvailableAchievements()->build();
       }
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'color'          => Colors::NON_RED,
-      ];
+      return self::youMust()->return()->all()->non(Colors::RED)->fromYourBoard()->build();
     }
   }
 

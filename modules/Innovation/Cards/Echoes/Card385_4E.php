@@ -33,21 +33,11 @@ class Card385_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourForecast()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight(Colors::GREEN)->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-      ];
+      return self::youMay()->splayUp()->build();
     }
   }
 

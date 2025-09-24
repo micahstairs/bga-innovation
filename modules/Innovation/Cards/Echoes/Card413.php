@@ -38,16 +38,10 @@ class Card413 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
     } else {
-      return [
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-        'age'            => self::getMinValueInLocation('hand'),
-      ];
+      $value = self::getMinValueInLocation('hand');
+      return self::youMust()->return()->value($value)->fromYourHand()->build();
     }
   }
 

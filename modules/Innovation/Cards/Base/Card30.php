@@ -30,7 +30,7 @@ class Card30 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayLeft()->withColor([Colors::GREEN, Colors::BLUE])->build();
+      return self::youMay()->splayLeft([Colors::GREEN, Colors::BLUE])->build();
     } else {
       return self::youMust()->score()->withIcon(Icons::HEALTH)->fromYourBoard()->build();
     }

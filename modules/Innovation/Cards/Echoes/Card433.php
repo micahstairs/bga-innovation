@@ -35,18 +35,9 @@ class Card433 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'score',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourScore()->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'board',
-        'bottom_from'   => true,
-        'score_keyword' => true,
-        'color'         => self::getAuxiliaryArray(),
-      ];
+      return self::youMay()->score()->fromBottom()->fromYourBoard()->withColor(self::getAuxiliaryArray())->build();
     }
   }
 

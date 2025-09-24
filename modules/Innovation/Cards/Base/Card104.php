@@ -37,7 +37,7 @@ class Card104 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayUp()->withColor(Colors::GREEN)->build();
+    return self::youMay()->splayUp(Colors::GREEN)->build();
   }
 
 }

@@ -23,7 +23,7 @@ class Card49 extends AbstractCard
     if (self::isDemand()) {
       return self::youMust()->non(Colors::GREEN)->withIcon(Icons::INDUSTRY)->fromYourBoard()->toMine()->build();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
+      return self::youMay()->splayRight(Colors::GREEN)->build();
     }
   }
 

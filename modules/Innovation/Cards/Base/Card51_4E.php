@@ -17,7 +17,7 @@ class Card51_4E extends AbstractCard
     if (self::isDemand()) {
       return self::youMust()->chooseValue()->ofMyChoice()->build();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
+      return self::youMay()->splayRight(Colors::YELLOW)->build();
     }
   }
 

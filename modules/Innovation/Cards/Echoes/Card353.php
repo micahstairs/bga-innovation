@@ -30,7 +30,7 @@ class Card353 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMay()->tuck()->fromYourHand()->withColor([$color])->build();
     } else {
-      return self::youMust()->return()->entirePile()->withColor([$color])->fromAnyPlayer()->build();
+      return self::youMust()->return()->fromAnywhereInStack()->withColor([$color])->fromAnyPlayer()->build();
     }
   }
 

@@ -26,16 +26,9 @@ class Card381_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourHand()->build();
     } else {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
     }
   }
 

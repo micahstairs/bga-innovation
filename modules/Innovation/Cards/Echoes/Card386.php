@@ -44,18 +44,9 @@ class Card386 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from'    => 'hand',
-        'meld_keyword'     => true,
-        'color'            => [Colors::BLUE, Colors::YELLOW],
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->meld()->withColor([Colors::BLUE, Colors::YELLOW])->fromYourHand()->revealingIfUnable()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayRight(Colors::YELLOW)->build();
     }
   }
 

@@ -45,17 +45,9 @@ class Card373_3E extends AbstractCard
           $colors[] = $color;
         }
       }
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => $colors,
-      ];
+      return self::youMay()->splayRight($colors)->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::REVEALED,
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->all()->fromYourRevealed()->build();
     }
   }
 

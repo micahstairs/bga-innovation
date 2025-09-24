@@ -15,9 +15,9 @@ class Card470 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_from' => 'board'];
+      return self::youMust()->chooseCardFrom('board')->build();
     } else {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2])->build();
     }
   }
 
@@ -53,7 +53,7 @@ class Card470 extends AbstractCard
   {
     $topCard = self::getTopCardOfColor($color);
     if ($topCard && self::wasForeseen()) {
-      self::setAuxiliaryValue($topCard['id']);
+      self::setAuxiliaryValue(self::getId($topCard));
       self::setNextStep(2);
       self::setMaxSteps(2);
     }

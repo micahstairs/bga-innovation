@@ -29,12 +29,7 @@ class Card473 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'            => true,
-      'location_from'       => Locations::HAND,
-      'owner_from'          => 'any player',
-      'achieve_if_eligible' => true,
-    ];
+    return self::youMay()->achieveIfEligible()->fromAnyHand()->build();
   }
 
   public function handleCardChoice(array $card)

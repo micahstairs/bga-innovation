@@ -25,7 +25,7 @@ class Card34 extends AbstractCard
     if (self::isDemand()) {
       return self::youMust()->fromYourHand()->withIcon(Icons::AUTHORITY)->toMine()->revealingIfUnable()->build();
     } else {
-      return self::youMay()->splayLeft()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
+      return self::youMay()->splayLeft([Colors::YELLOW, Colors::PURPLE])->build();
     }
   }
 

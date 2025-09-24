@@ -44,23 +44,12 @@ class Card387 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'age'           => self::getMinValue(self::getTopCards()),
-      ];
+      $value = self::getMinValue(self::getTopCards());
+      return self::youMust()->score()->value($value)->fromYourBoard()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourScore()->build();
     } else {
-      return [
-        'location_from'                   => 'score',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourScore()->build();
     }
   }
 
@@ -70,8 +59,8 @@ class Card387 extends AbstractCard
       if (self::isFirstInteraction()) {
         $cardIds = [];
         foreach (self::getCards('score') as $scoreCard) {
-          if ($scoreCard['age'] != self::getValue($card)) {
-            $cardIds[] = $scoreCard['id'];
+          if (self::getValue($scoreCard) != self::getValue($card)) {
+            $cardIds[] = self::getId($scoreCard);
           }
         }
         self::setAuxiliaryArray($cardIds);

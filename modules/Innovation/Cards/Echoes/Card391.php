@@ -51,11 +51,7 @@ class Card391 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::RIGHT,
-      'color'           => [Colors::BLUE],
-    ];
+    return self::youMay()->splayRight(Colors::BLUE)->build();
   }
 
 }

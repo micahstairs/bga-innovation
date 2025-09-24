@@ -20,16 +20,9 @@ class Card410 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     } else {
-      return [
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     }
   }
 

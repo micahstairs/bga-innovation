@@ -18,19 +18,11 @@ class Card385_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     } else if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourForecast()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight(Colors::GREEN)->build();
     }
   }
 

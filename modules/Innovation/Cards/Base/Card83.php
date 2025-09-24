@@ -33,7 +33,7 @@ class Card83 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->chooseTwoColors()->build();
     } else {
-      return self::youMay()->splayUp()->withColor(self::getAuxiliaryValue())->build();
+      return self::youMay()->splayUp(self::getAuxiliaryValue())->build();
     }
   }
 

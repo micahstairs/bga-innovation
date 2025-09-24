@@ -52,7 +52,7 @@ class Card356 extends AbstractCard
       }
     } else {
       $colors = [Colors::YELLOW, Colors::BLUE];
-      return self::youMay()->splayLeft()->withColor($colors)->build();
+      return self::youMay()->splayLeft($colors)->build();
     }
   }
 

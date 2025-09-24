@@ -17,18 +17,9 @@ class Card424 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'board',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'hand',
-        'color'         => [Colors::GREEN],
-      ];
+      return self::youMust()->withColor(Colors::GREEN)->fromYourBoard()->toMyHand()->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'board',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->fromYourBoard()->build();
     }
   }
 
@@ -38,9 +29,10 @@ class Card424 extends AbstractCard
     if (!$topGreenCard) {
       return;
     }
-    if (self::isDemand() && $topGreenCard['id'] == CardIds::SCISSORS) {
+    $cardId = self::getId($topGreenCard);
+    if (self::isDemand() && $cardId == CardIds::SCISSORS) {
       self::win(self::getLauncherId());
-    } else if (self::isFirstNonDemand() && $topGreenCard['id'] == CardIds::PAPER) {
+    } else if (self::isFirstNonDemand() && $cardId == CardIds::PAPER) {
       self::win();
     }
   }

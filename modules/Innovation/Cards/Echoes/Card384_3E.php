@@ -38,27 +38,14 @@ class Card384_3E extends AbstractCard
           }
         }
         self::setAuxiliaryArray($cardIds);
-        return [
-          'location_from'                   => 'deck',
-          'location_to'                     => 'hand',
-          'card_ids_are_in_auxiliary_array' => true,
-        ];
+        return self::youMust()->onlyCardsInAuxiliaryArray()->fromDeck()->toYourHand()->build();
       } else {
         self::setAuxiliaryArray([self::getLastSelectedId()]);
-        return [
-          'location_from'                   => 'hand',
-          'topdeck_keyword'                 => true,
-          'card_ids_are_in_auxiliary_array' => true,
-          // Give the player the chance to read the card
-          'enable_autoselection'            => false,
-        ];
+        // Disable autoselection to give the player the chance to read the card
+        return self::youMust()->topDeck()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
       }
     } else {
-      return [
-        'can_pass'       => self::isSecondInteraction(),
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourHand()->build();
     }
   }
 
@@ -73,7 +60,7 @@ class Card384_3E extends AbstractCard
       self::setMaxSteps(2);
     } else if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $revealedCard = self::drawAndReveal(self::getValue($card));
-      $topCard = self::getTopCardOfColor($revealedCard['color']);
+      $topCard = self::getTopCardOfColor(self::getColor($revealedCard));
       if (self::getValue($revealedCard) > self::getValue($topCard)) {
         self::meld($revealedCard);
       } else {

@@ -33,22 +33,11 @@ class Card398 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'without_bonus' => true,
-      ];
+      return self::youMust()->score()->withoutBonus()->fromYourBoard()->build();
     } else if (self::isSecondNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::RED],
-      ];
+      return self::youMay()->splayUp(Colors::RED)->build();
     } else {
-      return [
-        'location_from'      => 'board',
-        'foreshadow_keyword' => true,
-      ];
+      return self::youMust()->foreshadow()->fromYourBoard()->build();
     }
   }
 

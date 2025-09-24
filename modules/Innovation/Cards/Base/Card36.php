@@ -18,7 +18,7 @@ class Card36 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->return()->fromYourScore()->build();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::BLUE)->build();
+      return self::youMay()->splayRight(Colors::BLUE)->build();
     }
   }
 

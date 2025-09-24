@@ -13,7 +13,7 @@ class Card474 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choose_icon_type' => true];
+    return self::youMust()->chooseIcon()->build();
   }
 
   public function handleIconChoice(int $icon)

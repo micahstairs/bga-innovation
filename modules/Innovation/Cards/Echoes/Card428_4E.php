@@ -40,13 +40,9 @@ class Card428_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'color'         => Colors::NON_RED,
-      ];
+      return self::youMust()->score()->non(Colors::RED)->fromYourBoard()->build();
     } else {
-      return ['choose_icon_type' => true];
+      return self::youMust()->chooseIcon()->build();
     }
   }
 

@@ -30,21 +30,12 @@ class Card479 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_icon_type' => true,
-        'icon'             => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseIcon(self::getAuxiliaryArray())->build();
     } else {
       $icon = self::getAuxiliaryValue();
       self::setAuxiliaryArray(self::getCardIdsWithVisibleIcon($icon)); // Repurpose array to store the card IDs to transfer
-      return [
-        'n'                               => 'all',
-        'location_from'                   => Locations::PILE,
-        'location_to'                     => self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD,
-        'owner_to'                        => self::getLauncherId(),
-        'with_icon'                       => $icon,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $locationTo = self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD;
+      return self::youMust()->onlyCardsInAuxiliaryArray()->withIcon($icon)->fromAnywhereInStack()->toMy($locationTo)->build();
     }
   }
 

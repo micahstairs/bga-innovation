@@ -28,7 +28,7 @@ class Card336 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       return self::youMust()->return()->all()->fromYourRevealed()->build();
     } else {
-      return self::youMust()->return()->entirePile()->withColor(self::getAuxiliaryValue())->fromAnyPlayer()->build();
+      return self::youMust()->return()->fromAnywhereInStack()->withColor(self::getAuxiliaryValue())->fromAnyPlayer()->build();
     }
   }
 

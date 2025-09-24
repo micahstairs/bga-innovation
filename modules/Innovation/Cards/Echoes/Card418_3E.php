@@ -26,16 +26,9 @@ class Card418_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => Locations::HAND,
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     } else {
-      return [
-        'location_from'  => Locations::BOARD,
-        'return_keyword' => true,
-        'color'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->return()->withColor(self::getAuxiliaryArray())->fromYourBoard()->build();
     }
   }
 

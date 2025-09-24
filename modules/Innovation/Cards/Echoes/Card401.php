@@ -25,23 +25,16 @@ class Card401 extends AbstractCard
       $topCard = self::getTopCardOfColor(Colors::GREEN);
       $bottomCard = self::getBottomCardOfColor(Colors::GREEN);
       if ($topCard) {
-        self::setAuxiliaryArray([$topCard['id'], $bottomCard['id']]);
+        self::setAuxiliaryArray([self::getId($topCard), self::getId($bottomCard)]);
       } else {
         self::setAuxiliaryArray([]);
       }
-      return [
-        'location_from'                   => 'pile',
-        'score_keyword'                   => true,
-        'color'                           => [Colors::GREEN],
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourStack(Colors::GREEN)->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getUniqueValuesInLocation('score'),
-      ];
+      $values = self::getUniqueValuesInLocation('score');
+      return self::youMust()->chooseValue($values)->build();
     } else {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2])->build();
     }
   }
 

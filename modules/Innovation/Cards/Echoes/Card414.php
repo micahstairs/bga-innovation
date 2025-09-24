@@ -25,27 +25,14 @@ class Card414 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'choose_player' => true,
-        'players'       => $this->game->getActiveOpponents(self::getPlayerId()),
-      ];
+      return self::youMust()->choosePlayer(self::getOpponents())->build();
     } else if (self::isThirdInteraction()) {
-      return [
-        'owner_from'    => self::getAuxiliaryValue2(),
-        'location_from' => 'score',
-        'owner_to'      => self::getAuxiliaryValue2(),
-        'location_to'   => 'board',
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      $playerId = self::getAuxiliaryValue2();
+      return self::youMust()->value(self::getAuxiliaryValue())->fromScore($playerId)->toBoard($playerId)->build();
     } else {
-      return [
-        'owner_from'          => self::getAuxiliaryValue2(),
-        'location_from'       => 'score',
-        'achieve_if_eligible' => true,
-        'age'                 => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->achieveIfEligible()->value(self::getAuxiliaryValue())->fromScore(self::getAuxiliaryValue2())->build();
     }
   }
 

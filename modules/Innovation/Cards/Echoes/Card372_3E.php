@@ -26,26 +26,11 @@ class Card372_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'n_min'          => 1,
-        'n_max'          => 3,
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from'                   => 'hand',
-        'foreshadow_keyword'              => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     } else {
-      return [
-        'n'                               => 'all',
-        'location_from'                   => 'hand',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->all()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     }
   }
 

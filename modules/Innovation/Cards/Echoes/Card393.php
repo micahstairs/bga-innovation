@@ -32,17 +32,13 @@ class Card393 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'n'              => self::wasForeseen() ? 'all' : 2,
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      if (self::wasForeseen()) {
+        return self::youMust()->return()->all()->fromYourScore()->build();
+      } else {
+        return self::youMust()->return()->exactly(2)->fromYourScore()->build();
+      }
     } else {
-      return [
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->score()->value(self::getAuxiliaryValue())->fromYourHand()->build();
     }
   }
 

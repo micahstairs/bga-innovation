@@ -32,7 +32,7 @@ class Card429 extends AbstractCard
       $card2 = self::draw(11);
       $card3 = self::draw(11);
       if (self::wasForeseen()) {
-        self::setAuxiliaryArray([$card1['id'], $card2['id'], $card3['id']]); // Track cards to foreshadow
+        self::setAuxiliaryArray([self::getId($card1), self::getId($card2), self::getId($card3)]); // Track cards to foreshadow
         self::setMaxSteps(1);
       }
     } else {
@@ -43,24 +43,11 @@ class Card429 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourForecast()->build();
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
-      return [
-        'n'                               => 3,
-        'location_from'                   => 'hand',
-        'foreshadow_keyword'              => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->foreshadow()->exactly(3)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayUp(Colors::YELLOW)->build();
     }
   }
 

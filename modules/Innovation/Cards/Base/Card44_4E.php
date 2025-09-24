@@ -15,7 +15,7 @@ class Card44_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayRight()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
+      return self::youMay()->splayRight([Colors::YELLOW, Colors::PURPLE])->build();
     } else {
       return self::youMay()->tuck()->exactly(self::countSplayedColors())->fromYourHand()->build();
     }

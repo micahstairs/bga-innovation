@@ -19,7 +19,7 @@ class Card44_3E extends AbstractCard
       $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::HEALTH), 2);
       return self::youMay()->tuck()->exactly($numCards)->fromYourHand()->build();
     } else {
-      return self::youMay()->splayRight()->withColor([Colors::YELLOW, Colors::PURPLE])->build();
+      return self::youMay()->splayRight([Colors::YELLOW, Colors::PURPLE])->build();
     }
   }
 

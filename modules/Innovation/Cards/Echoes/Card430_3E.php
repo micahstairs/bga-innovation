@@ -17,21 +17,11 @@ class Card430_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'n'              => 4,
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->exactly(4)->fromYourScore()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-      ];
+      return self::youMay()->splayUp()->build();
     }
   }
 

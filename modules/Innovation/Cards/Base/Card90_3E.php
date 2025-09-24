@@ -17,7 +17,7 @@ class Card90_3E extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMust()->return()->all()->fromYourHand()->build();
     } else if (self::isSecondNonDemand()) {
-      return self::youMay()->splayUp()->withColor(Colors::PURPLE)->build();
+      return self::youMay()->splayUp(Colors::PURPLE)->build();
     } else {
       return self::youMust()->meld()->fromYourHand()->build();
     }

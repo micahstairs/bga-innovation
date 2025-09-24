@@ -33,22 +33,12 @@ class Card421 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     } else if (self::isDemand()) {
-      return [
-        'location_from' => 'board',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'board',
-        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::NON_YELLOW, Icons::PROSPERITY),
-        'color'         => Colors::NON_YELLOW,
-        'without_icon'  => Icons::PROSPERITY,
-      ];
+      $value = $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::NON_YELLOW, Icons::PROSPERITY);
+      return self::youMust()->non(Colors::YELLOW)->value($value)->withoutIcon(Icons::PROSPERITY)->fromYourBoard()->toMine()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::PURPLE],
-      ];
+      return self::youMay()->splayUp(Colors::PURPLE)->build();
     }
   }
 

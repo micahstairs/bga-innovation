@@ -35,13 +35,7 @@ class Card390 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'             => 2,
-      'location_from' => 'score',
-      'owner_from'    => self::getPlayerId(),
-      'location_to'   => 'score',
-      'owner_to'      => self::getLauncherId(),
-    ];
+    return self::youMust()->exactly(2)->fromYourScore()->toMine()->build();
   }
 
 }

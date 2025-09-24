@@ -59,7 +59,8 @@ class Innovation extends Table
     const COMPEL_EFFECT = 2;
     const ECHO_EFFECT = 3;
 
-    static function stripTransferInfoForNotification(array $transferInfo): array {
+    static function stripTransferInfoForNotification(array $transferInfo): array
+    {
         // dereference transferInfo
         $transferInfo = (array) $transferInfo;
         unset($transferInfo['splay_direction_from']);
@@ -422,7 +423,7 @@ class Innovation extends Table
 
     /*
         setupNewGame:
-        
+
         This method is called only once, when a new game is launched.
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
@@ -807,9 +808,9 @@ class Innovation extends Table
 
     /*
         getAllDatas: 
-        
+
         Gather all informations about current game situation (visible by the current player).
-        
+
         The method is called each time the game interface is displayed to a player, ie:
         _ when the game starts
         _ when a player refreshes the game page (F5)
@@ -1030,13 +1031,13 @@ class Innovation extends Table
 
     /*
         getGameProgression:
-        
+
         Compute and return the current game progression.
         The number returned must be an integer beween 0 (=the game just started) and
         100 (= the game is finished or almost finished).
-    
+
         This method is called each time we are in a game state with the "updateGameProgression" property set to true 
-       
+
     */
     function getGameProgression()
     {
@@ -2846,7 +2847,7 @@ class Innovation extends Table
         } else if ($location_from === Locations::REVEALED_THEN_SCORE) {
             $from_somewhere_for_player = clienttranslate(' that you revealed and from your score pile');
             $from_somewhere_for_others = clienttranslate(' that he revealed and from his score pile');
-        } else if ($location_from === 'pile,score') {
+        } else if ($location_from === Locations::PILE_OR_SCORE) {
             $from_somewhere_for_player = clienttranslate(' from your board and score pile');
             $from_somewhere_for_others = clienttranslate(' from his board and score pile');
         }
@@ -6905,7 +6906,7 @@ class Innovation extends Table
             $condition_for_location = "location IN ('hand', 'score')";
         } else if ($location_from == 'pile') {
             $condition_for_location = "location = 'board'";
-        } else if ($location_from == 'pile,score') {
+        } else if ($location_from == Locations::PILE_OR_SCORE) {
             $condition_for_location = "location IN ('board', 'score')";
         } else {
             $condition_for_location = self::format("location = '{location_from}'", array('location_from' => $location_from));
@@ -10141,7 +10142,7 @@ class Innovation extends Table
                 'opponent_id'              => $opponent_id,
                 'splay_direction'          => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
-                'color_pile'               => $splay_direction === null && ($location_from == 'pile' || $location_from == 'pile,score') ? $this->innovationGameState->getAsArray('color_array')[0] : null,
+                'color_pile'               => $splay_direction === null && ($location_from == 'pile' || $location_from == Locations::PILE_OR_SCORE) ? $this->innovationGameState->getAsArray('color_array')[0] : null,
                 'card_interaction'         => $code,
                 'num_cards_already_chosen' => $n,
 
@@ -12202,7 +12203,7 @@ class Innovation extends Table
 
     /*
         zombieTurn:
-        
+
         This method is called each time it is the turn of a player who has quit the game (= "zombie" player).
         You can do whatever you want in order to make sure the turn of this player ends appropriately
         (ex: pass).

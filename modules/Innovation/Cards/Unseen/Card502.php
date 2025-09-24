@@ -26,13 +26,13 @@ class Card502 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayLeft()->withColor([Colors::RED, Colors::YELLOW])->build();
+      return self::youMay()->splayLeft([Colors::RED, Colors::YELLOW])->build();
     } else if (self::isFirstInteraction()) {
       return self::youMust()->safeguard()->value(self::countSplayedColors())->build();
     } else if (self::isSecondInteraction()) {
       return self::youMust()->choosePlayer()->build();
     } else {
-      return self::youMust()->value(self::getAuxiliaryValue())->fromYourHand()->toPlayer(self::getAuxiliaryValue2())->toBoard()->build();
+      return self::youMust()->value(self::getAuxiliaryValue())->fromYourHand()->toBoard(self::getAuxiliaryValue2())->build();
     }
   }
 

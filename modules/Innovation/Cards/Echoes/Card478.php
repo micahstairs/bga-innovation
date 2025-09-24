@@ -35,16 +35,9 @@ class Card478 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'    => 'any player',
-        'location_from' => 'board',
-        'location_to'   => 'board',
-      ];
+      return self::youMust()->fromAnyBoard()->toMyBoard()->build();
     } else {
-      return [
-        'choose_from' => 'board',
-        'not_id'      => CardIds::DEEPFAKE,
-      ];
+      return self::youMust()->chooseCardFrom('board')->otherThan(CardIds::DEEPFAKE)->build();
     }
   }
 

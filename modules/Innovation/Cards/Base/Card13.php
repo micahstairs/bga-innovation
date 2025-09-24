@@ -18,7 +18,7 @@ class Card13 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMay()->tuck()->fromYourHand()->withColor(self::getColorsOnBoard())->build();
     } else {
-      return self::youMay()->splayLeft()->withColor(self::getLastSelectedColor())->build();
+      return self::youMay()->splayLeft(self::getLastSelectedColor())->build();
     }
   }
 

@@ -21,28 +21,14 @@ class Card380 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'age_min'        => 1,
-        'age_max'        => 2,
-      ];
+      return self::youMust()->return()->minValue(1)->maxValue(2)->fromYourBoard()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => [3, 4, 5],
-      ];
+      return self::youMust()->chooseValue([3, 4, 5])->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
+      return self::youMay()->choose([1])->build();
     } else {
-      return [
-        'location_from'       => 'junk',
-        'achieve_if_eligible' => true,
-        'age'                 => self::getMaxValueInLocation('junk'),
-      ];
+      $value = self::getMaxValueInLocation('junk');
+      return self::youMust()->achieveIfEligible()->value($value)->fromJunk()->build();
     }
   }
 

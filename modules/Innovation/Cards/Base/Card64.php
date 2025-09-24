@@ -18,7 +18,7 @@ class Card64 extends AbstractCard
     if (self::isDemand()) {
       return self::youMust()->fromYourHand()->toMyScore()->build();
     } else {
-      return self::youMay()->splayRight()->withColor([Colors::RED, Colors::PURPLE])->build();
+      return self::youMay()->splayRight([Colors::RED, Colors::PURPLE])->build();
     }
   }
 

@@ -29,19 +29,9 @@ class Card415_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'                 => 2,
-        'location_from'     => Locations::BOARD,
-        'bottom_from'       => true,
-        'score_keyword'     => true,
-        'color'             => Colors::NON_BLUE,
-      ];
+      return self::youMust()->score()->exactly(2)->non(Colors::BLUE)->fromBottom()->fromYourBoard()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::BLUE],
-      ];
+      return self::youMay()->splayUp(Colors::BLUE)->build();
     }
   }
 

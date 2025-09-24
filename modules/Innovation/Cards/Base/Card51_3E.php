@@ -25,7 +25,7 @@ class Card51_3E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
+    return self::youMay()->splayRight(Colors::YELLOW)->build();
   }
 
   public function demandMightBeEffective(): bool

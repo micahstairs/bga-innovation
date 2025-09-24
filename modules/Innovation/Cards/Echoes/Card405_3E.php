@@ -31,18 +31,10 @@ class Card405_3E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'                   => Locations::HAND,
-        'meld_keyword'                    => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     } else {
-      return [
-        'n'                               => count(self::getAuxiliaryArray()),
-        'location_from'                   => Locations::HAND,
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $numCards = count(self::getAuxiliaryArray());
+      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     }
   }
 

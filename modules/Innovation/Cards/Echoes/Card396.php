@@ -23,11 +23,7 @@ class Card396 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'             => 'all',
-      'location_from' => 'hand',
-      'location_to'   => 'revealed,deck',
-    ];
+    return self::youMust()->revealAndReturn()->all()->fromYourHand()->build();
   }
 
   public function afterInteraction()

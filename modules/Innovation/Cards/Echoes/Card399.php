@@ -31,7 +31,7 @@ class Card399 extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       if (self::isFourthEdition()) {
         $topBlueCard = self::getTopCardOfColor(Colors::BLUE);
-        $value = $topBlueCard ? $topBlueCard['faceup_age'] : 0;
+        $value = $topBlueCard ? self::getFaceupValue($topBlueCard) : 0;
         self::setAuxiliaryValue($value); // Track first value to draw and reveal
         self::setAuxiliaryValue2($value); // Track second value to draw and reveal
         self::setNextStep(3);
@@ -47,42 +47,24 @@ class Card399 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from'                   => 'hand',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     } else if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'choose_value' => true,
-          'age'          => [1, 2, 3, 4, 5, 6],
-        ];
+        return self::youMust()->chooseValue([1, 2, 3, 4, 5, 6])->build();
       } else if (self::isSecondInteraction()) {
-        return [
-          'choose_value' => true,
-          'age'          => array_diff([1, 2, 3, 4, 5, 6], [self::getAuxiliaryValue()])
-        ];
+        $remainingValues = array_diff([1, 2, 3, 4, 5, 6], [self::getAuxiliaryValue()]);
+        return self::youMust()->chooseValue($remainingValues)->build();
       } else if (self::isThirdInteraction()) {
         self::drawAndReveal(self::getAuxiliaryValue());
         self::drawAndReveal(self::getAuxiliaryValue2());
-        return [
-          'location_from' => 'revealed',
-          'meld_keyword'  => true,
-        ];
+        return self::youMust()->meld()->fromYourRevealed()->build();
       } else {
-        return [
-          'location_from'  => 'revealed',
-          'return_keyword' => true,
-        ];
+        return self::youMust()->meld()->fromYourRevealed()->build();
       }
     } else if (self::isSecondNonDemand()) {
-      return ['choices' => [7, 8]];
+      return self::youMust()->choose([7, 8])->build();
     } else {
-      return [
-        'location_from' => 'junk',
-        'location_to'   => 'hand',
-      ];
+      return self::youMust()->fromJunk()->toYourHand()->build();
     }
   }
 

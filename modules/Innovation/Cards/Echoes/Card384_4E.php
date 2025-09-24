@@ -32,16 +32,13 @@ class Card384_4E extends AbstractCard
       foreach (self::getPlayerIds() as $playerId) {
         $values = array_merge($values, self::getUniqueValuesInLocation('score', $playerId));
       }
-      return [
-        'choose_value' => true,
-        'age'          => $values,
-      ];
+      return self::youMust()->chooseValue($values)->build();
     } else {
-      return [
-        'can_pass'           => self::getAuxiliaryValue() > 0,
-        'location_from'      => 'hand',
-        'foreshadow_keyword' => true,
-      ];
+      if (self::getAuxiliaryValue() > 0) {
+        return self::youMay()->foreshadow()->fromYourHand()->build();
+      } else {
+        return self::youMust()->foreshadow()->fromYourHand()->build();
+      }
     }
   }
 
@@ -56,7 +53,7 @@ class Card384_4E extends AbstractCard
       self::setMaxSteps(2);
     } else if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $revealedCard = self::drawAndReveal(self::getValue($card));
-      $topCard = self::getTopCardOfColor($revealedCard['color']);
+      $topCard = self::getTopCardOfColor(self::getColor($revealedCard));
       if (self::getValue($revealedCard) > self::getValue($topCard)) {
         self::meld($revealedCard);
       } else {

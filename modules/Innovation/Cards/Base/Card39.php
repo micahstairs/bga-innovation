@@ -29,7 +29,7 @@ class Card39 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor(self::getSplayedColors(Directions::LEFT))->build();
+    return self::youMay()->splayRight(self::getSplayedColors(Directions::LEFT))->build();
   }
 
   public function handleSplayChoice(int $color, bool $splayChanged)

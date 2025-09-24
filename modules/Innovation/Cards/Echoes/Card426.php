@@ -31,20 +31,10 @@ class Card426 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'     => true,
-        'choose_value' => true,
-      ];
+      return self::youMay()->chooseValue()->build();
     } else {
-      $options = [
-        'location_from' => 'board',
-        'location_to'   => 'hand',
-        'bottom_from'   => true,
-      ];
-      if (self::isFourthEdition()) {
-        $options['color'] = [Colors::RED];
-      }
-      return $options;
+      $colors = self::isFourthEdition() ? Colors::RED : Colors::ALL;
+      return self::youMust()->withColor($colors)->fromBottom()->fromYourBoard()->toMyHand()->build();
     }
   }
 

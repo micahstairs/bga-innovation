@@ -20,15 +20,9 @@ class Card434 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMay()->tuck()->anyNumber()->fromYourHand()->build();
     } else {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue()->build();
     }
   }
 

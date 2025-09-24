@@ -30,7 +30,7 @@ class Card365 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor([Colors::YELLOW])->build();
+    return self::youMay()->splayRight([Colors::YELLOW])->build();
   }
 
 }

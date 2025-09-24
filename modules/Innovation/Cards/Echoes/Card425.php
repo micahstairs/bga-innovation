@@ -26,10 +26,7 @@ class Card425 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'achieve_keyword'                 => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->achieve()->onlyCardsInAuxiliaryArray()->build();
   }
 
   public function handleCardChoice(array $card)

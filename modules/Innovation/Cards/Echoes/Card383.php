@@ -35,16 +35,9 @@ class Card383 extends AbstractCard
       foreach (self::getPlayerIds() as $playerId) {
         $values = array_merge($values, self::getUniqueValuesInLocation('hand', $playerId));
       }
-      return [
-        'choose_value' => true,
-        'age'          => $values,
-      ];
+      return self::youMust()->chooseValue($values)->build();
     } else {
-      return [
-        'n'              => 5,
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->exactly(5)->fromYourScore()->build();
     }
   }
 

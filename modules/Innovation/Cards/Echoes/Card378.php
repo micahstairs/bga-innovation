@@ -31,14 +31,11 @@ class Card378 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'             => self::isFirstOrThirdEdition() ? 1 : 'all',
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'board',
-      'color'         => Colors::NON_RED,
-      'with_icons'    => [Icons::HEALTH, Icons::INDUSTRY],
-    ];
+    if (self::isFirstOrThirdEdition()) {
+      return self::youMust()->withColor(Colors::NON_RED)->withIcons([Icons::HEALTH, Icons::INDUSTRY])->fromYourBoard()->toMine()->build();
+    } else {
+      return self::youMust()->all()->withColor(Colors::NON_RED)->withIcons([Icons::HEALTH, Icons::INDUSTRY])->fromYourBoard()->toMine()->build();
+    }
   }
 
   public function afterInteraction()

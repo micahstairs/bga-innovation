@@ -40,16 +40,10 @@ class Card395 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'forecast',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourForecast()->build();
     } else {
-      return [
-        'location_from' => 'board',
-        'location_to'   => 'hand',
-        'age'           => self::getMaxValue(self::getTopCards()),
-      ];
+      $value = self::getMaxValue(self::getTopCards());
+      return self::youMust()->value($value)->fromYourBoard()->toYourHand()->build();
     }
   }
 

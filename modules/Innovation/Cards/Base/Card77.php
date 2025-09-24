@@ -25,7 +25,7 @@ class Card77 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->splayUp()->build();
     } else {
-      return self::youMay()->splayUp()->withColor(Colors::RED)->build();
+      return self::youMay()->splayUp(Colors::RED)->build();
     }
   }
 

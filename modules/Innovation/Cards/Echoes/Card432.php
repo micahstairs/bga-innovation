@@ -32,29 +32,17 @@ class Card432 extends AbstractCard
   {
     if ((self::isFirstOrThirdEdition() && self::isFirstNonDemand()) || (self::isFourthEdition() && self::isSecondNonDemand())) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'       => true,
-          'n_min'          => 1,
-          'n_max'          => 'all',
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-        ];
+        return self::youMay()->return()->anyNumber()->fromYourHand()->build();
       } else {
-        return [
-          'n'                   => self::getAuxiliaryValue(),
-          'achieve_if_eligible' => true,
-          'refresh_selection'   => true, // Eligibility needs to be rechecked after each achievement is achieved
-        ];
+        // Eligibility needs to be rechecked after each achievement is achieved
+        return self::youMust()->achieveIfEligible()->exactly(self::getAuxiliaryValue())->refreshingSelection()->build();
       }
     } else {
       $bonuses = self::getBonuses();
       if (self::isFirstOrThirdEdition() && empty($bonuses)) {
         $bonuses[] = 0;
       }
-      return [
-        'choose_value' => true,
-        'age'          => $bonuses,
-      ];
+      return self::youMust()->chooseValue($bonuses)->build();
     }
   }
 

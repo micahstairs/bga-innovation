@@ -28,17 +28,9 @@ class Card416_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 4,
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->exactly(4)->fromYourScore()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::AVAILABLE_ACHIEVEMENTS,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromAvailableAchievements()->build();
     }
   }
 

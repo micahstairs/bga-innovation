@@ -37,16 +37,10 @@ class Card379 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => Arrays::getRepeatedValues(self::getBonuses()),
-      ];
+      $values = Arrays::getRepeatedValues(self::getBonuses());
+      return self::youMust()->chooseValue($values)->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::PURPLE],
-      ];
+      return self::youMay()->splayRight(Colors::PURPLE)->build();
     }
   }
 

@@ -44,21 +44,14 @@ class Card431 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isSecondNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayUp(Colors::GREEN)->build();
     } else {
-      return [
-        'can_pass'          => true,
-        'n_min'             => 1,
-        'n_max'             => 'all',
-        'location_from'     => 'hand',
-        'tuck_keyword'      => true,
-        'with_icon'         => Icons::EFFICIENCY,
-        'refresh_selection' => self::isFourthEdition(), // In 4th edition, need to refresh in case a splay causes a City to be drawn
-      ];
+      if (self::isFourthEdition()) {
+        // In 4th edition, need to refresh in case a splay causes a City to be drawn
+        return self::youMay()->tuck()->anyNumber()->withIcon(Icons::EFFICIENCY)->fromYourHand()->refreshingSelection()->build();
+      } else {
+        return self::youMay()->tuck()->anyNumber()->withIcon(Icons::EFFICIENCY)->fromYourHand()->build();
+      }
     }
   }
 

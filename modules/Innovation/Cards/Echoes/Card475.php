@@ -24,16 +24,9 @@ class Card475 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_player' => true,
-        'players'       => $this->game->getActiveOpponents(self::getPlayerId()),
-      ];
+      return self::youMust()->choosePlayer(self::getOpponents())->build();
     } else {
-      return [
-        'player_id'     => self::getAuxiliaryValue(),
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromHand(self::getAuxiliaryValue())->build();
     }
   }
 
