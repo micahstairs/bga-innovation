@@ -19,14 +19,14 @@ class Card518 extends AbstractCard
   {
     if (self::isDemand()) {
       $cardIds = [];
-      $maxValueInHand = self::getMaxValueInLocation('hand');
-      foreach (self::getCards('hand') as $card) {
+      $maxValueInHand = self::getMaxValueInLocation(Locations::HAND);
+      foreach (self::getCards(Locations::HAND) as $card) {
         if (self::getValue($card) < $maxValueInHand) {
           $cardIds[] = self::getId($card);
         }
       }
-      $maxValueInScore = self::getMaxValueInLocation('score');
-      foreach (self::getCards('score') as $card) {
+      $maxValueInScore = self::getMaxValueInLocation(Locations::SCORE);
+      foreach (self::getCards(Locations::SCORE) as $card) {
         if (self::getValue($card) < $maxValueInScore) {
           $cardIds[] = self::getId($card);
         }
@@ -37,7 +37,7 @@ class Card518 extends AbstractCard
       }
     } else {
       $topCard = self::getTopCardOfColor(Colors::RED);
-      if ($topCard && $topCard['id'] == CardIds::SPANISH_INQUISITION) {
+      if ($topCard && self::getId($topCard) == CardIds::SPANISH_INQUISITION) {
         self::setMaxSteps(1);
       }
     }
@@ -46,19 +46,9 @@ class Card518 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'n'                               => 'all',
-        'location_from'                   => Locations::HAND_OR_SCORE,
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHandOrScore()->onlyCardsInAuxiliaryArray()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'pile',
-        'return_keyword' => true,
-        'color'          => [Colors::RED],
-      ];
+      return self::youMust()->return()->withColor(Colors::RED)->fromAnywhereInStack()->build();
     }
   }
 

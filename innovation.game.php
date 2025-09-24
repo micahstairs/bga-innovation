@@ -2903,7 +2903,7 @@ class Innovation extends Table
             $action = clienttranslate('foreshadow');
         } else if ($location_to === 'junk') {
             $action = clienttranslate('junk');
-        } else if ($location_to === 'junk,safe') {
+        } else if ($location_to === Locations::JUNK_THEN_SAFEGUARD) {
             $action = clienttranslate('junk then safeguard');
         } else if ($location_to === 'revealed' || ($location_from === Locations::HAND && $location_to === Locations::REVEALED_THEN_HAND)) {
             $action = clienttranslate('reveal');
@@ -12046,7 +12046,7 @@ class Innovation extends Table
                             } else if ($location_to == Locations::REVEALED_THEN_SCORE) {
                                 $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
                                 self::scoreCard($card, $owner_to);
-                            } else if ($location_to == 'junk,safe') {
+                            } else if ($location_to == Locations::JUNK_THEN_SAFEGUARD) {
                                 $card = self::junkCard($card);
                                 self::safeguardCard($card, $owner_to);
                             } else {

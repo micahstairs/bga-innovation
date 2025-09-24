@@ -12,11 +12,7 @@ class Card590 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'achieve_keyword' => true,
-      'age_min'         => 1,
-      'age_max'         => 11,
-    ];
+    return self::youMust()->achieve()->range(1, 11)->build();
   }
 
   public function handleCardChoice(array $card)

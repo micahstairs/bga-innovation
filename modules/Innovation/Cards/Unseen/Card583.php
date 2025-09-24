@@ -21,31 +21,27 @@ class Card583 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       // Skip the first interaction if no color has more than 1 card on the board
-      $needsToChoose = false;
+      $choices = [1];
       $cardCounts = self::countCardsKeyedByValue('board');
       for ($i = 1; $i <= 11; $i++) {
         if ($cardCounts[$i] > 1) {
-          $needsToChoose = true;
+          $choices = [1, 2];
           break;
         }
       }
-      return ['choices' => $needsToChoose ? [1, 2] : [1]];
+      return self::youMust()->choose($choices)->build();
     } else if (self::isSecondInteraction()) {
       $returnBottomCard = self::getAuxiliaryValue() === 2;
       self::setAuxiliaryValue(0); // Track which value was returned
-      return [
-        'location_from'  => 'board',
-        'bottom_from'    => $returnBottomCard,
-        'return_keyword' => true,
-      ];
+      if ($returnBottomCard) {
+        return self::youMust()->return()->fromBottom()->fromYourBoard()->build();
+      } else {
+        return self::youMust()->return()->fromYourBoard()->build();
+      }
     } else if (self::isThirdInteraction()) {
       $value = self::getAuxiliaryValue();
       self::setAuxiliaryValue(0); // Track how many cards were transferred in the 2nd sentence of the effect
-      return [
-        'location_from'   => 'safe',
-        'achieve_keyword' => true,
-        'age'             => $value,
-      ];
+      return self::youMust()->achieve()->value($value)->fromYourSafe()->build();
     } else {
       return ['safeguard_keyword' => true];
     }

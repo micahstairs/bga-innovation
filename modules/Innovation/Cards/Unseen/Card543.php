@@ -22,15 +22,9 @@ class Card543 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'hand',
-        'location_to'   => 'revealed,hand',
-      ];
+      return self::youMust()->revealAndPlaceInHand()->fromYourHand()->build();
     } else {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->safeguard()->value(self::getAuxiliaryValue())->build();
     }
   }
 

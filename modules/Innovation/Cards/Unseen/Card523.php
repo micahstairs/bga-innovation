@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card523 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card523 extends AbstractCard
     if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else {
-      $numFours = self::countCardsKeyedByValue('score')[4];
+      $numFours = self::countCardsKeyedByValue(Locations::SCORE)[4];
       for ($i = 0; $i < $numFours; $i++) {
         self::draw(4);
       }
@@ -29,17 +30,9 @@ class Card523 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'with_icon'      => Icons::AUTHORITY,
-      ];
+      return self::youMust()->return()->all()->withIcon(Icons::AUTHORITY)->fromYourBoard()->build();
     } else {
-      return [
-        'location_from' => 'score',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourScore()->build();
     }
   }
 

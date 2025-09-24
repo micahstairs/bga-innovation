@@ -18,19 +18,10 @@ class Card561 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'board',
-        'owner_from'    => self::getPlayerId(),
-        'location_to'   => 'board',
-        'owner_to'      => self::getLauncherId(),
-        'without_icon'  => Icons::EFFICIENCY,
-        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::ALL, Icons::EFFICIENCY),
-      ];
+      $value = $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::ALL, Icons::EFFICIENCY);
+      return self::youMust()->value($value)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine()->build();
     } else {
-      return [
-        'splay_direction' => Directions::UNSPLAYED,
-        'color'           => self::getColorsWithMostVisibleCards(),
-      ];
+      return self::youMust()->unsplay(self::getColorsWithMostVisibleCards())->build();
     }
   }
 

@@ -32,13 +32,11 @@ class Card563 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass' => true,
-      'choose_value'  => true,
-    ];
+    return self::youMay()->chooseValue()->build();
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     $didScore = false;
     foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
       self::score($card);

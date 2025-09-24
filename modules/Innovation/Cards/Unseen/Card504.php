@@ -35,16 +35,11 @@ class Card504 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => Arrays::decode(self::getAuxiliaryValue()),
-      ];
+      $colors = Arrays::decode(self::getAuxiliaryValue());
+      return self::youMay()->splayLeft($colors)->build();
     } else {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::countCardsKeyedByColor(Locations::BOARD)[self::getLastSelectedColor()],
-      ];
+      $value = self::countCardsKeyedByColor(Locations::BOARD)[self::getLastSelectedColor()];
+      return self::youMust()->safeguard()->value($value)->build();
     }
   }
 

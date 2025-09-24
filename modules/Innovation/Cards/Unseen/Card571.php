@@ -22,12 +22,9 @@ class Card571 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2, 3]];
+      return self::youMust()->choose([1, 2, 3])->build();
     } else {
-      return [
-        'n'                 => 2,
-        'safeguard_keyword' => true,
-      ];
+      return self::youMust()->safeguard()->exactly(2)->build();
     }
   }
 

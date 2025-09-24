@@ -38,18 +38,9 @@ class Card508 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 2,
-        'n_max'         => 3,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->minCards(2)->maxCards(3)->fromYourHand()->build();
     }
   }
 

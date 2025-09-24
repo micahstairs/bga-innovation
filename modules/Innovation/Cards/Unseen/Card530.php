@@ -31,17 +31,9 @@ class Card530 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'safe',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'safe',
-      ];
+      return self::youMust()->fromYourSafe()->toMySafe()->build();
     } else {
-      return [
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED, Colors::PURPLE],
-      ];
+      return self::youMust()->splayRight([Colors::RED, Colors::PURPLE])->build();
     }
   }
 

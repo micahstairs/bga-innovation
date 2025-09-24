@@ -16,11 +16,7 @@ class Card509 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'safe',
-      'location_to'   => 'revealed',
-      'age'           => 4,
-    ];
+    return self::youMust()->reveal()->value(4)->fromYourSafe()->build();
   }
 
   public function handleCardChoice(array $card)

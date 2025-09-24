@@ -22,7 +22,7 @@ class Card526 extends AbstractCard
       $card2 = self::transferToHand(self::drawAndReveal(6));
       $numIconTypes = count(array_unique(array_merge(self::getIcons($card1), self::getIcons($card2))));
       self::setAuxiliaryValue($numIconTypes); // Track number of different icon types on drawn cards
-      self::setAuxiliaryArray([$card1['id'], $card2['id']]); // Track cards to return
+      self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]); // Track cards to return
       self::setMaxSteps(1);
     }
   }
@@ -30,18 +30,9 @@ class Card526 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     } else {
-      return [
-        'n'                               => 2,
-        'location_from'                   => Locations::HAND,
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->exactly(2)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     }
   }
 

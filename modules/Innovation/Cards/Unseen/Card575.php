@@ -20,23 +20,14 @@ class Card575 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction() || self::isSecondInteraction()) {
-      return [
-        'location' => Locations::SAFE,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getMaxValueInLocation(Locations::SAFE),
-      ];
+      $value = self::getMaxValueInLocation(Locations::SAFE);
+      return self::youMust()->value($value)->fromYourSafe()->toMine()->build();
     } else if (self::isThirdInteraction() || self::isFourthInteraction()) {
-      return [
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getMaxValueInLocation(Locations::SCORE),
-      ];
+      $value = self::getMaxValueInLocation(Locations::SCORE);
+      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
     } else {
-      return [
-        'location_from' => Locations::SCORE,
-        'meld_keyword'  => true,
-        'age'           => self::getMinValueInLocation(Locations::SCORE),
-      ];
+      $value = self::getMinValueInLocation(Locations::SCORE);
+      return self::youMust()->meld()->value($value)->fromYourScore()->build();
     }
   }
 

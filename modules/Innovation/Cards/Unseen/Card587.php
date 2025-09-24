@@ -12,14 +12,7 @@ class Card587 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => 'achievements',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'safe',
-      'age_min'       => 1,
-      'age_max'       => 11,
-    ];
+    return self::youMust()->range(1, 11)->toMySafe()->build();
   }
 
 }

@@ -23,21 +23,10 @@ class Card528 extends AbstractCard
     if (self::isFirstInteraction()) {
       $card = self::transferToHand(self::drawAndReveal(5));
       $returnedCard = self::return(self::getTopCardOfColor(self::getColor($card)));
-      self::setAuxiliaryValue($returnedCard ? 1 : 0); // Track how many cards were returned
-      return [
-        'location_from'    => 'hand',
-        'location_to'      => Locations::REVEALED_THEN_DECK,
-        'return_keyword'   => true,
-        'not_id'           => self::getId($card),
-        'color'            => [self::getColor($card)],
-        'reveal_if_unable' => true,
-      ];
+      self::setAuxiliaryValue(value: $returnedCard ? 1 : 0); // Track how many cards were returned
+      return self::youMust()->revealAndReturn()->withColor(self::getColor($card))->otherThan(self::getId($card))->fromYourHand()->revealingIfUnable()->build();
     } else {
-      return [
-        'location_from'  => 'score',
-        'location_to'    => Locations::REVEALED_THEN_DECK,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->revealAndReturn()->fromYourScore()->build();
     }
   }
 

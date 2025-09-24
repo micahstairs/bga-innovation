@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card540 extends AbstractCard
 {
@@ -26,17 +27,14 @@ class Card540 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'safeguard_keyword' => true,
-      'age'               => self::countCards('score'),
-    ];
-
+    $value = self::countCards(Locations::SCORE);
+    return self::youMust()->safeguard()->value($value)->build();
   }
 
   public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
-      $cards = self::getCardsKeyedByValue('hand')[self::getLastSelectedAge()];
+      $cards = self::getCardsKeyedByValue(Locations::HAND)[self::getLastSelectedAge()];
       foreach ($cards as $card) {
         self::score($card);
       }

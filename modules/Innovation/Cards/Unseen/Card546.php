@@ -29,25 +29,11 @@ class Card546 extends AbstractCard
   {
     if (self::isDemand()) {
       // "Transfer the card in your hand of my choice to my board!"
-      return [
-        'player_id'     => self::getLauncherId(),
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'revealed',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'board',
-      ];
+      return self::youMust()->fromYourRevealed()->toMyBoard()->ofMyChoice()->build();
     } else if (self::getEffectNumber() === 1) {
-      return [
-        'location_from' => 'safe',
-        'location_to'   => 'score',
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->fromYourSafe()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::BLUE],
-      ];
+      return self::youMay()->splayRight(Colors::BLUE)->build();
     }
   }
 

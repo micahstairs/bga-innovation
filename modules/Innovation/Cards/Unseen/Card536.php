@@ -31,18 +31,9 @@ class Card536 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'                               => 2,
-        'location_from'                   => 'revealed',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->exactly(2)->fromYourRevealed()->onlyCardsInAuxiliaryArray()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => array(self::getAuxiliaryValue()),
-      ];
+      return self::youMay()->splayRight(self::getAuxiliaryValue())->build();
     }
   }
 

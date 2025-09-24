@@ -21,23 +21,12 @@ class Card503 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'player_id'    => self::getLauncherId(),
-          'choose_color' => true,
-        ];
+        return self::youMust()->chooseColor()->ofMyChoice()->build();
       } else {
-        return [
-          'location_from'    => 'hand',
-          'meld_keyword'     => true,
-          'color'            => [self::getAuxiliaryValue()],
-          'reveal_if_unable' => true,
-        ];
+        return self::youMust()->meld()->withColor(self::getAuxiliaryValue())->fromYourHand()->revealingIfUnable()->build();
       }
     } else {
-      return [
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     }
   }
 

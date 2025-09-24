@@ -27,23 +27,12 @@ class Card517 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'player_id'    => self::getLauncherId(),
-          'choose_color' => true,
-        ];
+        return self::youMust()->chooseColor()->ofMyChoice()->build();
       } else {
-        return [
-          'location_from'  => 'hand',
-          'return_keyword' => true,
-          'color'          => [self::getAuxiliaryValue()],
-        ];
+        return self::youMust()->return()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED],
-      ];
+      return self::youMay()->splayRight(Colors::RED)->build();
     }
   }
 

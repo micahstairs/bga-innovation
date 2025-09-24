@@ -31,10 +31,8 @@ class Card489 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'choose_two_colors' => true,
-      'color'             => Arrays::decode(self::getAuxiliaryValue()),
-    ];
+    $colors = Arrays::decode(self::getAuxiliaryValue());
+    return self::youMust()->chooseTwoColors($colors)->build();
   }
 
   public function handleTwoColorChoice(int $color1, int $color2)

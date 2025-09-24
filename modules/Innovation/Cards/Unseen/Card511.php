@@ -32,12 +32,8 @@ class Card511 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'      => true,
-          'location_from' => Locations::HAND,
-          'tuck_keyword'  => true,
-          'color'         => Arrays::decode(self::getAuxiliaryValue2()),
-        ];
+        $colors = Arrays::decode(self::getAuxiliaryValue2());
+        return self::youMay()->tuck()->withColor($colors)->fromYourHand()->build();
       } else {
         if (self::getAuxiliaryValue() === 1) {
           self::draw(3);
@@ -46,11 +42,7 @@ class Card511 extends AbstractCard
         return [];
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::BLUE, Colors::YELLOW],
-      ];
+      return self::youMay()->splayLeft([Colors::BLUE, Colors::YELLOW])->build();
     }
   }
 

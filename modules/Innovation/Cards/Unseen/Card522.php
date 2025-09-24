@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card522 extends AbstractCard
 {
@@ -17,17 +16,11 @@ class Card522 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'safe',
-        'location_to'   => Locations::AVAILABLE_ACHIEVEMENTS,
-      ];
+      return self::youMust()->fromYourSafe()->toAvailableAchievements()->build();
     } else {
       $topRedCard = self::getTopCardOfColor(Colors::RED);
-      $value = $topRedCard ? $topRedCard['faceup_age'] : 0;
-      return [
-        'safeguard_keyword' => true,
-        'age'               => $value,
-      ];
+      $value = $topRedCard ? self::getFaceUpValue($topRedCard) : 0;
+      return self::youMust()->safeguard()->value($value)->build();
     }
   }
 

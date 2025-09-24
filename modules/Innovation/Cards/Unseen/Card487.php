@@ -14,16 +14,10 @@ class Card487 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'owner_to'      => $this->game->getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer()[0],
-        'location_to'   => Locations::HAND,
-      ];
+      $playerOnLeft = $this->game->getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer()[0];
+      return self::youMust()->fromYourHand()->toPlayer($playerOnLeft)->build();
     }
   }
 

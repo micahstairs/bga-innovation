@@ -17,22 +17,15 @@ class Card569 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayUp(Colors::GREEN)->build();
     } else if (self::isSecondNonDemand()) {
       if (self::isFirstInteraction()) {
-        return ['choices' => [1, 2]];
+        return self::youMust()->choose([1, 2])->build();
       } else {
-        return ['safeguard_keyword' => true];
+        return self::youMust()->safeguard()->build();
       }
     } else {
-      return [
-        'location_from' => 'safe',
-        'location_to'   => 'revealed',
-      ];
+      return self::youMust()->reveal()->fromYourSafe()->build();
     }
 
   }

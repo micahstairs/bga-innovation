@@ -17,24 +17,12 @@ class Card551 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'safe',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'safe',
-        'age'           => self::getMinValueInLocation('safe'),
-      ];
+      $value = self::getMinValueInLocation('safe');
+      return self::youMust()->value($value)->fromYourSafe()->toMine()->build();
     } else if (self::getEffectNumber() === 1) {
-      return [
-        'owner_from'    => 'any player',
-        'location_from' => 'score',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromAnyScore()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED, Colors::YELLOW],
-      ];
+      return self::youMay()->splayRight([Colors::RED, Colors::YELLOW])->build();
     }
   }
 

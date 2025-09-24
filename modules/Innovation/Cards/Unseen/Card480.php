@@ -13,10 +13,7 @@ class Card480 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'hand',
-      'location_to'   => 'revealed',
-    ];
+    return self::youMust()->reveal()->fromYourHand()->build();
   }
 
   public function handleCardChoice(array $card)

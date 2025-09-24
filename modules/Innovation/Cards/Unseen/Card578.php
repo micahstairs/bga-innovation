@@ -25,12 +25,7 @@ class Card578 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from'    => self::getLauncherId(),
-      'location_from' => Locations::SCORE,
-      'owner_to'      => self::getPlayerId(),
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromMyScore()->toYours()->build();
   }
 
 }

@@ -17,13 +17,10 @@ class Card521 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => Locations::HAND_OR_SCORE,
-        'owner_to'      => $this->game->getActivePlayerIdOnRightOfActingPlayer(),
-        'location_to'   => Locations::BOARD,
-      ];
+      $playerOnRight = $this->game->getActivePlayerIdOnRightOfActingPlayer();
+      return self::youMust()->fromYourHandOrScore()->toBoard($playerOnRight)->build();
     } else {
-      return ['choices' => [0, 1]];
+      return self::youMust()->choose([0, 1])->build();
     }
   }
 

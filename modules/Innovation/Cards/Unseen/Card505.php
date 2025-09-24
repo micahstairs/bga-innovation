@@ -19,10 +19,8 @@ class Card505 extends AbstractCard
     // Purity during this action) or it will be empty.
     $array = self::getActionScopedAuxiliaryArray();
     $lastValue = empty($array) ? 0 : $array[0];
-    return [
-      'choose_value' => true,
-      'age'          => array_unique([3, $lastValue + 1]),
-    ];
+    $choosableValues = array_unique([3, $lastValue + 1]);
+    return self::youMust()->chooseValue($choosableValues)->build();
   }
 
   public function handleValueChoice(int $value)

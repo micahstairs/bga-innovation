@@ -35,31 +35,21 @@ class Card541 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::getFirstInteractionOptions();
     } else if (self::isSecondNonDemand()) {
-      return [
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore()->build();
     } else {
-      return [
-        'choose_value' => true,
-        'age'          => self::getUniqueValuesInLocation(Locations::SCORE),
-      ];
+      $values = self::getUniqueValuesInLocation(Locations::SCORE);
+      return self::youMust()->chooseValue($values)->build();
     }
   }
 
   private function getFirstInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [0, 1],
-      ];
+      return self::youMay()->choose([0, 1])->build();
+    } else if (self::getAuxiliaryValue() == 1) {
+      return self::youMust()->score()->fromYourHand()->build();
     } else {
-      $keyword = self::getAuxiliaryValue() == 1 ? 'score_keyword' : 'safeguard_keyword';
-      return [
-        'location_from' => Locations::HAND,
-        $keyword        => true,
-      ];
+      return self::youMust()->safeguard()->fromYourHand()->build();
     }
   }
 

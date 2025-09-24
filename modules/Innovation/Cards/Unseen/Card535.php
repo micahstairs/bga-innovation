@@ -21,17 +21,9 @@ class Card535 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => 'board',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourBoard()->build();
     } else {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'color'          => [self::getLastSelectedColor()],
-      ];
+      return self::youMay()->return()->withColor(self::getLastSelectedColor())->fromYourBoard()->build();
     }
   }
 

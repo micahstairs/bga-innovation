@@ -36,18 +36,9 @@ class Card501 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::BOARD,
-        'without_icon'   => Icons::HEALTH,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->withoutIcon(Icons::HEALTH)->fromYourBoard()->build();
     } else {
-      return [
-        'location_from'  => Locations::SCORE,
-        'age'            => self::getAuxiliaryValue2(),
-        'n'              => 'all',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->value(self::getAuxiliaryValue2())->fromYourScore()->build();
     }
   }
 

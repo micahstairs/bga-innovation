@@ -25,18 +25,9 @@ class Card542 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'player_id'      => self::getLauncherId(),
-        'location_from'  => 'revealed',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourRevealed()->ofMyChoice()->build();
     } else {
-      return [
-        'n'             => 'all',
-        'location_from' => 'score',
-        'tuck_keyword'  => true,
-        'color'         => [self::getLastSelectedColor()],
-      ];
+      return self::youMust()->tuck()->all()->withColor(self::getLastSelectedColor())->fromYourScore()->build();
     }
   }
 

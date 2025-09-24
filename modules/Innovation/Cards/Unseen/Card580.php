@@ -16,16 +16,9 @@ class Card580 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from'   => 'safe',
-        'achieve_keyword' => true,
-      ];
+      return self::youMust()->achieve()->fromYourSafe()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::PURPLE],
-      ];
+      return self::youMay()->splayUp(Colors::PURPLE)->build();
     }
   }
 

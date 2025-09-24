@@ -25,18 +25,11 @@ class Card488 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
+    } else if (self::getAuxiliaryValue() === 1) {
+      return self::youMay()->score()->withColor(self::getAuxiliaryArray())->fromYourHand()->revealingIfUnable()->build();
     } else {
-      return [
-        'can_pass'         => self::getAuxiliaryValue() === 1,
-        'location_from'    => 'hand',
-        'color'            => self::getAuxiliaryArray(),
-        'score_keyword'    => true,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->score()->withColor(self::getAuxiliaryArray())->fromYourHand()->revealingIfUnable()->build();
     }
   }
 

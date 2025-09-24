@@ -36,14 +36,10 @@ class Card493 extends AbstractCard
       $cardIds[] = self::getId($card);
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'location_from'                   => Locations::HAND,
-      'meld_keyword'                    => true,
-      'card_ids_are_in_auxiliary_array' => true,
-      // Automating this can sometimes reveal hidden info
-      'enable_autoselection'            => count($cardsInHand) <= 1,
-      'reveal_if_unable'                => true,
-    ];
+
+    // Automating this can sometimes reveal hidden info
+    $canAutoselect = count($cardsInHand) <= 1;
+    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withAutoselection($canAutoselect)->build();
   }
 
   public function handleCardChoice(array $card)

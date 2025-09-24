@@ -17,16 +17,9 @@ class Card507 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'splay_direction'     => Directions::UNSPLAYED,
-        'has_splay_direction' => [Directions::LEFT, Directions::RIGHT, Directions::UP, Directions::ASLANT],
-      ];
+      return self::youMust()->unsplay()->currentlySplayed()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::RED, Colors::GREEN],
-      ];
+      return self::youMay()->splayLeft([Colors::RED, Colors::GREEN])->build();
     }
   }
 

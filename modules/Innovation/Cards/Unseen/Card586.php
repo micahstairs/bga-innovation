@@ -15,12 +15,9 @@ class Card586 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2])->build();
     } else {
-      return [
-        'location_from'  => 'safe',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourSafe()->build();
     }
   }
 

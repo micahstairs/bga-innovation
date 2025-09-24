@@ -30,25 +30,12 @@ class Card531 extends AbstractCard
   {
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
-        return [
-          'n'             => 'all',
-          'location_from' => 'revealed',
-          'meld_keyword'  => true,
-          'color'         => [Colors::GREEN, Colors::YELLOW],
-        ];
+        return self::youMust()->meld()->all()->withColor([Colors::GREEN, Colors::YELLOW])->fromYourRevealed()->build();
       } else {
-        return [
-          'n'              => 'all',
-          'location_from'  => 'revealed',
-          'return_keyword' => true,
-        ];
+        return self::youMust()->return()->all()->fromYourRevealed()->build();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN, Colors::YELLOW],
-      ];
+      return self::youMay()->splayRight([Colors::GREEN, Colors::YELLOW])->build();
     }
   }
 

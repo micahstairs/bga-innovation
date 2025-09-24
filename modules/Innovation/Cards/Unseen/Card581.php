@@ -17,19 +17,9 @@ class Card581 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayUp(Colors::GREEN)->build();
     } else {
-      return [
-        'owner_from'    => 'any other player',
-        'location_from' => 'board',
-        'meld_keyword'  => true,
-        'color'         => Colors::NON_YELLOW,
-        'with_icon'     => Icons::EFFICIENCY,
-      ];
+      return self::youMust()->meld()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromAnyBoard()->build();
     }
   }
 

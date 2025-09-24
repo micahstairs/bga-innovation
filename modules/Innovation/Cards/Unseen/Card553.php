@@ -33,10 +33,7 @@ class Card553 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'splay_direction' => Directions::RIGHT,
-      'color'           => [Colors::GREEN, Colors::PURPLE],
-    ];
+    return self::youMust()->splayRight([Colors::GREEN, Colors::PURPLE])->build();
   }
 
   public function afterInteraction()

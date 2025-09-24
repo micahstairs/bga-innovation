@@ -18,31 +18,13 @@ class Card549 extends AbstractCard
   {
 
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'          => true,
-        'location_from'     => 'hand',
-        'safeguard_keyword' => true,
-      ];
+      return self::youMay()->safeguard()->fromYourHand()->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'n'             => 2,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'location_to'   => 'revealed',
-      ];
+      return self::youMust()->reveal()->exactly(2)->fromAvailableAchievements()->build();
     } else if (self::isThirdInteraction()) {
-      return [
-        'can_pass'                        => true,
-        'location_from'                   => 'revealed',
-        'location_to'                     => 'board',
-        'meld_keyword'                    => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMay()->meld()->onlyCardsInAuxiliaryArray()->fromYourRevealed()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'revealed',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourRevealed()->build();
     }
   }
 

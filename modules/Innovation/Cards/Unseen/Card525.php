@@ -34,16 +34,9 @@ class Card525 extends AbstractCard
           $values[] = self::getValue($card);
         }
       }
-      return [
-        'choose_value' => true,
-        'age'          => $values,
-      ];
+      return self::youMust()->chooseValue($values)->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::BLUE],
-      ];
+      return self::youMay()->splayRight(Colors::BLUE)->build();
     }
   }
 

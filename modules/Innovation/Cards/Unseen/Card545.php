@@ -24,11 +24,7 @@ class Card545 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'board',
-      'tuck_keyword'  => true,
-      'with_icon'     => Icons::CONCEPT,
-    ];
+    return self::youMust()->tuck()->withIcon(Icons::CONCEPT)->fromYourBoard()->build();
   }
 
   public function afterInteraction()

@@ -15,16 +15,12 @@ class Card559 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2, 3]];
+      return self::youMust()->choose([1, 2, 3])->build();
     } else {
       if (self::getAuxiliaryValue() === 2) {
-        return [
-          'n'             => 'all',
-          'location_from' => 'score',
-          'tuck_keyword'  => true,
-        ];
+        return self::youMust()->tuck()->all()->fromYourScore()->build();
       } else {
-        return ['choose_value' => true];
+        return self::youMust()->chooseValue()->build();
       }
     }
   }

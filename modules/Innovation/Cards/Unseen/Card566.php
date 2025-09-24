@@ -42,11 +42,11 @@ class Card566 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'       => self::countCards('revealed') === 1,
-      'location_from'  => 'revealed',
-      'return_keyword' => true,
-    ];
+    if (self::countCards('revealed') === 1) {
+      return self::youMay()->return()->fromYourRevealed()->build();
+    } else {
+      return self::youMust()->return()->fromYourRevealed()->build();
+    }
   }
 
   public function afterInteraction()

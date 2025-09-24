@@ -15,7 +15,7 @@ class Card593 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choices' => [Colors::RED, Colors::BLUE, Colors::GREEN]];
+    return self::youMust()->choose([Colors::RED, Colors::BLUE, Colors::GREEN])->build();
   }
 
   protected function getPromptForListChoice(): array

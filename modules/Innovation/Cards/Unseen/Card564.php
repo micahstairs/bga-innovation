@@ -32,11 +32,7 @@ class Card564 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from' => 'score',
-      'location_to'   => 'revealed',
-      'age'           => self::getAuxiliaryValue(),
-    ];
+    return self::youMust()->reveal()->value(self::getAuxiliaryValue())->fromYourScore()->build();
   }
 
   public function handleCardChoice(array $card)

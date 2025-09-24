@@ -20,15 +20,12 @@ class Card555 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2])->build();
     } else {
       if (self::getAuxiliaryValue() === 1) {
-        return ['splay_direction' => Directions::UNSPLAYED];
+        return self::youMust()->unsplay()->build();
       } else {
-        return [
-          'splay_direction'     => Directions::UP,
-          'has_splay_direction' => [Directions::UNSPLAYED],
-        ];
+        return self::youMust()->splayUp()->currentlyUnsplayed()->build();
       }
     }
   }

@@ -18,11 +18,7 @@ class Card538 extends AbstractCard
     foreach (self::getTopCards() as $card) {
       $colors[] = self::getColor($card);
     }
-    return [
-      'player_id'    => self::getLauncherId(),
-      'choose_color' => true,
-      'color'        => $colors,
-    ];
+    return self::youMust()->chooseColor($colors)->ofMyChoice()->build();
   }
 
   public function handleColorChoice(int $color): void

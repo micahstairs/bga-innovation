@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card565 extends AbstractCard
 {
@@ -19,15 +20,9 @@ class Card565 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_player' => true,
-        'players'       => $this->game->getActiveOpponents(self::getPlayerId()),
-      ];
+      return self::youMust()->choosePlayer(self::getOpponents())->build();
     } else {
-      return [
-        'player_id'   => self::getAuxiliaryValue(),
-        'choose_from' => 'board',
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->ofPlayersChoice(self::getAuxiliaryValue())->build();
     }
   }
 

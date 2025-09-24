@@ -26,26 +26,12 @@ class Card486 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_player' => true,
-        'players'       => $this->game->getOtherActivePlayers(self::getPlayerId()),
-      ];
+      return self::youMust()->choosePlayer(self::getOtherPlayers())->build();
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from' => 'board',
-        'owner_to'      => self::getAuxiliaryValue(),
-        'location_to'   => 'board',
-        'with_icon'     => Icons::AUTHORITY,
-      ];
+      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toBoard(self::getAuxiliaryValue())->build();
     } else {
-      return [
-        'owner_from'    => self::getAuxiliaryValue(),
-        'location_from' => 'board',
-        'owner_to'      => self::getPlayerId(),
-        'meld_keyword'  => true,
-        'age'           => $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), Icons::AUTHORITY),
-        'without_icon'  => Icons::AUTHORITY,
-      ];
+      $value = $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), Icons::AUTHORITY);
+      return self::youMust()->meld()->value($value)->withoutIcon(Icons::AUTHORITY)->fromBoard(self::getAuxiliaryValue())->toYours()->build();
     }
   }
 

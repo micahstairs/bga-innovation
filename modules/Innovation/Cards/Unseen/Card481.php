@@ -22,11 +22,7 @@ class Card481 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'              => 2,
-      'location_from'  => 'hand',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->exactly(2)->fromYourHand()->build();
   }
 
   public function afterInteraction()

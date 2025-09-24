@@ -29,23 +29,12 @@ class Card485 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'       => true,
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-          'age'            => self::getAuxiliaryValue(),
-        ];
+        return self::youMay()->return()->value(self::getAuxiliaryValue())->fromYourHand()->build();
       } else {
-        return [
-          'safeguard_keyword' => true,
-          'age'               => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->safeguard()->value(self::getAuxiliaryValue())->build();
       }
     } else {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
+      return self::youMay()->choose([1])->build();
     }
   }
 

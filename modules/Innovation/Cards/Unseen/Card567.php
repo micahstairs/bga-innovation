@@ -29,17 +29,10 @@ class Card567 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'color'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->return()->all()->withColor(self::getAuxiliaryArray())->fromYourBoard()->build();
     } else {
-      return [
-        'n'                 => count(self::getAuxiliaryArray()),
-        'safeguard_keyword' => true,
-      ];
+      $numCards = count(self::getAuxiliaryArray());
+      return self::youMust()->safeguard()->exactly($numCards)->build();
     }
   }
 

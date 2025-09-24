@@ -26,20 +26,11 @@ class Card497 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => Locations::SAFE,
-        'location_to'   => Locations::AVAILABLE_ACHIEVEMENTS,
-      ];
+      return self::youMust()->fromYourSafe()->toAvailableAchievements()->build();
+    } else if (self::isSecondInteraction() || self::isThirdInteraction()) {
+      return self::youMay()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
     } else {
-      $options = [
-        'can_pass'      => true,
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
-      if (self::isSecondInteraction() || self::isThirdInteraction()) {
-        $options['card_ids_are_in_auxiliary_array'] = true;
-      }
-      return $options;
+      return self::youMay()->score()->fromYourHand()->build();
     }
   }
 

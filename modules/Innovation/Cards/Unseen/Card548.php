@@ -13,10 +13,7 @@ class Card548 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass' => true,
-      'choices'  => [1, 2],
-    ];
+    return self::youMay()->choose([1, 2])->build();
   }
 
   protected function getPromptForListChoice(): array

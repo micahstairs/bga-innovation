@@ -38,6 +38,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function ofPlayersChoice(int $player_id): InteractionBuilder
+  {
+    $this->interactionOptions['player_id'] = $player_id;
+    return $this;
+  }
+
   function otherThan(int $cardId): InteractionBuilder
   {
     $this->interactionOptions['not_id'] = $cardId;
@@ -213,6 +219,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function currentlySplayedLeft(): InteractionBuilder
+  {
+    $this->interactionOptions['has_splay_direction'] = [Directions::LEFT];
+    return $this;
+  }
+
   function currentlySplayedRight(): InteractionBuilder
   {
     $this->interactionOptions['has_splay_direction'] = [Directions::RIGHT];
@@ -220,6 +232,19 @@ class InteractionBuilder
   }
 
   // DIRECTION OF SPLAY
+
+  function unsplay(array|int|null $colors = null): InteractionBuilder
+  {
+    if ($colors !== null) {
+      if (!is_array($colors)) {
+        $colors = [$colors];
+      }
+      $this->interactionOptions['color'] = $colors;
+    }
+
+    $this->interactionOptions['splay_direction'] = Directions::UNSPLAYED;
+    return $this;
+  }
 
   function splayLeft(array|int|null $colors = null): InteractionBuilder
   {
@@ -315,6 +340,13 @@ class InteractionBuilder
   function fromYourAchievements(): InteractionBuilder
   {
     $this->interactionOptions['location_from'] = Locations::ACHIEVEMENTS;
+    $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
+    return $this;
+  }
+
+  function fromYourSafe(): InteractionBuilder
+  {
+    $this->interactionOptions['location_from'] = Locations::SAFE;
     $this->interactionOptions['owner_from'] = $this->state->getPlayerId();
     return $this;
   }
@@ -480,6 +512,12 @@ class InteractionBuilder
 
   // DESTINATION LOCATION
 
+  function toLocation(string $location): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = $location;
+    return $this;
+  }
+
   function toPlayer(int $playerId): InteractionBuilder
   {
     $this->interactionOptions['owner_to'] = $playerId;
@@ -519,10 +557,32 @@ class InteractionBuilder
     return $this->toMy()->toScore();
   }
 
+  function toMyAchivements(): InteractionBuilder
+  {
+    return $this->toMy(Locations::ACHIEVEMENTS);
+  }
+
+  function toYourAchivements(): InteractionBuilder
+  {
+    return $this->toLocation(Locations::ACHIEVEMENTS);
+  }
+
   function toYourScore(): InteractionBuilder
   {
     $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
     $this->interactionOptions['location_to'] = Locations::SCORE;
+    return $this;
+  }
+
+  function toMySafe(): InteractionBuilder
+  {
+    return $this->toMy(Locations::SAFE);
+  }
+
+  function toYourSafe(): InteractionBuilder
+  {
+    $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
+    $this->interactionOptions['location_to'] = Locations::SAFE;
     return $this;
   }
 
@@ -535,6 +595,12 @@ class InteractionBuilder
   {
     $this->interactionOptions['owner_to'] = $this->state->getPlayerId();
     $this->interactionOptions['location_to'] = Locations::HAND;
+    return $this;
+  }
+
+  function toAvailableAchievements(): InteractionBuilder
+  {
+    $this->interactionOptions['location_to'] = Locations::AVAILABLE_ACHIEVEMENTS;
     return $this;
   }
 
@@ -714,15 +780,21 @@ class InteractionBuilder
     return $this;
   }
 
-  function chooseTwoColors(): InteractionBuilder
+  function chooseTwoColors(?array $colors = null): InteractionBuilder
   {
     $this->interactionOptions['choose_two_colors'] = true;
+    if ($colors !== null) {
+      $this->interactionOptions['color'] = $colors;
+    }
     return $this;
   }
 
-  function chooseThreeColors(): InteractionBuilder
+  function chooseThreeColors(?array $colors = null): InteractionBuilder
   {
     $this->interactionOptions['choose_three_colors'] = true;
+    if ($colors !== null) {
+      $this->interactionOptions['color'] = $colors;
+    }
     return $this;
   }
 
@@ -758,6 +830,12 @@ class InteractionBuilder
   function revealingIfUnable(): InteractionBuilder
   {
     $this->interactionOptions['reveal_if_unable'] = true;
+    return $this;
+  }
+
+  function withAutoselection(bool $enabled): InteractionBuilder
+  {
+    $this->interactionOptions['enable_autoselection'] = $enabled;
     return $this;
   }
 

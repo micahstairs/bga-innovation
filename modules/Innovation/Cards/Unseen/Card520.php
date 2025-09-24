@@ -6,6 +6,7 @@ use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card520 extends AbstractCard
 {
@@ -24,7 +25,7 @@ class Card520 extends AbstractCard
       }
     }
     if ($numCardsWithProsperityIcons === 3) {
-      $cardsInDeck = self::getCardsKeyedByValue('deck');
+      $cardsInDeck = self::getCardsKeyedByValue(Locations::DECK);
       foreach ($cardsInDeck[5] as $card) {
         if ($card['type'] == CardTypes::BASE) {
           self::score($card);

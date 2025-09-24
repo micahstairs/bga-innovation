@@ -35,10 +35,6 @@ class Card574 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::UP,
-      'color'           => [Colors::YELLOW, Colors::PURPLE],
-    ];
+    return self::youMay()->splayUp([Colors::YELLOW, Colors::PURPLE])->build();
   }
 }

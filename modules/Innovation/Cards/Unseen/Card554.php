@@ -28,17 +28,9 @@ class Card554 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN, Colors::PURPLE],
-      ];
+      return self::youMust()->splayRight([Colors::GREEN, Colors::PURPLE])->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'revealed',
-        'return_keyword' => true,
-      ];
-
+      return self::youMust()->return()->all()->fromYourRevealed()->build();
     }
   }
 

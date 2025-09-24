@@ -16,24 +16,13 @@ class Card490 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::countCards(Locations::ACHIEVEMENTS) + 1,
-      ];
+      $value = self::countCards(Locations::ACHIEVEMENTS) + 1;
+      return self::youMust()->safeguard()->value($value)->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'location_to'   => Locations::HAND,
-        'age'           => self::getMinValue(self::getAvailableStandardAchievements()),
-      ];
+      $value = self::getMinValue(self::getAvailableStandardAchievements());
+      return self::youMay()->value($value)->fromAvailableAchievements()->toYourHand()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::PILE,
-        'return_keyword' => true,
-        'color'          => [Colors::YELLOW, Colors::BLUE],
-      ];
+      return self::youMust()->return()->fromAnywhereInStack()->withColor([Colors::YELLOW, Colors::BLUE])->build();
     }
   }
 

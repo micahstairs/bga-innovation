@@ -18,19 +18,12 @@ class Card558 extends AbstractCard
   {
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
-        return ['choices' => [1, 2, 3]];
+        return self::youMust()->choose([1, 2, 3])->build();
       } else {
-        return [
-          'n'                 => 'all',
-          'location_from'     => Locations::AVAILABLE_ACHIEVEMENTS,
-          'safeguard_keyword' => true,
-        ];
+        return self::youMust()->safeguard()->all()->fromAvailableAchievements()->build();
       }
     } else {
-      return [
-        'splay_direction'     => Directions::UP,
-        'has_splay_direction' => [Directions::LEFT],
-      ];
+      return self::youMust()->splayUp()->currentlySplayedLeft()->build();
     }
   }
 

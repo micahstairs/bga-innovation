@@ -22,25 +22,12 @@ class Card513 extends AbstractCard
       if (self::isFirstInteraction()) {
         $value = self::countCards(Locations::HAND);
         self::setAuxiliaryValue($value);
-        return [
-          'location_from'     => Locations::AVAILABLE_ACHIEVEMENTS,
-          'safeguard_keyword' => true,
-          'age'               => $value,
-        ];
+        return self::youMust()->safeguard()->value($value)->fromAvailableAchievements()->build();
       } else {
-        return [
-          'n'              => 'all',
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-          'age'            => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromYourHand()->build();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::PURPLE],
-      ];
+      return self::youMay()->splayLeft(Colors::PURPLE)->build();
     }
   }
 

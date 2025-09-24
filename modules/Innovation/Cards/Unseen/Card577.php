@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 
 class Card577 extends AbstractCard
 {
@@ -16,18 +15,9 @@ class Card577 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'safe',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'achievements',
-      ];
+      return self::youMust()->fromYourSafe()->toMyAchivements()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayUp(Colors::YELLOW)->build();
     }
   }
 

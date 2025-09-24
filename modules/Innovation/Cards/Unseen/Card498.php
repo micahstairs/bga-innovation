@@ -25,20 +25,10 @@ class Card498 extends AbstractCard
   {
     $drawnCardId = self::getAuxiliaryValue();
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'          => true,
-        'location_from'     => 'hand',
-        'safeguard_keyword' => true,
-        'not_id'            => $drawnCardId,
-        'color'             => [self::getCard($drawnCardId)['color']],
-      ];
+      $color = self::getColor(self::getCard($drawnCardId));
+      return self::youMay()->safeguard()->withColor($color)->otherThan($drawnCardId)->fromYourHand()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-        'not_id'         => $drawnCardId,
-      ];
+      return self::youMust()->return()->all()->otherThan($drawnCardId)->fromYourHand()->build();
     }
   }
 

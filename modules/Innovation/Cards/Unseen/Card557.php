@@ -23,11 +23,7 @@ class Card557 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n'             => 'all',
-      'location_from' => 'safe',
-      'tuck_keyword'  => true,
-    ];
+    return self::youMust()->tuck()->all()->fromYourSafe()->build();
   }
 
 }

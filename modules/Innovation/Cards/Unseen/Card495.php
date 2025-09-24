@@ -38,11 +38,7 @@ class Card495 extends AbstractCard
         $colors[] = $color;
       }
     }
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::LEFT,
-      'color'           => $colors,
-    ];
+    return self::youMay()->splayLeft($colors)->build();
   }
 
 }

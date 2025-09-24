@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card516 extends AbstractCard
 {
@@ -15,15 +16,11 @@ class Card516 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [0, 1]];
+      return self::youMust()->choose([0, 1])->build();
     } else if (self::isSecondInteraction()) {
-      return ['choose_from' => 'safe'];
+      return self::youMust()->chooseCardFrom(Locations::SAFE)->build();
     } else {
-      return [
-        'location_from' => 'safe',
-        'meld_keyword'  => 'true',
-        'not_id'        => self::getAuxiliaryValue2(),
-      ];
+      return self::youMust()->meld()->fromYourSafe()->otherThan(self::getAuxiliaryValue2())->build();
     }
   }
 
@@ -42,7 +39,7 @@ class Card516 extends AbstractCard
       if (self::getNumChosen() > 0) {
         self::safeguard($revealedCard);
         // Put all revealed cards in hand if they can't fit in the safe
-        foreach (self::getCards('revealed') as $card) {
+        foreach (self::getCards(Locations::REVEALED) as $card) {
           self::transferToHand($card);
         }
       } else {

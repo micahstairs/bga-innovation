@@ -30,20 +30,15 @@ class Card544 extends AbstractCard
           $mustReveal = true;
         }
       }
-      return [
-        'location_from' => Locations::HAND,
-        'location_to'   => $mustReveal ? Locations::REVEALED_THEN_DECK : Locations::DECK,
-      ];
+      if ($mustReveal) {
+        return self::youMust()->revealAndReturn()->fromYourHand()->build();
+      } else {
+        return self::youMust()->return()->fromYourHand()->build();
+      }
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand()->build();
     } else {
-      return [
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->fromYourHand()->build();
     }
   }
 

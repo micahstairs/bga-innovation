@@ -28,17 +28,9 @@ class Card576 extends AbstractCard
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(0); // Track whether cards were transferred as part of either interaction
-      return [
-        'can_pass'        => true,
-        'location_from'   => 'board',
-        'topdeck_keyword' => true,
-      ];
+      return self::youMay()->topDeck()->fromYourBoard()->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMay()->meld()->fromYourHand()->build();
     }
   }
 

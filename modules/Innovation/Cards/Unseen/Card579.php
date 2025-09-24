@@ -18,17 +18,9 @@ class Card579 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       self::setAuxiliaryArray([]);
-      return [
-        'n'              => 'all',
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourScore()->build();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::RED],
-      ];
+      return self::youMay()->splayUp(Colors::RED)->build();
     }
   }
 

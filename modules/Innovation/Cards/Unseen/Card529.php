@@ -16,16 +16,9 @@ class Card529 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => [1, 3, 5, 7, 9, 11],
-      ];
+      return self::youMust()->chooseValue([1, 3, 5, 7, 9, 11])->build();
     } else {
-      return [
-        'n'             => 3,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'score_keyword' => true,
-      ];
+      return self::youMust()->score()->exactly(3)->fromAvailableAchievements()->build();
     }
   }
 
@@ -33,8 +26,8 @@ class Card529 extends AbstractCard
   {
     $count = 0;
     foreach ($this->game->getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $playerId) {
-      foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $card) {
-        $this->game->transferCardFromTo($card, 0, 'achievements');
+      foreach (self::getCardsKeyedByValue(Locations::SCORE, $playerId)[$value] as $card) {
+        self::transferToAvailableAchievements($card);
         $count++;
       }
     }

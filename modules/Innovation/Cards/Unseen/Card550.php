@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card550 extends AbstractCard
 {
@@ -20,18 +21,10 @@ class Card550 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'score',
-        'location_to'   => 'board',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourScore()->build();
     } else {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::getLowestAvailableAchievementValue(),
-      ];
+      return self::youMust()->safeguard()->value(self::getMinValueInLocation(Locations::AVAILABLE_ACHIEVEMENTS))->build();
     }
   }
 
@@ -50,11 +43,6 @@ class Card550 extends AbstractCard
         }
       }
     }
-  }
-
-  private function getLowestAvailableAchievementValue(): int
-  {
-    return $this->game->getMinOrMaxAgeInLocation(0, 'achievements', 'MIN');
   }
 
 }

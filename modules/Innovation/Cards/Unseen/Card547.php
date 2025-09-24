@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card547 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card547 extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else if (self::isSecondNonDemand()) {
-      foreach (self::getCards('achievements') as $card) {
+      foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
         if (self::isSpecialAchievement($card)) {
           self::draw(7);
         }
@@ -29,38 +30,21 @@ class Card547 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [0, 1]];
+      return self::youMust()->choose([0, 1])->build();
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === 1) {
         $topCards = self::getTopCards();
         $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
-        return [
-          'location_from' => 'board',
-          'location_to'   => 'junk,safe',
-          'color'         => $colors,
-        ];
+        return self::youMust()->withColor($colors)->fromYourBoard()->toLocation(Locations::JUNK_THEN_SAFEGUARD)->build();
       } else {
         self::setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));
-        return [
-          'location_from'                   => 'safe',
-          'score_keyword'                   => true,
-          'card_ids_are_in_auxiliary_array' => true,
-        ];
+        return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourSafe()->build();
       }
     } else {
       if (self::getAuxiliaryValue() === 1) {
-        return [
-          'location_from' => 'board',
-          'location_to'   => 'junk,safe',
-          'age'           => self::getLastSelectedAge(),
-          'color'         => Colors::getAllColorsOtherThan(self::getLastSelectedColor()),
-        ];
+        return self::youMust()->non(self::getLastSelectedColor())->value(self::getLastSelectedAge())->fromYourBoard()->toLocation(Locations::JUNK_THEN_SAFEGUARD)->build();
       } else {
-        return [
-          'location_from' => 'safe',
-          'score_keyword' => true,
-          'age'           => self::getLastSelectedAge(),
-        ];
+        return self::youMust()->score()->value(self::getLastSelectedAge())->fromYourSafe()->build();
       }
     }
   }

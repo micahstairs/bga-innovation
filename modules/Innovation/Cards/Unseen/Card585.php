@@ -14,11 +14,7 @@ class Card585 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'location_from'  => 'board',
-      'bottom_from'    => true,
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->fromBottom()->fromYourBoard()->build();
   }
 
   public function handleCardChoice(array $card)

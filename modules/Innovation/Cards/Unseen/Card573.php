@@ -14,12 +14,7 @@ class Card573 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'owner_from'    => self::getLauncherId(),
-      'location_from' => 'score',
-      'owner_to'      => self::getPlayerId(),
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromMyScore()->build();
   }
 
   public function handleCardChoice(array $card)

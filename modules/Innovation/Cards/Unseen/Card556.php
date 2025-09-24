@@ -23,13 +23,7 @@ class Card556 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return [
-      'n_min'                           => 1,
-      'n_max'                           => 2,
-      'location_from'                   => 'hand',
-      'return_keyword'                  => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->return()->minCards(1)->maxCards(2)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
   }
 
   public function handleCardChoice(array $card)

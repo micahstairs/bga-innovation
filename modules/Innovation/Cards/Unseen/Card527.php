@@ -37,10 +37,7 @@ class Card527 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'safeguard_keyword'               => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->safeguard()->onlyCardsInAuxiliaryArray()->build();
   }
 
 }

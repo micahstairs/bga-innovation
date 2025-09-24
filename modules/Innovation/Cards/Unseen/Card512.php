@@ -27,23 +27,11 @@ class Card512 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand()->build();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'     => true,
-        'choose_color' => true,
-      ];
+      return self::youMay()->chooseColor()->build();
     } else {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'color'         => [self::getAuxiliaryValue()],
-      ];
+      return self::youMay()->tuck()->anyNumber()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
     }
   }
 

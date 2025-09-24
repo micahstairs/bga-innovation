@@ -21,18 +21,11 @@ class Card534 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2])->build();
     } else if (self::getAuxiliaryValue() === 1) {
-      return [
-        'splay_direction'     => Directions::LEFT,
-        'has_splay_direction' => [Directions::UNSPLAYED],
-        'color'               => Colors::NON_PURPLE,
-      ];
+      return self::youMust()->splayLeft()->non(Colors::PURPLE)->currentlyUnsplayed()->build();
     } else {
-      return [
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand()->build();
     }
   }
 

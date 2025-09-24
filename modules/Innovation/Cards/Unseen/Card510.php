@@ -20,18 +20,11 @@ class Card510 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getValue(self::getTopCardOfColor(Colors::YELLOW)),
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW));
     } else {
-      return [
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getValue(self::getTopCardOfColor(Colors::YELLOW, self::getLauncherId())),
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW, self::getLauncherId()));
     }
+    return self::youMust()->value($value)->fromYourScore()->toMine()->build();
   }
 
 }

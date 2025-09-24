@@ -29,7 +29,7 @@ class Card537 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return ['choices' => [1, 2, 3]];
+    return self::youMust()->choose([1, 2, 3])->build();
   }
 
   protected function getPromptForListChoice(): array

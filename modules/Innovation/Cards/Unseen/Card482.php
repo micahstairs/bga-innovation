@@ -38,16 +38,9 @@ class Card482 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'safeguard_keyword'               => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->safeguard()->onlyCardsInAuxiliaryArray()->build();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand()->build();
     }
   }
 

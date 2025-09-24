@@ -36,13 +36,8 @@ class Card484 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'location_from'                   => 'hand',
-      'score_keyword'                   => true,
-      'card_ids_are_in_auxiliary_array' => true,
-      'reveal_if_unable'                => true,
-      'enable_autoselection'            => false, // Automating this can sometimes reveal hidden info
-    ];
+    // Automating the selection can sometimes reveal hidden info
+    return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withoutAutoselection()->build();
   }
 
   public function afterInteraction()

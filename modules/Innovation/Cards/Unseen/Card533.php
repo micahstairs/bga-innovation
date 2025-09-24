@@ -25,15 +25,9 @@ class Card533 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand()->build();
     } else {
-      return [
-        'choose_color' => true,
-        'color'        => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseColor(self::getAuxiliaryArray())->build();
     }
   }
 
