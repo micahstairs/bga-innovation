@@ -44,7 +44,7 @@ class Card486 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       self::setMaxSteps(3);
-      self::setAuxiliaryValue($card['owner']);
+      self::setAuxiliaryValue(self::getOwner($card));
     }
   }
 }

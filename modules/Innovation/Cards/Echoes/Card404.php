@@ -57,12 +57,12 @@ class Card404 extends AbstractCard
 
   private function bottomLeftIconVisible($card)
   {
-    return $this->game->getIfTopCardOnBoard(self::getId($card)) || ($card['location'] == 'board' && $card['splay_direction'] >= Directions::RIGHT);
+    return $this->game->getIfTopCardOnBoard(self::getId($card)) || (self::getLocation($card) == 'board' && $card['splay_direction'] >= Directions::RIGHT);
   }
 
   private function bottomCenterIconVisible($card)
   {
-    return $this->game->getIfTopCardOnBoard(self::getId($card)) || ($card['location'] == 'board' && $card['splay_direction'] >= Directions::UP);
+    return $this->game->getIfTopCardOnBoard(self::getId($card)) || (self::getLocation($card) == 'board' && $card['splay_direction'] >= Directions::UP);
   }
 
 }

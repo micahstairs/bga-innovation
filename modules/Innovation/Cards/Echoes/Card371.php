@@ -75,7 +75,7 @@ class Card371 extends AbstractCard
   {
     if (self::filterByColor(self::getCards(Locations::FORECAST), Colors::BLUE)) {
       $destinyCard = self::getCard(CardIds::DESTINY);
-      $destinyIsAvailable = $destinyCard['owner'] == 0 && $destinyCard['location'] == Locations::ACHIEVEMENTS;
+      $destinyIsAvailable = self::getOwner($destinyCard) == 0 && self::getLocation($destinyCard) == Locations::ACHIEVEMENTS;
       if ($destinyIsAvailable) {
         self::revealForecast();
         self::setAuxiliaryValue(1); // Remember that we should claim the Destiny achievement

@@ -26,7 +26,7 @@ class Card399 extends AbstractCard
       $valueToDraw = self::isFirstOrThirdEdition() ? 9 : 8;
       $card1 = self::draw($valueToDraw);
       $card2 = self::draw($valueToDraw);
-      self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+      self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
       if (self::isFourthEdition()) {

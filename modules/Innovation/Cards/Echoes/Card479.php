@@ -53,7 +53,7 @@ class Card479 extends AbstractCard
         $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));
       }
       foreach ($stack as $card) {
-        if ($card['position'] == count($stack) - 1) {
+        if (self::getPosition($card) == count($stack) - 1) {
           // All icons are visible on the top card in the stack
           $icons = self::getIcons($card, [1, 2, 3, 4, 5, 6]);
         } else {

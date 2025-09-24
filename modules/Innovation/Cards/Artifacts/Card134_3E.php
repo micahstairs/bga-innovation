@@ -33,7 +33,7 @@ class Card134_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isSplayInteraction()) {
-      self::splayLeft(self::getColor($card), $card['owner'], self::getPlayerId());
+      self::splayLeft(self::getColor($card), self::getOwner($card), self::getPlayerId());
     } else {
       self::selfExecute($card);
       self::setMaxSteps(2);

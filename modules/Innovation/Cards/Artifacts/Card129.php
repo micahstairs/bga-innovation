@@ -39,7 +39,7 @@ class Card129 extends AbstractCard
   public function compelMightBeEffective(): bool
   {
     foreach (self::getTopCards() as $card) {
-      if ($card['type'] == CardTypes::ARTIFACTS) {
+      if (self::getType($card) == CardTypes::ARTIFACTS) {
         return true;
       }
     }

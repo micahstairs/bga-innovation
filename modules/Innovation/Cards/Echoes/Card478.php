@@ -46,7 +46,7 @@ class Card478 extends AbstractCard
     if (self::isFirstInteraction()) {
       // Intercept this card transfer so that we can tell where the card is coming from
       self::setAuxiliaryValue(self::getId($card));
-      self::setAuxiliaryValue2($card['owner']);
+      self::setAuxiliaryValue2(self::getOwner($card));
       self::transferToBoard($card);
       return true;
     }

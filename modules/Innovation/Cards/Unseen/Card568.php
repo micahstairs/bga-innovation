@@ -19,7 +19,7 @@ class Card568 extends AbstractCard
     if (self::isDemand()) {
       self::drawAndMeld(8);
       $topPurpleCard = self::getTopCardOfColor(Colors::PURPLE);
-      if ($topPurpleCard !== null && $topPurpleCard['id'] == 84) {
+      if ($topPurpleCard !== null && self::getId($topPurpleCard) == 84) {
         self::lose();
       }
     } else if (self::getEffectNumber() === 1) {

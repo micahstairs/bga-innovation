@@ -27,7 +27,7 @@ class Card520 extends AbstractCard
     if ($numCardsWithProsperityIcons === 3) {
       $cardsInDeck = self::getCardsKeyedByValue(Locations::DECK);
       foreach ($cardsInDeck[5] as $card) {
-        if ($card['type'] == CardTypes::BASE) {
+        if (self::getType($card) == CardTypes::BASE) {
           self::score($card);
         }
       }

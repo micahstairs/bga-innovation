@@ -33,7 +33,7 @@ class Card527 extends AbstractCard
     $values = self::getValues(self::getTopCards());
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $achievement) {
       if (self::isValuedCard($achievement) && (in_array(self::getValue($achievement), $values))) {
-        $cardIds[] = $achievement['id'];
+        $cardIds[] = self::getId($achievement);
       }
     }
     self::setAuxiliaryArray($cardIds);

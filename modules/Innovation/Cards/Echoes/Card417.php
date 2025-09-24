@@ -35,7 +35,7 @@ class Card417 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::transferToScorePile($card, $card['owner']);
+      self::transferToScorePile($card, self::getOwner($card));
       $cardIds = [];
       foreach (self::getCards('hand') as $cardInHand) {
         if (self::hasIconInCommon($cardInHand, $card)) {

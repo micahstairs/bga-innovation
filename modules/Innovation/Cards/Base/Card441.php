@@ -21,7 +21,7 @@ class Card441 extends AbstractCard
     if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];
       for ($i = 0; $i < count($stack) - 4; $i++) {
-        $cardIds[] = $stack[$i]['id'];
+        $cardIds[] = self::getId($stack[$i]);
       }
       self::setAuxiliaryArray($cardIds);
       self::setAuxiliaryValue($color); // Track color to return

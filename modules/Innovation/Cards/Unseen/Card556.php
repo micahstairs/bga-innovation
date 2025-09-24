@@ -17,7 +17,7 @@ class Card556 extends AbstractCard
   {
     $card1 = self::transferToHand(self::drawAndReveal(9));
     $card2 = self::transferToHand(self::drawAndReveal(9));
-    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+    self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
     self::setMaxSteps(1);
   }
 

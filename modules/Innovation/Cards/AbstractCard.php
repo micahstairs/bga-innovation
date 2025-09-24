@@ -1026,6 +1026,38 @@ abstract class AbstractCard
     return intval($card['id']);
   }
 
+  protected static function getType(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['type']);
+  }
+
+  protected static function getOwner(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['owner']);
+  }
+
+  protected static function getLocation(?array $card): string|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return $card['location'];
+  }
+
+  protected static function getPosition(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['position']);
+  }
+
   protected function getCard(int $cardId): ?array
   {
     return $this->game->getCardInfo($cardId);

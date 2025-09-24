@@ -39,7 +39,7 @@ class Card422_4E extends AbstractCard
       $cardIds = [];
       foreach (self::getCardsKeyedByColor(Locations::BOARD) as $stack) {
         foreach ($stack as $card) {
-          if ($card['position'] > 0) {
+          if (self::getPosition($card) > 0) {
             $cardIds[] = self::getId($card);
           }
         }

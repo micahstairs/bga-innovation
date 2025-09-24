@@ -26,7 +26,7 @@ class Card538 extends AbstractCard
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     self::unsplay($color);
     self::meld(self::getBottomCardOfColor($color));
-    if (self::getTopCardOfColor($color)['position'] > 0) {
+    if (self::getPosition(self::getTopCardOfColor($color)) > 0) {
       self::transferToBoard(self::getBottomCardOfColor($color), self::getLauncherId());
     }
   }

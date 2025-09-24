@@ -23,7 +23,7 @@ class Card472 extends AbstractCard
       } else {
         foreach (self::getPlayerIds() as $playerId) {
           foreach (self::getStack($color, $playerId) as $card) {
-            if ($card['position'] < 5) {
+            if (self::getPosition($card) < 5) {
               self::return($card);
               $repeat = true;
             }

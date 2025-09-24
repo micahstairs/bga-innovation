@@ -33,7 +33,7 @@ class Card549 extends AbstractCard
     if (self::isFirstInteraction()) {
       if (self::getNumChosen() > 0) {
         $card = self::getLastSelectedCard();
-        if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
+        if (self::getLocation($card) == 'safe' && self::getOwner($card) == self::getPlayerId()) {
           self::setMaxSteps(4);
         }
       }

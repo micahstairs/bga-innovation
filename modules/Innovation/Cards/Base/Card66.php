@@ -69,7 +69,7 @@ class Card66 extends AbstractCard
   protected function handleSpecialAchievementChoice(int $specialAchievementId)
   {
     $specialAchievement = self::getCard($specialAchievementId);
-    if ($specialAchievement['location'] == Locations::JUNK) {
+    if (self::getLocation($specialAchievement) == Locations::JUNK) {
       self::transferToAvailableAchievements($specialAchievement);
     } else {
       self::junk($specialAchievement);

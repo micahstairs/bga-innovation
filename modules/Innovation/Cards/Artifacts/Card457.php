@@ -38,7 +38,7 @@ class Card457 extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(self::getId($card)); // Track card selected from score pile
     } else if (self::isSecondInteraction()) {
-      self::transferToBoard(self::getCard(self::getAuxiliaryValue()), $card['owner']);
+      self::transferToBoard(self::getCard(self::getAuxiliaryValue()), self::getOwner($card));
       self::transferToScorePile($card, self::getPlayerId());
     }
   }

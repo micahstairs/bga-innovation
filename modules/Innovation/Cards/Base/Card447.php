@@ -26,7 +26,7 @@ class Card447 extends AbstractCard
 
     $cardIds = [];
     foreach (self::getStack($color) as $card) {
-      if ($card['position'] < 3) {
+      if (self::getPosition($card) < 3) {
         $cardIds[] = self::getId($card);
       }
     }

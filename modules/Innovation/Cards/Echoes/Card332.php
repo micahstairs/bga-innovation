@@ -23,7 +23,7 @@ class Card332 extends AbstractCard
     } else {
       $card1 = self::drawType(1, CardTypes::ECHOES);
       $card2 = self::drawType(1, CardTypes::ECHOES);
-      self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+      self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
       self::setMaxSteps(2);
     }
   }

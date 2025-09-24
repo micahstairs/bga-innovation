@@ -40,7 +40,7 @@ class Card123 extends AbstractCard
     foreach (self::getPlayerIds() as $playerId) {
       $hasTopArtifact = false;
       foreach (self::getTopCards($playerId) as $card) {
-        if ($card['type'] == CardTypes::ARTIFACTS) {
+        if (self::getType($card) == CardTypes::ARTIFACTS) {
           $hasTopArtifact = true;
           break;
         }
