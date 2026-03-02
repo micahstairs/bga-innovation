@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card474 extends AbstractCard
 {
@@ -39,17 +40,17 @@ class Card474 extends AbstractCard
 
     foreach (self::getOtherPlayerIds($maxIconPlayerId) as $playerId) {
       self::revealHand($playerId);
-      foreach (self::getCards('hand', $playerId) as $card) {
+      foreach (self::getCards(Locations::HAND, $playerId) as $card) {
         self::transferToHandIfFeaturedIconMatches($card, $icon, $maxIconPlayerId);
       }
       self::revealScorePile($playerId);
-      foreach (self::getCards('score', $playerId) as $card) {
+      foreach (self::getCards(Locations::SCORE, $playerId) as $card) {
         self::transferToHandIfFeaturedIconMatches($card, $icon, $maxIconPlayerId);
       }
     }
 
     self::revealScorePile($maxIconPlayerId);
-    foreach (self::getCards('score', $maxIconPlayerId) as $card) {
+    foreach (self::getCards(Locations::SCORE, $maxIconPlayerId) as $card) {
       self::transferToHandIfFeaturedIconMatches($card, $icon, $maxIconPlayerId);
     }
 

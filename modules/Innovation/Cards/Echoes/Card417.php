@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Locations;
 
 class Card417 extends AbstractCard
 {
@@ -26,7 +27,7 @@ class Card417 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseCardFrom('board')->otherThan(CardIds::HELICOPTER)->fromAnyPlayer()->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::HELICOPTER)->fromAnyPlayer()->build();
     } else {
       return self::youMay()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->withoutAutoselection()->build();
     }
@@ -37,7 +38,7 @@ class Card417 extends AbstractCard
     if (self::isFirstInteraction()) {
       self::transferToScorePile($card, self::getOwner($card));
       $cardIds = [];
-      foreach (self::getCards('hand') as $cardInHand) {
+      foreach (self::getCards(Locations::HAND) as $cardInHand) {
         if (self::hasIconInCommon($cardInHand, $card)) {
           $cardIds[] = self::getId($cardInHand);
         }

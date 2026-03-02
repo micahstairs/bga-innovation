@@ -32,7 +32,7 @@ class Card21 extends AbstractCard
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Exchange highest cards in your hand with the highest cards in your score pile'), 'age' => self::renderValue(self::getMaxValueInLocation('score') + 1)],
+      1 => [clienttranslate('Exchange highest cards in your hand with the highest cards in your score pile'), 'age' => self::renderValue(self::getMaxValueInLocation(Locations::SCORE) + 1)],
       2 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(3, CardTypes::BASE)],
     ]);
   }

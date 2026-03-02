@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card582 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card582 extends AbstractCard
         $values[] = self::getFaceupValue($card);
       }
     }
-    foreach (self::getCards('score') as $card) {
+    foreach (self::getCards(Locations::SCORE) as $card) {
       if (!in_array(self::getValue($card), $values)) {
         $values[] = self::getValue($card);
       }

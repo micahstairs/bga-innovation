@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card584 extends AbstractCard
 {
@@ -16,11 +17,11 @@ class Card584 extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      if (self::countCardsKeyedByValue('score')[3] > 0) {
+      if (self::countCardsKeyedByValue(Locations::SCORE)[3] > 0) {
         self::lose();
       }
     } else if (self::isSecondNonDemand()) {
-      if (self::countCardsKeyedByValue('hand')[7] > 0) {
+      if (self::countCardsKeyedByValue(Locations::HAND)[7] > 0) {
         self::win();
       }
     } else if (self::isThirdNonDemand()) {

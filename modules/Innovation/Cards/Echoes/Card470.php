@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card470 extends AbstractCard
 {
@@ -15,7 +16,7 @@ class Card470 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseCardFrom('board')->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->build();
     } else {
       return self::youMust()->choose([1, 2])->build();
     }

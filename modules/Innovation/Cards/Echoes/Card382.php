@@ -23,7 +23,7 @@ class Card382 extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       $tuckedCard = self::drawAndTuck(4);
       $topCard = self::getTopCardOfColor(self::getColor($tuckedCard));
-      if ($topCard['age'] < 4) {
+      if (self::getValue($topCard) < 4) {
         self::drawAndScore(4);
       }
     } else {

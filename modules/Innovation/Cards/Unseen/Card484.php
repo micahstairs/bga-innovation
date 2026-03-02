@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card484 extends AbstractCard
 {
@@ -15,7 +16,7 @@ class Card484 extends AbstractCard
   public function initialExecution()
   {
     $colorCounts = [0, 0, 0, 0, 0];
-    $cards = self::getCards('hand', self::getLauncherId());
+    $cards = self::getCards(Locations::HAND, self::getLauncherId());
     foreach ($cards as $card) {
       $colorCounts[self::getColor($card)]++;
     }
@@ -30,7 +31,7 @@ class Card484 extends AbstractCard
   {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
-    foreach (self::getCards('hand') as $card) {
+    foreach (self::getCards(Locations::HAND) as $card) {
       if ($colorCounts[self::getColor($card)] > 0) {
         $cardIds[] = self::getId($card);
       }
@@ -43,10 +44,10 @@ class Card484 extends AbstractCard
   public function afterInteraction()
   {
     if (self::getNumChosen() === 0) {
-      $launcherCardsInHand = self::getCards('hand', self::getLauncherId());
-      $cardsInHand = self::getCards('hand');
+      $launcherCardsInHand = self::getCards(Locations::HAND, self::getLauncherId());
+      $cardsInHand = self::getCards(Locations::HAND);
       if (array_sum(self::getActionScopedAuxiliaryArray()) > 0 && count($launcherCardsInHand) > 0) {
-        $cardsInScorePile = self::getCards('score', self::getLauncherId());
+        $cardsInScorePile = self::getCards(Locations::SCORE, self::getLauncherId());
         foreach ($cardsInHand as $card) {
           self::transferToScorePile($card, self::getLauncherId());
         }
@@ -67,7 +68,7 @@ class Card484 extends AbstractCard
   {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
-    foreach (self::getCards('hand', $playerId) as $card) {
+    foreach (self::getCards(Locations::HAND, $playerId) as $card) {
       if ($colorCounts[self::getColor($card)] > 0) {
         $cardIds[] = self::getId($card);
       }

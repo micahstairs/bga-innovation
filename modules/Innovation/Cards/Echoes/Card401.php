@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card401 extends AbstractCard
 {
@@ -31,7 +32,7 @@ class Card401 extends AbstractCard
       }
       return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourStack(Colors::GREEN)->build();
     } else if (self::isFirstInteraction()) {
-      $values = self::getUniqueValuesInLocation('score');
+      $values = self::getUniqueValuesInLocation(Locations::SCORE);
       return self::youMust()->chooseValue($values)->build();
     } else {
       return self::youMust()->choose([1, 2])->build();
@@ -63,7 +64,7 @@ class Card401 extends AbstractCard
   public function handleListChoice(int $choice)
   {
     $value = self::getAuxiliaryValue();
-    $sourceLocation = $choice === 1 ? 'hand' : 'score';
+    $sourceLocation = $choice === 1 ? Locations::HAND : Locations::SCORE;
     $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
     foreach ($playerIds as $playerId) {
       foreach (self::getCardsKeyedByValue($sourceLocation, $playerId)[$value] as $card) {

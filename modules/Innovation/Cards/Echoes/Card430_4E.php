@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card430_4E extends AbstractCard
 {
@@ -32,7 +32,7 @@ class Card430_4E extends AbstractCard
     if (self::isDemand()) {
       $values = self::getActionScopedAuxiliaryArray();
       $cardIds = [];
-      foreach (self::getCards('score') as $card) {
+      foreach (self::getCards(Locations::SCORE) as $card) {
         if (in_array(self::getValue($card), $values)) {
           $cardIds[] = self::getId($card);
         }

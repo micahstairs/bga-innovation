@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card593 extends AbstractCard
 {
@@ -37,9 +38,9 @@ class Card593 extends AbstractCard
     }
 
     if (self::splayAslant($color) && $scoredCard) {
-      $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), 'score');
-      $minScoreValue = self::getMinValueInLocation('score');
-      foreach (self::getCards('achievements') as $card) {
+      $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), Locations::SCORE);
+      $minScoreValue = self::getMinValueInLocation(Locations::SCORE);
+      foreach (self::getCards(Locations::ACHIEVEMENTS) as $card) {
         if (self::isValuedCard($card) && self::getValue($card) < $minScoreValue) {
           self::transferToScorePile($card);
         }

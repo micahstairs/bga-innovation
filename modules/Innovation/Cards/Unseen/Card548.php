@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card548 extends AbstractCard
 {
@@ -30,8 +31,8 @@ class Card548 extends AbstractCard
       self::junk(self::draw(7));
       self::junk(self::draw(7));
     } else {
-      $junkCards = self::getCards('junk');
-      foreach (self::getCards('score') as $card) {
+      $junkCards = self::getCards(Locations::JUNK);
+      foreach (self::getCards(Locations::SCORE) as $card) {
         self::junk($card);
       }
       foreach ($junkCards as $card) {

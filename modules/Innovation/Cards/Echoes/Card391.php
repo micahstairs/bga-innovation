@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card391 extends AbstractCard
 {
@@ -32,7 +32,7 @@ class Card391 extends AbstractCard
       $color = $this->game->getIndexedAuxiliaryValue(self::getPlayerId());
       do {
         $continue = false;
-        $count = self::countCardsKeyedByColor('board')[$color];
+        $count = self::countCardsKeyedByColor(Locations::BOARD)[$color];
         if ($count > 2) {
           self::score(self::getTopCardOfColor($color));
           self::score(self::getTopCardOfColor($color));

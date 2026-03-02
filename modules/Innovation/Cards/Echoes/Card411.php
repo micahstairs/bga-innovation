@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card411 extends AbstractCard
 {
@@ -32,7 +33,7 @@ class Card411 extends AbstractCard
     } else {
       $topCards = self::getTopCards();
       $cardIds = [];
-      foreach (self::getCards('score') as $scorePileCard) {
+      foreach (self::getCards(Locations::SCORE) as $scorePileCard) {
         $found = false;
         foreach ($topCards as $topCard) {
           if (self::getFaceupValue($topCard) == self::getValue($scorePileCard)) {

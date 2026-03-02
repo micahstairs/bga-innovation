@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Locations;
 
 class Card478 extends AbstractCard
 {
@@ -37,7 +38,7 @@ class Card478 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->fromAnyBoard()->toMyBoard()->build();
     } else {
-      return self::youMust()->chooseCardFrom('board')->otherThan(CardIds::DEEPFAKE)->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::DEEPFAKE)->build();
     }
   }
 

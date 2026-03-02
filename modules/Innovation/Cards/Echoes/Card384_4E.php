@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card384_4E extends AbstractCard
 {
@@ -30,7 +31,7 @@ class Card384_4E extends AbstractCard
     if (self::isEcho()) {
       $values = [];
       foreach (self::getPlayerIds() as $playerId) {
-        $values = array_merge($values, self::getUniqueValuesInLocation('score', $playerId));
+        $values = array_merge($values, self::getUniqueValuesInLocation(Locations::SCORE, $playerId));
       }
       return self::youMust()->chooseValue($values)->build();
     } else {

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card472 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card472 extends AbstractCard
       $repeat = false;
       $card = self::transferToHand(self::drawAndReveal(10));
       $color = self::getColor($card);
-      if (self::countCardsKeyedByColor('board')[$color] < 6) {
+      if (self::countCardsKeyedByColor(Locations::BOARD)[$color] < 6) {
         self::splayAslant($color);
       } else {
         foreach (self::getPlayerIds() as $playerId) {

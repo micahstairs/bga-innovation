@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card402 extends AbstractCard
 {
@@ -20,7 +21,7 @@ class Card402 extends AbstractCard
     if (self::isFirstNonDemand() || self::isFirstOrThirdEdition()) {
       self::setMaxSteps(1);
     } else {
-      self::drawAndForeshadow(self::countCards('hand'));
+      self::drawAndForeshadow(self::countCards(Locations::HAND));
     }
   }
 
@@ -38,7 +39,7 @@ class Card402 extends AbstractCard
     if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $value = self::getValue($card);
       foreach (self::getPlayerIds() as $playerId) {
-        foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $scoreCard) {
+        foreach (self::getCardsKeyedByValue(Locations::SCORE, $playerId)[$value] as $scoreCard) {
           self::transferToHand($scoreCard);
         }
       }

@@ -24,7 +24,7 @@ class Card360 extends AbstractCard
     if (self::isDemand()) {
       $cardIds = [];
       $handCounts = self::countCardsKeyedByValue(Locations::HAND, self::getLauncherId());
-      foreach (self::getCards('score') as $card) {
+      foreach (self::getCards(Locations::SCORE) as $card) {
         if ($handCounts[self::getValue($card)] > 0) {
           $cardIds[] = self::getId($card);
         }

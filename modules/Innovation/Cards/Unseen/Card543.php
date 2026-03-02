@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card543 extends AbstractCard
 {
@@ -14,7 +15,7 @@ class Card543 extends AbstractCard
 
   public function initialExecution()
   {
-    if (self::countCards('hand') > 0) {
+    if (self::countCards(Locations::HAND) > 0) {
       self::setMaxSteps(1);
     }
   }
@@ -37,7 +38,7 @@ class Card543 extends AbstractCard
       if ($topCard) {
         self::safeguard($topCard);
         self::setMaxSteps(2);
-        self::setAuxiliaryValue($topCard['age'] + 1);
+        self::setAuxiliaryValue(self::getValue($topCard) + 1);
       }
     }
   }

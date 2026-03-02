@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card583 extends AbstractCard
 {
@@ -22,7 +23,7 @@ class Card583 extends AbstractCard
     if (self::isFirstInteraction()) {
       // Skip the first interaction if no color has more than 1 card on the board
       $choices = [1];
-      $cardCounts = self::countCardsKeyedByValue('board');
+      $cardCounts = self::countCardsKeyedByValue(Locations::BOARD);
       for ($i = 1; $i <= 11; $i++) {
         if ($cardCounts[$i] > 1) {
           $choices = [1, 2];

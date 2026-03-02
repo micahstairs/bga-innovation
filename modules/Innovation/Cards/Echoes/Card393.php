@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card393 extends AbstractCard
 {
@@ -56,8 +57,8 @@ class Card393 extends AbstractCard
 
   private function getNextValueToReturn(int $lastScoredValue): ?int
   {
-    $scorePileCounts = self::countCardsKeyedByValue('score');
-    $handCounts = self::countCardsKeyedByValue('hand');
+    $scorePileCounts = self::countCardsKeyedByValue(Locations::SCORE);
+    $handCounts = self::countCardsKeyedByValue(Locations::HAND);
     for ($age = $lastScoredValue + 1; $age <= 11; $age++) {
       if ($scorePileCounts[$age] > 0 && $handCounts[$age] > 0) {
         return $age;

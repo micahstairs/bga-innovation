@@ -28,7 +28,7 @@ class Card476 extends AbstractCard
   public function afterInteraction()
   {
     // Prove that there are no cards of the drawn color left in the score pile
-    if (self::countCards('score') > 0) {
+    if (self::countCards(Locations::SCORE) > 0) {
       self::revealScorePile();
     }
   }
