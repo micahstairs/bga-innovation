@@ -1788,6 +1788,30 @@ abstract class AbstractCard
     return $icons;
   }
 
+  function countExactIconsOnCard($card, $icon): int
+    {
+        $icon_count = 0;
+        if ($card['spot_1'] !== null && $card['spot_1'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_2'] !== null && $card['spot_2'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_3'] !== null && $card['spot_3'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_4'] !== null && $card['spot_4'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_5'] !== null && $card['spot_5'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_6'] !== null && $card['spot_6'] == $icon) {
+            $icon_count++;
+        }
+        return $icon_count;
+    }
+
   protected function getBonusIcon(array $card): int
   {
     $bonusIcons = $this->game->getBonusIcons($card);
