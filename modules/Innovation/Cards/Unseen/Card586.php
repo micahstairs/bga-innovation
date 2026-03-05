@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card586 extends AbstractCard
 {
@@ -12,12 +13,12 @@ class Card586 extends AbstractCard
   //   - Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return
   //     one of your secrets. If you don't, you lose. Otherwise, repeat this effect.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choose([1, 2])->build();
+      return self::youMust()->choose([1, 2]);
     } else {
-      return self::youMust()->return()->fromYourSafe()->build();
+      return self::youMust()->return()->fromYourSafe();
     }
   }
 

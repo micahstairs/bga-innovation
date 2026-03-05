@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card503 extends AbstractCard
 {
@@ -17,16 +18,16 @@ class Card503 extends AbstractCard
     self::setMaxSteps(self::isDemand() ? 2 : 1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->chooseColor()->ofMyChoice()->build();
+        return self::youMust()->chooseColor()->ofMyChoice();
       } else {
-        return self::youMust()->meld()->withColor(self::getAuxiliaryValue())->fromYourHand()->revealingIfUnable()->build();
+        return self::youMust()->meld()->withColor(self::getAuxiliaryValue())->fromYourHand()->revealingIfUnable();
       }
     } else {
-      return self::youMust()->meld()->fromYourHand()->build();
+      return self::youMust()->meld()->fromYourHand();
     }
   }
 

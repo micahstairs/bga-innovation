@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
@@ -25,9 +26,9 @@ class Card11_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY)->build();
+    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY);
   }
 
   public function nonDemandsMightBeEffective(): bool

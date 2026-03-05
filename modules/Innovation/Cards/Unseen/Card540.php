@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card540 extends AbstractCard
@@ -25,10 +26,10 @@ class Card540 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $value = self::countCards(Locations::SCORE);
-    return self::youMust()->safeguard()->value($value)->build();
+    return self::youMust()->safeguard()->value($value);
   }
 
   public function afterInteraction()

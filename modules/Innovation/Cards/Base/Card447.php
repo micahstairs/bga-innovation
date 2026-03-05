@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -20,7 +21,7 @@ class Card447 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $color = self::getAuxiliaryValue();
 
@@ -34,7 +35,7 @@ class Card447 extends AbstractCard
 
     self::setAuxiliaryValue2(0); // Track the sum of the values of the cards being returned
 
-    return self::youMust()->return()->exactly(count($cardIds))->fromYourStack($color)->onlyCardsInAuxiliaryArray()->build();
+    return self::youMust()->return()->exactly(count($cardIds))->fromYourStack($color)->onlyCardsInAuxiliaryArray();
   }
 
   public function handleAbortedInteraction()

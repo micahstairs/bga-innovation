@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card56_3E extends AbstractCard
@@ -11,9 +12,9 @@ class Card56_3E extends AbstractCard
   //   - You may meld all the highest cards in your score pile. If you meld one of the highest, you
   //     must meld all of the highest.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->meld()->all()->highest()->fromYourScore()->build();
+    return self::youMay()->meld()->all()->highest()->fromYourScore();
   }
 
   public function nonDemandsMightBeEffective(): bool

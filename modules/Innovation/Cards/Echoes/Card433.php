@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card433 extends AbstractCard
@@ -32,12 +33,12 @@ class Card433 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->meld()->fromYourScore()->build();
+      return self::youMust()->meld()->fromYourScore();
     } else {
-      return self::youMay()->score()->fromBottom()->fromYourBoard()->withColor(self::getAuxiliaryArray())->build();
+      return self::youMay()->score()->fromBottom()->fromYourBoard()->withColor(self::getAuxiliaryArray());
     }
   }
 

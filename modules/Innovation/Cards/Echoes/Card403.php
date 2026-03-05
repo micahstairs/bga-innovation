@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
@@ -30,23 +31,23 @@ class Card403 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->score()->non(Colors::PURPLE)->withoutBonus()->fromYourBoard()->build();
+      return self::youMust()->score()->non(Colors::PURPLE)->withoutBonus()->fromYourBoard();
     }
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->chooseValue([6, 7, 8, 9])->build();
+        return self::youMust()->chooseValue([6, 7, 8, 9]);
       } else {
-        return self::youMay()->choose([1])->build();
+        return self::youMay()->choose([1]);
       }
     }
     if (self::isFirstInteraction()) {
-      return self::youMay()->chooseValue([6, 7, 8, 9])->build();
+      return self::youMay()->chooseValue([6, 7, 8, 9]);
     } else {
       $value = self::getMaxValueInLocation('junk');
-      return self::youMust()->achieveIfEligible()->value($value)->fromJunk()->build();
+      return self::youMust()->achieveIfEligible()->value($value)->fromJunk();
     }
   }
 

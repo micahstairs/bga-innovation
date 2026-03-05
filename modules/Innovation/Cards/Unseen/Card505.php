@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card505 extends AbstractCard
@@ -13,14 +14,14 @@ class Card505 extends AbstractCard
   //     Brethren of Purity during this action. If you meld over a card with a [CONCEPT], repeat
   //     this effect.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     // The array will either contain a single value (if a card has been melded due to Brethren of
     // Purity during this action) or it will be empty.
     $array = self::getActionScopedAuxiliaryArray();
     $lastValue = empty($array) ? 0 : $array[0];
     $choosableValues = array_unique([3, $lastValue + 1]);
-    return self::youMust()->chooseValue($choosableValues)->build();
+    return self::youMust()->chooseValue($choosableValues);
   }
 
   public function handleValueChoice(int $value)

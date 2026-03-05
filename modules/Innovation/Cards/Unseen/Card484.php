@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card484 extends AbstractCard
@@ -27,7 +28,7 @@ class Card484 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
@@ -38,7 +39,7 @@ class Card484 extends AbstractCard
     }
     self::setAuxiliaryArray($cardIds);
     // Automating the selection can sometimes reveal hidden info
-    return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withoutAutoselection()->build();
+    return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withoutAutoselection();
   }
 
   public function afterInteraction()

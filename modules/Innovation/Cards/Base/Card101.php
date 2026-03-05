@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card101 extends AbstractCard
@@ -41,9 +42,9 @@ class Card101 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->withIcon(Icons::HEALTH)->fromYourBoard()->build();
+    return self::youMust()->return()->withIcon(Icons::HEALTH)->fromYourBoard();
   }
 
   public function someoneHasMoreHealthThanIndustry(): bool

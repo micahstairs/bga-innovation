@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Directions;
 
@@ -36,15 +37,15 @@ class Card343 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMay()->splayLeft()->build();
+      return self::youMay()->splayLeft();
     } else if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->return()->withBonus()->fromYourHand()->revealingIfUnable()->build();
+      return self::youMust()->return()->withBonus()->fromYourHand()->revealingIfUnable();
     } else {
       $types = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
-      return self::youMust()->return()->withTypes($types)->fromYourHand()->build();
+      return self::youMust()->return()->withTypes($types)->fromYourHand();
     }
   }
 

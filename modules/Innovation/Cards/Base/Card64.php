@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
@@ -13,12 +14,12 @@ class Card64 extends AbstractCard
   //   - I DEMAND you transfer a card from your hand to my score pile! If you do, draw a 6!
   //   - You may splay your red or purple cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->fromYourHand()->toMyScore()->build();
+      return self::youMust()->fromYourHand()->toMyScore();
     } else {
-      return self::youMay()->splayRight([Colors::RED, Colors::PURPLE])->build();
+      return self::youMay()->splayRight([Colors::RED, Colors::PURPLE]);
     }
   }
 

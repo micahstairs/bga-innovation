@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card493 extends AbstractCard
@@ -22,7 +23,7 @@ class Card493 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $iconsMelded = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $cardIds = [];
@@ -39,7 +40,7 @@ class Card493 extends AbstractCard
 
     // Automating this can sometimes reveal hidden info
     $canAutoselect = count($cardsInHand) <= 1;
-    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withAutoselection($canAutoselect)->build();
+    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withAutoselection($canAutoselect);
   }
 
   public function handleCardChoice(array $card)

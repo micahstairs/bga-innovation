@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -14,13 +15,13 @@ class Card458 extends AbstractCard
   //   - Choose a valued card in the junk. Score all cards of the chosen card's value in the junk. If you
   //     do, and you score fewer than eleven points, repeat this effect.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       $colors = self::getUniqueColorsInLocation(Locations::BOARD);
-      return self::youMust()->chooseColor($colors)->build();
+      return self::youMust()->chooseColor($colors);
     } else {
-      return self::youMust()->chooseCardFrom(Locations::JUNK)->build();
+      return self::youMust()->chooseCardFrom(Locations::JUNK);
     }
   }
 

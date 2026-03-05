@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card164_3E extends AbstractCard
@@ -10,12 +11,12 @@ class Card164_3E extends AbstractCard
   // Almira, Queen of the Castle (3rd edition):
   //   - Meld a card from your hand. Claim an achievement of matching value, ignoring eligibility.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->meld()->fromYourHand()->build();
+      return self::youMust()->meld()->fromYourHand();
     } else {
-      return self::youMust()->achieve()->value(self::getLastSelectedFaceUpAge())->build();
+      return self::youMust()->achieve()->value(self::getLastSelectedFaceUpAge());
     }
   }
 

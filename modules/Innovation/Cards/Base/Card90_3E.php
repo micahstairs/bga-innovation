@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card90_3E extends AbstractCard
@@ -12,14 +13,14 @@ class Card90_3E extends AbstractCard
   //   - You may splay your purple cards up.
   //   - Meld a card from your hand and then execute each of its non-demand dogma effects. Do not share them.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->return()->all()->fromYourHand()->build();
+      return self::youMust()->return()->all()->fromYourHand();
     } else if (self::isSecondNonDemand()) {
-      return self::youMay()->splayUp(Colors::PURPLE)->build();
+      return self::youMay()->splayUp(Colors::PURPLE);
     } else {
-      return self::youMust()->meld()->fromYourHand()->build();
+      return self::youMust()->meld()->fromYourHand();
     }
   }
 

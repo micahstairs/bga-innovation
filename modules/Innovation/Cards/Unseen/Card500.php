@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -26,12 +27,12 @@ class Card500 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->build();
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray();
     } else {
-      return self::youMay()->splayLeft()->withColor([Colors::GREEN, Colors::PURPLE])->build();
+      return self::youMay()->splayLeft()->withColor([Colors::GREEN, Colors::PURPLE]);
     }
   }
 

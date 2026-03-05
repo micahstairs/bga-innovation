@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
@@ -44,27 +45,27 @@ class Card399 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->chooseValue([1, 2, 3, 4, 5, 6])->build();
+        return self::youMust()->chooseValue([1, 2, 3, 4, 5, 6]);
       } else if (self::isSecondInteraction()) {
         $remainingValues = array_diff([1, 2, 3, 4, 5, 6], [self::getAuxiliaryValue()]);
-        return self::youMust()->chooseValue($remainingValues)->build();
+        return self::youMust()->chooseValue($remainingValues);
       } else if (self::isThirdInteraction()) {
         self::drawAndReveal(self::getAuxiliaryValue());
         self::drawAndReveal(self::getAuxiliaryValue2());
-        return self::youMust()->meld()->fromYourRevealed()->build();
+        return self::youMust()->meld()->fromYourRevealed();
       } else {
-        return self::youMust()->meld()->fromYourRevealed()->build();
+        return self::youMust()->meld()->fromYourRevealed();
       }
     } else if (self::isSecondNonDemand()) {
-      return self::youMust()->choose([7, 8])->build();
+      return self::youMust()->choose([7, 8]);
     } else {
-      return self::youMust()->fromJunk()->toYourHand()->build();
+      return self::youMust()->fromJunk()->toYourHand();
     }
   }
 

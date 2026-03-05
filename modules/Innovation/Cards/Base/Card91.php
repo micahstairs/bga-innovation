@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -15,16 +16,16 @@ class Card91 extends AbstractCard
   //   - You may return a card from your hand. If you do, score a card from your hand and draw two [10].
   //   - You may junk all cards in the [10] deck.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMay()->return()->fromYourHand()->build();
+        return self::youMay()->return()->fromYourHand();
       } else {
-        return self::youMay()->score()->fromYourHand()->build();
+        return self::youMay()->score()->fromYourHand();
       }
     } else {
-      return self::youMay()->choose([1])->build();
+      return self::youMay()->choose([1]);
     }
   }
 

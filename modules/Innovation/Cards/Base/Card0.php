@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card0 extends AbstractCard
 {
@@ -21,9 +22,9 @@ class Card0 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand()->build();
+    return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand();
   }
 
   public function afterInteraction()

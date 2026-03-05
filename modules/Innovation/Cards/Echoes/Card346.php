@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card346 extends AbstractCard
@@ -17,10 +18,10 @@ class Card346 extends AbstractCard
   //   - Draw a card of value equal to a bonus on any board, if there is one. If you do, and
   //     Linguistics was foreseen, junk all available achievements of that value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->choose([1, 2])->build();
+      return self::youMust()->choose([1, 2]);
     } else if (self::isFirstInteraction()) {
       if (self::isFirstOrThirdEdition()) {
         $values = self::getBonuses();
@@ -30,9 +31,9 @@ class Card346 extends AbstractCard
           $values = array_merge($values, self::getBonuses($playerId));
         }
       }
-      return self::youMust()->chooseValue($values)->build();
+      return self::youMust()->chooseValue($values);
     } else {
-      return self::youMust()->junk()->all()->value(self::getAuxiliaryValue())->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->all()->value(self::getAuxiliaryValue())->fromAvailableAchievements();
     }
   }
 

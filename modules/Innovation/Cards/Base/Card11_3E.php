@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -13,9 +14,9 @@ class Card11_3E extends AbstractCard
   //   - You may meld any number of cards from your hand, each with a [AUTHORITY]. If you melded
   //     four or more cards in this way, claim the Monument achievement.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY)->build();
+    return self::youMay()->meld()->anyNumber()->fromYourHand()->withIcon(Icons::AUTHORITY);
   }
 
   public function afterInteraction()

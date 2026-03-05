@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card542 extends AbstractCard
@@ -22,12 +23,12 @@ class Card542 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->return()->fromYourRevealed()->ofMyChoice()->build();
+      return self::youMust()->return()->fromYourRevealed()->ofMyChoice();
     } else {
-      return self::youMust()->tuck()->all()->withColor(self::getLastSelectedColor())->fromYourScore()->build();
+      return self::youMust()->tuck()->all()->withColor(self::getLastSelectedColor())->fromYourScore();
     }
   }
 

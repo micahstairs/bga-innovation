@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 
@@ -19,13 +20,13 @@ class Card506 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(Arrays::encode([]));
-      return self::youMust()->revealAndReturn()->exactly(5)->fromYourHandOrScore()->build();
+      return self::youMust()->revealAndReturn()->exactly(5)->fromYourHandOrScore();
     } else {
-      return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand();
     }
   }
 

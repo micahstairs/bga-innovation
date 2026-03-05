@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card415_3E extends AbstractCard
@@ -13,15 +14,15 @@ class Card415_3E extends AbstractCard
   //     value less than 11, draw a card of that total value and repeat this dogma effect (once only).
   //   - You may splay your blue cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
         self::setAuxiliaryArray([]); // Tracks total value of cards scored
       }
-      return self::youMust()->score()->exactly(2)->non(Colors::BLUE)->fromBottom()->fromYourBoard()->build();
+      return self::youMust()->score()->exactly(2)->non(Colors::BLUE)->fromBottom()->fromYourBoard();
     } else {
-      return self::youMay()->splayUp(Colors::BLUE)->build();
+      return self::youMay()->splayUp(Colors::BLUE);
     }
   }
 

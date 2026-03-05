@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card537 extends AbstractCard
@@ -27,9 +28,9 @@ class Card537 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->choose([1, 2, 3])->build();
+    return self::youMust()->choose([1, 2, 3]);
   }
 
   protected function getPromptForListChoice(): array

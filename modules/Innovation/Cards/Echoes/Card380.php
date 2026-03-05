@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card380 extends AbstractCard
@@ -18,17 +19,17 @@ class Card380 extends AbstractCard
   //   - Choose the [3], [4], or [5] deck. You may junk all cards in the chosen deck. If you do,
   //     achieve the highest card in the junk if eligible.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->return()->minValue(1)->maxValue(2)->fromYourBoard()->build();
+      return self::youMust()->return()->minValue(1)->maxValue(2)->fromYourBoard();
     } else if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue([3, 4, 5])->build();
+      return self::youMust()->chooseValue([3, 4, 5]);
     } else if (self::isSecondInteraction()) {
-      return self::youMay()->choose([1])->build();
+      return self::youMay()->choose([1]);
     } else {
       $value = self::getMaxValueInLocation('junk');
-      return self::youMust()->achieveIfEligible()->value($value)->fromJunk()->build();
+      return self::youMust()->achieveIfEligible()->value($value)->fromJunk();
     }
   }
 

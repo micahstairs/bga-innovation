@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card143 extends AbstractCard
@@ -35,12 +36,12 @@ class Card143 extends AbstractCard
     self::transferToHand($card);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::getAuxiliaryValue() == Colors::YELLOW) {
-      return self::youMust()->return()->all()->fromYourHand()->build();
+      return self::youMust()->return()->all()->fromYourHand();
     } else {
-      return self::youMust()->return()->all()->fromYourScore()->build();
+      return self::youMust()->return()->all()->fromYourScore();
     }
   }
 

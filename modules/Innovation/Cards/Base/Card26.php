@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -28,9 +29,9 @@ class Card26 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->meld()->all()->fromYourScore()->build();
+    return self::youMay()->meld()->all()->fromYourScore();
   }
 
   private function allTopCardsHaveProsperity(): bool

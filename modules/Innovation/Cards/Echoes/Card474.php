@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card474 extends AbstractCard
@@ -12,9 +13,9 @@ class Card474 extends AbstractCard
   //   - Choose an icon type. Transfer all cards with that featured icon from all hands and score
   //     piles to the hand of the single player with the most of the chosen icon on their board.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseIcon()->build();
+    return self::youMust()->chooseIcon();
   }
 
   public function handleIconChoice(int $icon)

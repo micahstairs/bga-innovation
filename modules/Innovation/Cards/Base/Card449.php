@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card449 extends AbstractCard
@@ -13,9 +14,9 @@ class Card449 extends AbstractCard
   //     board! If you transfer any cards, exchange all cards in your score pile with all cards in
   //     my score pile!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->all()->withDemandEffect()->fromYourBoard()->toMine()->build();
+    return self::youMust()->all()->withDemandEffect()->fromYourBoard()->toMine();
   }
 
   public function afterInteraction()

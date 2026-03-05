@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card40 extends AbstractCard
@@ -13,9 +14,9 @@ class Card40 extends AbstractCard
   // - 4th edition:
   //   - I DEMAND you transfer a [2] or [3] from your score pile to my score pile!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->range(2, 3)->fromYourScore()->toMine()->build();
+    return self::youMust()->range(2, 3)->fromYourScore()->toMine();
   }
 
   public function demandMightBeEffective(): bool

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card524 extends AbstractCard
@@ -27,9 +28,9 @@ class Card524 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseColor(Colors::NON_PURPLE)->build();
+    return self::youMust()->chooseColor(Colors::NON_PURPLE);
   }
 
   public function handleColorChoice(int $color): void

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card588 extends AbstractCard
@@ -22,17 +23,17 @@ class Card588 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::getEffectNumber() === 1) {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer();
     } else {
       if (self::isFirstInteraction()) {
-        return self::youMust()->choose([1, 2])->build();
+        return self::youMust()->choose([1, 2]);
       } else if (self::getAuxiliaryValue() === 1) {
-        return self::youMay()->safeguard()->anyNumber()->build();
+        return self::youMay()->safeguard()->anyNumber();
       } else {
-        return self::youMay()->anyNumber()->fromYourSafe()->toYourAchivements()->build();
+        return self::youMay()->anyNumber()->fromYourSafe()->toYourAchivements();
       }
     }
   }

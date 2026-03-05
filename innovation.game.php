@@ -10934,7 +10934,7 @@ class Innovation extends Table
             ->setNextStep(self::getStep() + 1)
             ->setMaxSteps(self::getStepMax());
 
-        $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
+        $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions()->build();
         $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
 
         // Decrease the number of cards to select based on the forecast/safe limit

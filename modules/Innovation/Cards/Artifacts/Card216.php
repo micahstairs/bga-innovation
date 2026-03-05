@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card216 extends AbstractCard
@@ -18,13 +19,13 @@ class Card216 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryArray(self::getEligibleCardIds());
-      return self::youMay()->reveal()->onlyCardsInAuxiliaryArray()->fromYourHand()->withoutAutoselection()->build();
+      return self::youMay()->reveal()->onlyCardsInAuxiliaryArray()->fromYourHand()->withoutAutoselection();
     } else {
-      return self::youMust()->achieve()->value(self::getLastSelectedAge())->build();
+      return self::youMust()->achieve()->value(self::getLastSelectedAge());
     }
   }
 

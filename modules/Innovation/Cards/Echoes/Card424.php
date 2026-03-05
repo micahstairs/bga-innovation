@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 
@@ -14,12 +15,12 @@ class Card424 extends AbstractCard
   //     green card, I win!
   //   - You may score a top card on your board. If Paper is your top green card, you win.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->withColor(Colors::GREEN)->fromYourBoard()->toMyHand()->build();
+      return self::youMust()->withColor(Colors::GREEN)->fromYourBoard()->toMyHand();
     } else {
-      return self::youMay()->score()->fromYourBoard()->build();
+      return self::youMay()->score()->fromYourBoard();
     }
   }
 

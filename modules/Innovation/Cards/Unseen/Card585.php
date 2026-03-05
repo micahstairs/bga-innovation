@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card585 extends AbstractCard
@@ -12,9 +13,9 @@ class Card585 extends AbstractCard
   //   - Return a bottom card from your board. Splay that color on your board aslant. Score all
   //     cards on your board of that color without [HEALTH].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->fromBottom()->fromYourBoard()->build();
+    return self::youMust()->return()->fromBottom()->fromYourBoard();
   }
 
   public function handleCardChoice(array $card)

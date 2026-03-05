@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -20,7 +21,7 @@ class Card401 extends AbstractCard
   //     from either all opponents' hands or all their score piles. Draw and foreshadow a card of
   //     the chosen value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $topCard = self::getTopCardOfColor(Colors::GREEN);
@@ -30,12 +31,12 @@ class Card401 extends AbstractCard
       } else {
         self::setAuxiliaryArray([]);
       }
-      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourStack(Colors::GREEN)->build();
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourStack(Colors::GREEN);
     } else if (self::isFirstInteraction()) {
       $values = self::getUniqueValuesInLocation(Locations::SCORE);
-      return self::youMust()->chooseValue($values)->build();
+      return self::youMust()->chooseValue($values);
     } else {
-      return self::youMust()->choose([1, 2])->build();
+      return self::youMust()->choose([1, 2]);
     }
   }
 

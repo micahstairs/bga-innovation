@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card347 extends AbstractCard
@@ -25,20 +26,20 @@ class Card347 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       if (self::isFirstOrThirdEdition()) {
-        return self::youMust()->withBonus()->fromYourHand()->toMyScore()->build();
+        return self::youMust()->withBonus()->fromYourHand()->toMyScore();
       } else {
         $types = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
-        return self::youMust()->withTypes($types)->fromYourHand()->toMyScore()->build();
+        return self::youMust()->withTypes($types)->fromYourHand()->toMyScore();
       }
     } else if (self::isFirstInteraction()) {
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
-      return self::youMust()->choosePlayer($players)->build();
+      return self::youMust()->choosePlayer($players);
     } else {
-      return self::youMust()->fromMyHand()->toBoard(self::getAuxiliaryValue())->build();
+      return self::youMust()->fromMyHand()->toBoard(self::getAuxiliaryValue());
     }
   }
 

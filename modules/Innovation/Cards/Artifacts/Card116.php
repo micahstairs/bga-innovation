@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card116 extends AbstractCard
@@ -17,12 +18,12 @@ class Card116 extends AbstractCard
   //   - Score a card from your hand. If you have a top card matching its color, super-execute
   //     that top card it is your turn, otherwise self-execute it.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->revealAndScore()->fromYourHand()->build();
+      return self::youMust()->revealAndScore()->fromYourHand();
     } else {
-      return self::youMust()->achieveIfEligible()->build();
+      return self::youMust()->achieveIfEligible();
     }
   }
 

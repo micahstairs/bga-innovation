@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card183 extends AbstractCard
@@ -16,10 +17,10 @@ class Card183 extends AbstractCard
   //   - Meld the highest card from your score pile. Draw and score two cards of value equal to the
   //     melded card. Self-execute the melded card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $value = self::getMaxValueInLocation(Locations::SCORE);
-    return self::youMust()->meld()->value($value)->fromYourScore()->build();
+    return self::youMust()->meld()->value($value)->fromYourScore();
   }
 
   public function afterInteraction()

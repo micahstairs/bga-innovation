@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -14,17 +15,17 @@ class Card549 extends AbstractCard
   //     achievements. You may meld a revealed card with no [EFFICIENCY] or [AVATAR]. Return each
   //     revealed card you do not meld.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
 
     if (self::isFirstInteraction()) {
-      return self::youMay()->safeguard()->fromYourHand()->build();
+      return self::youMay()->safeguard()->fromYourHand();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->reveal()->exactly(2)->fromAvailableAchievements()->build();
+      return self::youMust()->reveal()->exactly(2)->fromAvailableAchievements();
     } else if (self::isThirdInteraction()) {
-      return self::youMay()->meld()->onlyCardsInAuxiliaryArray()->fromYourRevealed()->build();
+      return self::youMay()->meld()->onlyCardsInAuxiliaryArray()->fromYourRevealed();
     } else {
-      return self::youMust()->return()->all()->fromYourRevealed()->build();
+      return self::youMust()->return()->all()->fromYourRevealed();
     }
   }
 

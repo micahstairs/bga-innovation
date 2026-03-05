@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -29,8 +30,8 @@ class Card568 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->splayUp([Colors::RED, Colors::BLUE])->build();
+    return self::youMay()->splayUp([Colors::RED, Colors::BLUE]);
   }
 }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card3 extends AbstractCard
 {
@@ -24,12 +25,12 @@ class Card3 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->highest()->fromYourHand()->toMine()->build();
+      return self::youMust()->highest()->fromYourHand()->toMine();
     } else {
-      return self::youMust()->junk()->range(1, 2)->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->range(1, 2)->fromAvailableAchievements();
     }
   }
 

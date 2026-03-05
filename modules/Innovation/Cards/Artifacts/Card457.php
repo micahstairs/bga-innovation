@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card457 extends AbstractCard
@@ -17,19 +18,19 @@ class Card457 extends AbstractCard
     self::setMaxSteps(3);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(-1); // Track card chosen from the score pile
-      return self::youMust()->chooseCardFrom(Locations::SCORE)->build();
+      return self::youMust()->chooseCardFrom(Locations::SCORE);
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === -1) {
         // Skip this interaction if no card was chosen from the score pile
         return [];
       }
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getLastSelectedColor())->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getLastSelectedColor());
     } else {
-      return self::youMay()->return()->exactly(2)->fromYourHand()->build();
+      return self::youMay()->return()->exactly(2)->fromYourHand();
     }
   }
 

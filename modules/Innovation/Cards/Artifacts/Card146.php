@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card146 extends AbstractCard
@@ -19,15 +20,15 @@ class Card146 extends AbstractCard
   //     the drawn cards and repeat this effect.
 
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->revealAndReturn()->fromYourScore()->build();
+      return self::youMust()->revealAndReturn()->fromYourScore();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->return()->exactly(2)->fromYourHand()->onlyCardsInAuxiliaryArray()->build();
+      return self::youMust()->return()->exactly(2)->fromYourHand()->onlyCardsInAuxiliaryArray();
     } else {
       // Using autoselection here would always reveals hidden info
-      return self::youMust()->revealAndPlaceInHand()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
+      return self::youMust()->revealAndPlaceInHand()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection();
     }
   }
 

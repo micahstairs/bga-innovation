@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card516 extends AbstractCard
@@ -13,14 +14,14 @@ class Card516 extends AbstractCard
   //     than one of your secrets. If you reveal a red or purple card, meld one of your other secrets.
   //     If you do, safeguard the drawn card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choose([0, 1])->build();
+      return self::youMust()->choose([0, 1]);
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->chooseCardFrom(Locations::SAFE)->build();
+      return self::youMust()->chooseCardFrom(Locations::SAFE);
     } else {
-      return self::youMust()->meld()->fromYourSafe()->otherThan(self::getAuxiliaryValue2())->build();
+      return self::youMust()->meld()->fromYourSafe()->otherThan(self::getAuxiliaryValue2());
     }
   }
 

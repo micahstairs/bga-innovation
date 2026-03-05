@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
@@ -44,18 +45,18 @@ class Card371 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->value(5)->fromYourForecast()->toHand()->build();
+      return self::youMust()->value(5)->fromYourForecast()->toHand();
     } else if (self::isFirstNonDemand()) {
       // TODO(#472): The value here could be as high as 14 with a visible bonus of 12 which
       // would end the game. This could be presented as a game-ending option like with Evolution.
-      return self::youMust()->chooseValue($this->getAuxiliaryArray())->build();
+      return self::youMust()->chooseValue($this->getAuxiliaryArray());
     } else if (self::isFirstInteraction()) {
-      return self::youMay()->choose([1])->build();
+      return self::youMay()->choose([1]);
     } else {
-      return self::youMust()->return()->all()->fromYourForecast()->build();
+      return self::youMust()->return()->all()->fromYourForecast();
     }
   }
 

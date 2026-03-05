@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card173 extends AbstractCard
@@ -29,7 +30,7 @@ class Card173 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $colors = [];
@@ -40,11 +41,11 @@ class Card173 extends AbstractCard
           $colors[] = self::getColor($card);
         }
       }
-      return self::youMust()->chooseColor($colors)->build();
+      return self::youMust()->chooseColor($colors);
     } else if (self::isFirstInteraction()) {
-      return self::youMust()->achieve()->build();
+      return self::youMust()->achieve();
     } else {
-      return self::youMust()->junk()->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->fromAvailableAchievements();
     }
   }
 

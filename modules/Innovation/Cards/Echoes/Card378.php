@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -29,12 +30,12 @@ class Card378 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->withColor(Colors::NON_RED)->withIcons([Icons::HEALTH, Icons::INDUSTRY])->fromYourBoard()->toMine()->build();
+      return self::youMust()->withColor(Colors::NON_RED)->withIcons([Icons::HEALTH, Icons::INDUSTRY])->fromYourBoard()->toMine();
     } else {
-      return self::youMust()->all()->withColor(Colors::NON_RED)->withIcons([Icons::HEALTH, Icons::INDUSTRY])->fromYourBoard()->toMine()->build();
+      return self::youMust()->all()->withColor(Colors::NON_RED)->withIcons([Icons::HEALTH, Icons::INDUSTRY])->fromYourBoard()->toMine();
     }
   }
 

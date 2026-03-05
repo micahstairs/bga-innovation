@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card147 extends AbstractCard
@@ -23,10 +24,10 @@ class Card147 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue([1, 2, 3, 4, 6, 7, 8, 9, 10, 11])->build();
+      return self::youMust()->chooseValue([1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
     } else {
       $valueToReturn = self::getAuxiliaryValue();
       $numAffectedScorePiles = 0;
@@ -39,7 +40,7 @@ class Card147 extends AbstractCard
         }
       }
       self::setAuxiliaryValue2($numAffectedScorePiles); // Track number of cards to draw and score
-      return self::youMust()->return()->all()->value($valueToReturn)->fromAnyScore()->build();
+      return self::youMust()->return()->all()->value($valueToReturn)->fromAnyScore();
     }
   }
 

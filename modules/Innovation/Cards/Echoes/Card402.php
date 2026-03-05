@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card402 extends AbstractCard
@@ -25,12 +26,12 @@ class Card402 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->return()->fromYourHand()->build();
+      return self::youMay()->return()->fromYourHand();
     } else {
-      return self::youMust()->chooseValue()->build();
+      return self::youMust()->chooseValue();
     }
   }
 

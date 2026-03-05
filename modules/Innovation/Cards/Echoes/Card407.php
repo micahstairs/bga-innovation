@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -41,25 +42,25 @@ class Card407 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->meld()->withIcon(Icons::HEALTH)->fromYourHand()->revealingIfUnable()->build();
+      return self::youMust()->meld()->withIcon(Icons::HEALTH)->fromYourHand()->revealingIfUnable();
     } else if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourScore()->build();
+        return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourScore();
       } else {
-        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourBoard()->build();
+        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourBoard();
       }
     } else {
       if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
-        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourScore()->revealingIfUnable()->build();
+        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourScore()->revealingIfUnable();
       } else if (self::isSecondInteraction()) {
-        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourBoard()->build();
+        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourBoard();
       } else {
         $numCards = self::countCards(Locations::ACHIEVEMENTS);
-        return self::youMust()->junk()->exactly($numCards)->includingSpecialAchievements()->fromAvailableAchievements()->build();
+        return self::youMust()->junk()->exactly($numCards)->includingSpecialAchievements()->fromAvailableAchievements();
       }
     }
   }

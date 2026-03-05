@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card217 extends AbstractCard
@@ -17,9 +18,9 @@ class Card217 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->anyNumber()->fromYourScore()->build();
+    return self::youMay()->return()->anyNumber()->fromYourScore();
   }
 
   public function afterInteraction()

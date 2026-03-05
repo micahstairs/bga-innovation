@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card486 extends AbstractCard
@@ -23,15 +24,15 @@ class Card486 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choosePlayer(self::getOtherPlayers())->build();
+      return self::youMust()->choosePlayer(self::getOtherPlayers());
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toBoard(self::getAuxiliaryValue())->build();
+      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toBoard(self::getAuxiliaryValue());
     } else {
       $value = $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), Icons::AUTHORITY);
-      return self::youMust()->meld()->value($value)->withoutIcon(Icons::AUTHORITY)->fromBoard(self::getAuxiliaryValue())->toYours()->build();
+      return self::youMust()->meld()->value($value)->withoutIcon(Icons::AUTHORITY)->fromBoard(self::getAuxiliaryValue())->toYours();
     }
   }
 

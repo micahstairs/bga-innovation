@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card556 extends AbstractCard
@@ -21,9 +22,9 @@ class Card556 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->minCards(1)->maxCards(2)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    return self::youMust()->return()->minCards(1)->maxCards(2)->onlyCardsInAuxiliaryArray()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

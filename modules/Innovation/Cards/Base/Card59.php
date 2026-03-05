@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card59 extends AbstractCard
@@ -15,12 +16,12 @@ class Card59 extends AbstractCard
   //   - Reveal a card from your hand. Take into your hand all cards of that color from all opponents'
   //     hands. Then, meld all cards of that color from your hand.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->reveal()->fromYourHand()->build();
+      return self::youMust()->reveal()->fromYourHand();
     } else {
-      return self::youMust()->meld()->all()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
+      return self::youMust()->meld()->all()->withColor(self::getAuxiliaryValue())->fromYourHand();
     }
   }
 

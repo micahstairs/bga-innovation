@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card375 extends AbstractCard
 {
@@ -35,12 +36,12 @@ class Card375 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMay()->return()->fromYourBoard()->build();
+      return self::youMay()->return()->fromYourBoard();
     } else {
-      return self::youMust()->return()->fromYourBoard()->build();
+      return self::youMust()->return()->fromYourBoard();
     }
   }
 

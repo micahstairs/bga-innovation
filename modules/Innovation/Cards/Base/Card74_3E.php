@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card74_3E extends AbstractCard
 {
@@ -10,12 +11,12 @@ class Card74_3E extends AbstractCard
   //   - Return all cards from your hand, then draw three [6].
   //   - You may splay up any one color of your cards currently splayed right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->return()->all()->fromYourHand()->build();
+      return self::youMust()->return()->all()->fromYourHand();
     } else {
-      return self::youMay()->splayUp()->currentlySplayedRight()->build();
+      return self::youMay()->splayUp()->currentlySplayedRight();
     }
   }
 

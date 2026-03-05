@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card476 extends AbstractCard
@@ -20,9 +21,9 @@ class Card476 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->all()->fromLocation(Locations::PILE_OR_SCORE)->withColor(self::getAuxiliaryValue())->build();
+    return self::youMust()->return()->all()->fromLocation(Locations::PILE_OR_SCORE)->withColor(self::getAuxiliaryValue());
   }
 
   public function afterInteraction()

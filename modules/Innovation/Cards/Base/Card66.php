@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 use Innovation\Enums\Colors;
 
@@ -27,14 +28,14 @@ class Card66 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition() && self::isFirstNonDemand()) {
-      return self::youMay()->chooseToRearrange()->build();
+      return self::youMay()->chooseToRearrange();
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
-      return self::youMay()->chooseSpecialAchievement()->build();
+      return self::youMay()->chooseSpecialAchievement();
     } else {
-      return self::youMay()->splayUp([Colors::BLUE, Colors::YELLOW])->build();
+      return self::youMay()->splayUp([Colors::BLUE, Colors::YELLOW]);
     }
   }
 

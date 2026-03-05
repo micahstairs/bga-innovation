@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card166 extends AbstractCard
@@ -15,12 +16,12 @@ class Card166 extends AbstractCard
   //   - Tuck a card from your hand. Splay right its color on your board. Draw a card of value
   //     equal to the highest number of icons of the same type in that color on your board.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->revealAndReturn()->fromYourHand()->build();
+      return self::youMust()->revealAndReturn()->fromYourHand();
     } else {
-      return self::youMust()->tuck()->fromYourHand()->build();
+      return self::youMust()->tuck()->fromYourHand();
     }
   }
 

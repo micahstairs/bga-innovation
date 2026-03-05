@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -23,10 +24,10 @@ class Card21 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $choices = self::isFourthEdition() ? [1, 2] : [1];
-    return self::youMay()->choose($choices)->build();
+    return self::youMay()->choose($choices);
   }
 
   protected function getPromptForListChoice(): array

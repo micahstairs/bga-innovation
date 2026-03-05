@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -34,7 +35,7 @@ class Card373_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $counts = self::countCardsKeyedByColor(Locations::BOARD);
@@ -45,9 +46,9 @@ class Card373_3E extends AbstractCard
           $colors[] = $color;
         }
       }
-      return self::youMay()->splayRight($colors)->build();
+      return self::youMay()->splayRight($colors);
     } else {
-      return self::youMay()->return()->all()->fromYourRevealed()->build();
+      return self::youMay()->return()->all()->fromYourRevealed();
     }
   }
 

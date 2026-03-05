@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card157 extends AbstractCard
@@ -15,9 +16,9 @@ class Card157 extends AbstractCard
   //     my board! From the bottom up, transfer all cards of that color from my board to my score
   //     pile, then from your board to my board!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseColor(self::getEligibleColors())->build();
+    return self::youMust()->chooseColor(self::getEligibleColors());
   }
 
   public function handleColorChoice(int $color)

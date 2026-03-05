@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
@@ -51,9 +52,9 @@ class Card404 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->splayUp(Colors::PURPLE)->build();
+    return self::youMay()->splayUp(Colors::PURPLE);
   }
 
   private function bottomLeftIconVisible($card)

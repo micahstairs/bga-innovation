@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card167 extends AbstractCard
@@ -11,12 +12,12 @@ class Card167 extends AbstractCard
   //   - I COMPEL you to reveal a card in your hand! If you do, and its value is equal to the value
   //     of any of my top cards, return it and all cards of its color from your board!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->reveal()->fromYourHand()->build();
+      return self::youMust()->reveal()->fromYourHand();
     } else {
-      return self::youMust()->return()->all()->fromYourStack(self::getLastSelectedColor())->build();
+      return self::youMust()->return()->all()->fromYourStack(self::getLastSelectedColor());
     }
   }
 

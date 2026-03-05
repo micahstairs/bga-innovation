@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -33,12 +34,12 @@ class Card366 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->topDeck()->fromYourForecast()->build();
+      return self::youMay()->topDeck()->fromYourForecast();
     } else if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->achieveIfEligible()->fromYourForecast()->build();
+      return self::youMust()->achieveIfEligible()->fromYourForecast();
     } else {
       self::setAuxiliaryArray(self::getAvailableStandardAchievementIds());
       $forecastCards = self::getCards(Locations::FORECAST);
@@ -46,7 +47,7 @@ class Card366 extends AbstractCard
         $this->game->transferCardFromTo($card, 0, Locations::ACHIEVEMENTS);
       }
       $numCards = count($forecastCards);
-      return self::youMay()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromAvailableAchievements()->toForecast()->build();
+      return self::youMay()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromAvailableAchievements()->toForecast();
     }
   }
 

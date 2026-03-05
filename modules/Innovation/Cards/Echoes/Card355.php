@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card355 extends AbstractCard
@@ -34,14 +35,14 @@ class Card355 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->revealAndReturn()->withBonus()->fromYourForecast()->build();
+      return self::youMay()->revealAndReturn()->withBonus()->fromYourForecast();
     } else if (self::isFirstInteraction()) {
-      return self::youMust()->choosePlayer(self::getOtherPlayers())->build();
+      return self::youMust()->choosePlayer(self::getOtherPlayers());
     } else {
-      return self::youMust()->foreshadow()->all()->fromForecast(self::getAuxiliaryValue())->build();
+      return self::youMust()->foreshadow()->all()->fromForecast(self::getAuxiliaryValue());
     }
   }
 

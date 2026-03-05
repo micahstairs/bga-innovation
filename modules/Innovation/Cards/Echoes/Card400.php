@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card400 extends AbstractCard
@@ -30,16 +31,16 @@ class Card400 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMay()->choosePlayer(self::getOtherPlayers())->build();
+        return self::youMay()->choosePlayer(self::getOtherPlayers());
       } else {
-        return self::youMay()->chooseColor()->build();
+        return self::youMay()->chooseColor();
       }
     } else {
-      return self::youMay()->splayUp(Colors::BLUE)->build();
+      return self::youMay()->splayUp(Colors::BLUE);
     }
   }
 

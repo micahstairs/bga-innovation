@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card383 extends AbstractCard
 {
@@ -28,16 +29,16 @@ class Card383 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $values = [];
       foreach (self::getPlayerIds() as $playerId) {
         $values = array_merge($values, self::getUniqueValuesInLocation('hand', $playerId));
       }
-      return self::youMust()->chooseValue($values)->build();
+      return self::youMust()->chooseValue($values);
     } else {
-      return self::youMust()->return()->exactly(5)->fromYourScore()->build();
+      return self::youMust()->return()->exactly(5)->fromYourScore();
     }
   }
 

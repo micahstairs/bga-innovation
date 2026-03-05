@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card479 extends AbstractCard
@@ -27,15 +28,15 @@ class Card479 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseIcon(self::getAuxiliaryArray())->build();
+      return self::youMust()->chooseIcon(self::getAuxiliaryArray());
     } else {
       $icon = self::getAuxiliaryValue();
       self::setAuxiliaryArray(self::getCardIdsWithVisibleIcon($icon)); // Repurpose array to store the card IDs to transfer
       $locationTo = self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD;
-      return self::youMust()->onlyCardsInAuxiliaryArray()->withIcon($icon)->fromAnywhereInStack()->toMy($locationTo)->build();
+      return self::youMust()->onlyCardsInAuxiliaryArray()->withIcon($icon)->fromAnywhereInStack()->toMy($locationTo);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card548 extends AbstractCard
@@ -12,9 +13,9 @@ class Card548 extends AbstractCard
   //   - You may choose to either draw and junk two [7], or exchange all cards in your score pile
   //     with all valued cards in the junk.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->choose([1, 2])->build();
+    return self::youMay()->choose([1, 2]);
   }
 
   protected function getPromptForListChoice(): array

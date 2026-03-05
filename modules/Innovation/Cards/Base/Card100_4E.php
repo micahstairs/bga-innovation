@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Locations;
 
@@ -30,9 +31,9 @@ class Card100_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::SELF_SERVICE)->build();
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::SELF_SERVICE);
   }
 
   public function handleCardChoice(array $card)

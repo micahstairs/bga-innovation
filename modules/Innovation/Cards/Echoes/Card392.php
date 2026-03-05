@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -38,18 +39,18 @@ class Card392 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       self::setAuxiliaryArray(self::getOddValuedCardIds(self::getCards('hand')));
-      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else if (self::isDemand()) {
       $cardIds = self::getOddValuedCardIds(self::getCards('hand'));
       self::setAuxiliaryArray($cardIds);
       $numCards = count($cardIds);
-      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      return self::youMay()->splayRight(Colors::RED)->build();
+      return self::youMay()->splayRight(Colors::RED);
     }
   }
 

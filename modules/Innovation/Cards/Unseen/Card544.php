@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 use Innovation\Enums\Colors;
 
@@ -20,7 +21,7 @@ class Card544 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       // If it's possible for there to be an effective right splay, then reveal the card before returning it
@@ -31,14 +32,14 @@ class Card544 extends AbstractCard
         }
       }
       if ($mustReveal) {
-        return self::youMust()->revealAndReturn()->fromYourHand()->build();
+        return self::youMust()->revealAndReturn()->fromYourHand();
       } else {
-        return self::youMust()->return()->fromYourHand()->build();
+        return self::youMust()->return()->fromYourHand();
       }
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->tuck()->fromYourHand()->build();
+      return self::youMust()->tuck()->fromYourHand();
     } else {
-      return self::youMust()->score()->fromYourHand()->build();
+      return self::youMust()->score()->fromYourHand();
     }
   }
 

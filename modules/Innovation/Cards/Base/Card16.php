@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 // 16  => array(
@@ -21,9 +22,9 @@ class Card16 extends AbstractCard
   //   - You may return a card from your hand. If you do, draw and meld a card of value one higher
   //     than the card you return.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->fromYourHand()->build();
+    return self::youMay()->return()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

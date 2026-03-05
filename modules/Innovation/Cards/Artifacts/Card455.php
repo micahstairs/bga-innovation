@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card455 extends AbstractCard
@@ -27,18 +28,18 @@ class Card455 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       $players = [];
       foreach (self::getAuxiliaryArray() as $playerId) {
         $players[] = $this->game->playerIdToPlayerIndex($playerId);
       }
-      return self::youMust()->choosePlayer($players)->build();
+      return self::youMust()->choosePlayer($players);
     } else {
       $playerId = self::getAuxiliaryValue();
       $value = self::getMaxValue(self::getTopCards($playerId));
-      return self::youMust()->value($value)->fromBoard($playerId)->build();
+      return self::youMust()->value($value)->fromBoard($playerId);
     }
   }
 

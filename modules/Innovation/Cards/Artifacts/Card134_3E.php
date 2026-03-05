@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -18,14 +19,14 @@ class Card134_3E extends AbstractCard
     return true;
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isSplayInteraction()) {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer();
     } else {
       // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
       $excludedCardId = $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'];
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(Colors::PURPLE)->otherThan($excludedCardId)->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(Colors::PURPLE)->otherThan($excludedCardId);
     }
 
   }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card470 extends AbstractCard
@@ -13,12 +14,12 @@ class Card470 extends AbstractCard
   //     board, if eligible, or score it. If you do either, and Streaming was foreseen, repeat
   //     this effect using the same color.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD);
     } else {
-      return self::youMust()->choose([1, 2])->build();
+      return self::youMust()->choose([1, 2]);
     }
   }
 

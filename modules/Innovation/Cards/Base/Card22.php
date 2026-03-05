@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
@@ -31,9 +32,9 @@ class Card22 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->tuck()->fromYourHand()->withColor(Colors::GREEN)->build();
+    return self::youMay()->tuck()->fromYourHand()->withColor(Colors::GREEN);
   }
 
   public function afterInteraction()

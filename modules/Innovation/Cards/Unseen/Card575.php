@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card575 extends AbstractCard
@@ -17,17 +18,17 @@ class Card575 extends AbstractCard
     self::setMaxSteps(6);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction() || self::isSecondInteraction()) {
       $value = self::getMaxValueInLocation(Locations::SAFE);
-      return self::youMust()->value($value)->fromYourSafe()->toMine()->build();
+      return self::youMust()->value($value)->fromYourSafe()->toMine();
     } else if (self::isThirdInteraction() || self::isFourthInteraction()) {
       $value = self::getMaxValueInLocation(Locations::SCORE);
-      return self::youMust()->value($value)->fromYourScore()->toMine()->build();
+      return self::youMust()->value($value)->fromYourScore()->toMine();
     } else {
       $value = self::getMinValueInLocation(Locations::SCORE);
-      return self::youMust()->meld()->value($value)->fromYourScore()->build();
+      return self::youMust()->meld()->value($value)->fromYourScore();
     }
   }
 

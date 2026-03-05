@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card83 extends AbstractCard
@@ -28,12 +29,12 @@ class Card83 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseTwoColors()->build();
+      return self::youMust()->chooseTwoColors();
     } else {
-      return self::youMay()->splayUp(self::getAuxiliaryValue())->build();
+      return self::youMay()->splayUp(self::getAuxiliaryValue());
     }
   }
 

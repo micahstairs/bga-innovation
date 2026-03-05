@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card522 extends AbstractCard
@@ -13,14 +14,14 @@ class Card522 extends AbstractCard
   //     higher than the transferred card. If you don't, safeguard an available achievement of
   //     value equal to the value of your top red card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->fromYourSafe()->toAvailableAchievements()->build();
+      return self::youMust()->fromYourSafe()->toAvailableAchievements();
     } else {
       $topRedCard = self::getTopCardOfColor(Colors::RED);
       $value = $topRedCard ? self::getFaceUpValue($topRedCard) : 0;
-      return self::youMust()->safeguard()->value($value)->build();
+      return self::youMust()->safeguard()->value($value);
     }
   }
 

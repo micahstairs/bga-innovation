@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card41 extends AbstractCard
@@ -13,12 +14,12 @@ class Card41 extends AbstractCard
   // - 4th edition:
   //   - I DEMAND you return a card from your score pile! If you do, return a top card of equal value from your board! If you do, junk all cards in the 4 deck!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->return()->fromYourScore()->build();
+      return self::youMust()->return()->fromYourScore();
     } else {
-      return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourBoard()->build();
+      return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourBoard();
     }
   }
 

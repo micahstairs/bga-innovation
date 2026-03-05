@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Directions;
 
@@ -27,9 +28,9 @@ class Card39 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->splayRight(self::getSplayedColors(Directions::LEFT))->build();
+    return self::youMay()->splayRight(self::getSplayedColors(Directions::LEFT));
   }
 
   public function handleSplayChoice(int $color, bool $splayChanged)

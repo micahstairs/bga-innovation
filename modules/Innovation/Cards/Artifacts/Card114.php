@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -18,12 +19,12 @@ class Card114 extends AbstractCard
   //   - Return a purple card from your hand. If you do, draw and reveal a card from any set of
   //     value two higher. If the drawn card is purple, meld it and self-execute it.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->revealAndReturn()->withColor(Colors::PURPLE)->fromYourHand()->revealingIfUnable()->build();
+      return self::youMust()->revealAndReturn()->withColor(Colors::PURPLE)->fromYourHand()->revealingIfUnable();
     } else {
-      return self::youMust()->chooseType()->build();
+      return self::youMust()->chooseType();
     }
   }
 

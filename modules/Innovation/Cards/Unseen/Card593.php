@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -14,9 +15,9 @@ class Card593 extends AbstractCard
   //     aslant. If you do both, exchange all the lowest cards in your score pile with all your
   //     claimed standard achievements of lower value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->choose([Colors::RED, Colors::BLUE, Colors::GREEN])->build();
+    return self::youMust()->choose([Colors::RED, Colors::BLUE, Colors::GREEN]);
   }
 
   protected function getPromptForListChoice(): array

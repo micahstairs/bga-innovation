@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 
 class Card555 extends AbstractCard
@@ -17,15 +18,15 @@ class Card555 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choose([1, 2])->build();
+      return self::youMust()->choose([1, 2]);
     } else {
       if (self::getAuxiliaryValue() === 1) {
-        return self::youMust()->unsplay()->build();
+        return self::youMust()->unsplay();
       } else {
-        return self::youMust()->splayUp()->currentlyUnsplayed()->build();
+        return self::youMust()->splayUp()->currentlyUnsplayed();
       }
     }
   }

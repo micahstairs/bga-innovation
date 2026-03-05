@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card197_3E extends AbstractCard
 {
@@ -24,9 +25,9 @@ class Card197_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->all()->fromYourBoard()->toMyScore()->withDemandEffect()->build();
+    return self::youMust()->all()->fromYourBoard()->toMyScore()->withDemandEffect();
   }
 
   public function compelMightBeEffective(): bool

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card528 extends AbstractCard
@@ -18,15 +19,15 @@ class Card528 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       $card = self::transferToHand(self::drawAndReveal(5));
       $returnedCard = self::return(self::getTopCardOfColor(self::getColor($card)));
       self::setAuxiliaryValue(value: $returnedCard ? 1 : 0); // Track how many cards were returned
-      return self::youMust()->revealAndReturn()->withColor(self::getColor($card))->otherThan(self::getId($card))->fromYourHand()->revealingIfUnable()->build();
+      return self::youMust()->revealAndReturn()->withColor(self::getColor($card))->otherThan(self::getId($card))->fromYourHand()->revealingIfUnable();
     } else {
-      return self::youMust()->revealAndReturn()->fromYourScore()->build();
+      return self::youMust()->revealAndReturn()->fromYourScore();
     }
   }
 

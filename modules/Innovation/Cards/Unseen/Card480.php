@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card480 extends AbstractCard
 {
@@ -11,9 +12,9 @@ class Card480 extends AbstractCard
   //   - I DEMAND you reveal a card in your hand! If you do, and I have no card in my hand of the
   //     same color, transfer it to my hand, then repeat this effect!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->reveal()->fromYourHand()->build();
+    return self::youMust()->reveal()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card148_3E extends AbstractCard
@@ -25,9 +26,9 @@ class Card148_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->all()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine()->build();
+    return self::youMust()->all()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine();
   }
 
   public function compelMightBeEffective(): bool

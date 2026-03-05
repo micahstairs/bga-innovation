@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card519 extends AbstractCard
@@ -22,17 +23,17 @@ class Card519 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->meld()->fromYourRevealed()->ofMyChoice()->build();
+      return self::youMust()->meld()->fromYourRevealed()->ofMyChoice();
     } else {
       $choices = [];
       $array = self::getAuxiliaryArray();
       for ($i = 0; $i < count($array); $i++) {
         $choices[] = $i;
       }
-      return self::youMust()->choose($choices)->ofMyChoice()->build();
+      return self::youMust()->choose($choices)->ofMyChoice();
     }
   }
 

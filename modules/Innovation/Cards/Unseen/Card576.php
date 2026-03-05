@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card576 extends AbstractCard
 {
@@ -24,13 +25,13 @@ class Card576 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(0); // Track whether cards were transferred as part of either interaction
-      return self::youMay()->topDeck()->fromYourBoard()->build();
+      return self::youMay()->topDeck()->fromYourBoard();
     } else {
-      return self::youMay()->meld()->fromYourHand()->build();
+      return self::youMay()->meld()->fromYourHand();
     }
   }
 

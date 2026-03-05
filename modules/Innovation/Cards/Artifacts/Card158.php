@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card158 extends AbstractCard
@@ -15,12 +16,12 @@ class Card158 extends AbstractCard
   //   - If you have no cards in your score pile, choose a color and score all cards of that color
   //     on your board. Otherwise, return all cards from your score pile.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::countCards(Locations::SCORE) === 0) {
-      return self::youMust()->chooseColor()->build();
+      return self::youMust()->chooseColor();
     } else {
-      return self::youMust()->return()->all()->fromYourScore()->build();
+      return self::youMust()->return()->all()->fromYourScore();
     }
   }
 

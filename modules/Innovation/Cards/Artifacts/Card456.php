@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card456 extends AbstractCard
 {
@@ -18,9 +19,9 @@ class Card456 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

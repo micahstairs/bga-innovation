@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card389 extends AbstractCard
@@ -29,7 +30,7 @@ class Card389 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $cardIds = [];
     $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
@@ -42,7 +43,7 @@ class Card389 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return self::youMay()->achieveIfEligible()->fromAnyBoard()->onlyCardsInAuxiliaryArray()->build();
+    return self::youMay()->achieveIfEligible()->fromAnyBoard()->onlyCardsInAuxiliaryArray();
   }
 
   public function afterInteraction()

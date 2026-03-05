@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card68 extends AbstractCard
@@ -15,9 +16,9 @@ class Card68 extends AbstractCard
   //   - I DEMAND you transfer the three highest cards from your hand to my hand! If you
   //     transfer any, and have no cards in hand, draw a [7]!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->exactly(3)->highest()->fromYourHand()->toMine()->refreshingSelection()->build();
+    return self::youMust()->exactly(3)->highest()->fromYourHand()->toMine()->refreshingSelection();
   }
 
   public function afterInteraction()

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -33,17 +34,17 @@ class Card333 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->tuck()->withColor(Colors::RED)->fromYourHand()->revealingIfUnable()->build();
+      return self::youMust()->tuck()->withColor(Colors::RED)->fromYourHand()->revealingIfUnable();
     } else {
       if (self::isEcho()) {
-        return self::youMust()->tuck()->value(1)->fromYourHand()->build();
+        return self::youMust()->tuck()->value(1)->fromYourHand();
       } else if (self::isFirstInteraction()) {
-        return self::youMust()->choose([1, 2])->build();
+        return self::youMust()->choose([1, 2]);
       } else {
-        return self::youMust()->tuck()->value(2)->fromYourForecast()->build();
+        return self::youMust()->tuck()->value(2)->fromYourForecast();
       }
     }
   }

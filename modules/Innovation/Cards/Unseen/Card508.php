@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card508 extends AbstractCard
@@ -36,12 +37,12 @@ class Card508 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
+      return self::youMust()->chooseValue(self::getAuxiliaryArray());
     } else {
-      return self::youMay()->score()->minCards(2)->maxCards(3)->fromYourHand()->build();
+      return self::youMay()->score()->minCards(2)->maxCards(3)->fromYourHand();
     }
   }
 

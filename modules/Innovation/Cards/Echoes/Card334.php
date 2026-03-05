@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card334 extends AbstractCard
@@ -37,12 +38,12 @@ class Card334 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourHand()->toMine()->revealingIfUnable()->build();
+      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourHand()->toMine()->revealingIfUnable();
     } else {
-      return self::youMust()->withIcons([Icons::AUTHORITY, Icons::CONCEPT])->fromYourHand()->toMine()->revealingIfUnable()->withoutAutoselection()->build();
+      return self::youMust()->withIcons([Icons::AUTHORITY, Icons::CONCEPT])->fromYourHand()->toMine()->revealingIfUnable()->withoutAutoselection();
     }
   }
 

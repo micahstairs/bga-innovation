@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -15,13 +16,13 @@ class Card561 extends AbstractCard
   //     If you do, unsplay the transferred card's color on your board!
   //   - Unsplay the color on your board with the most visible cards.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       $value = $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::ALL, Icons::EFFICIENCY);
-      return self::youMust()->value($value)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine()->build();
+      return self::youMust()->value($value)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine();
     } else {
-      return self::youMust()->unsplay(self::getColorsWithMostVisibleCards())->build();
+      return self::youMust()->unsplay(self::getColorsWithMostVisibleCards());
     }
   }
 

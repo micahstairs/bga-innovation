@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
@@ -32,10 +33,10 @@ class Card364 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->score()->withColor(self::getAuxiliaryArray())->fromYourHand()->build();
+      return self::youMust()->score()->withColor(self::getAuxiliaryArray())->fromYourHand();
     } else {
       $choices = [];
       $purpleSplayDirection = self::getSplayDirection(Colors::PURPLE);
@@ -49,7 +50,7 @@ class Card364 extends AbstractCard
           $choices[] = 5 + $color;
         }
       }
-      return self::youMay()->choose($choices)->build();
+      return self::youMay()->choose($choices);
     }
   }
 

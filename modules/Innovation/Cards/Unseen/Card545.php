@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card545 extends AbstractCard
@@ -22,9 +23,9 @@ class Card545 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->tuck()->withIcon(Icons::CONCEPT)->fromYourBoard()->build();
+    return self::youMust()->tuck()->withIcon(Icons::CONCEPT)->fromYourBoard();
   }
 
   public function afterInteraction()

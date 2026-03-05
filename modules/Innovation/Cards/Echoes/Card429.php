@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -40,14 +41,14 @@ class Card429 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->return()->all()->fromYourForecast()->build();
+      return self::youMust()->return()->all()->fromYourForecast();
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
-      return self::youMust()->foreshadow()->exactly(3)->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->foreshadow()->exactly(3)->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      return self::youMay()->splayUp(Colors::YELLOW)->build();
+      return self::youMay()->splayUp(Colors::YELLOW);
     }
   }
 

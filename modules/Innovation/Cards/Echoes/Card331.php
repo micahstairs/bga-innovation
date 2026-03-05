@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card331 extends AbstractCard
@@ -34,7 +35,7 @@ class Card331 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $colors = [];
     $playerCards = self::getTopCards(self::getPlayerId());
@@ -51,7 +52,7 @@ class Card331 extends AbstractCard
         $colors[] = self::getColor($playerCard);
       }
     }
-    return self::youMust()->withColor($colors)->fromYourBoard()->toMyBoard()->build();
+    return self::youMust()->withColor($colors)->fromYourBoard()->toMyBoard();
   }
 
   public function handleCardChoice(array $card)

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card515 extends AbstractCard
@@ -23,16 +24,16 @@ class Card515 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->choose([0, 1])->build();
+        return self::youMust()->choose([0, 1]);
       } else {
-        return self::youMust()->score()->fromYourHand()->build();
+        return self::youMust()->score()->fromYourHand();
       }
     } else {
-      return self::youMust()->revealAndReturn()->exactly(2)->fromYourHand()->build();
+      return self::youMust()->revealAndReturn()->exactly(2)->fromYourHand();
     }
   }
 

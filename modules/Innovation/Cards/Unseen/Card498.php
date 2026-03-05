@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card498 extends AbstractCard
 {
@@ -21,14 +22,14 @@ class Card498 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $drawnCardId = self::getAuxiliaryValue();
     if (self::isFirstInteraction()) {
       $color = self::getColor(self::getCard($drawnCardId));
-      return self::youMay()->safeguard()->withColor($color)->otherThan($drawnCardId)->fromYourHand()->build();
+      return self::youMay()->safeguard()->withColor($color)->otherThan($drawnCardId)->fromYourHand();
     } else {
-      return self::youMust()->return()->all()->otherThan($drawnCardId)->fromYourHand()->build();
+      return self::youMust()->return()->all()->otherThan($drawnCardId)->fromYourHand();
     }
   }
 

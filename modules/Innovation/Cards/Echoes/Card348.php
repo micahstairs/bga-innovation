@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -34,13 +35,13 @@ class Card348 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMay()->choose([2, 3])->build();
+      return self::youMay()->choose([2, 3]);
     } else {
       $icons = [Icons::AUTHORITY, Icons::INDUSTRY];
-      return self::youMust()->withoutIcons($icons)->fromYourBoard()->toMine()->build();
+      return self::youMust()->withoutIcons($icons)->fromYourBoard()->toMine();
     }
   }
 

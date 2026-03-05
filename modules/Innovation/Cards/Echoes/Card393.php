@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card393 extends AbstractCard
@@ -30,16 +31,16 @@ class Card393 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       if (self::wasForeseen()) {
-        return self::youMust()->return()->all()->fromYourScore()->build();
+        return self::youMust()->return()->all()->fromYourScore();
       } else {
-        return self::youMust()->return()->exactly(2)->fromYourScore()->build();
+        return self::youMust()->return()->exactly(2)->fromYourScore();
       }
     } else {
-      return self::youMust()->score()->value(self::getAuxiliaryValue())->fromYourHand()->build();
+      return self::youMust()->score()->value(self::getAuxiliaryValue())->fromYourHand();
     }
   }
 

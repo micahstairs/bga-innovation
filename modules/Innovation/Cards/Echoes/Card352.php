@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card352 extends AbstractCard
@@ -18,18 +19,18 @@ class Card352 extends AbstractCard
   //   - Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of
   //     value equal to the tucked card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->tuck()->withBonus()->fromYourHand()->revealingIfUnable()->build();
+        return self::youMust()->tuck()->withBonus()->fromYourHand()->revealingIfUnable();
       } else {
-        return self::youMay()->return()->fromYourHand()->build();
+        return self::youMay()->return()->fromYourHand();
       }
     } else if (self::isFirstNonDemand()) {
-      return self::youMust()->chooseValue(self::getBonuses())->build();
+      return self::youMust()->chooseValue(self::getBonuses());
     } else {
-      return self::youMust()->tuck()->fromYourHand()->build();
+      return self::youMust()->tuck()->fromYourHand();
     }
   }
 

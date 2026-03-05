@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card45 extends AbstractCard
@@ -22,12 +23,12 @@ class Card45 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayRight(Colors::BLUE)->build();
+      return self::youMay()->splayRight(Colors::BLUE);
     } else {
-      return self::youMust()->return()->fromYourScore()->build();
+      return self::youMust()->return()->fromYourScore();
     }
   }
 

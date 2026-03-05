@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card473 extends AbstractCard
@@ -27,9 +28,9 @@ class Card473 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->achieveIfEligible()->fromAnyHand()->build();
+    return self::youMay()->achieveIfEligible()->fromAnyHand();
   }
 
   public function handleCardChoice(array $card)

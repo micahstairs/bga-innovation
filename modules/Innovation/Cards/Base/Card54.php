@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card54 extends AbstractCard
@@ -15,9 +16,9 @@ class Card54 extends AbstractCard
   //   - I DEMAND you transfer a top card with [CONCEPT] higher than my top card of the same
   //     color from your board to my board! If you do, draw an [5]!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->withIcon(Icons::CONCEPT)->withColor(self::getEligibleColors())->fromYourBoard()->toMine()->build();
+    return self::youMust()->withIcon(Icons::CONCEPT)->withColor(self::getEligibleColors())->fromYourBoard()->toMine();
   }
 
   public function handleCardChoice(array $card)

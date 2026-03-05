@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
@@ -32,15 +33,15 @@ class Card211 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->score()->withColor(Colors::YELLOW)->fromBottom()->fromYourBoard()->build();
+      return self::youMay()->score()->withColor(Colors::YELLOW)->fromBottom()->fromYourBoard();
     } else if (self::isSecondInteraction()) {
-      return self::youMay()->choose([1])->build();
+      return self::youMay()->choose([1]);
     } else {
       $value = self::getMaxValueInLocation(Locations::HAND);
-      return self::youMust()->meld()->value($value)->fromYourHand()->build();
+      return self::youMust()->meld()->value($value)->fromYourHand();
     }
   }
 

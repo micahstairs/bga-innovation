@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card529 extends AbstractCard
@@ -13,12 +14,12 @@ class Card529 extends AbstractCard
   //     available achievements. If you transfer at least four cards, draw and safeguard a card
   //     of that value, and score three available standard achievements.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue([1, 3, 5, 7, 9, 11])->build();
+      return self::youMust()->chooseValue([1, 3, 5, 7, 9, 11]);
     } else {
-      return self::youMust()->score()->exactly(3)->fromAvailableAchievements()->build();
+      return self::youMust()->score()->exactly(3)->fromAvailableAchievements();
     }
   }
 

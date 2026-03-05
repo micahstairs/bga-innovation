@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card187 extends AbstractCard
 {
@@ -10,11 +11,11 @@ class Card187 extends AbstractCard
   //   - I COMPEL you to draw and reveal an [8]! Return all cards of the drawn card's color from
   //     your board!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $card = self::drawAndReveal(8);
     self::transferToHand($card);
-    return self::youMust()->return()->all()->fromYourStack(self::getColor($card))->build();
+    return self::youMust()->return()->all()->fromYourStack(self::getColor($card));
   }
 
 }

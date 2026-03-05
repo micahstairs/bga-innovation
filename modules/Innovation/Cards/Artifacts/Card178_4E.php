@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card178_4E extends AbstractCard
 {
@@ -22,9 +23,9 @@ class Card178_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseValue()->build();
+    return self::youMust()->chooseValue();
   }
 
   public function handleValueChoice(int $value)

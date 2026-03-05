@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -29,14 +30,14 @@ class Card394 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayRight(self::getAuxiliaryValue())->build();
+      return self::youMay()->splayRight(self::getAuxiliaryValue());
     } else {
       $count = self::getStandardIconCount(Icons::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
-      return self::youMust()->junk()->value($count)->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->value($count)->fromAvailableAchievements();
     }
   }
 

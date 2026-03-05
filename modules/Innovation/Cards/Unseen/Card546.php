@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -25,15 +26,15 @@ class Card546 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       // "Transfer the card in your hand of my choice to my board!"
-      return self::youMust()->fromYourRevealed()->toMyBoard()->ofMyChoice()->build();
+      return self::youMust()->fromYourRevealed()->toMyBoard()->ofMyChoice();
     } else if (self::getEffectNumber() === 1) {
-      return self::youMust()->score()->fromYourSafe()->build();
+      return self::youMust()->score()->fromYourSafe();
     } else {
-      return self::youMay()->splayRight(Colors::BLUE)->build();
+      return self::youMay()->splayRight(Colors::BLUE);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card330 extends AbstractCard
@@ -45,9 +46,9 @@ class Card330 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->choosePlayer(self::getAuxiliaryArray())->build();
+    return self::youMust()->choosePlayer(self::getAuxiliaryArray());
   }
 
   public function handlePlayerChoice(int $opponentId)

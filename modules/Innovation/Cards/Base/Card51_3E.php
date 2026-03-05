@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -23,9 +24,9 @@ class Card51_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->splayRight(Colors::YELLOW)->build();
+    return self::youMay()->splayRight(Colors::YELLOW);
   }
 
   public function demandMightBeEffective(): bool

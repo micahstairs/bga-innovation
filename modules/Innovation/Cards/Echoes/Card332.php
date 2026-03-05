@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card332 extends AbstractCard
@@ -28,12 +29,12 @@ class Card332 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand();
     }
   }
 

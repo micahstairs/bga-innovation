@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -30,15 +31,15 @@ class Card421 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->chooseValue()->build();
+      return self::youMust()->chooseValue();
     } else if (self::isDemand()) {
       $value = $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::NON_YELLOW, Icons::PROSPERITY);
-      return self::youMust()->non(Colors::YELLOW)->value($value)->withoutIcon(Icons::PROSPERITY)->fromYourBoard()->toMine()->build();
+      return self::youMust()->non(Colors::YELLOW)->value($value)->withoutIcon(Icons::PROSPERITY)->fromYourBoard()->toMine();
     } else {
-      return self::youMay()->splayUp(Colors::PURPLE)->build();
+      return self::youMay()->splayUp(Colors::PURPLE);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card512 extends AbstractCard
 {
@@ -24,14 +25,14 @@ class Card512 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->tuck()->fromYourHand()->build();
+      return self::youMust()->tuck()->fromYourHand();
     } else if (self::isFirstInteraction()) {
-      return self::youMay()->chooseColor()->build();
+      return self::youMay()->chooseColor();
     } else {
-      return self::youMay()->tuck()->anyNumber()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
+      return self::youMay()->tuck()->anyNumber()->withColor(self::getAuxiliaryValue())->fromYourHand();
     }
   }
 

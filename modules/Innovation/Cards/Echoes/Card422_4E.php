@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card422_4E extends AbstractCard
@@ -31,10 +32,10 @@ class Card422_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->tuck()->fromYourBoard()->build();
+      return self::youMust()->tuck()->fromYourBoard();
     } else {
       $cardIds = [];
       foreach (self::getCardsKeyedByColor(Locations::BOARD) as $stack) {
@@ -45,7 +46,7 @@ class Card422_4E extends AbstractCard
         }
       }
       self::setAuxiliaryArray($cardIds);
-      return self::youMust()->return()->all()->fromAnywhereInStack()->onlyCardsInAuxiliaryArray()->build();
+      return self::youMust()->return()->all()->fromAnywhereInStack()->onlyCardsInAuxiliaryArray();
     }
   }
 

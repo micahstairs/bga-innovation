@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card390 extends AbstractCard
 {
@@ -33,9 +34,9 @@ class Card390 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->exactly(2)->fromYourScore()->toMine()->build();
+    return self::youMust()->exactly(2)->fromYourScore()->toMine();
   }
 
 }

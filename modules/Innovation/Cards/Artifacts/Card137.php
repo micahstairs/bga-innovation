@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card137 extends AbstractCard
 {
@@ -11,9 +12,9 @@ class Card137 extends AbstractCard
   //   - I COMPEL you to transfer a top card of higher value than my top card of the same color
   //     from your board to my board!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->fromYourBoard()->withColor(self::getEligibleColors())->toMine()->build();
+    return self::youMust()->fromYourBoard()->withColor(self::getEligibleColors())->toMine();
   }
 
   private function getEligibleColors(): array

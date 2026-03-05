@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -20,12 +21,12 @@ class Card34 extends AbstractCard
   //     all available special achievements!
   //   - You may splay your yellow or purple cards left. If you do, draw a [3].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->fromYourHand()->withIcon(Icons::AUTHORITY)->toMine()->revealingIfUnable()->build();
+      return self::youMust()->fromYourHand()->withIcon(Icons::AUTHORITY)->toMine()->revealingIfUnable();
     } else {
-      return self::youMay()->splayLeft([Colors::YELLOW, Colors::PURPLE])->build();
+      return self::youMay()->splayLeft([Colors::YELLOW, Colors::PURPLE]);
     }
   }
 

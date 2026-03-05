@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
@@ -14,13 +15,13 @@ class Card521 extends AbstractCard
   //   - Transfer a card from your hand or score pile to the board of the player on your right. If
   //     you don't, claim the Folklore achievement.
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       $playerOnRight = $this->game->getActivePlayerIdOnRightOfActingPlayer();
-      return self::youMust()->fromYourHandOrScore()->toBoard($playerOnRight)->build();
+      return self::youMust()->fromYourHandOrScore()->toBoard($playerOnRight);
     } else {
-      return self::youMust()->choose([0, 1])->build();
+      return self::youMust()->choose([0, 1]);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card345 extends AbstractCard
 {
@@ -24,10 +25,10 @@ class Card345 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->return()->anyNumber()->fromYourHand()->build();
+      return self::youMay()->return()->anyNumber()->fromYourHand();
     } else {
       $valuesToDraw = self::getAuxiliaryArray();
       $values = [];
@@ -36,7 +37,7 @@ class Card345 extends AbstractCard
           $values[] = $i;
         }
       }
-      return self::youMust()->chooseValue($values)->build();
+      return self::youMust()->chooseValue($values);
     }
   }
 

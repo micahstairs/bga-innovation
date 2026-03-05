@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card370_3E extends AbstractCard
@@ -13,7 +14,7 @@ class Card370_3E extends AbstractCard
   //     any color left; two, right; three, up. If you returned at least one card, draw and
   //     foreshadow a [6].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       return [

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card443 extends AbstractCard
 {
@@ -16,12 +17,12 @@ class Card443 extends AbstractCard
     self::setAuxiliaryArray([11]); // Track values to choose from to score next
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue(self::getAuxiliaryArray())->build();
+      return self::youMust()->chooseValue(self::getAuxiliaryArray());
     } else {
-      return self::youMust()->score()->fromYourBoard()->value(self::getAuxiliaryValue())->build();
+      return self::youMust()->score()->fromYourBoard()->value(self::getAuxiliaryValue());
     }
   }
 

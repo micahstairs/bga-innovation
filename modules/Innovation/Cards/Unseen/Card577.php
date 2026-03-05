@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card577 extends AbstractCard
@@ -12,12 +13,12 @@ class Card577 extends AbstractCard
   //   - I DEMAND you transfer one of your secrets to my achievements!
   //   - You may splay your yellow cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->fromYourSafe()->toMyAchivements()->build();
+      return self::youMust()->fromYourSafe()->toMyAchivements();
     } else {
-      return self::youMay()->splayUp(Colors::YELLOW)->build();
+      return self::youMay()->splayUp(Colors::YELLOW);
     }
   }
 

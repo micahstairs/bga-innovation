@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
@@ -31,9 +32,9 @@ class Card564 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->reveal()->value(self::getAuxiliaryValue())->fromYourScore()->build();
+    return self::youMust()->reveal()->value(self::getAuxiliaryValue())->fromYourScore();
   }
 
   public function handleCardChoice(array $card)

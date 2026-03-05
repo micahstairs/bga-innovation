@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card384_3E extends AbstractCard
 {
@@ -24,7 +25,7 @@ class Card384_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       if (self::isFirstInteraction()) {
@@ -38,14 +39,14 @@ class Card384_3E extends AbstractCard
           }
         }
         self::setAuxiliaryArray($cardIds);
-        return self::youMust()->onlyCardsInAuxiliaryArray()->fromDeck()->toYourHand()->build();
+        return self::youMust()->onlyCardsInAuxiliaryArray()->fromDeck()->toYourHand();
       } else {
         self::setAuxiliaryArray([self::getLastSelectedId()]);
         // Disable autoselection to give the player the chance to read the card
-        return self::youMust()->topDeck()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
+        return self::youMust()->topDeck()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection();
       }
     } else {
-      return self::youMay()->return()->fromYourHand()->build();
+      return self::youMay()->return()->fromYourHand();
     }
   }
 

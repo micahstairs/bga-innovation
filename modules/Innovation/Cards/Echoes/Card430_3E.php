@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
@@ -14,14 +15,14 @@ class Card430_3E extends AbstractCard
   //   - I DEMAND you return four cards from your score pile!
   //   - Return a card from your score pile. If you do, you may splay any one color of your cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->return()->exactly(4)->fromYourScore()->build();
+      return self::youMust()->return()->exactly(4)->fromYourScore();
     } else if (self::isFirstInteraction()) {
-      return self::youMust()->return()->fromYourScore()->build();
+      return self::youMust()->return()->fromYourScore();
     } else {
-      return self::youMay()->splayUp()->build();
+      return self::youMay()->splayUp();
     }
   }
 

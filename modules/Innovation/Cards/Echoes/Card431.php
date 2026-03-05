@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -41,16 +42,16 @@ class Card431 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isSecondNonDemand()) {
-      return self::youMay()->splayUp(Colors::GREEN)->build();
+      return self::youMay()->splayUp(Colors::GREEN);
     } else {
       if (self::isFourthEdition()) {
         // In 4th edition, need to refresh in case a splay causes a City to be drawn
-        return self::youMay()->tuck()->anyNumber()->withIcon(Icons::EFFICIENCY)->fromYourHand()->refreshingSelection()->build();
+        return self::youMay()->tuck()->anyNumber()->withIcon(Icons::EFFICIENCY)->fromYourHand()->refreshingSelection();
       } else {
-        return self::youMay()->tuck()->anyNumber()->withIcon(Icons::EFFICIENCY)->fromYourHand()->build();
+        return self::youMay()->tuck()->anyNumber()->withIcon(Icons::EFFICIENCY)->fromYourHand();
       }
     }
   }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -30,13 +31,13 @@ class Card592 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
-      return self::youMust()->tuck()->all()->onlyCardsInAuxiliaryArray()->fromYourBoard()->build();
+      return self::youMust()->tuck()->all()->onlyCardsInAuxiliaryArray()->fromYourBoard();
     } else {
-      return self::youMay()->onlyCardsInAuxiliaryArray()->fromBottom()->fromYourBoard()->toYourSafe()->build();
+      return self::youMay()->onlyCardsInAuxiliaryArray()->fromBottom()->fromYourBoard()->toYourSafe();
     }
   }
 

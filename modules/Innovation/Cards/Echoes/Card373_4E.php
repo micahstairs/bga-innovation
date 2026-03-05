@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
@@ -25,7 +26,7 @@ class Card373_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $counts = self::countCardsKeyedByColor(Locations::BOARD);
@@ -36,11 +37,11 @@ class Card373_4E extends AbstractCard
           $colors[] = $color;
         }
       }
-      return self::youMay()->splayRight($colors)->build();
+      return self::youMay()->splayRight($colors);
     } else if (self::isFirstInteraction()) {
-      return self::youMust()->chooseColor()->ofMyChoice()->build();
+      return self::youMust()->chooseColor()->ofMyChoice();
     } else {
-      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromAvailableAchievements();
     }
   }
 

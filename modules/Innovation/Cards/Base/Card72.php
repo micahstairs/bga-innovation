@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -25,16 +26,16 @@ class Card72 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->lowest()->fromMyHand()->toYours()->ofMyChoice()->build();
+        return self::youMust()->lowest()->fromMyHand()->toYours()->ofMyChoice();
       } else {
-        return self::youMust()->exactly(2)->highest()->fromYourHand()->toMine()->build();
+        return self::youMust()->exactly(2)->highest()->fromYourHand()->toMine();
       }
     } else {
-      return self::youMust()->choose([7, 8])->build();
+      return self::youMust()->choose([7, 8]);
     }
   }
 

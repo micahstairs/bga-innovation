@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card527 extends AbstractCard
@@ -27,7 +28,7 @@ class Card527 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $cardIds = [];
     $values = self::getValues(self::getTopCards());
@@ -37,7 +38,7 @@ class Card527 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return self::youMust()->safeguard()->onlyCardsInAuxiliaryArray()->build();
+    return self::youMust()->safeguard()->onlyCardsInAuxiliaryArray();
   }
 
 }

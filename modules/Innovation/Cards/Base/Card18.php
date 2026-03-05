@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -16,12 +17,12 @@ class Card18 extends AbstractCard
   //   - Meld one or two cards from your hand. If you meld two, you may transfer your top red card
   //     to another player's board. If you do, meld that player's top green card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->meld()->minCards(1)->maxCards(2)->fromYourHand()->build();
+      return self::youMust()->meld()->minCards(1)->maxCards(2)->fromYourHand();
     } else {
-      return self::youMay()->choosePlayer(self::getOtherPlayers())->build();
+      return self::youMay()->choosePlayer(self::getOtherPlayers());
     }
   }
 

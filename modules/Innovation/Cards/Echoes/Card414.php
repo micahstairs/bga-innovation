@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card414 extends AbstractCard
 {
@@ -22,17 +23,17 @@ class Card414 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue()->build();
+      return self::youMust()->chooseValue();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->choosePlayer(self::getOpponents())->build();
+      return self::youMust()->choosePlayer(self::getOpponents());
     } else if (self::isThirdInteraction()) {
       $playerId = self::getAuxiliaryValue2();
-      return self::youMust()->value(self::getAuxiliaryValue())->fromScore($playerId)->toBoard($playerId)->build();
+      return self::youMust()->value(self::getAuxiliaryValue())->fromScore($playerId)->toBoard($playerId);
     } else {
-      return self::youMust()->achieveIfEligible()->value(self::getAuxiliaryValue())->fromScore(self::getAuxiliaryValue2())->build();
+      return self::youMust()->achieveIfEligible()->value(self::getAuxiliaryValue())->fromScore(self::getAuxiliaryValue2());
     }
   }
 

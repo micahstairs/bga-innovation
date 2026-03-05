@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card571 extends AbstractCard
@@ -19,12 +20,12 @@ class Card571 extends AbstractCard
     self::setAuxiliaryValue2(0); // Tracks whether the effect will be repeating
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choose([1, 2, 3])->build();
+      return self::youMust()->choose([1, 2, 3]);
     } else {
-      return self::youMust()->safeguard()->exactly(2)->build();
+      return self::youMust()->safeguard()->exactly(2);
     }
   }
 

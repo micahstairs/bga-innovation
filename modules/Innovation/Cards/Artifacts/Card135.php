@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card135 extends AbstractCard
 {
@@ -13,9 +14,9 @@ class Card135 extends AbstractCard
   // - 4th edition:
   //   - Return all cards from your hand. Draw a card of value equal to the number of cards you return.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->all()->fromYourHand()->build();
+    return self::youMust()->return()->all()->fromYourHand();
   }
 
   public function afterInteraction()

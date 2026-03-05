@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
@@ -14,12 +15,12 @@ class Card134_4E extends AbstractCard
   //   - Splay left a color on any player's board.
   //   - Choose any top purple card other than Cyrus Cylinder on any player's board. Self-execute it. 
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer();
     } else {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(Colors::PURPLE)->otherThan(CardIds::CYRUS_CYLINDER)->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(Colors::PURPLE)->otherThan(CardIds::CYRUS_CYLINDER);
     }
 
   }

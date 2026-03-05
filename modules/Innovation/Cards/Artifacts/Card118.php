@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card118 extends AbstractCard
@@ -16,12 +17,12 @@ class Card118 extends AbstractCard
   //   - I COMPEL you to return a card from your score pile! If you do, transfer an achievement of
   //     the same value from your achievements to mine, and junk all cards in the deck of that value!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->return()->fromYourScore()->build();
+      return self::youMust()->return()->fromYourScore();
     } else {
-      return self::youMust()->value(self::getLastSelectedAge())->fromYourAchievements()->toMine()->build();
+      return self::youMust()->value(self::getLastSelectedAge())->fromYourAchievements()->toMine();
     }
   }
 

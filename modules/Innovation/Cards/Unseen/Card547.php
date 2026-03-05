@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -27,24 +28,24 @@ class Card547 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choose([0, 1])->build();
+      return self::youMust()->choose([0, 1]);
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === 1) {
         $topCards = self::getTopCards();
         $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
-        return self::youMust()->withColor($colors)->fromYourBoard()->toLocation(Locations::JUNK_THEN_SAFEGUARD)->build();
+        return self::youMust()->withColor($colors)->fromYourBoard()->toLocation(Locations::JUNK_THEN_SAFEGUARD);
       } else {
         self::setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));
-        return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourSafe()->build();
+        return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourSafe();
       }
     } else {
       if (self::getAuxiliaryValue() === 1) {
-        return self::youMust()->non(self::getLastSelectedColor())->value(self::getLastSelectedAge())->fromYourBoard()->toLocation(Locations::JUNK_THEN_SAFEGUARD)->build();
+        return self::youMust()->non(self::getLastSelectedColor())->value(self::getLastSelectedAge())->fromYourBoard()->toLocation(Locations::JUNK_THEN_SAFEGUARD);
       } else {
-        return self::youMust()->score()->value(self::getLastSelectedAge())->fromYourSafe()->build();
+        return self::youMust()->score()->value(self::getLastSelectedAge())->fromYourSafe();
       }
     }
   }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card372_3E extends AbstractCard
 {
@@ -23,14 +24,14 @@ class Card372_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand()->build();
+      return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      return self::youMust()->return()->all()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+      return self::youMust()->return()->all()->onlyCardsInAuxiliaryArray()->fromYourHand();
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -12,12 +13,12 @@ class Card44_4E extends AbstractCard
   //   - You may splay your yellow or purple cards right.
   //   - You may tuck a card from your hand for every splayed color on your board.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayRight([Colors::YELLOW, Colors::PURPLE])->build();
+      return self::youMay()->splayRight([Colors::YELLOW, Colors::PURPLE]);
     } else {
-      return self::youMay()->tuck()->exactly(self::countSplayedColors())->fromYourHand()->build();
+      return self::youMay()->tuck()->exactly(self::countSplayedColors())->fromYourHand();
     }
   }
 

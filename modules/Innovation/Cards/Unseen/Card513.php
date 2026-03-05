@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
@@ -16,18 +17,18 @@ class Card513 extends AbstractCard
   //     Anonymity achievement.
   //   - You may splay your purple cards left.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
         $value = self::countCards(Locations::HAND);
         self::setAuxiliaryValue($value);
-        return self::youMust()->safeguard()->value($value)->fromAvailableAchievements()->build();
+        return self::youMust()->safeguard()->value($value)->fromAvailableAchievements();
       } else {
-        return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromYourHand()->build();
+        return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromYourHand();
       }
     } else {
-      return self::youMay()->splayLeft(Colors::PURPLE)->build();
+      return self::youMay()->splayLeft(Colors::PURPLE);
     }
   }
 

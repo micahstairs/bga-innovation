@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card139 extends AbstractCard
@@ -18,12 +19,12 @@ class Card139 extends AbstractCard
   //     cards you score.
 
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->return()->fromYourHand()->build();
+      return self::youMust()->return()->fromYourHand();
     } else {
-      return self::youMust()->score()->exactly(self::getLastSelectedAge())->fromYourHand()->build();
+      return self::youMust()->score()->exactly(self::getLastSelectedAge())->fromYourHand();
     }
   }
 

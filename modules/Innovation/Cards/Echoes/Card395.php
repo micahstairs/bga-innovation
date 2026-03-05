@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
@@ -37,13 +38,13 @@ class Card395 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return self::youMust()->meld()->fromYourForecast()->build();
+      return self::youMust()->meld()->fromYourForecast();
     } else {
       $value = self::getMaxValue(self::getTopCards());
-      return self::youMust()->value($value)->fromYourBoard()->toYourHand()->build();
+      return self::youMust()->value($value)->fromYourBoard()->toYourHand();
     }
   }
 

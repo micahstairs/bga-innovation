@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Locations;
 
@@ -33,12 +34,12 @@ class Card478 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->fromAnyBoard()->toMyBoard()->build();
+      return self::youMust()->fromAnyBoard()->toMyBoard();
     } else {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::DEEPFAKE)->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::DEEPFAKE);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card71 extends AbstractCard
@@ -15,7 +16,7 @@ class Card71 extends AbstractCard
   //   - I demand you return all but one of the cards in your hand!
   //   - You may score a card from your hand.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       $handCount = self::countCards(Locations::HAND);
@@ -24,9 +25,9 @@ class Card71 extends AbstractCard
       } else {
         $numCardsToReturn = $this->game->intDivision($handCount, 2);
       }
-      return self::youMust()->return()->exactly($numCardsToReturn)->fromYourHand()->build();
+      return self::youMust()->return()->exactly($numCardsToReturn)->fromYourHand();
     } else {
-      return self::youMay()->score()->fromYourHand()->build();
+      return self::youMay()->score()->fromYourHand();
     }
   }
 

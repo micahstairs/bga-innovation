@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -14,18 +15,18 @@ class Card569 extends AbstractCard
   //   - Choose to either draw an [11], or safeguard an available standard achievement.
   //   - Reveal one of your secrets, and super-execute it if it is your turn.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayUp(Colors::GREEN)->build();
+      return self::youMay()->splayUp(Colors::GREEN);
     } else if (self::isSecondNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->choose([1, 2])->build();
+        return self::youMust()->choose([1, 2]);
       } else {
-        return self::youMust()->safeguard()->build();
+        return self::youMust()->safeguard();
       }
     } else {
-      return self::youMust()->reveal()->fromYourSafe()->build();
+      return self::youMust()->reveal()->fromYourSafe();
     }
 
   }
