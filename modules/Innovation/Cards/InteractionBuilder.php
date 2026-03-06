@@ -409,7 +409,7 @@ class InteractionBuilder
 
   function fromBoard(int $playerId): InteractionBuilder
   {
-    $this->interactionOptions['choose_from'] = Locations::BOARD;
+    $this->interactionOptions['location_from'] = Locations::BOARD;
     $this->interactionOptions['owner_from'] = $playerId;
     return $this;
   }

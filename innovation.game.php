@@ -10720,6 +10720,9 @@ class Innovation extends Table
         $set = "Base";
         if ($card['type'] == CardTypes::ARTIFACTS) {
             $set = "Artifacts";
+        } else if ($card['type'] == CardTypes::CITIES) {
+            require_once("modules/Innovation/Cards/NoOpCard.php");
+            return new \Innovation\Cards\NoOpCard($this, $execution_state, $card_id);
         } else if ($card['type'] == CardTypes::ECHOES) {
             $set = "Echoes";
         } else if ($card['type'] == CardTypes::UNSEEN) {
