@@ -17,22 +17,16 @@ class Card370_3E extends AbstractCard
   public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'     => true,
-        'choose_color' => true,
-        'color'        => self::getUniqueColorsInLocation(Locations::HAND),
-      ];
+      return self::youMay()->chooseColor(self::getUniqueColorsInLocation(Locations::HAND));
     } else if (self::isSecondInteraction()) {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 3,
-        'location_from' => Locations::HAND,
-        'location_to'   => Locations::REVEALED_THEN_DECK,
-        'color'         => [self::getAuxiliaryValue()],
-      ];
+      return self::youMay()
+        ->revealAndReturn()
+        ->minCards(1)
+        ->maxCards(3)
+        ->fromYourHand()
+        ->withColor([self::getAuxiliaryValue()]);
     } else {
-      return ['splay_direction' => self::getAuxiliaryValue()];
+      return self::youMust()->splayInDirection(self::getAuxiliaryValue());
     }
   }
 

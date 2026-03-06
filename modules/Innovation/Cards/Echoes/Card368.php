@@ -5,9 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card368 extends AbstractCard
 {
@@ -27,30 +25,22 @@ class Card368 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstOrThirdEdition()) {
-        return [
-          'location_from' => Locations::BOARD,
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => Locations::BOARD,
-          'color'         => Colors::NON_RED,
-          'with_icons'    => [Icons::AUTHORITY, Icons::CONCEPT],
-        ];
+        return self::youMust()
+          ->non(Colors::RED)
+          ->withIcons([Icons::AUTHORITY, Icons::CONCEPT])
+          ->fromYourBoard()
+          ->toMyBoard();
       } else {
         self::setAuxiliaryArray([]); // Tracks cards transferred
-        return [
-          'n'             => 2,
-          'location_from' => Locations::BOARD,
-          'owner_to'      => self::getLauncherId(),
-          'location_to'   => Locations::BOARD,
-          'color'         => Colors::NON_RED,
-          'with_icons'    => [Icons::AUTHORITY, Icons::AVATAR],
-        ];
+        return self::youMust()
+          ->exactly(2)
+          ->non(Colors::RED)
+          ->withIcons([Icons::AUTHORITY, Icons::AVATAR])
+          ->fromYourBoard()
+          ->toMyBoard();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::PURPLE],
-      ];
+      return self::youMay()->splayRight(Colors::PURPLE);
     }
   }
 

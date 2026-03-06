@@ -298,6 +298,12 @@ class InteractionBuilder
     return $this;
   }
 
+  function splayInDirection(int $direction): InteractionBuilder
+  {
+    $this->interactionOptions['splay_direction'] = $direction;
+    return $this;
+  }
+
   // SOURCE LOCATION
 
   function fromJunk(): InteractionBuilder
