@@ -23,7 +23,7 @@ class Card214_3E extends AbstractCard
   {
     $colors = self::getAuxiliaryArray();
     if (!$colors) {
-      return [];
+      return self::noInteraction();
     }
     return self::youMust()->score()->withColor($colors);
   }

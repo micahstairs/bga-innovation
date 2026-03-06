@@ -23,7 +23,7 @@ class Card163 extends AbstractCard
     if (self::isRed($card)) {
       return self::youMust()->achieve();
     } else if (self::isFirstOrThirdEdition()) {
-      return [];
+      return self::noInteraction();
     } else {
       return self::youMust()->junk()->fromAvailableAchievements();
     }

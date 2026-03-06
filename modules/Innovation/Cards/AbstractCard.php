@@ -66,6 +66,12 @@ abstract class AbstractCard
     return (new InteractionBuilder($this->state))->canPass(false);
   }
 
+  /** Returns a no-op InteractionBuilder whose build() yields []. Use when this step has no interaction. */
+  public function noInteraction(): InteractionBuilder
+  {
+    return new InteractionBuilder($this->state);
+  }
+
   public final function getSpecialChoicePrompt(): array
   {
     $choiceType = $this->game->innovationGameState->get('special_type_of_choice');

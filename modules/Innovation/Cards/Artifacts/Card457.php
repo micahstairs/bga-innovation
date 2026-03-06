@@ -26,7 +26,7 @@ class Card457 extends AbstractCard
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === -1) {
         // Skip this interaction if no card was chosen from the score pile
-        return [];
+        return self::noInteraction();
       }
       return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getLastSelectedColor());
     } else {

@@ -40,7 +40,7 @@ class Card511 extends AbstractCard
           self::draw(3);
           self::draw(3);
         }
-        return [];
+        return self::noInteraction();
       }
     } else {
       return self::youMay()->splayLeft([Colors::BLUE, Colors::YELLOW]);

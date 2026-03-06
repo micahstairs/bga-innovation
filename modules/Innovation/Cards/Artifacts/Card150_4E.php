@@ -22,7 +22,7 @@ class Card150_4E extends AbstractCard
       if (self::countCards(Locations::HAND) < 4) {
         return self::youMust()->return()->all()->non(Colors::GREEN)->fromYourBoard();
       } else {
-        return [];
+        return self::noInteraction();
       }
     } else {
       return self::youMust()->meld()->fromYourHand();
