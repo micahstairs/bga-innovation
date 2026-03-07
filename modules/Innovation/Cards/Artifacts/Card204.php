@@ -4,7 +4,6 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
-use Innovation\Enums\Locations;
 
 class Card204 extends AbstractCard
 {
@@ -30,7 +29,7 @@ class Card204 extends AbstractCard
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->score()->fromYourHand();
+        return self::youMay()->score()->fromYourHand();
       } else {
         return self::youMay()->fromYourScore()->toYourHand();
       }
