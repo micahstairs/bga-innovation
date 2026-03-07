@@ -6865,7 +6865,23 @@ class Innovation extends Table
         }
 
         // Condition for location
-        $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+        // TODO(LATER): Remove this try-catch once we get to the bottom of the "Unhandled case in Locations::decode: -1" bug
+        try {
+            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+        } catch (\Exception $e) {
+            $cardContext = '';
+            if ($this->innovationGameState->get('current_nesting_index') >= 0) {
+                try {
+                    $nested = self::getCurrentNestedCardState();
+                    if ($nested !== null && isset($nested['card_id'])) {
+                        $cardContext = ' Executing card: ' . self::getCardName($nested['card_id']);
+                    }
+                } catch (\Throwable $t) {
+                    // ignore when building context
+                }
+            }
+            throw new \Exception($e->getMessage() . $cardContext, 0, $e);
+        }
         if ($location_from == Locations::REVEALED_THEN_HAND) {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == Locations::REVEALED_THEN_SCORE) {

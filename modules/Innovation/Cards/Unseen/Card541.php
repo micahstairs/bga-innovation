@@ -43,7 +43,7 @@ class Card541 extends AbstractCard
     }
   }
 
-  private function getFirstInteractionOptions(): array
+  private function getFirstInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       return self::youMay()->choose([0, 1]);

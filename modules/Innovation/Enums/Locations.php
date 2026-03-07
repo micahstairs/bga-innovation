@@ -71,7 +71,7 @@ class Locations
       case self::SAFE:
         return clienttranslate('safe');
       default:
-        error_log("Unhandled case in Locations::render: $location." . self::callerContext());
+        error_log("Unhandled case in Locations::render: $location.");
         return $location;
     }
   }
@@ -122,7 +122,7 @@ class Locations
       case self::MUSEUMS:
         return 20;
       default:
-        throw new \Exception("Unhandled case in Locations::encode: $location." . self::callerContext());
+        throw new \Exception("Unhandled case in Locations::encode: $location.");
     }
   }
 
@@ -172,28 +172,7 @@ class Locations
       case 20:
         return self::MUSEUMS;
       default:
-        throw new \Exception("Unhandled case in Locations::decode: $locationCode." . self::callerContext());
+        throw new \Exception("Unhandled case in Locations::decode: $locationCode.");
     }
-  }
-
-  private static function callerContext(): string
-  {
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 12);
-    $out = [];
-    foreach ($trace as $frame) {
-      $file = $frame['file'] ?? '';
-      $line = $frame['line'] ?? 0;
-      $func = $frame['function'] ?? '';
-      if ($file === '' || strpos($file, 'Locations.php') !== false) {
-        continue;
-      }
-      $short = basename($file);
-      $class = isset($frame['class']) ? $frame['class'] . $frame['type'] : '';
-      $out[] = "{$short}:{$line} {$class}{$func}()";
-      if (count($out) >= 3) {
-        break;
-      }
-    }
-    return $out === [] ? '' : ' Call chain: ' . implode(' <- ', $out);
   }
 }
