@@ -71,8 +71,7 @@ class Locations
       case self::SAFE:
         return clienttranslate('safe');
       default:
-        // NOTE: If this code path gets hit, then that means we are not properly translating it.
-        error_log("Unhandled case in Locations::render: $location.");
+        error_log("Unhandled case in Locations::render: $location." . self::callerContext());
         return $location;
     }
   }
@@ -123,7 +122,7 @@ class Locations
       case self::MUSEUMS:
         return 20;
       default:
-        throw new \Exception("Unhandled case in Locations::encode: $location.");
+        throw new \Exception("Unhandled case in Locations::encode: $location." . self::callerContext());
     }
   }
 
@@ -173,7 +172,22 @@ class Locations
       case 20:
         return self::MUSEUMS;
       default:
-        throw new \Exception("Unhandled case in Locations::decode: $locationCode.");
+        throw new \Exception("Unhandled case in Locations::decode: $locationCode." . self::callerContext());
     }
+  }
+
+  private static function callerContext(): string
+  {
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 6);
+    foreach ($trace as $frame) {
+      $file = $frame['file'] ?? '';
+      $line = $frame['line'] ?? 0;
+      $func = $frame['function'] ?? '';
+      if ($file !== '' && strpos($file, 'Locations.php') === false) {
+        $short = basename($file);
+        return " Called from {$short}:{$line} in {$func}()";
+      }
+    }
+    return '';
   }
 }
