@@ -22,11 +22,6 @@ class NoOpCard extends AbstractCard
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
-  }
-
-  public function getInteractionOptions(): InteractionBuilder
-  {
-    return self::youMay();
+    self::setMaxSteps(0);
   }
 }
