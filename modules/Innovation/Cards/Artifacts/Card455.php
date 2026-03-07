@@ -39,7 +39,7 @@ class Card455 extends AbstractCard
     } else {
       $playerId = self::getAuxiliaryValue();
       $value = self::getMaxValue(self::getTopCards($playerId));
-      return self::youMust()->value($value)->fromBoard($playerId);
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->value($value);
     }
   }
 
