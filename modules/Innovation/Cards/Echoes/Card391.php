@@ -33,7 +33,8 @@ class Card391 extends AbstractCard
       $color = $this->game->getIndexedAuxiliaryValue(self::getPlayerId());
       do {
         $continue = false;
-        $count = self::countCardsKeyedByColor(Locations::BOARD)[$color];
+        // NOTE: In certain situations, the echo effect may not have been executed, so color would be -1 in this case
+        $count = $color < 0 ? 0 : self::countCardsKeyedByColor(Locations::BOARD)[$color];
         if ($count > 2) {
           self::score(self::getTopCardOfColor($color));
           self::score(self::getTopCardOfColor($color));
