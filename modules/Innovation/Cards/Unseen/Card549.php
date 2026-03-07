@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -14,35 +15,17 @@ class Card549 extends AbstractCard
   //     achievements. You may meld a revealed card with no [EFFICIENCY] or [AVATAR]. Return each
   //     revealed card you do not meld.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
 
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'          => true,
-        'location_from'     => 'hand',
-        'safeguard_keyword' => true,
-      ];
+      return self::youMay()->safeguard()->fromYourHand();
     } else if (self::isSecondInteraction()) {
-      return [
-        'n'             => 2,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'location_to'   => 'revealed',
-      ];
+      return self::youMust()->reveal()->exactly(2)->fromAvailableAchievements();
     } else if (self::isThirdInteraction()) {
-      return [
-        'can_pass'                        => true,
-        'location_from'                   => 'revealed',
-        'location_to'                     => 'board',
-        'meld_keyword'                    => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMay()->meld()->onlyCardsInAuxiliaryArray()->fromYourRevealed();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'revealed',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourRevealed();
     }
   }
 
@@ -51,7 +34,7 @@ class Card549 extends AbstractCard
     if (self::isFirstInteraction()) {
       if (self::getNumChosen() > 0) {
         $card = self::getLastSelectedCard();
-        if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
+        if (self::getLocation($card) == 'safe' && self::getOwner($card) == self::getPlayerId()) {
           self::setMaxSteps(4);
         }
       }

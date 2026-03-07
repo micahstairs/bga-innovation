@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card354 extends AbstractCard
 {
@@ -26,14 +27,13 @@ class Card354 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from'    => 'hand',
-      'meld_keyword'     => true,
-      'with_bonus'       => self::isFirstOrThirdEdition(),
-      'reveal_if_unable' => self::isFirstOrThirdEdition(),
-    ];
+    if (self::isFirstOrThirdEdition()) {
+      return self::youMay()->meld()->withBonus()->fromYourHand()->revealingIfUnable();
+    } else {
+      return self::youMust()->meld()->fromYourHand();
+    }
   }
 
   public function handleCardChoice(array $card)

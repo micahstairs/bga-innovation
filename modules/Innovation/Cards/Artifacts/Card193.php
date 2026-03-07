@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -16,13 +17,9 @@ class Card193 extends AbstractCard
   //   - Meld an [8] from your hand. If the melded card has no effects, you win. Otherwise,
   //     self-execute it.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from' => Locations::HAND,
-      'meld_keyword'  => true,
-      'age'           => 8,
-    ];
+    return self::youMust()->meld()->value(8)->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

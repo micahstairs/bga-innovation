@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -25,27 +26,16 @@ class Card485 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'       => true,
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-          'age'            => self::getAuxiliaryValue(),
-        ];
+        return self::youMay()->return()->value(self::getAuxiliaryValue())->fromYourHand();
       } else {
-        return [
-          'safeguard_keyword' => true,
-          'age'               => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->safeguard()->value(self::getAuxiliaryValue());
       }
     } else {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
+      return self::youMay()->choose([1]);
     }
   }
 

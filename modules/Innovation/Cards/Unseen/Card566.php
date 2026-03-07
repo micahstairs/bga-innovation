@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
+use Innovation\Enums\Locations;
 
 class Card566 extends AbstractCard
 {
@@ -19,19 +21,19 @@ class Card566 extends AbstractCard
     if (self::getEffectNumber() === 1) {
       $card1 = $this->game->getDeckTopCard(9, CardTypes::BASE);
       if ($card1) {
-        $this->game->transferCardFromTo($card1, self::getPlayerId(), 'revealed', ['draw_keyword' => false]);
+        $this->game->transferCardFromTo($card1, self::getPlayerId(), Locations::REVEALED, ['draw_keyword' => false]);
         self::setMaxSteps(1);
       }
       $card2 = $this->game->getDeckTopCard(10, CardTypes::BASE);
       if ($card2) {
-        $this->game->transferCardFromTo($card2, self::getPlayerId(), 'revealed', ['draw_keyword' => false]);
+        $this->game->transferCardFromTo($card2, self::getPlayerId(), Locations::REVEALED, ['draw_keyword' => false]);
         self::setMaxSteps(1);
       }
     } else {
-      if (self::countCards('board') === 0) {
+      if (self::countCards(Locations::BOARD) === 0) {
         self::win();
       } else {
-        foreach (self::getCards('junk') as $card) {
+        foreach (self::getCards(Locations::JUNK) as $card) {
           if (self::isValuedCard($card)) {
             self::transferToHand($card);
           }
@@ -40,18 +42,18 @@ class Card566 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'can_pass'       => self::countCards('revealed') === 1,
-      'location_from'  => 'revealed',
-      'return_keyword' => true,
-    ];
+    if (self::countCards(Locations::REVEALED) === 1) {
+      return self::youMay()->return()->fromYourRevealed();
+    } else {
+      return self::youMust()->return()->fromYourRevealed();
+    }
   }
 
   public function afterInteraction()
   {
-    foreach (self::getCards('revealed') as $card) {
+    foreach (self::getCards(Locations::REVEALED) as $card) {
       self::placeOnTopOfDeck($card);
     }
   }

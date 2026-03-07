@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -28,7 +29,7 @@ class Card495 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $stackSizes = self::countCardsKeyedByColor(Locations::BOARD);
     $maxStackSize = max($stackSizes);
@@ -38,11 +39,7 @@ class Card495 extends AbstractCard
         $colors[] = $color;
       }
     }
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::LEFT,
-      'color'           => $colors,
-    ];
+    return self::youMay()->splayLeft($colors);
   }
 
 }

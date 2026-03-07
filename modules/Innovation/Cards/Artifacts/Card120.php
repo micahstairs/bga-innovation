@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card120 extends AbstractCard
@@ -16,9 +17,9 @@ class Card120 extends AbstractCard
   //   - Meld a card from your hand. Score all other cards of the same color from your board. If
   //     you score a card, repeat this effect.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->meld()->fromYourHand()->build();
+    return self::youMust()->meld()->fromYourHand();
   }
 
   public function handleCardChoice(array $meldedCard)

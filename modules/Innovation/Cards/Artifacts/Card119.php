@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Locations;
 
 class Card119 extends AbstractCard
 {
@@ -33,7 +34,7 @@ class Card119 extends AbstractCard
     if (array_diff(self::getOtherPlayerIds(), self::getActionScopedAuxiliaryArray())) {
       return false;
     }
-    return self::isLauncher() && $this->game->getCurrentNestedCardState()['card_location'] === 'board';
+    return self::isLauncher() && $this->game->getCurrentNestedCardState()['card_location'] === Locations::BOARD;
   }
 
   private function wasOnEveryOpponentBoardAndIsTheirTurn(): bool

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card374_4E extends AbstractCard
@@ -30,30 +31,18 @@ class Card374_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
         $values = self::getAuxiliaryArray();
-        return [
-          'n'                 => count($values),
-          'choose_value'      => true,
-          'age'               => $values,
-          'refresh_selection' => true,
-        ];
+        $numSelections = count($values);
+        return self::youMust()->chooseValue($values)->exactly($numSelections)->refreshingSelection();
       } else {
-        return [
-          'location_from'  => Locations::SCORE,
-          'return_keyword' => true,
-          'age'            => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourScore();
       }
     } else {
-      return [
-        'can_pass'       => true,
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourHand();
     }
   }
 
@@ -67,7 +56,8 @@ class Card374_4E extends AbstractCard
   {
     if (self::isDemand() && self::getAuxiliaryArray()) {
       self::setNextStep(1);
-    } if (self::isNonDemand()) {
+    }
+    if (self::isNonDemand()) {
       self::draw(self::getValue($card));
     }
   }

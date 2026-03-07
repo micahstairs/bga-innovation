@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 
 class Card536 extends AbstractCard
@@ -28,21 +29,12 @@ class Card536 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'                               => 2,
-        'location_from'                   => 'revealed',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->exactly(2)->fromYourRevealed()->onlyCardsInAuxiliaryArray();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => array(self::getAuxiliaryValue()),
-      ];
+      return self::youMay()->splayRight(self::getAuxiliaryValue());
     }
   }
 

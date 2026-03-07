@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card455 extends AbstractCard
@@ -27,24 +28,18 @@ class Card455 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       $players = [];
       foreach (self::getAuxiliaryArray() as $playerId) {
         $players[] = $this->game->playerIdToPlayerIndex($playerId);
       }
-      return [
-        'choose_player' => true,
-        'players'       => $players,
-      ];
+      return self::youMust()->choosePlayer($players);
     } else {
       $playerId = self::getAuxiliaryValue();
-      return [
-        'choose_from' => Locations::BOARD,
-        'owner_from'  => $playerId,
-        'age'         => self::getMaxValue(self::getTopCards($playerId)),
-      ];
+      $value = self::getMaxValue(self::getTopCards($playerId));
+      return self::youMust()->value($value)->fromBoard($playerId);
     }
   }
 
@@ -58,7 +53,7 @@ class Card455 extends AbstractCard
   {
     $playerId = self::getAuxiliaryValue();
     foreach (self::getTopCards($playerId) as $topCard) {
-      if ($topCard['color'] != self::getColor($card)) {
+      if (self::getColor($topCard) != self::getColor($card)) {
         self::transferToScorePile($topCard, $playerId);
       }
     }

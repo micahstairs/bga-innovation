@@ -16,7 +16,7 @@ class Card589 extends AbstractCard
     $topGreenCard = self::getTopCardOfColor(Colors::GREEN);
     $numScored = 0;
     foreach (self::getStack(Colors::GREEN) as $card) {
-      if (self::getId($card) != $topGreenCard['id']) {
+      if (self::getId($card) != self::getId($topGreenCard)) {
         self::score($card);
         $numScored++;
       }

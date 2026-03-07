@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card416_4E extends AbstractCard
@@ -25,20 +26,12 @@ class Card416_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 4,
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->exactly(4)->fromYourScore();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::AVAILABLE_ACHIEVEMENTS,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromAvailableAchievements();
     }
   }
 

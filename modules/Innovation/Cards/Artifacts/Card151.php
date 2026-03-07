@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -31,9 +32,9 @@ class Card151 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->score()->fromYourBoard()->withIcon(Icons::PROSPERITY)->build();
+    return self::youMust()->score()->fromYourBoard()->withIcon(Icons::PROSPERITY);
   }
 
   public function compelMightBeEffective(): bool

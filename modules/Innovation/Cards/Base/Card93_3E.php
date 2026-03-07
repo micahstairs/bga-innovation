@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -21,9 +22,9 @@ class Card93_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->fromMyBoard()->withoutIcon(Icons::HEALTH)->toYourHand()->build();
+    return self::youMust()->fromMyBoard()->withoutIcon(Icons::HEALTH)->toYourHand();
   }
 
   public function demandMightBeEffective(): bool

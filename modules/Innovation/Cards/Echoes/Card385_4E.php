@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
@@ -30,24 +31,14 @@ class Card385_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourForecast();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight(Colors::GREEN);
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-      ];
+      return self::youMay()->splayUp();
     }
   }
 

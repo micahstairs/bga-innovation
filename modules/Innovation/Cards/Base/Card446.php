@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card446 extends AbstractCard
@@ -12,12 +13,12 @@ class Card446 extends AbstractCard
   //   - I DEMAND you transfer all the cards of the value of my choice from your score pile to my score pile!
   //   - Reveal and self-execute the highest card in your score pile.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->chooseValue()->ofMyChoice()->build();
+      return self::youMust()->chooseValue()->ofMyChoice();
     } else {
-      return self::youMust()->reveal()->highest()->fromYourScore()->build();
+      return self::youMust()->reveal()->highest()->fromYourScore();
     }
   }
 

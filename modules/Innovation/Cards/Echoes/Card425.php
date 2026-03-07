@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card425 extends AbstractCard
@@ -16,7 +17,7 @@ class Card425 extends AbstractCard
   //   - Claim one available standard achievement, if eligible, doubling your current score for the
   //     purpose of checking eligibility. If you do, and Artifical Heart was foreseen, repeat this effect.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $cardIds = [];
     $achievementsByValue = self::getCardsKeyedByValue(Locations::AVAILABLE_ACHIEVEMENTS);
@@ -26,10 +27,7 @@ class Card425 extends AbstractCard
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'achieve_keyword'                 => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->achieve()->onlyCardsInAuxiliaryArray();
   }
 
   public function handleCardChoice(array $card)

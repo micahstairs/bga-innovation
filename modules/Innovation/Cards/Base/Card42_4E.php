@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -13,10 +14,10 @@ class Card42_4E extends AbstractCard
   //   - You may return a card from your hand. If you do, score a card from your hand for every
   //     color on your board with [CONCEPT].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->return()->fromYourHand()->build();
+      return self::youMay()->return()->fromYourHand();
     } else {
       $numCardsToScore = 0;
       foreach (Colors::ALL as $color) {
@@ -24,7 +25,7 @@ class Card42_4E extends AbstractCard
           $numCardsToScore++;
         }
       }
-      return self::youMay()->score()->exactly($numCardsToScore)->fromYourHand()->build();
+      return self::youMay()->score()->exactly($numCardsToScore)->fromYourHand();
     }
   }
 

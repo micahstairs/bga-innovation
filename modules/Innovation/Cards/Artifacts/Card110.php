@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card110 extends AbstractCard
@@ -16,12 +17,12 @@ class Card110 extends AbstractCard
   //   - I COMPEL you to return a top card with a demand effect of each color from your board!
   //   - Score a top, non-blue card from your board with a demand effect.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isCompel()) {
-      return self::youMust()->return()->all()->withDemandEffect()->fromYourBoard()->build();
+      return self::youMust()->return()->all()->withDemandEffect()->fromYourBoard();
     } else {
-      return self::youMust()->score()->non(Colors::BLUE)->fromYourBoard()->withDemandEffect()->build();
+      return self::youMust()->score()->non(Colors::BLUE)->fromYourBoard()->withDemandEffect();
     }
   }
 

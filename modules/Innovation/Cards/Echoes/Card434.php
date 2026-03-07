@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card434 extends AbstractCard
 {
@@ -17,18 +18,12 @@ class Card434 extends AbstractCard
   //   - Draw and meld a card of any value. If you have nine different bonus values on your
   //     board, you win. Otherwise, self-execute the melded card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMay()->tuck()->anyNumber()->fromYourHand();
     } else {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue();
     }
   }
 

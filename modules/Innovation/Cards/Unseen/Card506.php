@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 
@@ -19,21 +20,13 @@ class Card506 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(Arrays::encode([]));
-      return [
-        'location_from' => Locations::HAND_OR_SCORE,
-        'location_to'   => 'revealed,deck',
-        'n'             => 5,
-      ];
+      return self::youMust()->revealAndReturn()->exactly(5)->fromYourHandOrScore();
     } else {
-      return [
-        'location_from'                   => 'hand',
-        'meld_keyword'                    => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand();
     }
   }
 
@@ -59,7 +52,7 @@ class Card506 extends AbstractCard
       $numColors = count(Arrays::decode(self::getAuxiliaryValue()));
       $card1 = self::draw($numColors);
       $card2 = self::draw($numColors);
-      self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+      self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
     }
   }
 }

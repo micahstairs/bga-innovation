@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card196 extends AbstractCard
 {
@@ -15,12 +16,12 @@ class Card196 extends AbstractCard
   //     of cards you return.
   //   - Choose a value. Junk all cards in that deck.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->return()->all()->fromYourScore()->build();
+      return self::youMust()->return()->all()->fromYourScore();
     } else {
-      return self::youMust()->chooseValue()->build();
+      return self::youMust()->chooseValue();
     }
   }
 

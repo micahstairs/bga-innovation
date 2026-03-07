@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -16,10 +17,10 @@ class Card156 extends AbstractCard
   //   - Return your top card of each non-blue color. For each card you return, draw and meld a
   //     card of value one higher than the value of the returned card, in ascending order.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     self::setAuxiliaryArray([]);
-    return self::youMust()->return()->all()->non(Colors::BLUE)->fromYourBoard()->build();
+    return self::youMust()->return()->all()->non(Colors::BLUE)->fromYourBoard();
   }
 
   public function handleCardChoice(array $card)

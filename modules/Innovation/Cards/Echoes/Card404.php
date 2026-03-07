@@ -3,9 +3,11 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card404 extends AbstractCard
 {
@@ -50,23 +52,19 @@ class Card404 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::UP,
-      'color'           => [Colors::PURPLE],
-    ];
+    return self::youMay()->splayUp(Colors::PURPLE);
   }
 
   private function bottomLeftIconVisible($card)
   {
-    return $this->game->getIfTopCardOnBoard(self::getId($card)) || ($card['location'] == 'board' && $card['splay_direction'] >= Directions::RIGHT);
+    return $this->game->getIfTopCardOnBoard(self::getId($card)) || (self::getLocation($card) == Locations::BOARD && $card['splay_direction'] >= Directions::RIGHT);
   }
 
   private function bottomCenterIconVisible($card)
   {
-    return $this->game->getIfTopCardOnBoard(self::getId($card)) || ($card['location'] == 'board' && $card['splay_direction'] >= Directions::UP);
+    return $this->game->getIfTopCardOnBoard(self::getId($card)) || (self::getLocation($card) == Locations::BOARD && $card['splay_direction'] >= Directions::UP);
   }
 
 }

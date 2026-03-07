@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -19,12 +20,12 @@ class Card132 extends AbstractCard
   //   - Score a card from your hand with no [AUTHORITY]. If you do, junk all cards in the deck of
   //     value equal to the scored card. Otherwise, tuck Terracotta Army.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isCompel()) {
-      return self::youMust()->return()->fromYourBoard()->withoutIcon(Icons::AUTHORITY)->build();
+      return self::youMust()->return()->fromYourBoard()->withoutIcon(Icons::AUTHORITY);
     } else {
-      return self::youMust()->score()->fromYourHand()->withoutIcon(Icons::AUTHORITY)->revealingIfUnable()->build();
+      return self::youMust()->score()->fromYourHand()->withoutIcon(Icons::AUTHORITY)->revealingIfUnable();
     }
   }
 

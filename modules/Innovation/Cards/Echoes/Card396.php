@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card396 extends AbstractCard
 {
@@ -21,13 +22,9 @@ class Card396 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'n'             => 'all',
-      'location_from' => 'hand',
-      'location_to'   => 'revealed,deck',
-    ];
+    return self::youMust()->revealAndReturn()->all()->fromYourHand();
   }
 
   public function afterInteraction()

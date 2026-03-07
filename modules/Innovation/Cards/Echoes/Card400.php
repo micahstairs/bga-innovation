@@ -3,8 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 
 class Card400 extends AbstractCard
 {
@@ -31,27 +31,16 @@ class Card400 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'      => true,
-          'choose_player' => true,
-          'players'       => $this->game->getOtherActivePlayers(self::getPlayerId()),
-        ];
+        return self::youMay()->choosePlayer(self::getOtherPlayers());
       } else {
-        return [
-          'can_pass'     => true,
-          'choose_color' => true,
-        ];
+        return self::youMay()->chooseColor();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::BLUE],
-      ];
+      return self::youMay()->splayUp(Colors::BLUE);
     }
   }
 
@@ -66,7 +55,7 @@ class Card400 extends AbstractCard
   {
     $playerId = self::getAuxiliaryValue();
     $direction = self::getSplayDirection($color, $playerId);
-    $this->game->splay(self::getPlayerId(), self::getPlayerId(), $color, $direction, /*force_unsplay=*/$direction === 0);
+    $this->game->splay(self::getPlayerId(), self::getPlayerId(), $color, $direction, /*force_unsplay=*/ $direction === 0);
   }
 
 }

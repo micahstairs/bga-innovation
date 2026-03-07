@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 // TODO: Split this implementation into separate files for 3rd and 4th edition.
 class Card353 extends AbstractCard
@@ -24,23 +25,13 @@ class Card353 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    $color = self::getCard(self::getAuxiliaryValue())['color'];
+    $color = self::getColor(self::getCard(self::getAuxiliaryValue()));
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'      => self::isFourthEdition(),
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'color'         => [$color],
-      ];
+      return self::youMay()->tuck()->fromYourHand()->withColor([$color]);
     } else {
-      return [
-        'n'             => 'all',
-        'owner_from'    => 'any other player',
-        'location_from' => 'pile',
-        'color'         => [$color],
-      ];
+      return self::youMust()->return()->fromAnywhereInStack()->withColor([$color])->fromAnyPlayer();
     }
   }
 

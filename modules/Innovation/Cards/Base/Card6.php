@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -31,9 +32,9 @@ class Card6 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->meld()->fromYourHand()->withColor(self::getColorsNotOnBoard())->revealingIfUnable()->build();
+    return self::youMust()->meld()->fromYourHand()->withColor(self::getColorsNotOnBoard())->revealingIfUnable();
   }
 
   private function getColorsNotOnBoard(): array

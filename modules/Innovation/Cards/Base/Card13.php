@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -13,12 +14,12 @@ class Card13 extends AbstractCard
   //   - You may tuck a card from your hand of the same color as any card on your board. If you do,
   //     you may splay that color of your cards left.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->tuck()->fromYourHand()->withColor(self::getColorsOnBoard())->build();
+      return self::youMay()->tuck()->fromYourHand()->withColor(self::getColorsOnBoard());
     } else {
-      return self::youMay()->splayLeft()->withColor(self::getLastSelectedColor())->build();
+      return self::youMay()->splayLeft(self::getLastSelectedColor());
     }
   }
 

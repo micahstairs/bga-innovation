@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -14,22 +15,12 @@ class Card581 extends AbstractCard
   //   - You may splay your green cards up.
   //   - Meld a top non-yellow card with [EFFICIENCY] from another player's board. If you do, self-execute it. Otherwise, draw an [11].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayUp(Colors::GREEN);
     } else {
-      return [
-        'owner_from'    => 'any other player',
-        'location_from' => 'board',
-        'meld_keyword'  => true,
-        'color'         => Colors::NON_YELLOW,
-        'with_icon'     => Icons::EFFICIENCY,
-      ];
+      return self::youMust()->meld()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromAnyBoard();
     }
   }
 

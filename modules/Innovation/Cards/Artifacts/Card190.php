@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card190 extends AbstractCard
 {
@@ -13,9 +14,9 @@ class Card190 extends AbstractCard
   //   - Return a card from your hand. Draw and score three cards of the returned card's value. If
   //     you don't, junk all cards in the deck of value equal to the highest scored card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->fromYourHand()->build();
+    return self::youMust()->return()->fromYourHand();
   }
 
   public function afterInteraction()

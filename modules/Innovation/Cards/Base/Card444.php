@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card444 extends AbstractCard
 {
@@ -20,16 +21,16 @@ class Card444 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       $topCards = self::getTopCards();
       $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
-      return self::youMust()->return()->fromYourBoard()->withColor($colors)->build();
+      return self::youMust()->return()->fromYourBoard()->withColor($colors);
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->return()->fromYourBoard()->value(self::getAuxiliaryValue())->non(self::getLastSelectedColor())->build();
+      return self::youMust()->return()->fromYourBoard()->value(self::getAuxiliaryValue())->non(self::getLastSelectedColor());
     } else {
-      return self::youMust()->return()->all()->fromYourHandOrScore()->maxValue(self::getAuxiliaryValue())->build();
+      return self::youMust()->return()->all()->fromYourHandOrScore()->maxValue(self::getAuxiliaryValue());
     }
   }
 

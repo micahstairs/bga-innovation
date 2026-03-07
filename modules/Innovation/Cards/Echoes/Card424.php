@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 
@@ -14,21 +15,12 @@ class Card424 extends AbstractCard
   //     green card, I win!
   //   - You may score a top card on your board. If Paper is your top green card, you win.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'board',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'hand',
-        'color'         => [Colors::GREEN],
-      ];
+      return self::youMust()->withColor(Colors::GREEN)->fromYourBoard()->toMyHand();
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'board',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->fromYourBoard();
     }
   }
 
@@ -38,9 +30,10 @@ class Card424 extends AbstractCard
     if (!$topGreenCard) {
       return;
     }
-    if (self::isDemand() && $topGreenCard['id'] == CardIds::SCISSORS) {
+    $cardId = self::getId($topGreenCard);
+    if (self::isDemand() && $cardId == CardIds::SCISSORS) {
       self::win(self::getLauncherId());
-    } else if (self::isFirstNonDemand() && $topGreenCard['id'] == CardIds::PAPER) {
+    } else if (self::isFirstNonDemand() && $cardId == CardIds::PAPER) {
       self::win();
     }
   }

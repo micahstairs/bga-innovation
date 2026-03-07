@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -18,21 +19,14 @@ class Card534 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2]);
     } else if (self::getAuxiliaryValue() === 1) {
-      return [
-        'splay_direction'     => Directions::LEFT,
-        'has_splay_direction' => [Directions::UNSPLAYED],
-        'color'               => Colors::NON_PURPLE,
-      ];
+      return self::youMust()->splayLeft()->non(Colors::PURPLE)->currentlyUnsplayed();
     } else {
-      return [
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourHand();
     }
   }
 

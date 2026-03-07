@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -16,9 +17,9 @@ class Card78 extends AbstractCard
   //   - I demand you transfer your two highest non-red top cards without [INDUSTRY] of different
   //     colors to my score pile! If you transfer any cards, draw an 8.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->exactly(2)->highest()->non(Colors::RED)->withoutIcon(Icons::INDUSTRY)->fromYourBoard()->toMyScore()->refreshingSelection()->build();
+    return self::youMust()->exactly(2)->highest()->non(Colors::RED)->withoutIcon(Icons::INDUSTRY)->fromYourBoard()->toMyScore()->refreshingSelection();
   }
 
   public function afterInteraction()

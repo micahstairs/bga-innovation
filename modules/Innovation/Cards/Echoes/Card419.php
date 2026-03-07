@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -30,28 +31,19 @@ class Card419 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'board',
-        'location_to'   => 'hand',
-        'color'         => Colors::NON_GREEN,
-      ];
+      return self::youMay()->non(Colors::GREEN)->fromYourBoard()->toYourHand();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayUp(Colors::GREEN);
     }
   }
 
   public function handleCardChoice(array $card)
   {
-    $scoredCard = self::drawAndScore($card['faceup_age']);
-    if ($scoredCard['age'] == $card['faceup_age'] && self::wasForeseen()) {
+    $scoredCard = self::drawAndScore(self::getFaceupValue($card));
+    if (self::getValue($scoredCard) == self::getFaceupValue($card) && self::wasForeseen()) {
       self::setNextStep(1);
     }
   }

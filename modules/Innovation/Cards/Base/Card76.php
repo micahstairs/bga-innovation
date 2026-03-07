@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -15,14 +16,14 @@ class Card76 extends AbstractCard
   // - 4th edition:
   //   - Return a card in any opponent's score pile for every color on your board with [EFFICIENCY].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
       $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2);
     } else {
       $numCards = self::countColorsWithIcon(Icons::EFFICIENCY);
     }
-    return self::youMust()->return()->exactly($numCards)->fromOpponentsScore()->build();
+    return self::youMust()->return()->exactly($numCards)->fromOpponentsScore();
   }
 
   public function nonDemandsMightBeEffective(): bool

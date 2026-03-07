@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Utils\Arrays;
 
 class Card413 extends AbstractCard
@@ -35,19 +36,13 @@ class Card413 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray());
     } else {
-      return [
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-        'age'            => self::getMinValueInLocation('hand'),
-      ];
+      $value = self::getMinValueInLocation('hand');
+      return self::youMust()->return()->value($value)->fromYourHand();
     }
   }
 

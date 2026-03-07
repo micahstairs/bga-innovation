@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card23 extends AbstractCard
@@ -26,9 +27,9 @@ class Card23 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->fromYourBoard()->withColor(self::getSelectableColors())->toMyScore()->build();
+    return self::youMust()->fromYourBoard()->withColor(self::getSelectableColors())->toMyScore();
   }
 
   private function getSelectableColors(): array

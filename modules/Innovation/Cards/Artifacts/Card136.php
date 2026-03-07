@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Locations;
 
@@ -17,18 +18,18 @@ class Card136 extends AbstractCard
   //   - Reveal a card from your hand. If you do, splay left its color on your board, then choose a
   //     top card other than Yata No Kagami of that color on any board and self-execute it.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       if (self::isFirstOrThirdEdition()) {
-        return self::youMust()->tuck()->fromYourHand()->build();
+        return self::youMust()->tuck()->fromYourHand();
       } else {
-        return self::youMust()->reveal()->fromYourHand()->build();
+        return self::youMust()->reveal()->fromYourHand();
       }
     } else if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->currentlySplayed()->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->currentlySplayed();
     } else {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getAuxiliaryValue())->otherThan(CardIds::YATA_NO_KAGAMI)->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getAuxiliaryValue())->otherThan(CardIds::YATA_NO_KAGAMI);
     }
   }
 

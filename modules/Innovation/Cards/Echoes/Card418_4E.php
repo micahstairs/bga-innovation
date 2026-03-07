@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
+use Innovation\Cards\InteractionBuilder;
 
 class Card418_4E extends AbstractCard
 {
@@ -23,7 +23,7 @@ class Card418_4E extends AbstractCard
       if ($cardIds) {
         // NOTE: The array will contain at most one element.
         $meldedCard = self::getCard($cardIds[0]);
-        $returnedCard = self::return(self::getTopCardOfColor($meldedCard['color']));
+        $returnedCard = self::return(self::getTopCardOfColor(self::getColor($meldedCard)));
         $values = [self::getValue($meldedCard), self::getValue($returnedCard)];
         foreach (self::getAvailableStandardAchievements() as $card) {
           if (in_array(self::getValue($card), $values)) {
@@ -36,12 +36,9 @@ class Card418_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from' => Locations::HAND,
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

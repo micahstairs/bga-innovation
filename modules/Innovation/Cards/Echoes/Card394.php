@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -29,22 +30,14 @@ class Card394 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [self::getAuxiliaryValue()],
-      ];
+      return self::youMay()->splayRight(self::getAuxiliaryValue());
     } else {
       $count = self::getStandardIconCount(Icons::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
-      return [
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'junk_keyword'  => true,
-        'age'           => $count,
-      ];
+      return self::youMust()->junk()->value($count)->fromAvailableAchievements();
     }
   }
 
@@ -58,7 +51,7 @@ class Card394 extends AbstractCard
   public function junkAchievementsOfLowerValue($value)
   {
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
-      if (self::isValuedCard($card) && $card['age'] < $value) {
+      if (self::isValuedCard($card) && self::getValue($card) < $value) {
         self::junk($card);
       }
     }

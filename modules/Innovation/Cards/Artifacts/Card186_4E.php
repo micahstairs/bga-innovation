@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card186_4E extends AbstractCard
@@ -23,12 +24,12 @@ class Card186_4E extends AbstractCard
 
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromYourBoard()->build();
+      return self::youMust()->junk()->value(self::getAuxiliaryValue())->fromYourBoard();
     } else {
-      return self::youMust()->achieve()->includingSpecialAchievements()->build();
+      return self::youMust()->achieve()->includingSpecialAchievements();
     }
   }
 

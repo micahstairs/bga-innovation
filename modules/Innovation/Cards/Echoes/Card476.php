@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card476 extends AbstractCard
 {
@@ -19,20 +21,15 @@ class Card476 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'n'              => 'all',
-      'location_from'  => 'pile,score',
-      'color'          => [self::getAuxiliaryValue()],
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->all()->fromLocation(Locations::PILE_OR_SCORE)->withColor(self::getAuxiliaryValue());
   }
 
   public function afterInteraction()
   {
     // Prove that there are no cards of the drawn color left in the score pile
-    if (self::countCards('score') > 0) {
+    if (self::countCards(Locations::SCORE) > 0) {
       self::revealScorePile();
     }
   }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card112 extends AbstractCard
 {
@@ -32,9 +33,9 @@ class Card112 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->all()->fromYourRevealedAndScore()->build();
+    return self::youMust()->return()->all()->fromYourRevealedAndScore();
   }
 
   private function getCardName(array $card): string

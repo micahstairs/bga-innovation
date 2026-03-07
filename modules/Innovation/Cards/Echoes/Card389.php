@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card389 extends AbstractCard
@@ -29,26 +30,20 @@ class Card389 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $cardIds = [];
     $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
     foreach ($playerIds as $playerId) {
       $achievementCounts = self::countCardsKeyedByValue('achievements', $playerId);
       foreach (self::getTopCards($playerId) as $card) {
-        if ($achievementCounts[$card['faceup_age']] > 0) {
+        if ($achievementCounts[self::getFaceupValue($card)] > 0) {
           $cardIds[] = self::getId($card);
         }
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'can_pass'                        => true,
-      'owner_from'                      => 'any player',
-      'location_from'                   => 'board',
-      'achieve_if_eligible'             => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMay()->achieveIfEligible()->fromAnyBoard()->onlyCardsInAuxiliaryArray();
   }
 
   public function afterInteraction()

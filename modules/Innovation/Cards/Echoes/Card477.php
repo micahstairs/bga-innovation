@@ -24,8 +24,8 @@ class Card477 extends AbstractCard
     sort($values);
     $drewDesiredValues = true;
     foreach ($values as $value) {
-      $drawnValue = self::drawAndScore($value);
-      if ($drawnValue != $value) {
+      $drawnCard = self::drawAndScore($value);
+      if (self::getFaceupValue($drawnCard) != $value) {
         $drewDesiredValues = false;
       }
     }

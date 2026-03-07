@@ -3,8 +3,10 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card351 extends AbstractCard
 {
@@ -22,7 +24,7 @@ class Card351 extends AbstractCard
   public function initialExecution()
   {
     if (self::isEcho()) {
-      $values = self::getUniqueValuesInLocation('hand');
+      $values = self::getUniqueValuesInLocation(Locations::HAND);
       if (count($values) > 0) {
         self::setMaxSteps(2);
         self::setAuxiliaryArray($values);
@@ -32,38 +34,21 @@ class Card351 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       if (self::isFirstInteraction()) {
-        return [
-          'choose_value' => true,
-          'age'          => self::getAuxiliaryArray(),
-        ];
+        return self::youMust()->chooseValue(self::getAuxiliaryArray());
       } else {
-        return [
-          'n'             => 'all',
-          'location_from' => 'hand',
-          'tuck_keyword'  => true,
-          'age'           => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->tuck()->all()->value(self::getAuxiliaryValue())->fromYourHand();
       }
     } else if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-      ];
+      return self::youMay()->splayLeft();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
+      return self::youMay()->choose([1]);
     } else {
-      return [
-        'location_from'       => 'junk',
-        'age'                 => self::getMaxValueInLocation('junk'),
-        'achieve_if_eligible' => true
-      ];
+      $value = self::getMaxValueInLocation(Locations::JUNK);
+      return self::youMust()->achieveIfEligible()->value($value)->fromJunk();
     }
   }
 

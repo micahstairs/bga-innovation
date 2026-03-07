@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -33,21 +34,12 @@ class Card501 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => Locations::BOARD,
-        'without_icon'   => Icons::HEALTH,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->withoutIcon(Icons::HEALTH)->fromYourBoard();
     } else {
-      return [
-        'location_from'  => Locations::SCORE,
-        'age'            => self::getAuxiliaryValue2(),
-        'n'              => 'all',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->value(self::getAuxiliaryValue2())->fromYourScore();
     }
   }
 

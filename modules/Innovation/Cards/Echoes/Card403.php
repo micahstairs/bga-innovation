@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
@@ -30,40 +31,23 @@ class Card403 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'without_bonus' => true,
-        'color'         => Colors::NON_PURPLE,
-      ];
+      return self::youMust()->score()->non(Colors::PURPLE)->withoutBonus()->fromYourBoard();
     }
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return [
-          'choose_value' => true,
-          'age'          => [6, 7, 8, 9],
-        ];
+        return self::youMust()->chooseValue([6, 7, 8, 9]);
       } else {
-        return [
-          'can_pass' => true,
-          'choices'  => [1],
-        ];
+        return self::youMay()->choose([1]);
       }
     }
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [6, 7, 8, 9],
-      ];
+      return self::youMay()->chooseValue([6, 7, 8, 9]);
     } else {
-      return [
-        'location_from'       => 'junk',
-        'achieve_if_eligible' => true,
-        'age'                 => self::getMaxValueInLocation('junk'),
-      ];
+      $value = self::getMaxValueInLocation('junk');
+      return self::youMust()->achieveIfEligible()->value($value)->fromJunk();
     }
   }
 
@@ -98,7 +82,7 @@ class Card403 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       // TODO(LATER): This shouldn't really be a draw.
-      $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
+      $this->game->executeDraw(0, /*age=*/ self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
     } else if (self::junkBaseDeck($choice)) {
       self::setMaxSteps(2);
     }

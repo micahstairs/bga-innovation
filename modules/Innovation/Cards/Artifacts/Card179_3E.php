@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card179_3E extends AbstractCard
 {
@@ -11,9 +12,9 @@ class Card179_3E extends AbstractCard
   //     If the number of cards of that color visible on your board is exactly equal to the card's
   //     value, you win. Otherwise, return the melded card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseValue()->build();
+    return self::youMust()->chooseValue();
   }
 
   public function handleValueChoice(int $value)

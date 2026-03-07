@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card514 extends AbstractCard
 {
@@ -18,7 +19,7 @@ class Card514 extends AbstractCard
       self::setMaxSteps(1);
     } else {
       $card = self::drawAndMeld(3);
-      if (self::getBottomCardOfColor(self::getColor($card))['id'] == self::getId($card)) {
+      if (self::getId(self::getBottomCardOfColor(self::getColor($card))) == self::getId($card)) {
         self::score($card);
         self::setAuxiliaryValue(self::getColor($card));
         self::setMaxSteps(1);
@@ -26,18 +27,12 @@ class Card514 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::getEffectNumber() === 1) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor();
     } else {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'color'         => [self::getAuxiliaryValue()],
-      ];
+      return self::youMay()->score()->anyNumber()->withColor(self::getAuxiliaryValue())->fromYourHand();
     }
   }
 

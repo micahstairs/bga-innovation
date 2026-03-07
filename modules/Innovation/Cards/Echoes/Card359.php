@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card359 extends AbstractCard
@@ -32,33 +33,25 @@ class Card359 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return ['choices' => [3, 4]];
+      return self::youMust()->choose([3, 4]);
     } else if (self::isFirstInteraction()) {
       if (count(self::getActionScopedAuxiliaryArray(self::getPlayerId())) === 2) {
         // If two cards were drawn due to the Endorse action, the launcher is allowed to choose to meld
         // the same card twice. Unfortunately, this means the card may no longer be in a visible
         // location so we need to use a special prompt.
-        return [
-          'can_pass' => true,
-          'choices'  => [0, 1],
-        ];
+        return self::youMay()->choose([0, 1]);
       } else {
         self::setAuxiliaryArray(self::getActionScopedAuxiliaryArray(self::getPlayerId()));
-        return [
-          'can_pass'                        => true,
-          'location_from'                   => 'hand',
-          'meld_keyword'                    => true,
-          'card_ids_are_in_auxiliary_array' => true,
-        ];
+        return self::youMay()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand();
       }
     } else {
       if (self::isEligibleForAchieving(self::getCard(self::getAuxiliaryValue()))) {
-        return ['choices' => [1, 2]];
+        return self::youMust()->choose([1, 2]);
       } else {
-        return ['choices' => [1]];
+        return self::youMust()->choose([1]);
       }
     }
 
@@ -119,11 +112,11 @@ class Card359 extends AbstractCard
       return;
     }
     if (self::isFirstOrThirdEdition()) {
-      self::setAuxiliaryValue($topGreenCard['id']); // Track card ID which will be returned or achieved
+      self::setAuxiliaryValue(self::getId($topGreenCard)); // Track card ID which will be returned or achieved
       self::setMaxSteps(2);
-    } else if ($card['age'] == 3) {
+    } else if (self::getValue($card) == 3) {
       self::achieveIfEligible($topGreenCard);
-    } else if ($card['age'] == 4) {
+    } else if (self::getValue($card) == 4) {
       self::return($topGreenCard);
     }
   }

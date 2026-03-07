@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -17,21 +18,14 @@ class Card510 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getValue(self::getTopCardOfColor(Colors::YELLOW)),
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW));
     } else {
-      return [
-        'location' => Locations::SCORE,
-        'owner_to' => self::getLauncherId(),
-        'age'      => self::getValue(self::getTopCardOfColor(Colors::YELLOW, self::getLauncherId())),
-      ];
+      $value = self::getValue(self::getTopCardOfColor(Colors::YELLOW, self::getLauncherId()));
     }
+    return self::youMust()->value($value)->fromYourScore()->toMine();
   }
 
 }

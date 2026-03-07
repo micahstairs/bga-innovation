@@ -3,8 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card391 extends AbstractCard
 {
@@ -32,7 +33,8 @@ class Card391 extends AbstractCard
       $color = $this->game->getIndexedAuxiliaryValue(self::getPlayerId());
       do {
         $continue = false;
-        $count = self::countCardsKeyedByColor('board')[$color];
+        // NOTE: In certain situations, the echo effect may not have been executed, so color would be -1 in this case
+        $count = $color < 0 ? 0 : self::countCardsKeyedByColor(Locations::BOARD)[$color];
         if ($count > 2) {
           self::score(self::getTopCardOfColor($color));
           self::score(self::getTopCardOfColor($color));
@@ -49,13 +51,9 @@ class Card391 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::RIGHT,
-      'color'           => [Colors::BLUE],
-    ];
+    return self::youMay()->splayRight(Colors::BLUE);
   }
 
 }

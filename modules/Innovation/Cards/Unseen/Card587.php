@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card587 extends AbstractCard
 {
@@ -10,16 +11,9 @@ class Card587 extends AbstractCard
   // Cloaking:
   //   - I DEMAND you transfer one of your claimed standard achievements to my safe!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'owner_from'    => self::getPlayerId(),
-      'location_from' => 'achievements',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'safe',
-      'age_min'       => 1,
-      'age_max'       => 11,
-    ];
+    return self::youMust()->range(1, 11)->toMySafe();
   }
 
 }

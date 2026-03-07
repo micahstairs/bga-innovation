@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -14,7 +15,7 @@ class Card145_3E extends AbstractCard
   //     with a [AUTHORITY] on your board!
 
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $numTopCardsWithAuthority = 0;
     foreach (self::getTopCards() as $card) {
@@ -22,7 +23,7 @@ class Card145_3E extends AbstractCard
         $numTopCardsWithAuthority++;
       }
     }
-    return self::youMust()->exactly($numTopCardsWithAuthority)->fromYourScore()->toMine()->build();
+    return self::youMust()->exactly($numTopCardsWithAuthority)->fromYourScore()->toMine();
   }
 
   public function compelMightBeEffective(): bool

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card519 extends AbstractCard
 {
@@ -14,33 +16,24 @@ class Card519 extends AbstractCard
   public function initialExecution()
   {
     self::setAuxiliaryArray([]);
-    foreach (self::getCards('hand') as $card) {
+    foreach (self::getCards(Locations::HAND) as $card) {
       self::reveal($card);
       self::addToAuxiliaryArray(self::getId($card));
     }
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'player_id'     => self::getLauncherId(),
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'revealed',
-        'owner_to'      => self::getPlayerId(),
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourRevealed()->ofMyChoice();
     } else {
       $choices = [];
       $array = self::getAuxiliaryArray();
       for ($i = 0; $i < count($array); $i++) {
         $choices[] = $i;
       }
-      return [
-        'player_id' => self::getLauncherId(),
-        'choices'   => $choices,
-      ];
+      return self::youMust()->choose($choices)->ofMyChoice();
     }
   }
 
@@ -67,11 +60,11 @@ class Card519 extends AbstractCard
   public function afterInteraction()
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    foreach (self::getCards('revealed') as $card) {
+    foreach (self::getCards(Locations::REVEALED) as $card) {
       self::transferToHand($card);
     }
     self::revealScorePile();
-    foreach (self::getCards('score') as $card) {
+    foreach (self::getCards(Locations::SCORE) as $card) {
       self::addToAuxiliaryArray(self::getId($card));
     }
   }

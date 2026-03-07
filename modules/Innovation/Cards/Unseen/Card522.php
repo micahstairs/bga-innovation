@@ -3,8 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card522 extends AbstractCard
 {
@@ -14,20 +14,14 @@ class Card522 extends AbstractCard
   //     higher than the transferred card. If you don't, safeguard an available achievement of
   //     value equal to the value of your top red card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'safe',
-        'location_to'   => Locations::AVAILABLE_ACHIEVEMENTS,
-      ];
+      return self::youMust()->fromYourSafe()->toAvailableAchievements();
     } else {
       $topRedCard = self::getTopCardOfColor(Colors::RED);
-      $value = $topRedCard ? $topRedCard['faceup_age'] : 0;
-      return [
-        'safeguard_keyword' => true,
-        'age'               => $value,
-      ];
+      $value = $topRedCard ? self::getFaceUpValue($topRedCard) : 0;
+      return self::youMust()->safeguard()->value($value);
     }
   }
 
@@ -38,7 +32,7 @@ class Card522 extends AbstractCard
       $card = self::draw($valueToDraw);
       // "If you don't" happens whenever you either are unable to transfer a secret or you draw a
       // card of a different value than one higher of the transferred secret.
-      if (self::getNumChosen() === 0 || $card['age'] != $valueToDraw) {
+      if (self::getNumChosen() === 0 || self::getValue($card) != $valueToDraw) {
         self::setMaxSteps(2);
       }
     }

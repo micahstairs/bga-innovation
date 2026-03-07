@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card65 extends AbstractCard
@@ -12,12 +13,12 @@ class Card65 extends AbstractCard
   //   - You may choose to either draw and score an [8] and then return a card from your score pile,
   //     or draw a card of value one higher than the highest card in your score pile.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->choose([0, 1])->build();
+      return self::youMay()->choose([0, 1]);
     } else {
-      return self::youMust()->return()->fromYourScore()->build();
+      return self::youMust()->return()->fromYourScore();
     }
   }
 

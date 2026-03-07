@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card416_3E extends AbstractCard
@@ -17,20 +18,13 @@ class Card416_3E extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::AVAILABLE_ACHIEVEMENTS,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromAvailableAchievements();
     } else {
-      return [
-        'n'              => ceil(self::countCards(Locations::SCORE) / 2),
-        'location_from'  => Locations::SCORE,
-        'return_keyword' => true,
-      ];
+      $numCards = ceil(self::countCards(Locations::SCORE) / 2);
+      return self::youMust()->return()->exactly($numCards)->fromYourScore();
     }
   }
 

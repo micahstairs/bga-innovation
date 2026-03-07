@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card352 extends AbstractCard
@@ -18,33 +19,18 @@ class Card352 extends AbstractCard
   //   - Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of
   //     value equal to the tucked card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return [
-          'location_from'    => 'hand',
-          'tuck_keyword'     => true,
-          'with_bonus'       => true,
-          'reveal_if_unable' => true,
-        ];
+        return self::youMust()->tuck()->withBonus()->fromYourHand()->revealingIfUnable();
       } else {
-        return [
-          'can_pass'       => true,
-          'location_from'  => 'hand',
-          'return_keyword' => true,
-        ];
+        return self::youMay()->return()->fromYourHand();
       }
     } else if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getBonuses(),
-      ];
+      return self::youMust()->chooseValue(self::getBonuses());
     } else {
-      return [
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromYourHand();
     }
   }
 
@@ -61,7 +47,7 @@ class Card352 extends AbstractCard
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand() && self::wasForeseen()) {
-      while ($topCard = $this->game->getDeckTopCard($card['age'], CardTypes::BASE)) {
+      while ($topCard = $this->game->getDeckTopCard(self::getValue($card), CardTypes::BASE)) {
         self::tuck($topCard);
       }
     }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -38,37 +39,25 @@ class Card392 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       self::setAuxiliaryArray(self::getOddValuedCardIds(self::getCards('hand')));
-      return [
-        'location_from'                   => 'hand',
-        'score_keyword'                   => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else if (self::isDemand()) {
       $cardIds = self::getOddValuedCardIds(self::getCards('hand'));
       self::setAuxiliaryArray($cardIds);
-      return [
-        'n'                               => count($cardIds),
-        'location_from'                   => 'hand',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $numCards = count($cardIds);
+      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED],
-      ];
+      return self::youMay()->splayRight(Colors::RED);
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isDemand()) {
-      $maxValue = max(self::getAuxiliaryValue(), $card['age']);
+      $maxValue = max(self::getAuxiliaryValue(), self::getValue($card));
       self::setAuxiliaryValue($maxValue);
     }
   }
@@ -92,7 +81,7 @@ class Card392 extends AbstractCard
   {
     $cardIds = [];
     foreach ($cards as $card) {
-      if ($card['age'] % 2 == 1) {
+      if (self::getValue($card) % 2 == 1) {
         $cardIds[] = self::getId($card);
       }
     }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -35,9 +36,9 @@ class Card180 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->meld()->fromYourHand()->withColor(Colors::BLUE)->revealingIfUnable()->build();
+    return self::youMust()->meld()->fromYourHand()->withColor(Colors::BLUE)->revealingIfUnable();
   }
 
   public function afterInteraction()

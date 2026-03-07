@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card347 extends AbstractCard
@@ -25,29 +26,20 @@ class Card347 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      $options = [
-        'location_from' => 'hand',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'score',
-      ];
       if (self::isFirstOrThirdEdition()) {
-        $options['with_bonus'] = true;
+        return self::youMust()->withBonus()->fromYourHand()->toMyScore();
       } else {
-        $options['type'] = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
+        $types = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
+        return self::youMust()->withTypes($types)->fromYourHand()->toMyScore();
       }
-      return $options;
     } else if (self::isFirstInteraction()) {
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
-      return self::youMust()->choosePlayer($players)->build();
+      return self::youMust()->choosePlayer($players);
     } else {
-      return [
-        'location_from' => 'hand',
-        'owner_to'      => self::getAuxiliaryValue(),
-        'location_to'   => 'board',
-      ];
+      return self::youMust()->fromMyHand()->toBoard(self::getAuxiliaryValue());
     }
   }
 

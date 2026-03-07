@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
+use Innovation\Cards\InteractionBuilder;
 
 class Card204 extends AbstractCard
 {
@@ -25,16 +25,16 @@ class Card204 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->score()->fromYourHand()->build();
+        return self::youMay()->score()->fromYourHand();
       } else {
-        return self::youMay()->fromYourScore()->toYourHand()->build();
+        return self::youMay()->fromYourScore()->toYourHand();
       }
     } else {
-      return self::youMust()->junk()->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->fromAvailableAchievements();
     }
   }
 

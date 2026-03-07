@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card184_4E extends AbstractCard
 {
@@ -20,12 +21,12 @@ class Card184_4E extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choosePlayer(self::getAuxiliaryArray())->build();
+      return self::youMust()->choosePlayer(self::getAuxiliaryArray());
     } else {
-      return self::youMust()->fromYourRevealed()->toPlayer(self::getAuxiliaryValue())->toBoard()->build();
+      return self::youMust()->fromYourRevealed()->toBoard(self::getAuxiliaryValue());
     }
   }
 

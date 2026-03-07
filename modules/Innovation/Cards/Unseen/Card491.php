@@ -12,7 +12,7 @@ class Card491 extends AbstractCard
   public function initialExecution()
   {
     $card = self::drawAndMeld(2);
-    if ($card['position'] == 0) {
+    if (self::getPosition($card) == 0) {
       self::score($card);
     }
   }

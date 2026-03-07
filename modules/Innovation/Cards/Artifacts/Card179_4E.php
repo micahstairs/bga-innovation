@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card179_4E extends AbstractCard
 {
@@ -11,12 +12,12 @@ class Card179_4E extends AbstractCard
   //     cards. If the number of cards of each of those colors on your board is equal to that
   //     value, you win. Otherwise, return the drawn cards.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue()->build();
+      return self::youMust()->chooseValue();
     } else {
-      return self::youMust()->return()->all()->fromYourRevealed()->build();
+      return self::youMust()->return()->all()->fromYourRevealed();
     }
   }
 

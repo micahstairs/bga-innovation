@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card564 extends AbstractCard
 {
@@ -16,9 +18,9 @@ class Card564 extends AbstractCard
   public function initialExecution()
   {
     if (self::getEffectNumber() === 1) {
-      $cardIds = $this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), 'score');
+      $cardIds = $this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), Locations::SCORE);
       if (count($cardIds) >= 1) {
-        self::setAuxiliaryValue(self::getCard($cardIds[0])['age']);
+        self::setAuxiliaryValue(self::getValue(self::getCard($cardIds[0])));
         self::setMaxSteps(1);
       }
     } else {
@@ -30,13 +32,9 @@ class Card564 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from' => 'score',
-      'location_to'   => 'revealed',
-      'age'           => self::getAuxiliaryValue(),
-    ];
+    return self::youMust()->reveal()->value(self::getAuxiliaryValue())->fromYourScore();
   }
 
   public function handleCardChoice(array $card)

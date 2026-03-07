@@ -26,7 +26,7 @@ class Card376 extends AbstractCard
     } else {
       do {
         $topCard = self::getTopCardOfColor(Colors::YELLOW);
-        $value = $topCard ? $topCard['faceup_age'] + 1 : 0;
+        $value = $topCard ? self::getFaceupValue($topCard) + 1 : 0;
         $meldedCard = self::drawAndMeld($value);
         $repeat = self::isYellow($meldedCard);
         if (!$repeat && self::wasForeseen()) {

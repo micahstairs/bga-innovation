@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card492 extends AbstractCard
 {
@@ -30,20 +31,12 @@ class Card492 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'                   => 'hand',
-        'tuck_keyword'                    => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->tuck()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      return [
-        'location_from' => 'hand',
-        'tuck_keyword'  => true,
-        'color'         => [self::getLastSelectedColor()],
-      ];
+      return self::youMust()->tuck()->withColor(self::getLastSelectedColor())->fromYourHand();
     }
   }
 
@@ -55,7 +48,7 @@ class Card492 extends AbstractCard
       $valueToDraw = 0;
       if ($bottomCard) {
         self::splayLeft($color);
-        $valueToDraw = $bottomCard['age'];
+        $valueToDraw = self::getValue($bottomCard);
       }
       self::drawAndSafeguard($valueToDraw);
     }

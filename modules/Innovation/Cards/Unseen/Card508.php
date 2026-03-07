@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card508 extends AbstractCard
 {
@@ -15,8 +17,8 @@ class Card508 extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $handCards = self::countCardsKeyedByValue('hand');
-      $scoreCards = self::countCardsKeyedByValue('score');
+      $handCards = self::countCardsKeyedByValue(Locations::HAND);
+      $scoreCards = self::countCardsKeyedByValue(Locations::SCORE);
       $values = [];
       for ($age = 1; $age <= 11; $age++) {
         $sum = $handCards[$age] + $scoreCards[$age];
@@ -35,21 +37,12 @@ class Card508 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseValue(self::getAuxiliaryArray());
     } else {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 2,
-        'n_max'         => 3,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->minCards(2)->maxCards(3)->fromYourHand();
     }
   }
 
@@ -63,7 +56,7 @@ class Card508 extends AbstractCard
     if (self::isFirstNonDemand()) {
       $value = self::getAuxiliaryValue();
       $handCards = self::getCardsKeyedByValue('hand');
-      $scoreCards = self::getCardsKeyedByValue('score');
+      $scoreCards = self::getCardsKeyedByValue(Locations::SCORE);
       $playerIdOnRight = $this->game->getActivePlayerIdOnRightOfActingPlayer();
       foreach ($handCards[$value] as $card) {
         self::transferToScorePile($card, $playerIdOnRight);

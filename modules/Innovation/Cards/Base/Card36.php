@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -13,12 +14,12 @@ class Card36 extends AbstractCard
   //     than the top purple card on your board.
   //   - You may splay your blue cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->return()->fromYourScore()->build();
+      return self::youMay()->return()->fromYourScore();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::BLUE)->build();
+      return self::youMay()->splayRight(Colors::BLUE);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card70 extends AbstractCard
@@ -13,9 +14,9 @@ class Card70 extends AbstractCard
   // - 4th edition:
   //   - Return your top card of each color without [INDUSTRY], then draw an [8] for each card you return.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->all()->fromYourBoard()->withoutIcon(Icons::INDUSTRY)->build();
+    return self::youMust()->return()->all()->fromYourBoard()->withoutIcon(Icons::INDUSTRY);
   }
 
   public function afterInteraction()

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 
@@ -29,12 +30,10 @@ class Card489 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'choose_two_colors' => true,
-      'color'             => Arrays::decode(self::getAuxiliaryValue()),
-    ];
+    $colors = Arrays::decode(self::getAuxiliaryValue());
+    return self::youMust()->chooseTwoColors($colors);
   }
 
   public function handleTwoColorChoice(int $color1, int $color2)

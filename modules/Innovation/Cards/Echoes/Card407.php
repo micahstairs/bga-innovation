@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -41,51 +42,25 @@ class Card407 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'location_from'    => Locations::HAND,
-        'meld_keyword'     => true,
-        'with_icon'        => Icons::HEALTH,
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->meld()->withIcon(Icons::HEALTH)->fromYourHand()->revealingIfUnable();
     } else if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return [
-          'location_from'  => Locations::SCORE,
-          'return_keyword' => true,
-          'age'            => self::getAuxiliaryValue(),
-        ];
+        return self::youMust()->return()->value(self::getAuxiliaryValue())->fromYourScore();
       } else {
-        return [
-          'location_from'  => Locations::BOARD,
-          'return_keyword' => true,
-          'with_icon'      => Icons::EFFICIENCY,
-        ];
+        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourBoard();
       }
     } else {
       if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
-        return [
-          'location_from'    => Locations::SCORE,
-          'return_keyword'   => true,
-          'with_icon'        => Icons::EFFICIENCY,
-          'reveal_if_unable' => true,
-        ];
+        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourScore()->revealingIfUnable();
       } else if (self::isSecondInteraction()) {
-        return [
-          'location_from'  => Locations::BOARD,
-          'return_keyword' => true,
-          'with_icon'      => Icons::EFFICIENCY,
-        ];
+        return self::youMust()->return()->withIcon(Icons::EFFICIENCY)->fromYourBoard();
       } else {
-        return [
-          'n'                            => self::countCards(Locations::ACHIEVEMENTS),
-          'location_from'                => Locations::AVAILABLE_ACHIEVEMENTS,
-          'include_special_achievements' => true,
-          'junk_keyword'                 => true,
-        ];
+        $numCards = self::countCards(Locations::ACHIEVEMENTS);
+        return self::youMust()->junk()->exactly($numCards)->includingSpecialAchievements()->fromAvailableAchievements();
       }
     }
   }

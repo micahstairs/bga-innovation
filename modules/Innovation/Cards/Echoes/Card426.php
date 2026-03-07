@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card426 extends AbstractCard
 {
@@ -28,23 +30,13 @@ class Card426 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'     => true,
-        'choose_value' => true,
-      ];
+      return self::youMay()->chooseValue();
     } else {
-      $options = [
-        'location_from' => 'board',
-        'location_to'   => 'hand',
-        'bottom_from'   => true,
-      ];
-      if (self::isFourthEdition()) {
-        $options['color'] = [Colors::RED];
-      }
-      return $options;
+      $colors = self::isFourthEdition() ? Colors::RED : Colors::ALL;
+      return self::youMust()->withColor($colors)->fromBottom()->fromYourBoard()->toMyHand();
     }
   }
 
@@ -56,8 +48,8 @@ class Card426 extends AbstractCard
   public function afterInteraction()
   {
     if (self::isSecondInteraction()) {
-      $handCounts = self::countCardsKeyedByValue('hand');
-      $scoreCounts = self::countCardsKeyedByValue('score');
+      $handCounts = self::countCardsKeyedByValue(Locations::HAND);
+      $scoreCounts = self::countCardsKeyedByValue(Locations::SCORE);
       $eligible = true;
       for ($i = 1; $i <= 11; $i++) {
         if ($handCounts[$i] != $scoreCounts[$i]) {

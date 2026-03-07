@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -23,12 +24,12 @@ class Card92 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->tuck()->anyNumber()->fromYourHand()->build();
+      return self::youMay()->tuck()->anyNumber()->fromYourHand();
     } else {
-      return self::youMay()->choose([9])->build();
+      return self::youMay()->choose([9]);
     }
   }
 

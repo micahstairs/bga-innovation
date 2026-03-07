@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card170 extends AbstractCard
@@ -12,12 +13,12 @@ class Card170 extends AbstractCard
   //     colors, score it and splay up that color on your board. Otherwise, return all cards of
   //     that color from your score pile, and unsplay that color.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseThreeColors()->build();
+      return self::youMust()->chooseThreeColors();
     } else {
-      return self::youMust()->return()->all()->withColor(self::getAuxiliaryValue())->fromYourScore()->build();
+      return self::youMust()->return()->all()->withColor(self::getAuxiliaryValue())->fromYourScore();
     }
   }
 

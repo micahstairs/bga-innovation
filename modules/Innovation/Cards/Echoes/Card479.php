@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card479 extends AbstractCard
@@ -27,24 +28,15 @@ class Card479 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_icon_type' => true,
-        'icon'             => self::getAuxiliaryArray(),
-      ];
+      return self::youMust()->chooseIcon(self::getAuxiliaryArray());
     } else {
       $icon = self::getAuxiliaryValue();
       self::setAuxiliaryArray(self::getCardIdsWithVisibleIcon($icon)); // Repurpose array to store the card IDs to transfer
-      return [
-        'n'                               => 'all',
-        'location_from'                   => Locations::PILE,
-        'location_to'                     => self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD,
-        'owner_to'                        => self::getLauncherId(),
-        'with_icon'                       => $icon,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $locationTo = self::wasForeseen() ? Locations::ACHIEVEMENTS : Locations::BOARD;
+      return self::youMust()->onlyCardsInAuxiliaryArray()->withIcon($icon)->fromAnywhereInStack()->toMy($locationTo);
     }
   }
 
@@ -62,7 +54,7 @@ class Card479 extends AbstractCard
         $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));
       }
       foreach ($stack as $card) {
-        if ($card['position'] == count($stack) - 1) {
+        if (self::getPosition($card) == count($stack) - 1) {
           // All icons are visible on the top card in the stack
           $icons = self::getIcons($card, [1, 2, 3, 4, 5, 6]);
         } else {

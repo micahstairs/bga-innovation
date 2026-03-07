@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card208 extends AbstractCard
@@ -20,19 +21,19 @@ class Card208 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isCompel()) {
       if (self::isFirstInteraction()) {
         $n = self::countCards(Locations::HAND) - 2;
-        return self::youMust()->return()->exactly($n)->fromYourHand()->build();
+        return self::youMust()->return()->exactly($n)->fromYourHand();
       } else {
         $n = self::countCards(Locations::SCORE) - 2;
-        return self::youMust()->return()->exactly($n)->fromYourScore()->build();
+        return self::youMust()->return()->exactly($n)->fromYourScore();
       }
     } else {
       $n = self::countCards(Locations::SCORE) - 4;
-      return self::youMust()->return()->exactly($n)->fromYourScore()->build();
+      return self::youMust()->return()->exactly($n)->fromYourScore();
     }
   }
 

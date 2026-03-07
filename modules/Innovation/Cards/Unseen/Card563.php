@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -30,15 +31,13 @@ class Card563 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'can_pass' => true,
-      'choose_value'  => true,
-    ];
+    return self::youMay()->chooseValue();
   }
 
-  public function handleValueChoice(int $value) {
+  public function handleValueChoice(int $value)
+  {
     $didScore = false;
     foreach (self::getCardsKeyedByValue(Locations::HAND)[$value] as $card) {
       self::score($card);

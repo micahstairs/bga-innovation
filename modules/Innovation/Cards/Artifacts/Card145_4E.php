@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -15,7 +16,7 @@ class Card145_4E extends AbstractCard
   //     [AUTHORITY] on your board!
   //   - Junk an available achievement of value equal to the number of [AUTHORITY] on your board.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isCompel()) {
       $numStacksWithAuthority = 0;
@@ -24,9 +25,9 @@ class Card145_4E extends AbstractCard
           $numStacksWithAuthority++;
         }
       }
-      return self::youMust()->exactly($numStacksWithAuthority)->fromYourScore()->toMine()->build();
+      return self::youMust()->exactly($numStacksWithAuthority)->fromYourScore()->toMine();
     } else {
-      return self::youMust()->junk()->value(self::getStandardIconCount(Icons::AUTHORITY))->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->value(self::getStandardIconCount(Icons::AUTHORITY))->fromAvailableAchievements();
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -26,13 +27,9 @@ class Card422_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from' => Locations::BOARD,
-      'tuck_keyword'  => true,
-      'color'         => Colors::NON_YELLOW,
-    ];
+    return self::youMust()->tuck()->non(Colors::YELLOW)->fromYourBoard();
   }
 
 }

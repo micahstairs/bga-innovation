@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card411 extends AbstractCard
 {
@@ -25,36 +27,28 @@ class Card411 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->fromYourHand();
     } else {
       $topCards = self::getTopCards();
       $cardIds = [];
-      foreach (self::getCards('score') as $scorePileCard) {
+      foreach (self::getCards(Locations::SCORE) as $scorePileCard) {
         $found = false;
         foreach ($topCards as $topCard) {
-          if ($topCard['faceup_age'] == $scorePileCard['age']) {
+          if (self::getFaceupValue($topCard) == self::getValue($scorePileCard)) {
             $found = true;
             break;
           }
         }
         if ($found) {
-          $cardIds[] = $scorePileCard['id'];
+          $cardIds[] = self::getId($scorePileCard);
         }
       }
       self::setAuxiliaryArray($cardIds);
-      return [
-        'n'                               => count(self::getAuxiliaryArray()),
-        'location_from'                   => 'score',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $numCards = count(self::getAuxiliaryArray());
+      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourScore();
     }
   }
 

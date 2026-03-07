@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card84_3E extends AbstractCard
@@ -18,9 +19,9 @@ class Card84_3E extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->tuck()->all()->fromYourHand()->build();
+    return self::youMay()->tuck()->all()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

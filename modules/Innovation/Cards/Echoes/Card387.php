@@ -3,9 +3,11 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card387 extends AbstractCard
 {
@@ -28,7 +30,7 @@ class Card387 extends AbstractCard
     if (self::isEcho()) {
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
-      if (count(self::getUniqueValuesInLocation('score')) >= 2) {
+      if (count(self::getUniqueValuesInLocation(Locations::SCORE)) >= 2) {
         self::setMaxSteps(1);
       }
     } else {
@@ -41,26 +43,15 @@ class Card387 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'age'           => self::getMinValue(self::getTopCards()),
-      ];
+      $value = self::getMinValue(self::getTopCards());
+      return self::youMust()->score()->value($value)->fromYourBoard();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourScore();
     } else {
-      return [
-        'location_from'                   => 'score',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourScore();
     }
   }
 
@@ -69,9 +60,9 @@ class Card387 extends AbstractCard
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
         $cardIds = [];
-        foreach (self::getCards('score') as $scoreCard) {
-          if ($scoreCard['age'] != $card['age']) {
-            $cardIds[] = $scoreCard['id'];
+        foreach (self::getCards(Locations::SCORE) as $scoreCard) {
+          if (self::getValue($scoreCard) != self::getValue($card)) {
+            $cardIds[] = self::getId($scoreCard);
           }
         }
         self::setAuxiliaryArray($cardIds);

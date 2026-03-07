@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Locations;
 
 class Card478 extends AbstractCard
 {
@@ -32,19 +34,12 @@ class Card478 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'    => 'any player',
-        'location_from' => 'board',
-        'location_to'   => 'board',
-      ];
+      return self::youMust()->fromAnyBoard()->toMyBoard();
     } else {
-      return [
-        'choose_from' => 'board',
-        'not_id'      => CardIds::DEEPFAKE,
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::DEEPFAKE);
     }
   }
 
@@ -53,7 +48,7 @@ class Card478 extends AbstractCard
     if (self::isFirstInteraction()) {
       // Intercept this card transfer so that we can tell where the card is coming from
       self::setAuxiliaryValue(self::getId($card));
-      self::setAuxiliaryValue2($card['owner']);
+      self::setAuxiliaryValue2(self::getOwner($card));
       self::transferToBoard($card);
       return true;
     }

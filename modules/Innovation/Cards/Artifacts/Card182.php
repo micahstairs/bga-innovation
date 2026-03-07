@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card182 extends AbstractCard
@@ -15,14 +16,14 @@ class Card182 extends AbstractCard
   //   - Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from
   //     your score pile of that color. If you do, junk an available standard achievement.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->tuck()->fromYourHand()->build();
+      return self::youMust()->tuck()->fromYourHand();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->tuck()->all()->fromYourScore()->withColor(self::getLastSelectedColor())->revealingIfUnable()->build();
+      return self::youMust()->tuck()->all()->fromYourScore()->withColor(self::getLastSelectedColor())->revealingIfUnable();
     } else {
-      return self::youMust()->junk()->fromAvailableAchievements()->build();
+      return self::youMust()->junk()->fromAvailableAchievements();
     }
   }
 
