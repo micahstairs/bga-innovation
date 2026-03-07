@@ -16,17 +16,28 @@ class Card68 extends AbstractCard
   //   - I DEMAND you transfer the three highest cards from your hand to my hand! If you
   //     transfer any, and have no cards in hand, draw a [7]!
 
-  public function getInteractionOptions(): InteractionBuilder
+  public function initialExecution()
   {
-    return self::youMust()->exactly(3)->highest()->fromYourHand()->toMine()->refreshingSelection();
+    self::setMaxSteps(3);
+    self::setAuxiliaryValue(0); // Track how many cards were transferred due to the demand
   }
 
-  public function afterInteraction()
+  public function handleCardChoice(array $card)
   {
-    if (self::getNumChosen() > 0 && !self::hasCards(Locations::HAND)) {
+    self::incrementAuxiliaryValue();
+  }
+
+  public function getInteractionOptions(): InteractionBuilder
+  {
+    return self::youMust()->highest()->fromYourHand()->toMine();
+  }
+
+  public function atEndOfEffect()
+  {
+    if (self::getAuxiliaryValue() > 0 && !self::hasCards(Locations::HAND)) {
       self::draw(7);
     }
-  }
+  }  
 
   public function demandMightBeEffective(): bool
   {
