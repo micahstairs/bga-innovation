@@ -1,0 +1,13 @@
+# CodeRabbit configuration
+# https://docs.coderabbit.ai/reference/configuration
+
+reviews:
+  # Disable the "Auto reviews are disabled on base/target branches..." status message
+  review_status: false
+  auto_review:
+    # Base branches to run reviews on.
+    base_branches:
+      - main-legacy
+      - main-dev
+      - main-4
+      - main-alpha
