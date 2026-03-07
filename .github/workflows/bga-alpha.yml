@@ -5,6 +5,10 @@ on:
     branches:
       - 'main-alpha'
 
+concurrency:
+  group: push-to-innovationalpha
+  cancel-in-progress: false
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
