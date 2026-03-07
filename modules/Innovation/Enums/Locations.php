@@ -178,16 +178,22 @@ class Locations
 
   private static function callerContext(): string
   {
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 6);
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 12);
+    $out = [];
     foreach ($trace as $frame) {
       $file = $frame['file'] ?? '';
       $line = $frame['line'] ?? 0;
       $func = $frame['function'] ?? '';
-      if ($file !== '' && strpos($file, 'Locations.php') === false) {
-        $short = basename($file);
-        return " Called from {$short}:{$line} in {$func}()";
+      if ($file === '' || strpos($file, 'Locations.php') !== false) {
+        continue;
+      }
+      $short = basename($file);
+      $class = isset($frame['class']) ? $frame['class'] . $frame['type'] : '';
+      $out[] = "{$short}:{$line} {$class}{$func}()";
+      if (count($out) >= 3) {
+        break;
       }
     }
-    return '';
+    return $out === [] ? '' : ' Call chain: ' . implode(' <- ', $out);
   }
 }
