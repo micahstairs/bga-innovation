@@ -45,7 +45,7 @@ class Card583 extends AbstractCard
       self::setAuxiliaryValue(0); // Track how many cards were transferred in the 2nd sentence of the effect
       return self::youMust()->achieve()->value($value)->fromYourSafe();
     } else {
-      return ['safeguard_keyword' => true];
+      return self::youMust()->safeguard();
     }
   }
 
