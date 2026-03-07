@@ -2063,7 +2063,7 @@ class Innovation extends Table
     function notifyIfLocationLimitShrunkSelection($player_id)
     {
         if ($this->innovationGameState->get('limit_shrunk_selection_size') == 1) {
-            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
+            $location_to = $this->decodeLocation($this->innovationGameState->get('location_to'));
             if ($location_to == 'safe') {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${Your} safe is full so no more cards can be transferred to your safe.'), ['Your' => 'Your']);
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s safe is full so no more cards can be transferred to his safe.'), ['player_name' => self::renderPlayerName($player_id)]);
@@ -4488,6 +4488,29 @@ class Innovation extends Table
         return self::getCardPropertyForCurrentVersion('name', $id);
     }
 
+    /**
+     * Decode a location code; on exception, append current card context for debugging purposes.
+     */
+    private function decodeLocation(int $locationCode): string
+    {
+        try {
+            return Locations::decode($locationCode);
+        } catch (\Exception $e) {
+            $cardContext = '';
+            if ($this->innovationGameState->get('current_nesting_index') >= 0) {
+                try {
+                    $nested = self::getCurrentNestedCardState();
+                    if ($nested !== null && isset($nested['card_id'])) {
+                        $cardContext = ' Executing card: ' . self::getCardName($nested['card_id']);
+                    }
+                } catch (\Throwable $t) {
+                    // ignore when building context
+                }
+            }
+            throw new \Exception($e->getMessage() . $cardContext, 0, $e);
+        }
+    }
+
     function getNonDemandEffect($id, $effect_number)
     {
         return self::getCardPropertyForCurrentVersion('non_demand_effect_' . $effect_number, $id);
@@ -6865,23 +6888,7 @@ class Innovation extends Table
         }
 
         // Condition for location
-        // TODO(LATER): Remove this try-catch once we get to the bottom of the "Unhandled case in Locations::decode: -1" bug
-        try {
-            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
-        } catch (\Exception $e) {
-            $cardContext = '';
-            if ($this->innovationGameState->get('current_nesting_index') >= 0) {
-                try {
-                    $nested = self::getCurrentNestedCardState();
-                    if ($nested !== null && isset($nested['card_id'])) {
-                        $cardContext = ' Executing card: ' . self::getCardName($nested['card_id']);
-                    }
-                } catch (\Throwable $t) {
-                    // ignore when building context
-                }
-            }
-            throw new \Exception($e->getMessage() . $cardContext, 0, $e);
-        }
+        $location_from = $this->decodeLocation($this->innovationGameState->get('location_from'));
         if ($location_from == Locations::REVEALED_THEN_HAND) {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == Locations::REVEALED_THEN_SCORE) {
@@ -7300,7 +7307,7 @@ class Innovation extends Table
         if ($nesting_index < 0) {
             if ($this->innovationGameState->get('special_type_of_choice') > 0) { // Digging/stealing artifact
                 return ['ref_player_0' => $player_id];
-            } else if (Locations::decode($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
+            } else if ($this->decodeLocation($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
                 return ['ref_player_0' => $player_id];
             } else { // Search icon or Junk Achievement icon
                 return [
@@ -9910,10 +9917,10 @@ class Innovation extends Table
         $n = $this->innovationGameState->get("n");
         $owner_from = $this->innovationGameState->get("owner_from");
         if ($splay_direction == -1) {
-            $location_from = Locations::decode($this->innovationGameState->get("location_from"));
+            $location_from = $this->decodeLocation($this->innovationGameState->get("location_from"));
             $bottom_from = $this->innovationGameState->get("bottom_from");
             $owner_to = $this->innovationGameState->get("owner_to");
-            $location_to = Locations::decode($this->innovationGameState->get("location_to"));
+            $location_to = $this->decodeLocation($this->innovationGameState->get("location_to"));
             $bottom_to = $this->innovationGameState->get("bottom_to");
             $age_min = $this->innovationGameState->get("age_min");
             $age_max = $this->innovationGameState->get("age_max");
@@ -11105,7 +11112,7 @@ class Innovation extends Table
                 self::trace('interInteractionStep->promoteCard');
                 $this->gamestate->nextState('promoteCard');
                 return;
-            } else if (Locations::decode($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
+            } else if ($this->decodeLocation($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
                 // Award a museum to the player with the single most museums
                 $max_count = 0;
                 $player_id_with_max = null;
@@ -11181,8 +11188,8 @@ class Innovation extends Table
             $autoselection_mode = $this->innovationGameState->get('enable_autoselection');
             $refresh_selection = $this->innovationGameState->get('refresh_selection') == 1;
             $owner_from = $this->innovationGameState->get('owner_from');
-            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
-            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
+            $location_from = $this->decodeLocation($this->innovationGameState->get('location_from'));
+            $location_to = $this->decodeLocation($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $colors = $this->innovationGameState->getAsArray('color_array');
             $with_icons = $this->innovationGameState->getAsArray('with_icons');
@@ -11481,7 +11488,7 @@ class Innovation extends Table
 
             // Flags
             $owner_to = $this->innovationGameState->get('owner_to');
-            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
+            $location_to = $this->decodeLocation($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $score_keyword = $this->innovationGameState->get('score_keyword') == 1;
             $meld_keyword = $this->innovationGameState->get('meld_keyword') == 1;

@@ -30,7 +30,7 @@ class Card500 extends AbstractCard
   public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->score()->onlyCardsInAuxiliaryArray();
+      return self::youMust()->score()->fromYourBoard()->onlyCardsInAuxiliaryArray();
     } else {
       return self::youMay()->splayLeft()->withColor([Colors::GREEN, Colors::PURPLE]);
     }
