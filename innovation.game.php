@@ -8681,7 +8681,7 @@ class Innovation extends Table
             return self::transferCardFromTo($achievement, $player_id, 'achievements');
         } else {
             $card_args = self::getNotificationArgsForCardList([$achievement]);
-            self::notifyAll('logWithCardTooltips', clienttranslate('${card} has already been claimed.'), ['card' => $card_args, 'card_ids' => [$achievement_id]]);
+            self::notifyAll('logWithCardTooltips', clienttranslate('${card} is not available to be claimed.'), ['card' => $card_args, 'card_ids' => [$achievement_id]]);
             return null;
         }
     }
