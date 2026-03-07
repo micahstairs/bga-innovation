@@ -46,7 +46,7 @@ class Card91 extends AbstractCard
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(10, CardTypes::BASE)],
+      1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(1, CardTypes::BASE)],
     ]);
   }
 

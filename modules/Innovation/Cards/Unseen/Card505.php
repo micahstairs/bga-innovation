@@ -33,7 +33,7 @@ class Card505 extends AbstractCard
   public function afterInteraction()
   {
     $card = self::drawAndMeld(self::getAuxiliaryValue());
-    self::setActionScopedAuxiliaryArray([self::getValue($card)]);
+    self::setActionScopedAuxiliaryArray([$card['age']]);
     $stack = self::getStack(self::getColor($card));
     $numCards = count($stack);
     if ($numCards >= 2 && self::hasIcon($stack[$numCards - 2], Icons::CONCEPT)) {

@@ -24,7 +24,11 @@ class Card214_3E extends AbstractCard
     if (!$colors) {
       return [];
     }
-    return self::youMust()->score()->withColor($colors)->build();
+    return [
+      'location_from' => Locations::SCORE,
+      'meld_keyword'  => true,
+      'color'         => $colors,
+    ];
   }
 
   public function handleCardChoice(array $card)

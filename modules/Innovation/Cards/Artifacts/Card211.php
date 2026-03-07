@@ -35,12 +35,25 @@ class Card211 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->score()->withColor(Colors::YELLOW)->fromBottom()->fromYourBoard()->build();
+      return [
+        'can_pass'      => true,
+        'location_from' => Locations::BOARD,
+        'bottom_from'   => true,
+        'color'         => [Colors::YELLOW],
+        'score_keyword' => true,
+
+      ];
     } else if (self::isSecondInteraction()) {
-      return self::youMay()->choose([1])->build();
+      return [
+        'can_pass' => true,
+        'choices'  => [1],
+      ];
     } else {
-      $value = self::getMaxValueInLocation(Locations::HAND);
-      return self::youMust()->meld()->value($value)->fromYourHand()->build();
+      return [
+        'location_from' => Locations::HAND,
+        'meld_keyword'  => true,
+        'age'           => self::getMaxValueInLocation(Locations::HAND),
+      ];
     }
   }
 

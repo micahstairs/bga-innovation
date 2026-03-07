@@ -42,7 +42,7 @@ class Card385_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      self::drawAndForeshadow(self::getValue($card));
+      self::drawAndForeshadow($card['age']);
     }
   }
 

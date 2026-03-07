@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Enums\Locations;
 
 class Card456 extends AbstractCard
 {
@@ -14,13 +15,17 @@ class Card456 extends AbstractCard
   {
     $card1 = self::draw(11);
     $card2 = self::draw(11);
-    self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
+    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
     self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->build();
+    return [
+      'location_from'                   => Locations::HAND,
+      'meld_keyword'                    => true,
+      'card_ids_are_in_auxiliary_array' => true,
+    ];
   }
 
   public function handleCardChoice(array $card)

@@ -58,7 +58,7 @@ class Card394 extends AbstractCard
   public function junkAchievementsOfLowerValue($value)
   {
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
-      if (self::isValuedCard($card) && self::getValue($card) < $value) {
+      if (self::isValuedCard($card) && $card['age'] < $value) {
         self::junk($card);
       }
     }

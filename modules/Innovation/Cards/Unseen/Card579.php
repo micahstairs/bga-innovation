@@ -34,7 +34,7 @@ class Card579 extends AbstractCard
 
   public function handleCardChoice(array $card)
   {
-    self::addToAuxiliaryArray(self::getValue($card));
+    self::addToAuxiliaryArray($card['age']);
   }
 
   public function afterInteraction()

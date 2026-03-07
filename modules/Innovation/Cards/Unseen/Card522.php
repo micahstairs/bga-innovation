@@ -38,7 +38,7 @@ class Card522 extends AbstractCard
       $card = self::draw($valueToDraw);
       // "If you don't" happens whenever you either are unable to transfer a secret or you draw a
       // card of a different value than one higher of the transferred secret.
-      if (self::getNumChosen() === 0 || self::getValue($card) != $valueToDraw) {
+      if (self::getNumChosen() === 0 || $card['age'] != $valueToDraw) {
         self::setMaxSteps(2);
       }
     }

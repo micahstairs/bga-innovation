@@ -22,14 +22,29 @@ class Card352 extends AbstractCard
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->tuck()->withBonus()->fromYourHand()->revealingIfUnable()->build();
+        return [
+          'location_from'    => 'hand',
+          'tuck_keyword'     => true,
+          'with_bonus'       => true,
+          'reveal_if_unable' => true,
+        ];
       } else {
-        return self::youMay()->return()->fromYourHand()->build();
+        return [
+          'can_pass'       => true,
+          'location_from'  => 'hand',
+          'return_keyword' => true,
+        ];
       }
     } else if (self::isFirstNonDemand()) {
-      return self::youMust()->chooseValue(self::getBonuses())->build();
+      return [
+        'choose_value' => true,
+        'age'          => self::getBonuses(),
+      ];
     } else {
-      return self::youMust()->tuck()->fromYourHand()->build();
+      return [
+        'location_from' => 'hand',
+        'tuck_keyword'  => true,
+      ];
     }
   }
 
@@ -46,7 +61,7 @@ class Card352 extends AbstractCard
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand() && self::wasForeseen()) {
-      while ($topCard = $this->game->getDeckTopCard(self::getValue($card), CardTypes::BASE)) {
+      while ($topCard = $this->game->getDeckTopCard($card['age'], CardTypes::BASE)) {
         self::tuck($topCard);
       }
     }

@@ -36,17 +36,29 @@ class Card366 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMay()->topDeck()->fromYourForecast()->build();
+      return [
+        'can_pass'      => true,
+        'location_from' => 'forecast',
+        'location_to'   => 'deck',
+        'bottom_to'     => false, // put on top
+      ];
     } else if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->achieveIfEligible()->fromYourForecast()->build();
+      return [
+        'location_from'       => 'forecast',
+        'achieve_if_eligible' => true,
+      ];
     } else {
       self::setAuxiliaryArray(self::getAvailableStandardAchievementIds());
-      $forecastCards = self::getCards(Locations::FORECAST);
+      $forecastCards = self::getCards('forecast');
       foreach ($forecastCards as $card) {
-        $this->game->transferCardFromTo($card, 0, Locations::ACHIEVEMENTS);
+        $this->game->transferCardFromTo($card, 0, 'achievements');
       }
-      $numCards = count($forecastCards);
-      return self::youMay()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromAvailableAchievements()->toForecast()->build();
+      return [
+        'n'                               => count($forecastCards),
+        'location_from'                   => Locations::AVAILABLE_ACHIEVEMENTS,
+        'location_to'                     => 'forecast',
+        'card_ids_are_in_auxiliary_array' => true,
+      ];
     }
   }
 

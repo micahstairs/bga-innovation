@@ -4,7 +4,6 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Locations;
 
 class Card333 extends AbstractCard
 {
@@ -28,7 +27,7 @@ class Card333 extends AbstractCard
       } else {
         self::setMaxSteps(1);
       }
-    } else if (self::countCards(Locations::FORECAST) === 0) {
+    } else if (self::countCards('forecast') === 0) {
       self::drawAndForeshadow(3);
     }
   }
@@ -36,14 +35,27 @@ class Card333 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->tuck()->withColor(Colors::RED)->fromYourHand()->revealingIfUnable()->build();
+      return [
+        'location_from'    => 'hand',
+        'tuck_keyword'     => true,
+        'color'            => [Colors::RED],
+        'reveal_if_unable' => true,
+      ];
     } else {
       if (self::isEcho()) {
-        return self::youMust()->tuck()->value(1)->fromYourHand()->build();
+        return [
+          'location_from' => 'hand',
+          'tuck_keyword'  => true,
+          'age'           => 1,
+        ];
       } else if (self::isFirstInteraction()) {
-        return self::youMust()->choose([1, 2])->build();
+        return ['choices' => [1, 2]];
       } else {
-        return self::youMust()->tuck()->value(2)->fromYourForecast()->build();
+        return [
+          'location_from' => 'forecast',
+          'tuck_keyword'  => true,
+          'age'           => 2,
+        ];
       }
     }
   }

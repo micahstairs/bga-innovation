@@ -37,10 +37,17 @@ class Card348 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return self::youMay()->choose([2, 3])->build();
+      return [
+        'can_pass' => true,
+        'choices'  => [2, 3],
+      ];
     } else {
-      $icons = [Icons::AUTHORITY, Icons::INDUSTRY];
-      return self::youMust()->withoutIcons($icons)->fromYourBoard()->toMine()->build();
+      return [
+        'location_from' => Locations::BOARD,
+        'owner_to'      => self::getLauncherId(),
+        'location_to'   => Locations::BOARD,
+        'without_icons' => [Icons::AUTHORITY, Icons::INDUSTRY],
+      ];
     }
   }
 

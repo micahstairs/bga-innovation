@@ -20,7 +20,7 @@ class Card346 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return self::youMust()->choose([1, 2])->build();
+      return ['choices' => [1, 2]];
     } else if (self::isFirstInteraction()) {
       if (self::isFirstOrThirdEdition()) {
         $values = self::getBonuses();
@@ -30,9 +30,17 @@ class Card346 extends AbstractCard
           $values = array_merge($values, self::getBonuses($playerId));
         }
       }
-      return self::youMust()->chooseValue($values)->build();
+      return [
+        'choose_value' => true,
+        'age'          => $values,
+      ];
     } else {
-      return self::youMust()->junk()->all()->value(self::getAuxiliaryValue())->fromAvailableAchievements()->build();
+      return [
+        'n'             => 'all',
+        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
+        'junk_keyword'  => true,
+        'age'           => self::getAuxiliaryValue(),
+      ];
     }
   }
 

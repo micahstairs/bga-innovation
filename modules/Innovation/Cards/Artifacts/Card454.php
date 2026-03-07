@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card454 extends AbstractCard
 {
@@ -13,8 +14,11 @@ class Card454 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $icon = self::isCompel() ? Icons::EFFICIENCY : Icons::PROSPERITY;
-    return self::youMust()->return()->fromYourBoard()->withIcon($icon)->build();
+    return [
+      'location_from'  => Locations::BOARD,
+      'return_keyword' => true,
+      'with_icon'      => self::isCompel() ? Icons::EFFICIENCY : Icons::PROSPERITY,
+    ];
   }
 
   public function handleCardChoice(array $card)

@@ -34,11 +34,17 @@ class Card455 extends AbstractCard
       foreach (self::getAuxiliaryArray() as $playerId) {
         $players[] = $this->game->playerIdToPlayerIndex($playerId);
       }
-      return self::youMust()->choosePlayer($players)->build();
+      return [
+        'choose_player' => true,
+        'players'       => $players,
+      ];
     } else {
       $playerId = self::getAuxiliaryValue();
-      $value = self::getMaxValue(self::getTopCards($playerId));
-      return self::youMust()->value($value)->fromBoard($playerId)->build();
+      return [
+        'choose_from' => Locations::BOARD,
+        'owner_from'  => $playerId,
+        'age'         => self::getMaxValue(self::getTopCards($playerId)),
+      ];
     }
   }
 
@@ -52,7 +58,7 @@ class Card455 extends AbstractCard
   {
     $playerId = self::getAuxiliaryValue();
     foreach (self::getTopCards($playerId) as $topCard) {
-      if (self::getColor($topCard) != self::getColor($card)) {
+      if ($topCard['color'] != self::getColor($card)) {
         self::transferToScorePile($topCard, $playerId);
       }
     }

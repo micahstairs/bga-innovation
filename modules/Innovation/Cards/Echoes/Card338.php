@@ -14,12 +14,24 @@ class Card338 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return self::youMay()->meld()->fromYourHand()->build();
+      return [
+        'can_pass'      => true,
+        'location_from' => 'hand',
+        'meld_keyword'  => true,
+      ];
     } else if (self::isFirstInteraction()) {
-      return self::youMay()->return()->minCards(1)->fromYourHand()->build();
+      return [
+        'can_pass'       => true,
+        'n_min'          => 1,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+      ];
     } else {
-      $numCards = self::getAuxiliaryValue() * 2;
-      return self::youMust()->score()->exactly($numCards)->fromYourHand()->build();
+      return [
+        'n'             => self::getAuxiliaryValue() * 2,
+        'location_from' => 'hand',
+        'score_keyword' => true,
+      ];
     }
   }
 

@@ -75,7 +75,6 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
         "composer.json",
         "composer.lock",
         "phpunit.xml",
-        "_ide_helper.php",
         "tests/"
     ],
     "syncOption": {

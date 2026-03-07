@@ -68,7 +68,7 @@ class Card392 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isDemand()) {
-      $maxValue = max(self::getAuxiliaryValue(), self::getValue($card));
+      $maxValue = max(self::getAuxiliaryValue(), $card['age']);
       self::setAuxiliaryValue($maxValue);
     }
   }
@@ -92,7 +92,7 @@ class Card392 extends AbstractCard
   {
     $cardIds = [];
     foreach ($cards as $card) {
-      if (self::getValue($card) % 2 == 1) {
+      if ($card['age'] % 2 == 1) {
         $cardIds[] = self::getId($card);
       }
     }

@@ -28,11 +28,12 @@ class Card354 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstOrThirdEdition()) {
-      return self::youMay()->meld()->withBonus()->fromYourHand()->revealingIfUnable()->build();
-    } else {
-      return self::youMust()->meld()->fromYourHand()->build();
-    }
+    return [
+      'location_from'    => 'hand',
+      'meld_keyword'     => true,
+      'with_bonus'       => self::isFirstOrThirdEdition(),
+      'reveal_if_unable' => self::isFirstOrThirdEdition(),
+    ];
   }
 
   public function handleCardChoice(array $card)

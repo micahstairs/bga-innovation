@@ -23,15 +23,19 @@ class Card344 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    $values = self::getUniqueValuesInLocation(Locations::SCORE);
+    $values = self::getUniqueValuesInLocation('score');
     $cardIds = [];
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
-      if (self::isValuedCard($card) && in_array(intval(self::getValue($card)), $values)) {
+      if (self::isValuedCard($card) && in_array(intval($card['age']), $values)) {
         $cardIds[] = self::getId($card);
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return self::youMust()->junk()->onlyCardsInAuxiliaryArray()->fromAvailableAchievements()->build();
+    return [
+      'location_from'                   => Locations::AVAILABLE_ACHIEVEMENTS,
+      'junk_keyword'                    => true,
+      'card_ids_are_in_auxiliary_array' => true,
+    ];
   }
 
 }

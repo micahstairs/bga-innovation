@@ -30,7 +30,11 @@ class Card365 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMay()->splayRight()->withColor([Colors::YELLOW])->build();
+    return [
+      'can_pass'        => true,
+      'splay_direction' => Directions::RIGHT,
+      'color'           => [Colors::YELLOW],
+    ];
   }
 
 }

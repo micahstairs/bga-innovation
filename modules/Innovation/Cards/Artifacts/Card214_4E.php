@@ -18,7 +18,7 @@ class Card214_4E extends AbstractCard
     foreach (self::getCardsKeyedByValue(Locations::SCORE) as $cards) {
       if (count($cards) === 1) {
         self::meld($cards[0]);
-        self::setAuxiliaryValue(self::getColor($cards[0])); // Track color to meld from hand
+        self::setAuxiliaryValue($cards[0]['color']); // Track color to meld from hand
         self::setMaxSteps(1);
         return;
       }
@@ -28,7 +28,12 @@ class Card214_4E extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->withColor(self::getAuxiliaryValue())->fromYourHand()->revealingIfUnable()->build();
+    return [
+      'location_from'    => Locations::HAND,
+      'meld_keyword'     => true,
+      'color'            => [self::getAuxiliaryValue()],
+      'reveal_if_unable' => true,
+    ];
   }
 
   public function afterInteraction()

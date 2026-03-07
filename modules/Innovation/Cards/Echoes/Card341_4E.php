@@ -23,11 +23,22 @@ class Card341_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseColor()->build();
+      return ['choose_color' => true];
     } else if (self::isSecondInteraction()) {
-      return self::youMay()->tuck()->anyNumber()->withColor(self::getAuxiliaryValue())->fromYourHand()->build();
+      return [
+        'can_pass'      => true,
+        'n_min'         => 1,
+        'n_max'         => 'all',
+        'location_from' => Locations::HAND,
+        'tuck_keyword'  => true,
+        'color'         => [self::getAuxiliaryValue()],
+      ];
     } else {
-      return self::youMay()->achieveIfEligible()->fromYourHand()->build();
+      return [
+        'can_pass'            => true,
+        'location_from'       => Locations::HAND,
+        'achieve_if_eligible' => true,
+      ];
     }
   }
 

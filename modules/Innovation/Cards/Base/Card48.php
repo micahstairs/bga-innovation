@@ -24,7 +24,7 @@ class Card48 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand() || self::getAuxiliaryValue() >= 1) {
-      self::setMaxSteps(2);
+      self::setMaxSteps(1);
     }
   }
 

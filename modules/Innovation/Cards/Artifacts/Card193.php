@@ -18,7 +18,11 @@ class Card193 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->meld()->value(8)->fromYourHand()->build();
+    return [
+      'location_from' => Locations::HAND,
+      'meld_keyword'  => true,
+      'age'           => 8,
+    ];
   }
 
   public function handleCardChoice(array $card)

@@ -26,7 +26,7 @@ class Card62_4E extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseCardFrom(Locations::SCORE)->build();
+      return ['choose_from' => Locations::SCORE];
     } else {
       return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->build();
     }

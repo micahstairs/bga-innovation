@@ -37,11 +37,24 @@ class Card355 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->revealAndReturn()->withBonus()->fromYourForecast()->build();
+      return [
+        'can_pass'      => true,
+        'location_from' => 'forecast',
+        'location_to'   => 'revealed,deck',
+        'with_bonus'    => true,
+      ];
     } else if (self::isFirstInteraction()) {
-      return self::youMust()->choosePlayer(self::getOtherPlayers())->build();
+      return [
+        'choose_player' => true,
+        'players'       => $this->game->getOtherActivePlayers(self::getPlayerId()),
+      ];
     } else {
-      return self::youMust()->foreshadow()->all()->fromForecast(self::getAuxiliaryValue())->build();
+      return [
+        'n'                  => 'all',
+        'owner_from'         => self::getAuxiliaryValue(),
+        'location_from'      => 'forecast',
+        'foreshadow_keyword' => true,
+      ];
     }
   }
 

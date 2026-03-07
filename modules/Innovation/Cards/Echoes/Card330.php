@@ -47,7 +47,10 @@ class Card330 extends AbstractCard
 
   public function getInteractionOptions(): array
   {
-    return self::youMust()->choosePlayer(self::getAuxiliaryArray())->build();
+    return [
+      'choose_player' => true,
+      'players'       => self::getAuxiliaryArray(),
+    ];
   }
 
   public function handlePlayerChoice(int $opponentId)

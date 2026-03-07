@@ -29,9 +29,9 @@ class Card72 extends AbstractCard
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->lowest()->fromMyHand()->toYours()->ofMyChoice()->build();
+        return self::youMust()->exactly(2)->lowest()->fromMyHand()->toYours()->ofMyChoice()->build();
       } else {
-        return self::youMust()->exactly(2)->highest()->fromYourHand()->toMine()->build();
+        return self::youMust()->highest()->fromYourHand()->toMine()->build();
       }
     } else {
       return self::youMust()->choose([7, 8])->build();

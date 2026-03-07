@@ -33,13 +33,21 @@ class Card337 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      $maxCards = self::isFirstOrThirdEdition() ? 3 : 2;
-      return self::youMay()->return()->minCards(1)->maxCards($maxCards)->fromYourHand()->build();
+      return [
+        'can_pass'       => true,
+        'n_min'          => 1,
+        'n_max'          => self::isFirstOrThirdEdition() ? 3 : 2,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+      ];
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->choose([1, 2])->build();
+      return ['choices' => [1, 2]];
     } else {
-      $value = self::getMaxValue(self::getTopCards());
-      return self::youMust()->return()->value($value)->fromYourBoard()->build();
+      return [
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'age'            => self::getMaxValue(self::getTopCards()),
+      ];
     }
   }
 

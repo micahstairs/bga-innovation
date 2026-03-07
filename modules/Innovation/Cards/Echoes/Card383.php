@@ -19,7 +19,7 @@ class Card383 extends AbstractCard
     } else {
       $values = [];
       foreach (self::getTopCards() as $card) {
-        $values[] = self::getFaceupValue($card);
+        $values[] = $card['faceup_age'];
       }
       if (count(array_unique($values)) === 5) {
         self::setMaxSteps(1);

@@ -4,7 +4,6 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Enums\Icons;
-use Innovation\Enums\Locations;
 
 class Card367 extends AbstractCard
 {
@@ -44,9 +43,17 @@ class Card367 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return self::youMay()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->build();
+      return [
+        'owner_from'  => 'any player',
+        'choose_from' => 'board',
+      ];
     } else {
-      return self::youMust()->return()->all()->fromYourBoard()->withIcon(Icons::AUTHORITY)->build();
+      return [
+        'n'              => 'all',
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'with_icon'      => Icons::AUTHORITY,
+      ];
     }
   }
 

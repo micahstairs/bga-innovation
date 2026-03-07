@@ -39,12 +39,23 @@ class Card343 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return self::youMay()->splayLeft()->build();
+      return [
+        'can_pass'        => true,
+        'splay_direction' => Directions::LEFT,
+      ];
     } else if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->return()->withBonus()->fromYourHand()->revealingIfUnable()->build();
+      return [
+        'location_from'    => 'hand',
+        'return_keyword'   => true,
+        'with_bonus'       => true,
+        'reveal_if_unable' => true,
+      ];
     } else {
-      $types = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
-      return self::youMust()->return()->withTypes($types)->fromYourHand()->build();
+      return [
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'type'           => CardTypes::getAllTypesOtherThan(CardTypes::BASE),
+      ];
     }
   }
 

@@ -25,8 +25,8 @@ class Card349 extends AbstractCard
     } else if (self::isFirstNonDemand()) {
       $minValue = null;
       foreach (self::getTopCards() as $card) {
-        if (self::getColor($card) != Colors::GREEN && ($minValue === null || $minValue > self::getFaceupValue($card))) {
-          $minValue = self::getFaceupValue($card);
+        if (self::getColor($card) != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
+          $minValue = $card['faceup_age'];
         }
       }
       if ($minValue === null) {
@@ -41,14 +41,19 @@ class Card349 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
+      $options = [
+        'location_from' => 'hand',
+        'score_keyword' => true,
+      ];
       if (self::isFirstOrThirdEdition()) {
-        return self::youMust()->score()->withBonus()->fromYourHand()->revealingIfUnable()->build();
+        $options['with_bonus'] = true;
+        $options['reveal_if_unable'] = true;
       } else {
-        $types = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
-        return self::youMust()->score()->withTypes($types)->fromYourHand()->build();
+        $options['type'] = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
       }
+      return $options;
     } else {
-      return self::youMust()->choose([2, 3])->build();
+      return ['choices' => [2, 3]];
     }
   }
 

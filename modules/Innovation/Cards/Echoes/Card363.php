@@ -49,9 +49,17 @@ class Card363 extends AbstractCard
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      return self::youMust()->return()->all()->fromYourForecast()->build();
+      return [
+        'n'              => 'all',
+        'location_from'  => 'forecast',
+        'return_keyword' => true,
+      ];
     } else {
-      return self::youMay()->splayLeft()->withColor([Colors::PURPLE])->build();
+      return [
+        'can_pass'        => true,
+        'splay_direction' => Directions::LEFT,
+        'color'           => [Colors::PURPLE],
+      ];
     }
   }
 

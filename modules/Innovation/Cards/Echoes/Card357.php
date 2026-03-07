@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
 
 class Card357 extends AbstractCard
 {
@@ -19,7 +18,7 @@ class Card357 extends AbstractCard
     $card = self::drawAndReveal($maxBonus);
     self::transferToForecast($card, [$this, 'transferToHand'], self::getLauncherId());
     if (self::isRed($card)) {
-      foreach (self::getCards(Locations::HAND) as $card) {
+      foreach (self::getCards('hand') as $card) {
         self::transferToScorePile($card, self::getLauncherId());
       }
     }
