@@ -5,7 +5,6 @@ namespace Innovation\Cards\Unseen;
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 
 class Card553 extends AbstractCard
 {
@@ -25,8 +24,11 @@ class Card553 extends AbstractCard
       self::drawAndScore(7);
     }
     if ($hadEight) {
-      self::setMaxSteps(1);
-      self::setAuxiliaryValue($hadNine ? 1 : 0);
+      // Only advance to the interaction if the player can splay their green or purple cards right and they are not already splayed right
+      if (self::canSplay([Colors::GREEN, Colors::PURPLE]) && !(self::isSplayedRight(Colors::GREEN) && self::isSplayedRight(Colors::PURPLE))) {
+        self::setMaxSteps(1);
+        self::setAuxiliaryValue($hadNine ? 1 : 0);
+      }
     } else if ($hadNine) {
       self::draw(9);
     }
