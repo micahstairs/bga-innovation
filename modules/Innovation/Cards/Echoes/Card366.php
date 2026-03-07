@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -33,32 +34,20 @@ class Card366 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'forecast',
-        'location_to'   => 'deck',
-        'bottom_to'     => false, // put on top
-      ];
+      return self::youMay()->topDeck()->fromYourForecast();
     } else if (self::isFirstOrThirdEdition()) {
-      return [
-        'location_from'       => 'forecast',
-        'achieve_if_eligible' => true,
-      ];
+      return self::youMust()->achieveIfEligible()->fromYourForecast();
     } else {
       self::setAuxiliaryArray(self::getAvailableStandardAchievementIds());
-      $forecastCards = self::getCards('forecast');
+      $forecastCards = self::getCards(Locations::FORECAST);
       foreach ($forecastCards as $card) {
-        $this->game->transferCardFromTo($card, 0, 'achievements');
+        $this->game->transferCardFromTo($card, 0, Locations::ACHIEVEMENTS);
       }
-      return [
-        'n'                               => count($forecastCards),
-        'location_from'                   => Locations::AVAILABLE_ACHIEVEMENTS,
-        'location_to'                     => 'forecast',
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $numCards = count($forecastCards);
+      return self::youMay()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromAvailableAchievements()->toForecast();
     }
   }
 

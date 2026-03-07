@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card432 extends AbstractCard
@@ -28,33 +29,21 @@ class Card432 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if ((self::isFirstOrThirdEdition() && self::isFirstNonDemand()) || (self::isFourthEdition() && self::isSecondNonDemand())) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'       => true,
-          'n_min'          => 1,
-          'n_max'          => 'all',
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-        ];
+        return self::youMay()->return()->anyNumber()->fromYourHand();
       } else {
-        return [
-          'n'                   => self::getAuxiliaryValue(),
-          'achieve_if_eligible' => true,
-          'refresh_selection'   => true, // Eligibility needs to be rechecked after each achievement is achieved
-        ];
+        // Eligibility needs to be rechecked after each achievement is achieved
+        return self::youMust()->achieveIfEligible()->exactly(self::getAuxiliaryValue())->refreshingSelection();
       }
     } else {
       $bonuses = self::getBonuses();
       if (self::isFirstOrThirdEdition() && empty($bonuses)) {
         $bonuses[] = 0;
       }
-      return [
-        'choose_value' => true,
-        'age'          => $bonuses,
-      ];
+      return self::youMust()->chooseValue($bonuses);
     }
   }
 

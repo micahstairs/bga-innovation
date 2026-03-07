@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -23,16 +24,16 @@ class Card21 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $choices = self::isFourthEdition() ? [1, 2] : [1];
-    return self::youMay()->choose($choices)->build();
+    return self::youMay()->choose($choices);
   }
 
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Exchange highest cards in your hand with the highest cards in your score pile'), 'age' => self::renderValue(self::getMaxValueInLocation('score') + 1)],
+      1 => [clienttranslate('Exchange highest cards in your hand with the highest cards in your score pile'), 'age' => self::renderValue(self::getMaxValueInLocation(Locations::SCORE) + 1)],
       2 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(3, CardTypes::BASE)],
     ]);
   }

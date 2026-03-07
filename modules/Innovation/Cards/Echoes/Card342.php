@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card342 extends AbstractCard
 {
@@ -30,21 +31,12 @@ class Card342 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-      ];
+      return self::youMay()->score()->fromYourHand();
     } else {
-      return [
-        'n'              => 'all',
-        'owner_from'     => 'any player',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromAnyHand();
     }
   }
 

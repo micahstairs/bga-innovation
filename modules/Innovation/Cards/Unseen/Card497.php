@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card497 extends AbstractCard
@@ -23,23 +24,14 @@ class Card497 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => Locations::SAFE,
-        'location_to'   => Locations::AVAILABLE_ACHIEVEMENTS,
-      ];
+      return self::youMust()->fromYourSafe()->toAvailableAchievements();
+    } else if (self::isSecondInteraction() || self::isThirdInteraction()) {
+      return self::youMay()->score()->onlyCardsInAuxiliaryArray()->fromYourHand();
     } else {
-      $options = [
-        'can_pass'      => true,
-        'location_from' => Locations::HAND,
-        'score_keyword' => true,
-      ];
-      if (self::isSecondInteraction() || self::isThirdInteraction()) {
-        $options['card_ids_are_in_auxiliary_array'] = true;
-      }
-      return $options;
+      return self::youMay()->score()->fromYourHand();
     }
   }
 

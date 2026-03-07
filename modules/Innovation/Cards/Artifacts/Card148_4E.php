@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card148_4E extends AbstractCard
@@ -13,12 +14,12 @@ class Card148_4E extends AbstractCard
   //     my score pile! If you transfer any, transfer a top card on your board of that value to my board!
 
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue()->ofMyChoice()->build();
+      return self::youMust()->chooseValue()->ofMyChoice();
     } else {
-      return self::youMust()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine()->build();
+      return self::youMust()->value(self::getAuxiliaryValue())->fromYourBoard()->toMine();
     }
   }
 

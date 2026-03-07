@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
@@ -28,36 +29,28 @@ class Card511 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return [
-          'can_pass'      => true,
-          'location_from' => Locations::HAND,
-          'tuck_keyword'  => true,
-          'color'         => Arrays::decode(self::getAuxiliaryValue2()),
-        ];
+        $colors = Arrays::decode(self::getAuxiliaryValue2());
+        return self::youMay()->tuck()->withColor($colors)->fromYourHand();
       } else {
         if (self::getAuxiliaryValue() === 1) {
           self::draw(3);
           self::draw(3);
         }
-        return [];
+        return self::noInteraction();
       }
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::BLUE, Colors::YELLOW],
-      ];
+      return self::youMay()->splayLeft([Colors::BLUE, Colors::YELLOW]);
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      if (self::getColor($card) == Colors::YELLOW || $card['type'] != CardTypes::BASE) {
+      if (self::getColor($card) == Colors::YELLOW || self::getType($card) != CardTypes::BASE) {
         self::setAuxiliaryValue(1); // Remember that a yellow card or an expansion card was tucked
       }
       $colors = Arrays::removeElement(Arrays::decode(self::getAuxiliaryValue2()), self::getColor($card));

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card486 extends AbstractCard
@@ -23,29 +24,15 @@ class Card486 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'choose_player' => true,
-        'players'       => $this->game->getOtherActivePlayers(self::getPlayerId()),
-      ];
+      return self::youMust()->choosePlayer(self::getOtherPlayers());
     } else if (self::isSecondInteraction()) {
-      return [
-        'location_from' => 'board',
-        'owner_to'      => self::getAuxiliaryValue(),
-        'location_to'   => 'board',
-        'with_icon'     => Icons::AUTHORITY,
-      ];
+      return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toBoard(self::getAuxiliaryValue());
     } else {
-      return [
-        'owner_from'    => self::getAuxiliaryValue(),
-        'location_from' => 'board',
-        'owner_to'      => self::getPlayerId(),
-        'meld_keyword'  => true,
-        'age'           => $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), Icons::AUTHORITY),
-        'without_icon'  => Icons::AUTHORITY,
-      ];
+      $value = $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), Icons::AUTHORITY);
+      return self::youMust()->meld()->value($value)->withoutIcon(Icons::AUTHORITY)->fromBoard(self::getAuxiliaryValue())->toYours();
     }
   }
 
@@ -58,7 +45,7 @@ class Card486 extends AbstractCard
   {
     if (self::isSecondInteraction()) {
       self::setMaxSteps(3);
-      self::setAuxiliaryValue($card['owner']);
+      self::setAuxiliaryValue(self::getOwner($card));
     }
   }
 }

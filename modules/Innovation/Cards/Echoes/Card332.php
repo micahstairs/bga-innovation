@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card332 extends AbstractCard
@@ -23,19 +24,18 @@ class Card332 extends AbstractCard
     } else {
       $card1 = self::drawType(1, CardTypes::ECHOES);
       $card2 = self::drawType(1, CardTypes::ECHOES);
-      self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+      self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
       self::setMaxSteps(2);
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    $keyword = self::isFirstInteraction() ? 'foreshadow_keyword' : 'return_keyword';
-    return [
-      'location_from'                   => 'hand',
-      $keyword                          => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    if (self::isFirstInteraction()) {
+      return self::youMust()->foreshadow()->onlyCardsInAuxiliaryArray()->fromYourHand();
+    } else {
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourHand();
+    }
   }
 
   public function handleCardChoice(array $card)

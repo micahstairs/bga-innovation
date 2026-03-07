@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -32,19 +33,14 @@ class Card504 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => Arrays::decode(self::getAuxiliaryValue()),
-      ];
+      $colors = Arrays::decode(self::getAuxiliaryValue());
+      return self::youMay()->splayLeft($colors);
     } else {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::countCardsKeyedByColor(Locations::BOARD)[self::getLastSelectedColor()],
-      ];
+      $value = self::countCardsKeyedByColor(Locations::BOARD)[self::getLastSelectedColor()];
+      return self::youMust()->safeguard()->value($value);
     }
   }
 

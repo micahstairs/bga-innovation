@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
-use Innovation\Enums\Locations;
+use Innovation\Cards\InteractionBuilder;
 
 class Card372_4E extends AbstractCard
 {
@@ -24,23 +24,13 @@ class Card372_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'n_min'          => 1,
-        'n_max'          => 3,
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->minCards(1)->maxCards(3)->fromYourHand();
     } else {
-      return [
-        'n'                               => count(self::getAuxiliaryArray()) - 1,
-        'location_from'                   => Locations::HAND,
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      $numCards = count(self::getAuxiliaryArray()) - 1;
+      return self::youMust()->return()->exactly($numCards)->onlyCardsInAuxiliaryArray()->fromYourHand();
     }
   }
 

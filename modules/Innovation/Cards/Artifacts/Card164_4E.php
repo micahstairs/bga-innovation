@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card164_4E extends AbstractCard
@@ -12,12 +13,12 @@ class Card164_4E extends AbstractCard
   //     eligibility. Otherwise, junk all cards in the deck of value equal to the lowest available
   //     achievement, if there is one.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->meld()->fromYourHand()->build();
+      return self::youMust()->meld()->fromYourHand();
     } else {
-      return self::youMust()->achieve()->value(self::getLastSelectedFaceUpAge())->build();
+      return self::youMust()->achieve()->value(self::getLastSelectedFaceUpAge());
     }
   }
 

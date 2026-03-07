@@ -18,12 +18,13 @@ class Card388 extends AbstractCard
   public function initialExecution()
   {
     $tuckedCard = self::drawAndTuck(6);
-    self::transferToScorePile(self::getTopCardOfColor($tuckedCard['color']), self::getLauncherId());
-    self::transferToScorePile(self::getTopCardOfColor($tuckedCard['color']), self::getLauncherId());
+    $tuckedColor = self::getColor($tuckedCard);
+    self::transferToScorePile(self::getTopCardOfColor($tuckedColor), self::getLauncherId());
+    self::transferToScorePile(self::getTopCardOfColor($tuckedColor), self::getLauncherId());
     if (self::isFirstOrThirdEdition()) {
-      self::transferToScorePile(self::getBottomCardOfColor($tuckedCard['color'], self::getLauncherId()));
+      self::transferToScorePile(self::getBottomCardOfColor($tuckedColor, self::getLauncherId()));
     } else {
-      self::score(self::getBottomCardOfColor($tuckedCard['color'], self::getLauncherId()));
+      self::score(self::getBottomCardOfColor($tuckedColor, self::getLauncherId()));
     }
   }
 

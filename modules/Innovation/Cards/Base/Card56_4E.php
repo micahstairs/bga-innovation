@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card56_4E extends AbstractCard
@@ -20,16 +21,16 @@ class Card56_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return ['choose_value' => true];
+        return self::youMust()->chooseValue();
       } else {
-        return self::youMay()->meld()->all()->value(self::getAuxiliaryValue())->fromYourScore()->build();
+        return self::youMay()->meld()->all()->value(self::getAuxiliaryValue())->fromYourScore();
       }
     } else {
-      return self::youMay()->junk()->fromAvailableAchievements()->range(5, 7)->build();
+      return self::youMay()->junk()->fromAvailableAchievements()->range(5, 7);
     }
   }
 

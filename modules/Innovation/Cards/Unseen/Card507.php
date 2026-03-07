@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -14,19 +15,12 @@ class Card507 extends AbstractCard
   //     your board of that color to my score pile!
   //   - You may splay your red or green cards left.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'splay_direction'     => Directions::UNSPLAYED,
-        'has_splay_direction' => [Directions::LEFT, Directions::RIGHT, Directions::UP, Directions::ASLANT],
-      ];
+      return self::youMust()->unsplay()->currentlySplayed();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::LEFT,
-        'color'           => [Colors::RED, Colors::GREEN],
-      ];
+      return self::youMay()->splayLeft([Colors::RED, Colors::GREEN]);
     }
   }
 

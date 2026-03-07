@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Locations;
 
 class Card417 extends AbstractCard
 {
@@ -23,33 +25,23 @@ class Card417 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'owner_from'  => 'any player',
-        'choose_from' => 'board',
-        'not_id'      => CardIds::HELICOPTER,
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(CardIds::HELICOPTER)->fromAnyPlayer();
     } else {
-      return [
-        'can_pass'                        => true,
-        'location_from'                   => 'hand',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-        'enable_autoselection'            => false,
-      ];
+      return self::youMay()->return()->onlyCardsInAuxiliaryArray()->fromYourHand()->withoutAutoselection();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isFirstInteraction()) {
-      self::transferToScorePile($card, $card['owner']);
+      self::transferToScorePile($card, self::getOwner($card));
       $cardIds = [];
-      foreach (self::getCards('hand') as $cardInHand) {
+      foreach (self::getCards(Locations::HAND) as $cardInHand) {
         if (self::hasIconInCommon($cardInHand, $card)) {
-          $cardIds[] = $cardInHand['id'];
+          $cardIds[] = self::getId($cardInHand);
         }
       }
       self::setAuxiliaryArray($cardIds);

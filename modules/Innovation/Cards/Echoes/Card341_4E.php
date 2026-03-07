@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card341_4E extends AbstractCard
@@ -20,25 +21,14 @@ class Card341_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor();
     } else if (self::isSecondInteraction()) {
-      return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => Locations::HAND,
-        'tuck_keyword'  => true,
-        'color'         => [self::getAuxiliaryValue()],
-      ];
+      return self::youMay()->tuck()->anyNumber()->withColor(self::getAuxiliaryValue())->fromYourHand();
     } else {
-      return [
-        'can_pass'            => true,
-        'location_from'       => Locations::HAND,
-        'achieve_if_eligible' => true,
-      ];
+      return self::youMay()->achieveIfEligible()->fromYourHand();
     }
   }
 

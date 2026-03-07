@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card410 extends AbstractCard
 {
@@ -17,19 +18,12 @@ class Card410 extends AbstractCard
   //   - Return a card from your score pile. Draw and score two cards of value one less than the
   //     value of the card you return.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand();
     } else {
-      return [
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourScore();
     }
   }
 

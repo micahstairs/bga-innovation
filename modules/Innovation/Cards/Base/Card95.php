@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card95 extends AbstractCard
@@ -31,12 +32,12 @@ class Card95 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->withIcon(Icons::HEALTH)->fromOpponentsBoard()->toYourScore()->build();
+      return self::youMust()->withIcon(Icons::HEALTH)->fromOpponentsBoard()->toYourScore();
     } else {
-      return self::youMust()->score()->withIcon(Icons::HEALTH)->fromOpponentsBoard()->build();
+      return self::youMust()->score()->withIcon(Icons::HEALTH)->fromOpponentsBoard();
     }
 
   }

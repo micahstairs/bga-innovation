@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -27,14 +28,9 @@ class Card358 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from' => 'board',
-      'owner_to'      => self::getLauncherId(),
-      'location_to'   => 'score',
-      'with_icon'     => Icons::AUTHORITY,
-    ];
+    return self::youMust()->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMyScore();
   }
 
   public function handleCardChoice(array $card)

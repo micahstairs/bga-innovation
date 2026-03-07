@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card470 extends AbstractCard
 {
@@ -12,12 +14,12 @@ class Card470 extends AbstractCard
   //     board, if eligible, or score it. If you do either, and Streaming was foreseen, repeat
   //     this effect using the same color.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return ['choose_from' => 'board'];
+      return self::youMust()->chooseCardFrom(Locations::BOARD);
     } else {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2]);
     }
   }
 
@@ -43,7 +45,7 @@ class Card470 extends AbstractCard
     if ($choice === 2) {
       self::score($card);
       self::repeatIfForeseen(self::getColor($card));
-    } else if (in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId()))) {
+    } else if (in_array(self::getValue($card), $this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId()))) {
       self::achieve($card);
       self::repeatIfForeseen(self::getColor($card));
     }
@@ -53,7 +55,7 @@ class Card470 extends AbstractCard
   {
     $topCard = self::getTopCardOfColor($color);
     if ($topCard && self::wasForeseen()) {
-      self::setAuxiliaryValue($topCard['id']);
+      self::setAuxiliaryValue(self::getId($topCard));
       self::setNextStep(2);
       self::setMaxSteps(2);
     }

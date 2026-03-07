@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -13,18 +14,18 @@ class Card80 extends AbstractCard
   //     that value from all score piles.
   //   - You may splay your purple cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
-        return self::youMay()->return()->fromYourHand()->build();
+        return self::youMay()->return()->fromYourHand();
       } else if (self::isSecondInteraction()) {
-        return self::youMust()->chooseValue()->build();
+        return self::youMust()->chooseValue();
       } else {
-        return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromAnyScore()->build();
+        return self::youMust()->return()->all()->value(self::getAuxiliaryValue())->fromAnyScore();
       }
     } else {
-      return self::youMay()->splayUp()->withColor(Colors::PURPLE)->build();
+      return self::youMay()->splayUp(Colors::PURPLE);
     }
   }
 

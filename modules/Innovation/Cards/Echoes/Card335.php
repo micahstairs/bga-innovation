@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card335 extends AbstractCard
@@ -25,17 +26,13 @@ class Card335 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    $options = [
-      'location_from' => 'board',
-      'score_keyword' => true,
-      'bottom_from'   => true,
-    ];
     if (self::isFourthEdition()) {
-      $options['color'] = [Colors::BLUE];
+      return self::youMust()->score()->withColor(Colors::BLUE)->fromBottom()->fromYourBoard();
+    } else {
+      return self::youMust()->score()->fromBottom()->fromYourBoard();
     }
-    return $options;
   }
 
 }

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card384_4E extends AbstractCard
 {
@@ -25,23 +27,20 @@ class Card384_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $values = [];
       foreach (self::getPlayerIds() as $playerId) {
-        $values = array_merge($values, self::getUniqueValuesInLocation('score', $playerId));
+        $values = array_merge($values, self::getUniqueValuesInLocation(Locations::SCORE, $playerId));
       }
-      return [
-        'choose_value' => true,
-        'age'          => $values,
-      ];
+      return self::youMust()->chooseValue($values);
     } else {
-      return [
-        'can_pass'           => self::getAuxiliaryValue() > 0,
-        'location_from'      => 'hand',
-        'foreshadow_keyword' => true,
-      ];
+      if (self::getAuxiliaryValue() > 0) {
+        return self::youMay()->foreshadow()->fromYourHand();
+      } else {
+        return self::youMust()->foreshadow()->fromYourHand();
+      }
     }
   }
 
@@ -56,7 +55,7 @@ class Card384_4E extends AbstractCard
       self::setMaxSteps(2);
     } else if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $revealedCard = self::drawAndReveal(self::getValue($card));
-      $topCard = self::getTopCardOfColor($revealedCard['color']);
+      $topCard = self::getTopCardOfColor(self::getColor($revealedCard));
       if (self::getValue($revealedCard) > self::getValue($topCard)) {
         self::meld($revealedCard);
       } else {

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card402 extends AbstractCard
 {
@@ -20,36 +22,34 @@ class Card402 extends AbstractCard
     if (self::isFirstNonDemand() || self::isFirstOrThirdEdition()) {
       self::setMaxSteps(1);
     } else {
-      self::drawAndForeshadow(self::countCards('hand'));
+      self::drawAndForeshadow(self::countCards(Locations::HAND));
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourHand();
     } else {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue();
     }
   }
 
-  public function handleCardChoice(array $card) {
-    if (self::isFirstNonDemand()&& self::isFirstInteraction()) {
-      $value = $card['age'];
+  public function handleCardChoice(array $card)
+  {
+    if (self::isFirstNonDemand() && self::isFirstInteraction()) {
+      $value = self::getValue($card);
       foreach (self::getPlayerIds() as $playerId) {
-        foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $scoreCard) {
+        foreach (self::getCardsKeyedByValue(Locations::SCORE, $playerId)[$value] as $scoreCard) {
           self::transferToHand($scoreCard);
         }
       }
     }
   }
 
-  public function handleValueChoice($value) {
+  public function handleValueChoice($value)
+  {
     self::drawAndForeshadow($value);
   }
-  
+
 }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -15,23 +16,28 @@ class Card93_4E extends AbstractCard
   public function initialExecution()
   {
     if (self::countCards(Locations::SCORE)) {
-      self::setMaxSteps(2);
+      self::setMaxSteps(1);
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue()->ofMyChoice()->build();
+      return self::youMust()->chooseValue()->ofMyChoice();
     } else {
-      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYourHand()->build();
+      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYourHand();
     }
   }
 
   public function handleValueChoice(int $value)
   {
+    $numCardsTransferred = 0;
     foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
       self::transferToHand($card, self::getLauncherId());
+      $numCardsTransferred++;
+    }
+    if ($numCardsTransferred > 0) {
+      self::setMaxSteps(1);
     }
   }
 

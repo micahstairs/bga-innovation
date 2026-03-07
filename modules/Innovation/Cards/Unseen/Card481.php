@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card481 extends AbstractCard
 {
@@ -20,13 +21,9 @@ class Card481 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'n'              => 2,
-      'location_from'  => 'hand',
-      'return_keyword' => true,
-    ];
+    return self::youMust()->return()->exactly(2)->fromYourHand();
   }
 
   public function afterInteraction()

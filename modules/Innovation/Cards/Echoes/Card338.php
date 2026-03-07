@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card338 extends AbstractCard
 {
@@ -11,27 +12,15 @@ class Card338 extends AbstractCard
   //   - ECHO: You may meld a card from your hand.
   //   - Return any number of cards from your hand. Score two cards from your hand for every card you return.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'meld_keyword'  => true,
-      ];
+      return self::youMay()->meld()->fromYourHand();
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'       => true,
-        'n_min'          => 1,
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->minCards(1)->fromYourHand();
     } else {
-      return [
-        'n'             => self::getAuxiliaryValue() * 2,
-        'location_from' => 'hand',
-        'score_keyword' => true,
-      ];
+      $numCards = self::getAuxiliaryValue() * 2;
+      return self::youMust()->score()->exactly($numCards)->fromYourHand();
     }
   }
 

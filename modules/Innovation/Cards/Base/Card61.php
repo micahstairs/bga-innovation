@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -16,12 +17,12 @@ class Card61 extends AbstractCard
   //   - You may draw and tuck a [6]. If you tuck a card, score a top card without [INDUSTRY] of each color on your board.
   //   - You may splay your yellow cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->choose([1])->build();
+      return self::youMay()->choose([1]);
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
+      return self::youMay()->splayRight(Colors::YELLOW);
     }
   }
 

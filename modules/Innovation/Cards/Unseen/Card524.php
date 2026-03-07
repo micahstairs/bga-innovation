@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card524 extends AbstractCard
@@ -27,12 +28,9 @@ class Card524 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'choose_color' => true,
-      'color'        => Colors::NON_PURPLE,
-    ];
+    return self::youMust()->chooseColor(Colors::NON_PURPLE);
   }
 
   public function handleColorChoice(int $color): void
@@ -41,19 +39,21 @@ class Card524 extends AbstractCard
     self::selfExecuteTopCard($color);
   }
 
-  private function scoreTopCardAndPotentiallyRepeat(): void {
+  private function scoreTopCardAndPotentiallyRepeat(): void
+  {
     $color = self::getAuxiliaryValue();
     $topCard = self::getTopCardOfColor($color);
     if ($topCard) {
       self::score($topCard);
-      $scores = self::addToActionScopedAuxiliaryArray($topCard['faceup_age'], self::getPlayerId());
+      $scores = self::addToActionScopedAuxiliaryArray(self::getFaceupValue($topCard), self::getPlayerId());
       if (array_sum($scores) < 9) {
         self::selfExecuteTopCard($color);
       }
     }
   }
 
-  private function selfExecuteTopCard($color): void {
+  private function selfExecuteTopCard($color): void
+  {
     $topCard = self::getTopCardOfColor($color);
     if (!self::selfExecute($topCard)) {
       self::scoreTopCardAndPotentiallyRepeat();

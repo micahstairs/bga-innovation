@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card138 extends AbstractCard
@@ -12,9 +13,9 @@ class Card138 extends AbstractCard
   //   - I COMPEL you to choose a top card on your board! Transfer all cards of that card's color
   //     from your board to my score pile!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseCardFrom(Locations::BOARD)->build();
+    return self::youMust()->chooseCardFrom(Locations::BOARD);
   }
 
   public function handleCardChoice(array $card)

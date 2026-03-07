@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
@@ -14,13 +15,9 @@ class Card509 extends AbstractCard
   //     regardless of eligibility; yellow, score it; blue, draw a [5]. Otherwise, safeguard
   //     the top card of the [4] deck.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'location_from' => 'safe',
-      'location_to'   => 'revealed',
-      'age'           => 4,
-    ];
+    return self::youMust()->reveal()->value(4)->fromYourSafe();
   }
 
   public function handleCardChoice(array $card)

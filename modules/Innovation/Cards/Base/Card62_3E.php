@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card62_3E extends AbstractCard
@@ -23,9 +24,9 @@ class Card62_3E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->all()->lowest()->fromYourScore()->build();
+    return self::youMay()->return()->all()->lowest()->fromYourScore();
   }
 
   public function afterInteraction()

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card200 extends AbstractCard
@@ -13,9 +14,9 @@ class Card200 extends AbstractCard
   // - 4th edition:
   //   - Return all cards from your hand. Draw and reveal five [9]. If you reveal five colors, you win.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->all()->fromYourHand()->build();
+    return self::youMust()->return()->all()->fromYourHand();
   }
 
   public function afterInteraction()

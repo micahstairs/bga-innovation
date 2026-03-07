@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -24,23 +25,12 @@ class Card591 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'location_from'    => 'hand',
-        'score_keyword'    => true,
-        'color'            => [self::getAuxiliaryValue()],
-        'reveal_if_unable' => true,
-      ];
+      return self::youMust()->score()->withColor(self::getAuxiliaryValue())->fromYourHand()->revealingIfUnable();
     } else {
-      return [
-        'n'             => 4,
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'color'         => Colors::NON_YELLOW,
-        'with_icon'     => Icons::EFFICIENCY,
-      ];
+      return self::youMust()->score()->exactly(4)->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromYourBoard();
     }
   }
 

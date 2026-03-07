@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card420 extends AbstractCard
 {
@@ -36,13 +38,9 @@ class Card420 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'choose_from' => 'board',
-      'age'         => self::getAuxiliaryValue(),
-      'color'       => Colors::NON_GREEN,
-    ];
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->non(Colors::GREEN)->value(self::getAuxiliaryValue());
   }
 
   public function handleCardChoice(array $card)

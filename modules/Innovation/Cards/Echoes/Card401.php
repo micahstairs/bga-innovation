@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card401 extends AbstractCard
 {
@@ -19,29 +21,22 @@ class Card401 extends AbstractCard
   //     from either all opponents' hands or all their score piles. Draw and foreshadow a card of
   //     the chosen value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $topCard = self::getTopCardOfColor(Colors::GREEN);
       $bottomCard = self::getBottomCardOfColor(Colors::GREEN);
       if ($topCard) {
-        self::setAuxiliaryArray([$topCard['id'], $bottomCard['id']]);
+        self::setAuxiliaryArray([self::getId($topCard), self::getId($bottomCard)]);
       } else {
         self::setAuxiliaryArray([]);
       }
-      return [
-        'location_from'                   => 'pile',
-        'score_keyword'                   => true,
-        'color'                           => [Colors::GREEN],
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->score()->onlyCardsInAuxiliaryArray()->fromYourStack(Colors::GREEN);
     } else if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => self::getUniqueValuesInLocation('score'),
-      ];
+      $values = self::getUniqueValuesInLocation(Locations::SCORE);
+      return self::youMust()->chooseValue($values);
     } else {
-      return ['choices' => [1, 2]];
+      return self::youMust()->choose([1, 2]);
     }
   }
 
@@ -70,7 +65,7 @@ class Card401 extends AbstractCard
   public function handleListChoice(int $choice)
   {
     $value = self::getAuxiliaryValue();
-    $sourceLocation = $choice === 1 ? 'hand' : 'score';
+    $sourceLocation = $choice === 1 ? Locations::HAND : Locations::SCORE;
     $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
     foreach ($playerIds as $playerId) {
       foreach (self::getCardsKeyedByValue($sourceLocation, $playerId)[$value] as $card) {

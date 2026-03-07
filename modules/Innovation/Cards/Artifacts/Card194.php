@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -36,7 +37,7 @@ class Card194 extends AbstractCard
             self::achieve($card, $playerId);
           } else {
             self::transferToHand($card);
-            self::achieve(self::getTopCardOfColor($color), $playerId);
+            self::achieve(self::getTopCardOfColor($color, $playerId), $playerId);
           }
         } else {
           self::transferToHand($card);
@@ -46,9 +47,9 @@ class Card194 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->fromYourAchievements()->excludingRelics()->build();
+    return self::youMust()->return()->fromYourAchievements()->excludingRelics();
   }
 
   public function compelMightBeEffective(): bool

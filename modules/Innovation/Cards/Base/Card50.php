@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card50 extends AbstractCard
@@ -15,9 +16,9 @@ class Card50 extends AbstractCard
   //   - You may return a card from your hand. If you do, splay your cards of that card's color right,
   //     and draw a card of value equal to the number of cards of that color on your board.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->revealAndReturn()->fromYourHand()->build();
+    return self::youMay()->revealAndReturn()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

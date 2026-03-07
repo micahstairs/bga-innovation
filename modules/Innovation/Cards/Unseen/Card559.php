@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card559 extends AbstractCard
@@ -12,19 +13,15 @@ class Card559 extends AbstractCard
   //   - You may choose to either transfer your bottom card of each color to your hand, or tuck all
   //     cards from your score pile, or choose a value and score all cards from your hand of that value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return ['choices' => [1, 2, 3]];
+      return self::youMust()->choose([1, 2, 3]);
     } else {
       if (self::getAuxiliaryValue() === 2) {
-        return [
-          'n'             => 'all',
-          'location_from' => 'score',
-          'tuck_keyword'  => true,
-        ];
+        return self::youMust()->tuck()->all()->fromYourScore();
       } else {
-        return ['choose_value' => true];
+        return self::youMust()->chooseValue();
       }
     }
   }

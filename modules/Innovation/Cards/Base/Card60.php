@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -23,12 +24,12 @@ class Card60 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayRight()->build();
+      return self::youMay()->splayRight();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
+      return self::youMay()->splayRight(Colors::GREEN);
     }
   }
 

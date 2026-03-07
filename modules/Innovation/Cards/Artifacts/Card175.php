@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card175 extends AbstractCard
@@ -21,14 +22,14 @@ class Card175 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::getAuxiliaryValue() === -1) {
       $topCards = self::getTopCards();
       $colors = self::getColorsMatchingValues($topCards, self::getRepeatedValues($topCards));
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->exactly(2)->withColor($colors)->refreshingSelection()->forceAutoselection()->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->exactly(2)->withColor($colors)->refreshingSelection()->forceAutoselection();
     } else {
-      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(self::getLastSelectedId())->value(self::getLastSelectedFaceUpAge())->build();
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->otherThan(self::getLastSelectedId())->value(self::getLastSelectedFaceUpAge());
     }
   }
 

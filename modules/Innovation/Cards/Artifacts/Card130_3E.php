@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card130_3E extends AbstractCard
@@ -13,12 +14,12 @@ class Card130_3E extends AbstractCard
   //     draw a card of matching type and value to the covered card, then score a card from your
   //     hand.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->meld()->fromYourHand()->build();
+      return self::youMust()->meld()->fromYourHand();
     } else {
-      return self::youMust()->score()->fromYourHand()->build();
+      return self::youMust()->score()->fromYourHand();
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
@@ -25,9 +26,9 @@ class Card129 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->ofType(CardTypes::ARTIFACTS)->fromYourBoard()->toMine()->build();
+    return self::youMust()->ofType(CardTypes::ARTIFACTS)->fromYourBoard()->toMine();
   }
 
   private function holyGrailIsTopCard(): bool
@@ -39,7 +40,7 @@ class Card129 extends AbstractCard
   public function compelMightBeEffective(): bool
   {
     foreach (self::getTopCards() as $card) {
-      if ($card['type'] == CardTypes::ARTIFACTS) {
+      if (self::getType($card) == CardTypes::ARTIFACTS) {
         return true;
       }
     }

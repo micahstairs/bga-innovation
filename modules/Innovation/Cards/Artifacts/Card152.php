@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -19,14 +20,14 @@ class Card152 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseColor()->build();
+      return self::youMust()->chooseColor();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->chooseNonNegativeInteger()->build();
+      return self::youMust()->chooseNonNegativeInteger();
     } else {
-      return self::youMust()->return()->all()->fromYourHand()->build();
+      return self::youMust()->return()->all()->fromYourHand();
     }
   }
 

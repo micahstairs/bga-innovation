@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -16,12 +17,12 @@ class Card94 extends AbstractCard
   //   - Reveal a card from your hand. Transfer to your hand the top card of that color from all opponents' boards.
   //   - You may splay your yellow or blue cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMust()->reveal()->fromYourHand()->build();
+      return self::youMust()->reveal()->fromYourHand();
     } else {
-      return self::youMay()->splayUp()->withColor([Colors::BLUE, Colors::YELLOW])->build();
+      return self::youMay()->splayUp([Colors::BLUE, Colors::YELLOW]);
     }
   }
 

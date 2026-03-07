@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card482 extends AbstractCard
@@ -22,7 +23,7 @@ class Card482 extends AbstractCard
       $countsByValue = self::countCardsKeyedByValue(Locations::HAND);
       foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
         if (self::isValuedCard($card)) {
-          if ($countsByValue[$card['age']] > 0) {
+          if ($countsByValue[self::getValue($card)] > 0) {
             $cardIds[] = self::getId($card);
           }
         }
@@ -35,19 +36,12 @@ class Card482 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'safeguard_keyword'               => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->safeguard()->onlyCardsInAuxiliaryArray();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourHand();
     }
   }
 

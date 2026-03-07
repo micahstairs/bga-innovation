@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
@@ -29,9 +30,9 @@ class Card123 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->fromYourHandOrRevealed()->build();
+    return self::youMust()->return()->fromYourHandOrRevealed();
   }
 
   public function handleCardChoice(array $returnedCard)
@@ -40,7 +41,7 @@ class Card123 extends AbstractCard
     foreach (self::getPlayerIds() as $playerId) {
       $hasTopArtifact = false;
       foreach (self::getTopCards($playerId) as $card) {
-        if ($card['type'] == CardTypes::ARTIFACTS) {
+        if (self::getType($card) == CardTypes::ARTIFACTS) {
           $hasTopArtifact = true;
           break;
         }

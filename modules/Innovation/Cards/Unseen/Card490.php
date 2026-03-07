@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -13,27 +14,16 @@ class Card490 extends AbstractCard
   //   - You may transfer the lowest available achievement to your hand. If you do, return all
   //     yellow cards and all blue cards on your board.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::countCards(Locations::ACHIEVEMENTS) + 1,
-      ];
+      $value = self::countCards(Locations::ACHIEVEMENTS) + 1;
+      return self::youMust()->safeguard()->value($value);
     } else if (self::isFirstInteraction()) {
-      return [
-        'can_pass'      => true,
-        'location_from' => Locations::AVAILABLE_ACHIEVEMENTS,
-        'location_to'   => Locations::HAND,
-        'age'           => self::getMinValue(self::getAvailableStandardAchievements()),
-      ];
+      $value = self::getMinValue(self::getAvailableStandardAchievements());
+      return self::youMay()->value($value)->fromAvailableAchievements()->toYourHand();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => Locations::PILE,
-        'return_keyword' => true,
-        'color'          => [Colors::YELLOW, Colors::BLUE],
-      ];
+      return self::youMust()->return()->fromAnywhereInStack()->withColor([Colors::YELLOW, Colors::BLUE]);
     }
   }
 

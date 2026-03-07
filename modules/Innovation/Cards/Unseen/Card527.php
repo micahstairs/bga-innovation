@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card527 extends AbstractCard
@@ -27,20 +28,17 @@ class Card527 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $cardIds = [];
     $values = self::getValues(self::getTopCards());
     foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $achievement) {
       if (self::isValuedCard($achievement) && (in_array(self::getValue($achievement), $values))) {
-        $cardIds[] = $achievement['id'];
+        $cardIds[] = self::getId($achievement);
       }
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'safeguard_keyword'               => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->safeguard()->onlyCardsInAuxiliaryArray();
   }
 
 }

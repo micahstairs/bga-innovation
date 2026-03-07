@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card144 extends AbstractCard
@@ -25,16 +26,16 @@ class Card144 extends AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->revealAndReturn()->fromYourHand()->build();
+      return self::youMust()->revealAndReturn()->fromYourHand();
     } else if (self::isSecondInteraction()) {
-      return self::youMust()->return()->fromYourBoard()->withColor(self::getLastSelectedColor())->build();
+      return self::youMust()->return()->fromYourBoard()->withColor(self::getLastSelectedColor());
     } else if (self::isThirdInteraction()) {
-      return self::youMust()->revealAndReturn()->fromYourScore()->withColor(self::getLastSelectedColor())->build();
+      return self::youMust()->revealAndReturn()->fromYourScore()->withColor(self::getLastSelectedColor());
     } else {
-      return self::youMust()->achieve()->includingSpecialAchievements()->build();
+      return self::youMust()->achieve()->includingSpecialAchievements();
     }
   }
 

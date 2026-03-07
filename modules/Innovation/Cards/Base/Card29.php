@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -22,14 +23,14 @@ class Card29 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::HEALTH)->fromYourBoard()->toMine()->build();
+      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::HEALTH)->fromYourBoard()->toMine();
     } else if (self::isFirstOrThirdEdition()) {
-      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYours()->build();
+      return self::youMust()->withoutIcon(Icons::HEALTH)->fromMyBoard()->toYours();
     } else {
-      return self::youMust()->meld()->withoutIcon(Icons::HEALTH)->fromMyBoard()->build();
+      return self::youMust()->meld()->withoutIcon(Icons::HEALTH)->fromMyBoard();
     }
   }
 

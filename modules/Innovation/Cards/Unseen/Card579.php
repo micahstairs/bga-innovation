@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -14,27 +15,19 @@ class Card579 extends AbstractCard
   //     and score a [10].
   //   - You may splay your red cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       self::setAuxiliaryArray([]);
-      return [
-        'n'              => 'all',
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourScore();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::RED],
-      ];
+      return self::youMay()->splayUp(Colors::RED);
     }
   }
 
   public function handleCardChoice(array $card)
   {
-    self::addToAuxiliaryArray($card['age']);
+    self::addToAuxiliaryArray(self::getValue($card));
   }
 
   public function afterInteraction()

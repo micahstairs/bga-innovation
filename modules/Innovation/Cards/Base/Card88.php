@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Locations;
 
@@ -62,9 +63,9 @@ class Card88 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->otherThan(CardIds::FISSION)->fromAnyBoard()->build();
+    return self::youMust()->return()->otherThan(CardIds::FISSION)->fromAnyBoard();
   }
 
   public function atEndOfEffect()

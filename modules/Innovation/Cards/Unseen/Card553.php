@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -31,12 +32,9 @@ class Card553 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'splay_direction' => Directions::RIGHT,
-      'color'           => [Colors::GREEN, Colors::PURPLE],
-    ];
+    return self::youMust()->splayRight([Colors::GREEN, Colors::PURPLE]);
   }
 
   public function afterInteraction()

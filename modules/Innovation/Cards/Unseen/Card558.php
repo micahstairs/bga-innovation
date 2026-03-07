@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Locations;
 
@@ -14,23 +15,16 @@ class Card558 extends AbstractCard
   //     to your hand, or transfer all cards in your hand to the available achievements.
   //   - Choose a color you have splayed left and splay it up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
-        return ['choices' => [1, 2, 3]];
+        return self::youMust()->choose([1, 2, 3]);
       } else {
-        return [
-          'n'                 => 'all',
-          'location_from'     => Locations::AVAILABLE_ACHIEVEMENTS,
-          'safeguard_keyword' => true,
-        ];
+        return self::youMust()->safeguard()->all()->fromAvailableAchievements();
       }
     } else {
-      return [
-        'splay_direction'     => Directions::UP,
-        'has_splay_direction' => [Directions::LEFT],
-      ];
+      return self::youMust()->splayUp()->currentlySplayedLeft();
     }
   }
 

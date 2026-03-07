@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -15,22 +16,14 @@ class Card385_3E extends AbstractCard
   //     value to the card returned.
   //   - You may splay your green cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return ['choose_value' => true];
+      return self::youMust()->chooseValue();
     } else if (self::isFirstNonDemand()) {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'forecast',
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->fromYourForecast();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight(Colors::GREEN);
     }
   }
 
@@ -42,7 +35,7 @@ class Card385_3E extends AbstractCard
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      self::drawAndForeshadow($card['age']);
+      self::drawAndForeshadow(self::getValue($card));
     }
   }
 

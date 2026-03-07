@@ -59,6 +59,25 @@ class Innovation extends Table
     const COMPEL_EFFECT = 2;
     const ECHO_EFFECT = 3;
 
+    static function stripTransferInfoForNotification(array $transferInfo): array
+    {
+        // dereference transferInfo
+        $transferInfo = (array) $transferInfo;
+        unset($transferInfo['splay_direction_from']);
+        unset($transferInfo['bottom_from']);
+        unset($transferInfo['bottom_to']);
+        unset($transferInfo['score_keyword']);
+        unset($transferInfo['meld_keyword']);
+        unset($transferInfo['achieve_keyword']);
+        unset($transferInfo['draw_keyword']);
+        unset($transferInfo['safeguard_keyword']);
+        unset($transferInfo['return_keyword']);
+        unset($transferInfo['foreshadow_keyword']);
+        //unset($transferInfo['player_id']);
+        //unset($transferInfo['opponent_id']);
+        return $transferInfo;
+    }
+
     function __construct()
     {
         // Your global variables labels:
@@ -404,7 +423,7 @@ class Innovation extends Table
 
     /*
         setupNewGame:
-        
+
         This method is called only once, when a new game is launched.
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
@@ -789,9 +808,9 @@ class Innovation extends Table
 
     /*
         getAllDatas: 
-        
+
         Gather all informations about current game situation (visible by the current player).
-        
+
         The method is called each time the game interface is displayed to a player, ie:
         _ when the game starts
         _ when a player refreshes the game page (F5)
@@ -1012,13 +1031,13 @@ class Innovation extends Table
 
     /*
         getGameProgression:
-        
+
         Compute and return the current game progression.
         The number returned must be an integer beween 0 (=the game just started) and
         100 (= the game is finished or almost finished).
-    
+
         This method is called each time we are in a game state with the "updateGameProgression" property set to true 
-       
+
     */
     function getGameProgression()
     {
@@ -2044,7 +2063,7 @@ class Innovation extends Table
     function notifyIfLocationLimitShrunkSelection($player_id)
     {
         if ($this->innovationGameState->get('limit_shrunk_selection_size') == 1) {
-            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
+            $location_to = $this->decodeLocation($this->innovationGameState->get('location_to'));
             if ($location_to == 'safe') {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${Your} safe is full so no more cards can be transferred to your safe.'), ['Your' => 'Your']);
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s safe is full so no more cards can be transferred to his safe.'), ['player_name' => self::renderPlayerName($player_id)]);
@@ -2416,6 +2435,7 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
         }
 
+        $transferInfo = self::stripTransferInfoForNotification($transferInfo);
         $info = array_merge($transferInfo, $progressInfo);
 
         $notif_args = array_merge($info, self::getDelimiterMeanings($message, $card['id']));
@@ -2719,17 +2739,19 @@ class Innovation extends Table
             }
         }
 
+        $player_id = $transferInfo['player_id'];
+        $transferInfo = self::stripTransferInfoForNotification($transferInfo);
         $info = array_merge($transferInfo, $progressInfo);
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
         $notif_args_for_player = array_merge($notif_args_for_player, $info, $delimiters_for_player);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
         $notif_args_for_others = array_merge($notif_args_for_others, $info, $delimiters_for_others);
         if ($bulk_transfer) {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_player);
-            self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_others);
+            self::notifyPlayer($player_id, "transferedCardNoDelay", "", $notif_args_for_player);
+            self::notifyAllPlayersBut($player_id, "transferedCardNoDelay", "", $notif_args_for_others);
         } else {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
-            self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCard", $message_for_others, $notif_args_for_others);
+            self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
+            self::notifyAllPlayersBut($player_id, "transferedCard", $message_for_others, $notif_args_for_others);
         }
     }
 
@@ -2834,7 +2856,7 @@ class Innovation extends Table
         } else if ($location_from === Locations::REVEALED_THEN_SCORE) {
             $from_somewhere_for_player = clienttranslate(' that you revealed and from your score pile');
             $from_somewhere_for_others = clienttranslate(' that he revealed and from his score pile');
-        } else if ($location_from === 'pile,score') {
+        } else if ($location_from === Locations::PILE_OR_SCORE) {
             $from_somewhere_for_player = clienttranslate(' from your board and score pile');
             $from_somewhere_for_others = clienttranslate(' from his board and score pile');
         }
@@ -2890,7 +2912,7 @@ class Innovation extends Table
             $action = clienttranslate('foreshadow');
         } else if ($location_to === 'junk') {
             $action = clienttranslate('junk');
-        } else if ($location_to === 'junk,safe') {
+        } else if ($location_to === Locations::JUNK_THEN_SAFEGUARD) {
             $action = clienttranslate('junk then safeguard');
         } else if ($location_to === 'revealed' || ($location_from === Locations::HAND && $location_to === Locations::REVEALED_THEN_HAND)) {
             $action = clienttranslate('reveal');
@@ -3255,19 +3277,22 @@ class Innovation extends Table
             $notif_args_for_others['is_relic'] = $card['is_relic'];
         }
 
+        $player_id = $transferInfo['player_id'];
+        $opponent_id = $transferInfo['opponent_id'];
+        $transferInfo = self::stripTransferInfoForNotification($transferInfo);
         $info = array_merge($transferInfo, $progressInfo);
         $notif_args_for_player = array_merge($notif_args_for_player, $info, self::getDelimiterMeanings($message_for_player, $card['id']));
         $notif_args_for_opponent = array_merge($notif_args_for_opponent, $info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
         $notif_args_for_others = array_merge($notif_args_for_others, $info, self::getDelimiterMeanings($message_for_others, $card['id']));
 
         if ($bulk_transfer) {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCardNoDelay", "", $notif_args_for_player);
-            self::notifyPlayer($transferInfo['opponent_id'], "transferedCardNoDelay", "", $notif_args_for_opponent);
-            self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCardNoDelay", "", $notif_args_for_others);
+            self::notifyPlayer($player_id, "transferedCardNoDelay", "", $notif_args_for_player);
+            self::notifyPlayer($opponent_id, "transferedCardNoDelay", "", $notif_args_for_opponent);
+            self::notifyAllPlayersBut(array($player_id, $opponent_id), "transferedCardNoDelay", "", $notif_args_for_others);
         } else {
-            self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
-            self::notifyPlayer($transferInfo['opponent_id'], "transferedCard", $message_for_opponent, $notif_args_for_opponent);
-            self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCard", $message_for_others, $notif_args_for_others);
+            self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
+            self::notifyPlayer($opponent_id, "transferedCard", $message_for_opponent, $notif_args_for_opponent);
+            self::notifyAllPlayersBut(array($player_id, $opponent_id), "transferedCard", $message_for_others, $notif_args_for_others);
         }
     }
 
@@ -4399,31 +4424,6 @@ class Innovation extends Table
         self::notifyGeneralInfo($message);
     }
 
-    function notifyDogmaWithNoEffect($player_id, $dogma_icon)
-    {
-        $icon = "<span class='square N icon_" . $dogma_icon . "'></span>";
-
-        self::notifyPlayer(
-            $player_id,
-            'log',
-            clienttranslate('This card has only an I demand effect but nobody has fewer ${icon} than ${you}. Nothing happens.'),
-            array(
-                'you'  => 'you',
-                'icon' => $icon
-            )
-        );
-
-        self::notifyAllPlayersBut(
-            $player_id,
-            'log',
-            clienttranslate('This card has only an I demand effect but nobody has fewer ${icon} than ${player_name}. Nothing happens.'),
-            array(
-                'player_name' => self::getPlayerNameFromId($player_id),
-                'icon'        => $icon
-            )
-        );
-    }
-
     /** Information about cards **/
     function getCardInfo($id): ?array
     {
@@ -4486,6 +4486,29 @@ class Innovation extends Table
             return null;
         }
         return self::getCardPropertyForCurrentVersion('name', $id);
+    }
+
+    /**
+     * Decode a location code; on exception, append current card context for debugging purposes.
+     */
+    private function decodeLocation(int $locationCode): string
+    {
+        try {
+            return Locations::decode($locationCode);
+        } catch (\Exception $e) {
+            $cardContext = '';
+            if ($this->innovationGameState->get('current_nesting_index') >= 0) {
+                try {
+                    $nested = self::getCurrentNestedCardState();
+                    if ($nested !== null && isset($nested['card_id'])) {
+                        $cardContext = ' Executing card: ' . self::getCardName($nested['card_id']);
+                    }
+                } catch (\Throwable $t) {
+                    // ignore when building context
+                }
+            }
+            throw new \Exception($e->getMessage() . $cardContext, 0, $e);
+        }
     }
 
     function getNonDemandEffect($id, $effect_number)
@@ -4711,27 +4734,6 @@ class Innovation extends Table
         );
 
         return $splay_direction === null ? Directions::UNSPLAYED : intval($splay_direction);
-    }
-
-    function getIdsOfCardsInLocation($owner, $location)
-    {
-        /**
-            Get all cards in a particular location, sorted by position
-        **/
-
-        return self::getObjectListFromDB(self::format("
-                SELECT
-                    id
-                FROM
-                    card
-                WHERE
-                    owner = {owner} AND
-                    location = '{location}'
-                ORDER BY
-                    position
-            ",
-            array('owner' => $owner, 'location' => $location)
-        ), true);
     }
 
     function getIdsOfHighestOrLowestCardsInLocation($owner, $location, $highest)
@@ -6886,7 +6888,7 @@ class Innovation extends Table
         }
 
         // Condition for location
-        $location_from = Locations::decode($this->innovationGameState->get('location_from'));
+        $location_from = $this->decodeLocation($this->innovationGameState->get('location_from'));
         if ($location_from == Locations::REVEALED_THEN_HAND) {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == Locations::REVEALED_THEN_SCORE) {
@@ -6895,7 +6897,7 @@ class Innovation extends Table
             $condition_for_location = "location IN ('hand', 'score')";
         } else if ($location_from == 'pile') {
             $condition_for_location = "location = 'board'";
-        } else if ($location_from == 'pile,score') {
+        } else if ($location_from == Locations::PILE_OR_SCORE) {
             $condition_for_location = "location IN ('board', 'score')";
         } else {
             $condition_for_location = self::format("location = '{location_from}'", array('location_from' => $location_from));
@@ -7305,7 +7307,7 @@ class Innovation extends Table
         if ($nesting_index < 0) {
             if ($this->innovationGameState->get('special_type_of_choice') > 0) { // Digging/stealing artifact
                 return ['ref_player_0' => $player_id];
-            } else if (Locations::decode($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
+            } else if ($this->decodeLocation($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
                 return ['ref_player_0' => $player_id];
             } else { // Search icon or Junk Achievement icon
                 return [
@@ -7389,11 +7391,6 @@ class Innovation extends Table
         return self::getCurrentNestedCardState()['step'];
     }
 
-    function incrementStepMax(int $delta)
-    {
-        self::setStepMax(self::getStepMax() + $delta);
-    }
-
     function setStepMax(int $step_max)
     {
         self::updateCurrentNestedCardState('step_max', $step_max);
@@ -7409,19 +7406,9 @@ class Innovation extends Table
         self::updateCurrentNestedCardState('auxiliary_value', $auxiliary_value);
     }
 
-    function setAuxiliaryValueFromArray($array)
-    {
-        self::setAuxiliaryValue(Arrays::encode($array));
-    }
-
     function getAuxiliaryValue(): int
     {
         return intval(self::getCurrentNestedCardState()['auxiliary_value']);
-    }
-
-    function getAuxiliaryValueAsArray()
-    {
-        return Arrays::decode(self::getAuxiliaryValue());
     }
 
     function setAuxiliaryValue2(int $auxiliary_value_2)
@@ -7429,19 +7416,9 @@ class Innovation extends Table
         self::updateCurrentNestedCardState('auxiliary_value_2', $auxiliary_value_2);
     }
 
-    function setAuxiliaryValue2FromArray($array)
-    {
-        self::setAuxiliaryValue2(Arrays::encode($array));
-    }
-
     function getAuxiliaryValue2(): int
     {
         return intval(self::getCurrentNestedCardState()['auxiliary_value_2']);
-    }
-
-    function getAuxiliaryValue2AsArray()
-    {
-        return Arrays::decode(self::getAuxiliaryValue2());
     }
 
     function setAuxiliaryArray($array)
@@ -9663,16 +9640,11 @@ class Innovation extends Table
 
         // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
-            if (self::isInSeparateFile($card_id)) {
-                $executionState = (new ExecutionState($this))
-                    ->setEdition($this->innovationGameState->getEdition())
-                    ->setLauncherId($launcher_id)
-                    ->setPlayerId($executing_player_id);
-                if (self::getCardInstance($card_id, $executionState)->echoMightBeEffective()) {
-                    return false;
-                }
-            } else {
-                // Otherwise, we have to assume it has an effect
+            $executionState = (new ExecutionState($this))
+                ->setEdition($this->innovationGameState->getEdition())
+                ->setLauncherId($launcher_id)
+                ->setPlayerId($executing_player_id);
+            if (self::getCardInstance($card_id, $executionState)->echoMightBeEffective()) {
                 return false;
             }
         }
@@ -9682,16 +9654,11 @@ class Innovation extends Table
             return true;
         }
 
-        if (self::isInSeparateFile($card_id)) {
-            $executionState = (new ExecutionState($this))
-                ->setEdition($this->innovationGameState->getEdition())
-                ->setLauncherId($launcher_id)
-                ->setPlayerId($executing_player_id);
-            return !self::getCardInstance($card_id, $executionState)->nonDemandsMightBeEffective();
-        }
-
-        // Otherwise, we assume the non-demand effect(s) will have an effect
-        return false;
+        $executionState = (new ExecutionState($this))
+            ->setEdition($this->innovationGameState->getEdition())
+            ->setLauncherId($launcher_id)
+            ->setPlayerId($executing_player_id);
+        return !self::getCardInstance($card_id, $executionState)->nonDemandsMightBeEffective();
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the demand effect (without revealing hidden info to the launching player). */
@@ -9704,16 +9671,11 @@ class Innovation extends Table
             return true;
         }
 
-        if (self::isInSeparateFile($card_id)) {
-            $executionState = (new ExecutionState($this))
-                ->setEdition($this->innovationGameState->getEdition())
-                ->setLauncherId($launcher_id)
-                ->setPlayerId($executing_player_id);
-            return !self::getCardInstance($card_id, $executionState)->demandMightBeEffective();
-        }
-
-        // Otherwise, we assume the demand effect will have an effect
-        return false;
+        $executionState = (new ExecutionState($this))
+            ->setEdition($this->innovationGameState->getEdition())
+            ->setLauncherId($launcher_id)
+            ->setPlayerId($executing_player_id);
+        return !self::getCardInstance($card_id, $executionState)->demandMightBeEffective();
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the compel effect (without revealing hidden info to the launching player). */
@@ -9726,16 +9688,11 @@ class Innovation extends Table
             return true;
         }
 
-        if (self::isInSeparateFile($card_id)) {
-            $executionState = (new ExecutionState($this))
-                ->setEdition($this->innovationGameState->getEdition())
-                ->setLauncherId($launcher_id)
-                ->setPlayerId($executing_player_id);
-            return !self::getCardInstance($card_id, $executionState)->compelMightBeEffective();
-        }
-
-        // Otherwise, we assume the compel effect will have an effect
-        return false;
+        $executionState = (new ExecutionState($this))
+            ->setEdition($this->innovationGameState->getEdition())
+            ->setLauncherId($launcher_id)
+            ->setPlayerId($executing_player_id);
+        return !self::getCardInstance($card_id, $executionState)->compelMightBeEffective();
     }
 
     function argDogmaEffect()
@@ -9960,10 +9917,10 @@ class Innovation extends Table
         $n = $this->innovationGameState->get("n");
         $owner_from = $this->innovationGameState->get("owner_from");
         if ($splay_direction == -1) {
-            $location_from = Locations::decode($this->innovationGameState->get("location_from"));
+            $location_from = $this->decodeLocation($this->innovationGameState->get("location_from"));
             $bottom_from = $this->innovationGameState->get("bottom_from");
             $owner_to = $this->innovationGameState->get("owner_to");
-            $location_to = Locations::decode($this->innovationGameState->get("location_to"));
+            $location_to = $this->decodeLocation($this->innovationGameState->get("location_to"));
             $bottom_to = $this->innovationGameState->get("bottom_to");
             $age_min = $this->innovationGameState->get("age_min");
             $age_max = $this->innovationGameState->get("age_max");
@@ -10131,7 +10088,7 @@ class Innovation extends Table
                 'opponent_id'              => $opponent_id,
                 'splay_direction'          => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
-                'color_pile'               => $splay_direction === null && ($location_from == 'pile' || $location_from == 'pile,score') ? $this->innovationGameState->getAsArray('color_array')[0] : null,
+                'color_pile'               => $splay_direction === null && ($location_from == 'pile' || $location_from == Locations::PILE_OR_SCORE) ? $this->innovationGameState->getAsArray('color_array')[0] : null,
                 'card_interaction'         => $code,
                 'num_cards_already_chosen' => $n,
 
@@ -10506,13 +10463,11 @@ class Innovation extends Table
 
         // Perform one-time setup for the effect
         if (!$nested_card_state['performed_one_time_setup']) {
-            if (self::isInSeparateFile($card_id)) {
-                $executionState = (new ExecutionState($this))
-                    ->setEdition($this->innovationGameState->getEdition())
-                    ->setLauncherId($launcher_id);
-                $cardInstance = self::getCardInstance($card_id, $executionState);
-                $cardInstance->oneTimeSetup();
-            }
+            $executionState = (new ExecutionState($this))
+                ->setEdition($this->innovationGameState->getEdition())
+                ->setLauncherId($launcher_id);
+            $cardInstance = self::getCardInstance($card_id, $executionState);
+            $cardInstance->oneTimeSetup();
             self::updateCurrentNestedCardState('performed_one_time_setup', true);
         }
 
@@ -10782,24 +10737,15 @@ class Innovation extends Table
         $this->gamestate->nextState('dogmaEffect');
     }
 
-    /* Whether or not the card's implementation is in a separate file */
-    function isInSeparateFile($card_id)
-    {
-        $card = $this->getCardInfo($card_id);
-        if ($card['type'] == CardTypes::CITIES) {
-            return false;
-        }
-        return $card_id <= 214
-            || (220 <= $card_id && $card_id <= 498)
-            || $card_id >= 501;
-    }
-
     function getCardInstance($card_id, $execution_state)
     {
         $card = $this->getCardInfo($card_id);
         $set = "Base";
         if ($card['type'] == CardTypes::ARTIFACTS) {
             $set = "Artifacts";
+        } else if ($card['type'] == CardTypes::CITIES) {
+            require_once("modules/Innovation/Cards/NoOpCard.php");
+            return new \Innovation\Cards\NoOpCard($this, $execution_state, $card_id);
         } else if ($card['type'] == CardTypes::ECHOES) {
             $set = "Echoes";
         } else if ($card['type'] == CardTypes::UNSEEN) {
@@ -10872,10 +10818,6 @@ class Innovation extends Table
             ->setEffectNumber($current_effect_number)
             ->setMaxSteps(0);
 
-        $code = self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number);
-        $step_max = null;
-        $step = null;
-
         if ($nested_card_state['post_execution_index'] == 0) {
             $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));
             self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
@@ -10883,92 +10825,10 @@ class Innovation extends Table
             // TODO(LATER): Consider adding something to the log which says that an effect is resuming.
         }
 
-        $leaf = Icons::render(2);
-        $lightbulb = Icons::render(3);
-
-        $using_execution_status_object = false;
-
         try {
-
-            if (self::isInSeparateFile($card_id)) {
-                $cardInstance = self::getCardInstance($card_id, $executionState);
-                if ($nested_card_state['post_execution_index'] == 0 || $cardInstance->hasPostExecutionLogic()) {
-                    self::getCardInstance($card_id, $executionState)->initialExecution();
-                }
-                $using_execution_status_object = true;
-            }
-
-            switch ($code) {
-                // The first number is the id of the card
-                // D1 means the first (and single) I demand effect
-                // C1 means the first (and single) I compel effect
-                // N1 means the first non-demand effect
-                // N2 means the second non-demand effect
-                // N3 means the third non-demand effect
-                // E1 means the first (and single) echo effect
-
-                // Setting the $step_max variable means there is interaction needed with the player
-
-                // id 216, Relic age 4: Complex Numbers
-                case "216N1":
-                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                        $step_max = 1;
-                    }
-                    break;
-
-                // id 217, Relic age 5: Newton-Wickins Telescope
-                case "217N1":
-                    $step_max = 1;
-                    break;
-
-                // id 219, Relic age 7: Safety Pin
-                case "219E1":
-                    // Draw and score a 7."
-                    self::executeDraw($player_id, 7, 'score');
-                    break;
-
-                case "219D1":
-                    $step_max = 1;
-                    break;
-
-                // id 499, Unseen age 2: Cipher
-                case "499N1":
-                    self::setAuxiliaryValue(0);
-                    $step_max = 1;
-                    break;
-
-                case "499N2":
-                    // "Draw a 2."
-                    self::executeDraw($player_id, 2);
-                    $step_max = 1;
-                    break;
-
-                // id 500, Unseen age 2: Counterfeiting
-                case "500N1":
-                    $top_cards = self::getTopCardsOnBoard($player_id);
-                    $score_cards_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                    $card_id_array = array();
-                    foreach ($top_cards as $card) {
-                        for ($age = 1; $age <= 11; $age++) {
-                            if ($score_cards_by_age[$card['age']] == 0) {
-                                $card_id_array[] = $card['id'];
-                            }
-                        }
-                    }
-                    if (count($card_id_array) > 0) {
-                        $step_max = 1;
-                        self::setAuxiliaryArray($card_id_array);
-                    }
-                    break;
-
-                case "500N2":
-                    $step_max = 1;
-                    break;
-
-                default:
-                    // Do not throw an exception so that we are able to stop executing a card after it's popped from
-                    // the stack and there's nothing left to do.
-                    break;
+            $cardInstance = self::getCardInstance($card_id, $executionState);
+            if ($nested_card_state['post_execution_index'] == 0 || $cardInstance->hasPostExecutionLogic()) {
+                self::getCardInstance($card_id, $executionState)->initialExecution();
             }
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
@@ -10978,10 +10838,8 @@ class Innovation extends Table
             return;
         }
 
-        if ($using_execution_status_object) {
-            $step_max = $executionState->getMaxSteps();
-            $step = $executionState->getNextStep();
-        }
+        $step_max = $executionState->getMaxSteps();
+        $step = $executionState->getNextStep();
 
         // TODO(#1102): Remove null check.
         if ($step_max === null || $step_max === 0) {
@@ -11102,196 +10960,8 @@ class Innovation extends Table
             ->setNextStep(self::getStep() + 1)
             ->setMaxSteps(self::getStepMax());
 
-        $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-
-        if (self::isInSeparateFile($card_id)) {
-            $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
-            $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
-        }
-
-        switch ($code) {
-
-            // The first number is the id of the card
-            // D1 means the first (and single) I demand effect
-            // C1 means the first (and single) I compel effect
-            // N1 means the first non-demand effect
-            // N2 means the second non-demand effect
-            // N3 means the third non-demand effect
-            // E1 means the first (and single) echo effect
-
-            // The letter indicates the step : A for the first one, B for the second
-
-            // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 216, Relic age 4: Complex Numbers
-            case "216N1A":
-                // "You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board"
-                $card_ids = array();
-                $hand_cards = self::getCardsInLocation($player_id, 'hand');
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                // Bonus icons and other special city icons are counted as per https://boardgamegeek.com/thread/1872362/article/40784224.
-                foreach ($hand_cards as $card) {
-                    $eligible = false;
-
-                    foreach ($top_cards as $top_card) {
-                        $match_found = true;
-                        if ($top_card !== null) {
-                            // search icons are considered different than basic icons so they need to be handled separately
-                            if ($card['spot_6'] !== null && $top_card['spot_6'] !== null && $card['spot_6'] != $top_card['spot_6']) {
-                                $match_found = false; // If the search icons don't match
-                                break;
-                            }
-                            for ($icon = 1; $icon <= 13; $icon++) {
-                                // Echo effects are not considered icons, so they are skipped
-                                if ($icon == 10) {
-                                    continue;
-                                }
-                                if (self::countIconsOnCard($card, $icon) != self::countIconsOnCard($top_card, $icon)) {
-                                    $match_found = false; // If any icon counts mismatch, then the card isn't eligible
-                                    break;
-                                }
-                            }
-                            for ($icon = 101; $icon <= 112; $icon++) { // count bonus icons
-                                if (self::countIconsOnCard($card, $icon) != self::countIconsOnCard($top_card, $icon)) {
-                                    $match_found = false; // If any icon counts mismatch, then the card isn't eligible
-                                    break;
-                                }
-                            }
-                            if ($match_found) {
-                                $eligible = true;
-                            }
-                        }
-                    }
-                    if ($eligible) {
-                        $card_ids[] = $card['id'];
-                    }
-
-                }
-                self::setAuxiliaryArray($card_ids);
-
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-                    'can_pass'                        => true,
-
-                    'owner_from'                      => $player_id,
-                    'location_from'                   => 'hand',
-                    'owner_to'                        => $player_id,
-                    'location_to'                     => 'revealed',
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                    'enable_autoselection'            => false,
-                );
-                break;
-
-            case "216N1B":
-                // "Claim an achievement of matching value, ignoring eligibility"
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-
-                    'owner_from'                      => 0,
-                    'location_from'                   => 'achievements',
-                    'owner_to'                        => $player_id,
-                    'location_to'                     => 'achievements',
-
-                    'age'                             => $this->innovationGameState->get('age_last_selected'),
-                    'require_achievement_eligibility' => false
-                );
-                break;
-
-            // id 217, Relic age 5: Newton-Wickins Telescope
-            case "217N1A":
-                // "You may return any number of cards from your score pile"
-                $options = array(
-                    'player_id'     => $player_id,
-                    'n_min'         => 1,
-                    'can_pass'      => true,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'score',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck'
-                );
-                break;
-
-            // id 219, Relic age 7: Safety Pin
-            case "219D1A":
-                // "I demand you return all cards of value higher than 6 from your hand!"
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-
-                    'age_min'       => 7,
-                );
-                break;
-
-            // id 499, Unseen age 2: Cipher
-            case "499N1A":
-                // "Return all cards from your hand."
-                $options = array(
-                    'player_id'     => $player_id,
-
-                    'owner_from'    => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to'      => 0,
-                    'location_to'   => 'deck',
-                );
-                break;
-
-            case "499N2A":
-                // "You may splay your blue cards left."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 1,
-                    'color'           => array(0),
-                    // blue
-                );
-                break;
-
-            // id 500, Unseen age 2: Counterfeiting
-            case "500N1A":
-                // "Score a top card from your board of a value not in your score pile."            
-                $options = array(
-                    'player_id'                       => $player_id,
-                    'n'                               => 1,
-
-                    'owner_from'                      => $player_id,
-                    'location_from'                   => 'board',
-                    'owner_to'                        => $player_id,
-                    'location_to'                     => 'score',
-
-                    'card_ids_are_in_auxiliary_array' => true,
-                );
-                break;
-
-            case "500N2A":
-                // "You may splay your green or purple cards left."
-                $options = array(
-                    'player_id'       => $player_id,
-                    'n'               => 1,
-                    'can_pass'        => true,
-
-                    'splay_direction' => 1,
-                    'color'           => array(2, 4),
-                    // green or purple
-                );
-                break;
-
-            default:
-                if (!self::isInSeparateFile($card_id)) {
-                    // This should not happen
-                    throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
-                }
-                break;
-        }
+        $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions()->build();
+        $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
 
         // Decrease the number of cards to select based on the forecast/safe limit
         if ($options && array_key_exists('location_to', $options) && ($options['location_to'] == 'forecast' || $options['location_to'] == 'safe')) {
@@ -11328,13 +10998,11 @@ class Innovation extends Table
 
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
 
-            if (self::isInSeparateFile($card_id)) {
-                $executionState->setNumChosen(0);
-                self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
-                $step = $executionState->getNextStep() - 1;
-                self::setStep($step);
-                self::setStepMax($executionState->getMaxSteps());
-            }
+            $executionState->setNumChosen(0);
+            self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
+            $step = $executionState->getNextStep() - 1;
+            self::setStep($step);
+            self::setStepMax($executionState->getMaxSteps());
 
             // The last step has been completed, so it's the end of the turn for the player involved
             if ($step == self::getStepMax()) {
@@ -11405,111 +11073,12 @@ class Innovation extends Table
 
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
-                if ($code !== null && self::isInSeparateFile($card_id)) {
+                if ($code !== null) {
                     self::getCardInstance($card_id, $executionState)->afterInteraction();
                     $step = $executionState->getNextStep() - 1;
                     $step_max = $executionState->getMaxSteps();
                     self::setStep($step);
                     self::setStepMax($step_max);
-                }
-
-                switch ($code) {
-                    // The first number is the id of the card
-                    // D1 means the first (and single) I demand effect
-                    // C1 means the first (and single) I compel effect
-                    // N1 means the first non-demand effect
-                    // N2 means the second non-demand effect
-                    // N3 means the third non-demand effect
-                    // E1 means the first (and single) echo effect
-
-                    // The letter indicates the step : A for the first one, B for the second
-
-                    // id 149, Artifacts age 4: Molasses Reef Caravel
-                    case "149N1A":
-                        // "Draw three 4's"
-                        self::executeDraw($player_id, 4);
-                        self::executeDraw($player_id, 4);
-                        self::executeDraw($player_id, 4);
-
-                        $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[Colors::BLUE];
-                        if ($number_of_blue_cards == 0) {
-                            self::revealHand($player_id);
-                            $color_in_clear = Colors::render(Colors::BLUE);
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
-                            $step = $step + 1;
-                            self::incrementStep(1);
-                        }
-                        break;
-
-                    // id 180, Artifacts age 7: Hansen Writing Ball
-                    case "180C1A":
-                        // "Transfer all cards in your hand to my hand"
-                        foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
-                            self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
-                        }
-                        break;
-
-                    // id 216, Relic age 4: Complex Numbers
-                    case "216N1A":
-                        // "If you do"
-                        if ($n > 0) {
-                            // Return card to hand
-                            $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-                            self::transferCardFromTo($revealed_card, $player_id, 'hand');
-                            self::incrementStepMax(1);
-                        }
-                        break;
-
-                    // id 217, Relic age 5: Newton-Wickins Telescope
-                    case "217N1A":
-                        // "If you do, draw and meld a card of value equal to the number of cards returned"
-                        if ($n > 0) {
-                            $card = self::executeDrawAndMeld($player_id, $n);
-
-                            // "If the melded card has a clock, return it"
-                            if (self::countIconsOnCard($card, 6) > 0) {
-                                self::returnCard($card);
-                            }
-                        }
-                        break;
-
-                    // id 219, Relic age 7: Safety Pin
-                    case "219D1A":
-                        // "Draw a 6!"
-                        self::executeDraw($player_id, 6);
-                        break;
-
-                    // id 499, Unseen age 2: Cipher
-                    case "499N1A":
-                        if ($n >= 2) { // "If you return two or more,"
-                            // " draw a card of value one higher than the highest value of card you return."
-                            self::executeDraw($player_id, self::getAuxiliaryValue() + 1);
-                        }
-                        break;
-
-                    // id 500, Unseen age 2: Counterfeiting
-                    case "500N1A":
-                        if ($n > 0) { // "If you do,"
-                            $top_cards = self::getTopCardsOnBoard($player_id);
-                            $score_cards_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                            $card_id_array = array();
-                            foreach ($top_cards as $card) {
-                                for ($age = 0; $age < 12; $age++) {
-                                    if ($score_cards_by_age[$card['age']] == 0) {
-                                        $card_id_array[] = $card['id'];
-                                    }
-                                }
-                            }
-                            if (count($card_id_array) > 0) {
-                                // "repeat this effect."
-                                self::setStep(0);
-                                $step = 0;
-                                self::setAuxiliaryArray($card_id_array);
-                            }
-                        }
-                        break;
-
                 }
 
             } catch (EndOfGame $e) {
@@ -11543,7 +11112,7 @@ class Innovation extends Table
                 self::trace('interInteractionStep->promoteCard');
                 $this->gamestate->nextState('promoteCard');
                 return;
-            } else if (Locations::decode($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
+            } else if ($this->decodeLocation($this->innovationGameState->get('location_from')) === Locations::MUSEUMS) { // Returning artifacts from museums
                 // Award a museum to the player with the single most museums
                 $max_count = 0;
                 $player_id_with_max = null;
@@ -11586,7 +11155,7 @@ class Innovation extends Table
 
         if ($step == self::getStepMax()) { // The last step has been completed
 
-            if ($code !== null && self::isInSeparateFile($card_id)) {
+            if ($code !== null) {
                 $executionState->setCurrentStep(null);
                 $executionState->setNextStep(null);
                 $executionState->setMaxSteps(null);
@@ -11619,8 +11188,8 @@ class Innovation extends Table
             $autoselection_mode = $this->innovationGameState->get('enable_autoselection');
             $refresh_selection = $this->innovationGameState->get('refresh_selection') == 1;
             $owner_from = $this->innovationGameState->get('owner_from');
-            $location_from = Locations::decode($this->innovationGameState->get('location_from'));
-            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
+            $location_from = $this->decodeLocation($this->innovationGameState->get('location_from'));
+            $location_to = $this->decodeLocation($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $colors = $this->innovationGameState->getAsArray('color_array');
             $with_icons = $this->innovationGameState->getAsArray('with_icons');
@@ -11919,7 +11488,7 @@ class Innovation extends Table
 
             // Flags
             $owner_to = $this->innovationGameState->get('owner_to');
-            $location_to = Locations::decode($this->innovationGameState->get('location_to'));
+            $location_to = $this->decodeLocation($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $score_keyword = $this->innovationGameState->get('score_keyword') == 1;
             $meld_keyword = $this->innovationGameState->get('meld_keyword') == 1;
@@ -11966,7 +11535,7 @@ class Innovation extends Table
 
         try {
 
-            if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
+            if ($special_type_of_choice != 0 && $code !== null) {
                 $executionState = (new ExecutionState($this))
                     ->setEdition($this->innovationGameState->getEdition())
                     ->setLauncherId($launcher_id)
@@ -11981,112 +11550,85 @@ class Innovation extends Table
                 self::setStep($executionState->getNextStep() - 1);
             }
 
-            switch ($code) {
-                // The first number is the id of the card
-                // D1 means the first (and single) I demand effect
-                // C1 means the first (and single) I compel effect
-                // N1 means the first non-demand effect
-                // N2 means the second non-demand effect
-                // N3 means the third non-demand effect
-                // E1 means the first (and single) echo effect
+            if ($special_type_of_choice == 0) {
+                if ($code !== null) {
+                    $executionState = (new ExecutionState($this))
+                        ->setEdition($this->innovationGameState->getEdition())
+                        ->setLauncherId($launcher_id)
+                        ->setPlayerId($player_id)
+                        ->setEffectType($current_effect_type)
+                        ->setEffectNumber($current_effect_number)
+                        ->setCurrentStep(self::getStep())
+                        ->setNextStep(self::getStep() + 1)
+                        ->setMaxSteps(self::getStepMax())
+                        ->setNumChosen($this->innovationGameState->get('n') + 1);
+                }
 
-                // The letter indicates the step : A for the first one, B for the second
-
-                // Default behaviour: make the transfer or the splay as stated in B
-
-                // id 499, Unseen age 2: Cipher
-                case "499N1A":
-                    $max_value_selected_so_far = self::getAuxiliaryValue();
-                    if ($card['age'] > $max_value_selected_so_far) {
-                        self::setAuxiliaryValue($card['age']);
+                if ($splay_direction == -1) {
+                    if ($code !== null) {
+                        $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
+                        $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
+                        $this->innovationGameState->set("owner_last_selected", $card['owner']);
                     }
-                    self::returnCard($card);
-                    break;
-
-                default:
-                    if ($special_type_of_choice == 0) {
-                        if ($code !== null) {
-                            $executionState = (new ExecutionState($this))
-                                ->setEdition($this->innovationGameState->getEdition())
-                                ->setLauncherId($launcher_id)
-                                ->setPlayerId($player_id)
-                                ->setEffectType($current_effect_type)
-                                ->setEffectNumber($current_effect_number)
-                                ->setCurrentStep(self::getStep())
-                                ->setNextStep(self::getStep() + 1)
-                                ->setMaxSteps(self::getStepMax())
-                                ->setNumChosen($this->innovationGameState->get('n') + 1);
-                        }
-
-                        if ($splay_direction == -1) {
-                            if ($code !== null) {
-                                $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
-                                $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
-                                $this->innovationGameState->set("owner_last_selected", $card['owner']);
-                            }
-                            if ($code !== null && self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
-                                // Do nothing since the card transfer was overridden
-                            } else if ($location_to == Locations::REVEALED_THEN_HAND) {
-                                $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
-                                self::transferCardFromTo($card, $owner_to, Locations::HAND);
-                            } else if ($location_to == Locations::REVEALED_THEN_DECK) {
-                                $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
-                                self::returnCard($card);
-                            } else if ($location_to == Locations::REVEALED_THEN_SCORE) {
-                                $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
-                                self::scoreCard($card, $owner_to);
-                            } else if ($location_to == 'junk,safe') {
-                                $card = self::junkCard($card);
-                                self::safeguardCard($card, $owner_to);
-                            } else {
-                                // TODO(LATER): Figure out if 'bottom_from' should be included here too.
-                                self::transferCardFromTo(
-                                    $card,
-                                    $owner_to,
-                                    $location_to,
-                                    [
-                                        'bottom_to'          => $bottom_to,
-                                        'score_keyword'      => $score_keyword,
-                                        'meld_keyword'       => $meld_keyword,
-                                        'achieve_keyword'    => $achieve_keyword,
-                                        'draw_keyword'       => $draw_keyword,
-                                        'safeguard_keyword'  => $safeguard_keyword,
-                                        'return_keyword'     => $return_keyword,
-                                        'foreshadow_keyword' => $foreshadow_keyword,
-                                    ]
-                                );
-                            }
-                            if ($code !== null && self::isInSeparateFile($card_id)) {
-                                self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
-                                self::setStepMax($executionState->getMaxSteps());
-                                self::setStep($executionState->getNextStep() - 1);
-                            }
-                        } else {
-                            // Do the splay as stated in B
-                            $this->innovationGameState->set("color_last_selected", $card['color']);
-                            $did_splay = self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
-                            if ($code !== null && self::isInSeparateFile($card_id)) {
-                                self::getCardInstance($card_id, $executionState)->handleSplayChoice($card['color'], $did_splay);
-                                self::setStepMax($executionState->getMaxSteps());
-                                self::setStep($executionState->getNextStep() - 1);
-                            }
-                        }
-                    } else if ($card_id === null) { // Digging/stealing artifact
-                        $card_ids = self::getAuxiliaryArray();
-                        $chosen_card = self::getCardInfo($card_ids[$choice]);
-                        if ($choice == 0) {
-                            self::digCard($chosen_card, $player_id);
-                            self::incStat(1, 'dig_events_number', $player_id);
-                        } else {
-                            // If an artifact was stolen from an opponent's museum, rotate the museum and the artifact
-                            $museum = self::getCardsInLocation($chosen_card['owner'], Locations::MUSEUMS)[$chosen_card['position'] - 1];
-                            self::transferCardFromTo($museum, $player_id, Locations::MUSEUMS);
-                            self::transferCardFromTo($chosen_card, $player_id, Locations::MUSEUMS);
-                        }
-                    } else if (!self::isInSeparateFile($card_id)) {
-                        throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "stInterSelectionMove()", 'code' => $code)));
+                    if ($code !== null && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
+                        // Do nothing since the card transfer was overridden
+                    } else if ($location_to == Locations::REVEALED_THEN_HAND) {
+                        $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
+                        self::transferCardFromTo($card, $owner_to, Locations::HAND);
+                    } else if ($location_to == Locations::REVEALED_THEN_DECK) {
+                        $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
+                        self::returnCard($card);
+                    } else if ($location_to == Locations::REVEALED_THEN_SCORE) {
+                        $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
+                        self::scoreCard($card, $owner_to);
+                    } else if ($location_to == Locations::JUNK_THEN_SAFEGUARD) {
+                        $card = self::junkCard($card);
+                        self::safeguardCard($card, $owner_to);
+                    } else {
+                        // TODO(LATER): Figure out if 'bottom_from' should be included here too.
+                        self::transferCardFromTo(
+                            $card,
+                            $owner_to,
+                            $location_to,
+                            [
+                                'bottom_to'          => $bottom_to,
+                                'score_keyword'      => $score_keyword,
+                                'meld_keyword'       => $meld_keyword,
+                                'achieve_keyword'    => $achieve_keyword,
+                                'draw_keyword'       => $draw_keyword,
+                                'safeguard_keyword'  => $safeguard_keyword,
+                                'return_keyword'     => $return_keyword,
+                                'foreshadow_keyword' => $foreshadow_keyword,
+                            ]
+                        );
                     }
-                    break;
+                    if ($code !== null) {
+                        self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
+                        self::setStepMax($executionState->getMaxSteps());
+                        self::setStep($executionState->getNextStep() - 1);
+                    }
+                } else {
+                    // Do the splay as stated in B
+                    $this->innovationGameState->set("color_last_selected", $card['color']);
+                    $did_splay = self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
+                    if ($code !== null) {
+                        self::getCardInstance($card_id, $executionState)->handleSplayChoice($card['color'], $did_splay);
+                        self::setStepMax($executionState->getMaxSteps());
+                        self::setStep($executionState->getNextStep() - 1);
+                    }
+                }
+            } else if ($card_id === null) { // Digging/stealing artifact
+                $card_ids = self::getAuxiliaryArray();
+                $chosen_card = self::getCardInfo($card_ids[$choice]);
+                if ($choice == 0) {
+                    self::digCard($chosen_card, $player_id);
+                    self::incStat(1, 'dig_events_number', $player_id);
+                } else {
+                    // If an artifact was stolen from an opponent's museum, rotate the museum and the artifact
+                    $museum = self::getCardsInLocation($chosen_card['owner'], Locations::MUSEUMS)[$chosen_card['position'] - 1];
+                    self::transferCardFromTo($museum, $player_id, Locations::MUSEUMS);
+                    self::transferCardFromTo($chosen_card, $player_id, Locations::MUSEUMS);
+                }
             }
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
@@ -12097,12 +11639,6 @@ class Innovation extends Table
         }
 
         if ($special_type_of_choice == 0) {
-            // Mark extra information about this chosen card
-            // TODO(LATER): Remove this once it becomes redundant with the same 3 lines above (once all cards are in separate files)
-            $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
-            $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
-            $this->innovationGameState->set("owner_last_selected", $card['owner']);
-
             // Indicate that the player decided to return a card in order to avoid a demand
             if (self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1) {
                 self::deselectAllCards();
@@ -12192,7 +11728,7 @@ class Innovation extends Table
 
     /*
         zombieTurn:
-        
+
         This method is called each time it is the turn of a player who has quit the game (= "zombie" player).
         You can do whatever you want in order to make sure the turn of this player ends appropriately
         (ex: pass).

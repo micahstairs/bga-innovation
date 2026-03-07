@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card440 extends AbstractCard
@@ -19,20 +20,20 @@ class Card440 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
         // TODO(4E): Non-standard icons should be an option too here (and use constants).
-        return self::youMust()->chooseIcon([1, 3, 4, 5, 6, 7])->ofMyChoice()->build();
+        return self::youMust()->chooseIcon([1, 3, 4, 5, 6, 7])->ofMyChoice();
       } else {
-        return self::youMust()->return()->exactly(2)->fromYourBoard()->withIcon(self::getAuxiliaryValue())->refreshingSelection()->build();
+        return self::youMust()->return()->exactly(2)->fromYourBoard()->withIcon(self::getAuxiliaryValue())->refreshingSelection();
       }
     }
     if (self::isFirstInteraction()) {
-      return self::youMust()->return()->fromYourBoard()->build();
+      return self::youMust()->return()->fromYourBoard();
     } else {
-      return self::youMust()->return()->all()->fromYourScore()->minValue(self::getAuxiliaryValue())->build();
+      return self::youMust()->return()->all()->fromYourScore()->minValue(self::getAuxiliaryValue());
     }
   }
 

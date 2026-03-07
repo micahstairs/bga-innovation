@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card393 extends AbstractCard
 {
@@ -29,20 +31,16 @@ class Card393 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'n'              => self::wasForeseen() ? 'all' : 2,
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      if (self::wasForeseen()) {
+        return self::youMust()->return()->all()->fromYourScore();
+      } else {
+        return self::youMust()->return()->exactly(2)->fromYourScore();
+      }
     } else {
-      return [
-        'location_from' => 'hand',
-        'score_keyword' => true,
-        'age'           => self::getAuxiliaryValue(),
-      ];
+      return self::youMust()->score()->value(self::getAuxiliaryValue())->fromYourHand();
     }
   }
 
@@ -60,8 +58,8 @@ class Card393 extends AbstractCard
 
   private function getNextValueToReturn(int $lastScoredValue): ?int
   {
-    $scorePileCounts = self::countCardsKeyedByValue('score');
-    $handCounts = self::countCardsKeyedByValue('hand');
+    $scorePileCounts = self::countCardsKeyedByValue(Locations::SCORE);
+    $handCounts = self::countCardsKeyedByValue(Locations::HAND);
     for ($age = $lastScoredValue + 1; $age <= 11; $age++) {
       if ($scorePileCounts[$age] > 0 && $handCounts[$age] > 0) {
         return $age;

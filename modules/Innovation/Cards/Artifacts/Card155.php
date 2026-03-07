@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card155 extends AbstractCard
@@ -19,15 +20,15 @@ class Card155 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(0); // Track value of first returned card
       $value = self::getMinValueInLocation(Locations::HAND);
-      return self::youMust()->return()->value($value)->fromYourHand()->build();
+      return self::youMust()->return()->value($value)->fromYourHand();
     } else {
       $value = self::getMinValue(self::getTopCards());
-      return self::youMust()->return()->value($value)->fromYourBoard()->build();
+      return self::youMust()->return()->value($value)->fromYourBoard();
     }
   }
 

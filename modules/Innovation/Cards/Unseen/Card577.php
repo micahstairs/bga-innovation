@@ -3,8 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 
 class Card577 extends AbstractCard
 {
@@ -13,21 +13,12 @@ class Card577 extends AbstractCard
   //   - I DEMAND you transfer one of your secrets to my achievements!
   //   - You may splay your yellow cards up.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'safe',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'achievements',
-      ];
+      return self::youMust()->fromYourSafe()->toMyAchivements();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-        'color'           => [Colors::YELLOW],
-      ];
+      return self::youMay()->splayUp(Colors::YELLOW);
     }
   }
 

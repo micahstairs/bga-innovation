@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
@@ -22,8 +23,8 @@ class Card382 extends AbstractCard
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
       $tuckedCard = self::drawAndTuck(4);
-      $topCard = self::getTopCardOfColor($tuckedCard['color']);
-      if ($topCard['age'] < 4) {
+      $topCard = self::getTopCardOfColor(self::getColor($tuckedCard));
+      if (self::getValue($topCard) < 4) {
         self::drawAndScore(4);
       }
     } else {
@@ -31,20 +32,12 @@ class Card382 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'location_from' => 'board',
-        'score_keyword' => true,
-        'without_icon'  => Icons::INDUSTRY,
-      ];
+      return self::youMust()->score()->withoutIcon(Icons::INDUSTRY)->fromYourBoard();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::GREEN],
-      ];
+      return self::youMay()->splayRight(Colors::GREEN);
     }
   }
 

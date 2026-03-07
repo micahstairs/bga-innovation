@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card63 extends AbstractCard
@@ -15,9 +16,9 @@ class Card63 extends AbstractCard
   //   - You may return any number of cards from your hand. If you have returned more cards than
   //     any other player due to Democracy so far during this action, draw and score an [8].
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->anyNumber()->fromYourHand()->build();
+    return self::youMay()->return()->anyNumber()->fromYourHand();
   }
 
   public function afterInteraction()

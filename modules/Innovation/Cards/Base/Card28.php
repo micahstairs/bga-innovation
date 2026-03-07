@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card28 extends AbstractCard
@@ -25,12 +26,12 @@ class Card28 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choosePlayer(self::getOpponentsWithFewerPoints())->build();
+      return self::youMust()->choosePlayer(self::getOpponentsWithFewerPoints());
     } else {
-      return self::youMust()->fromYourScore()->toPlayer(self::getAuxiliaryValue())->toScore()->build();
+      return self::youMust()->fromYourScore()->toPlayer(self::getAuxiliaryValue())->toScore();
     }
   }
 

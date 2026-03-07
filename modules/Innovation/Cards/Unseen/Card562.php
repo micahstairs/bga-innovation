@@ -19,7 +19,7 @@ class Card562 extends AbstractCard
       if (self::hasIcon($card, Icons::INDUSTRY)) {
         self::score($card);
         break;
-      } else if (self::drawAndMeld(8)['faceup_age'] != 8) {
+      } else if (self::getFaceupValue(self::drawAndMeld(8)) != 8) {
         break;
       }
     }

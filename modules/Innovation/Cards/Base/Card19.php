@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 use Innovation\Utils\Arrays;
 
@@ -22,9 +23,9 @@ class Card19 extends AbstractCard
     self::setAuxiliaryValue(Arrays::encode([]));
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->anyNumber()->fromYourHand()->build();
+    return self::youMay()->return()->anyNumber()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

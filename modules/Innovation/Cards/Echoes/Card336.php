@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card336 extends AbstractCard
 {
@@ -21,24 +22,14 @@ class Card336 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return ['choose_color' => true];
+      return self::youMust()->chooseColor();
     } else if (self::isSecondInteraction()) {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'revealed',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->all()->fromYourRevealed();
     } else {
-      return [
-        'n'              => 'all',
-        'owner_from'     => 'any player',
-        'location_from'  => 'pile',
-        'return_keyword' => true,
-        'color'          => [self::getAuxiliaryValue()],
-      ];
+      return self::youMust()->return()->fromAnywhereInStack()->withColor(self::getAuxiliaryValue())->fromAnyPlayer();
     }
   }
 

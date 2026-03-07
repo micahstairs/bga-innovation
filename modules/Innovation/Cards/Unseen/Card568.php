@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -19,7 +20,7 @@ class Card568 extends AbstractCard
     if (self::isDemand()) {
       self::drawAndMeld(8);
       $topPurpleCard = self::getTopCardOfColor(Colors::PURPLE);
-      if ($topPurpleCard !== null && $topPurpleCard['id'] == 84) {
+      if ($topPurpleCard !== null && self::getId($topPurpleCard) == 84) {
         self::lose();
       }
     } else if (self::getEffectNumber() === 1) {
@@ -29,12 +30,8 @@ class Card568 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'can_pass'        => true,
-      'splay_direction' => Directions::UP,
-      'color'           => [Colors::RED, Colors::BLUE],
-    ];
+    return self::youMay()->splayUp([Colors::RED, Colors::BLUE]);
   }
 }

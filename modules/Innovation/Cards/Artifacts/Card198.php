@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card198 extends AbstractCard
 {
@@ -15,17 +16,17 @@ class Card198 extends AbstractCard
   //     from your score pile to my score pile! If you do neither, I win!
   //   - Score your highest top card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isCompel()) {
       if (self::isFirstInteraction()) {
-        return self::youMust()->value(9)->fromYourHand()->toMine()->build();
+        return self::youMust()->value(9)->fromYourHand()->toMine();
       } else {
-        return self::youMust()->value(9)->fromYourScore()->toMine()->build();
+        return self::youMust()->value(9)->fromYourScore()->toMine();
       }
     } else {
       $value = self::getMaxValue(self::getTopCards());
-      return self::youMust()->score()->fromYourBoard()->value($value)->build();
+      return self::youMust()->score()->fromYourBoard()->value($value);
     }
   }
 

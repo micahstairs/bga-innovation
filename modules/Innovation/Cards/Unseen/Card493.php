@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card493 extends AbstractCard
@@ -22,7 +23,7 @@ class Card493 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $iconsMelded = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $cardIds = [];
@@ -36,14 +37,10 @@ class Card493 extends AbstractCard
       $cardIds[] = self::getId($card);
     }
     self::setAuxiliaryArray($cardIds);
-    return [
-      'location_from'                   => Locations::HAND,
-      'meld_keyword'                    => true,
-      'card_ids_are_in_auxiliary_array' => true,
-      // Automating this can sometimes reveal hidden info
-      'enable_autoselection'            => count($cardsInHand) <= 1,
-      'reveal_if_unable'                => true,
-    ];
+
+    // Automating this can sometimes reveal hidden info
+    $canAutoselect = count($cardsInHand) <= 1;
+    return self::youMust()->meld()->onlyCardsInAuxiliaryArray()->fromYourHand()->revealingIfUnable()->withAutoselection($canAutoselect);
   }
 
   public function handleCardChoice(array $card)

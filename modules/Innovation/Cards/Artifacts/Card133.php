@@ -3,8 +3,8 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
-use Innovation\Enums\Locations;
 
 class Card133 extends AbstractCard
 {
@@ -31,12 +31,12 @@ class Card133 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->choosePlayer(self::getPlayers())->build();
+      return self::youMust()->choosePlayer(self::getPlayers());
     } else {
-      return self::youMust()->junk()->fromAvailableAchievements()->value(self::getAuxiliaryValue())->build();
+      return self::youMust()->junk()->fromAvailableAchievements()->value(self::getAuxiliaryValue());
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 
 class Card557 extends AbstractCard
@@ -21,13 +22,9 @@ class Card557 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'n'             => 'all',
-      'location_from' => 'safe',
-      'tuck_keyword'  => true,
-    ];
+    return self::youMust()->tuck()->all()->fromYourSafe();
   }
 
 }

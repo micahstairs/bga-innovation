@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card578 extends AbstractCard
@@ -23,14 +24,9 @@ class Card578 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'owner_from'    => self::getLauncherId(),
-      'location_from' => Locations::SCORE,
-      'owner_to'      => self::getPlayerId(),
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromMyScore()->toYours();
   }
 
 }

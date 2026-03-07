@@ -3,9 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
-use Innovation\Enums\Locations;
 
 class Card370_4E extends AbstractCard
 {
@@ -24,26 +23,17 @@ class Card370_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
         self::setAuxiliaryArray([]); // Track colors returned
-        return [
-          'can_pass'       => true,
-          'n'              => 'all',
-          'location_from'  => Locations::HAND,
-          'return_keyword' => true,
-        ];
+        return self::youMay()->return()->all()->fromYourHand();
       } else {
-        return ['splay_direction' => Directions::RIGHT];
+        return self::youMust()->splayRight();
       }
     } else {
-      return [
-        'location_from'      => Locations::BOARD,
-        'owner_from'         => 'any player',
-        'foreshadow_keyword' => true,
-      ];
+      return self::youMust()->foreshadow()->fromAnyBoard();
     }
   }
 

@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Locations;
 
 class Card593 extends AbstractCard
 {
@@ -13,9 +15,9 @@ class Card593 extends AbstractCard
   //     aslant. If you do both, exchange all the lowest cards in your score pile with all your
   //     claimed standard achievements of lower value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return ['choices' => [Colors::RED, Colors::BLUE, Colors::GREEN]];
+    return self::youMust()->choose([Colors::RED, Colors::BLUE, Colors::GREEN]);
   }
 
   protected function getPromptForListChoice(): array
@@ -37,9 +39,9 @@ class Card593 extends AbstractCard
     }
 
     if (self::splayAslant($color) && $scoredCard) {
-      $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), 'score');
-      $minScoreValue = self::getMinValueInLocation('score');
-      foreach (self::getCards('achievements') as $card) {
+      $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), Locations::SCORE);
+      $minScoreValue = self::getMinValueInLocation(Locations::SCORE);
+      foreach (self::getCards(Locations::ACHIEVEMENTS) as $card) {
         if (self::isValuedCard($card) && self::getValue($card) < $minScoreValue) {
           self::transferToScorePile($card);
         }

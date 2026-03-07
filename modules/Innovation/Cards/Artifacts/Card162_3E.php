@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card162_3E extends AbstractCard
@@ -17,16 +18,16 @@ class Card162_3E extends AbstractCard
     self::setMaxSteps(3);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->chooseValue()->build();
+      return self::youMust()->chooseValue();
     } else if (self::isSecondInteraction()) {
       // Autoselection is disabled to give the player the chance to read the card
-      return self::youMust()->topDeck()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection()->build();
+      return self::youMust()->topDeck()->fromYourHand()->onlyCardsInAuxiliaryArray()->withoutAutoselection();
     } else {
       $excludedCardId = $this->game->getCurrentNestedCardState()['executing_as_if_on_card_id'];
-      return self::youMay()->chooseCardFrom(Locations::BOARD)->otherThan($excludedCardId)->build();
+      return self::youMay()->chooseCardFrom(Locations::BOARD)->otherThan($excludedCardId);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
 
@@ -24,16 +25,16 @@ class Card48 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand() || self::getAuxiliaryValue() >= 1) {
-      self::setMaxSteps(1);
+      self::setMaxSteps(2);
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->exactly(2)->maxValue(4)->fromYourScore()->toMine()->build();
+      return self::youMust()->exactly(2)->maxValue(4)->fromYourScore()->toMine();
     } else {
-      return self::youMust()->score()->lowest()->withIcon(Icons::PROSPERITY)->fromYourBoard()->build();
+      return self::youMust()->score()->lowest()->withIcon(Icons::PROSPERITY)->fromYourBoard();
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card24 extends AbstractCard
@@ -11,12 +12,12 @@ class Card24 extends AbstractCard
   //   - You may splay left any one color of your cards.
   //   - You may score a card from your hand.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstNonDemand()) {
-      return self::youMay()->splayLeft()->build();
+      return self::youMay()->splayLeft();
     } else {
-      return self::youMay()->score()->fromYourHand()->build();
+      return self::youMay()->score()->fromYourHand();
     }
   }
 

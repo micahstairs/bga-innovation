@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card457 extends AbstractCard
@@ -17,28 +18,19 @@ class Card457 extends AbstractCard
     self::setMaxSteps(3);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(-1); // Track card chosen from the score pile
-      return ['choose_from' => Locations::SCORE];
+      return self::youMust()->chooseCardFrom(Locations::SCORE);
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === -1) {
         // Skip this interaction if no card was chosen from the score pile
-        return [];
+        return self::noInteraction();
       }
-      return [
-        'choose_from' => Locations::BOARD,
-        'owner_from'  => 'any player',
-        'color'       => [self::getLastSelectedColor()],
-      ];
+      return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer()->withColor(self::getLastSelectedColor());
     } else {
-      return [
-        'can_pass'       => true,
-        'n'              => 2,
-        'location_from'  => Locations::HAND,
-        'return_keyword' => true,
-      ];
+      return self::youMay()->return()->exactly(2)->fromYourHand();
     }
   }
 
@@ -47,7 +39,7 @@ class Card457 extends AbstractCard
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(self::getId($card)); // Track card selected from score pile
     } else if (self::isSecondInteraction()) {
-      self::transferToBoard(self::getCard(self::getAuxiliaryValue()), $card['owner']);
+      self::transferToBoard(self::getCard(self::getAuxiliaryValue()), self::getOwner($card));
       self::transferToScorePile($card, self::getPlayerId());
     }
   }

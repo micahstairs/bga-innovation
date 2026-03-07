@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -18,12 +19,12 @@ class Card49 extends AbstractCard
   //     If you do, draw and score a [5]!
   //   - You may splay your green cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::INDUSTRY)->fromYourBoard()->toMine()->build();
+      return self::youMust()->non(Colors::GREEN)->withIcon(Icons::INDUSTRY)->fromYourBoard()->toMine();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::GREEN)->build();
+      return self::youMay()->splayRight(Colors::GREEN);
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 use Innovation\Enums\Locations;
 
@@ -12,14 +13,11 @@ class Card452 extends AbstractCard
   //   - Choose a value different from any top card on your board. Score all cards in the deck of
   //     that value. Score all cards in the junk of that value.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     $presentValues = array_unique(self::getValues(self::getTopCards()));
     $absentValues = array_diff(range(1, 11), $presentValues);
-    return [
-      'choose_value' => true,
-      'age'          => $absentValues,
-    ];
+    return self::youMust()->chooseValue($absentValues);
   }
 
   public function handleValueChoice(int $value)

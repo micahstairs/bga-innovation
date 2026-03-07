@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card448 extends AbstractCard
@@ -12,13 +13,13 @@ class Card448 extends AbstractCard
   //   - Reveal and junk a card in your hand. Return from your hand all cards of value equal to the
   //     value of the junked card. Draw three cards of that value. Self-execute the junked card.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(-1); // Track the ID of the junked card
-      return self::youMust()->chooseCardFrom(Locations::HAND)->build();
+      return self::youMust()->chooseCardFrom(Locations::HAND);
     } else {
-      return self::youMust()->return()->all()->fromYourHand()->value(self::getLastSelectedFaceUpAge())->build();
+      return self::youMust()->return()->all()->fromYourHand()->value(self::getLastSelectedFaceUpAge());
     }
   }
 

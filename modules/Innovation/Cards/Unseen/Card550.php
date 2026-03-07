@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
+use Innovation\Enums\Locations;
 
 class Card550 extends AbstractCard
 {
@@ -18,20 +20,12 @@ class Card550 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-
     if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'score',
-        'location_to'   => 'board',
-        'meld_keyword'  => true,
-      ];
+      return self::youMust()->meld()->fromYourScore();
     } else {
-      return [
-        'safeguard_keyword' => true,
-        'age'               => self::getLowestAvailableAchievementValue(),
-      ];
+      return self::youMust()->safeguard()->value(self::getMinValueInLocation(Locations::AVAILABLE_ACHIEVEMENTS));
     }
   }
 
@@ -41,7 +35,7 @@ class Card550 extends AbstractCard
       self::setAuxiliaryValue(self::getId($card));
     } else {
       // Make sure the card is actually in the safe (the safe could have been full)
-      if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
+      if (self::getLocation($card) == 'safe' && self::getOwner($card) == self::getPlayerId()) {
         $meldedCard = self::getCard(self::getAuxiliaryValue());
         if (self::getPlayerId() === self::getLauncherId()) {
           self::superExecute($meldedCard);
@@ -50,11 +44,6 @@ class Card550 extends AbstractCard
         }
       }
     }
-  }
-
-  private function getLowestAvailableAchievementValue(): int
-  {
-    return $this->game->getMinOrMaxAgeInLocation(0, 'achievements', 'MIN');
   }
 
 }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card33 extends AbstractCard
@@ -11,9 +12,9 @@ class Card33 extends AbstractCard
   //   - You may return the highest card from your score pile. If you do, draw a card of value two
   //     higher than the highest card remaining in your score pile.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMay()->return()->highest()->fromYourScore()->build();
+    return self::youMay()->return()->highest()->fromYourScore();
   }
 
   public function handleCardChoice(array $card)

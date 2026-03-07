@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
@@ -18,12 +19,12 @@ class Card82 extends AbstractCard
   //     you do, score your top card of that color, then return all cards of that color form your
   //     board, and transfer Skyscrapers to my hand if it is a top card!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return self::youMust()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine()->build();
+      return self::youMust()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine();
     } else {
-      return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue())->build();
+      return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue());
     }
   }
 

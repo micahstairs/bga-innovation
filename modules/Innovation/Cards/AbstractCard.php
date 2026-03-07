@@ -39,7 +39,7 @@ abstract class AbstractCard
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     // Subclasses are expected to override this method if the card has any interactions.
     $cardId = self::getThisCardId();
@@ -49,7 +49,7 @@ abstract class AbstractCard
   public function updateInteractionOptions(): array
   {
     // Subclasses can override this method if the card has any interactions that use 'refresh_selection' and the default behavior is not sufficient.
-    $options = static::getInteractionOptions();
+    $options = static::getInteractionOptions()->build();
     // Clear the options that have to do with the number of cards being returned (only the
     // initial getInteractionOptions call should set these)
     unset($options['n'], $options['n_min'], $options['n_max']);
@@ -64,6 +64,12 @@ abstract class AbstractCard
   public function youMust(): InteractionBuilder
   {
     return (new InteractionBuilder($this->state))->canPass(false);
+  }
+
+  /** Returns a no-op InteractionBuilder whose build() yields []. Use when this step has no interaction. */
+  public function noInteraction(): InteractionBuilder
+  {
+    return new InteractionBuilder($this->state);
   }
 
   public final function getSpecialChoicePrompt(): array
@@ -1026,6 +1032,38 @@ abstract class AbstractCard
     return intval($card['id']);
   }
 
+  protected static function getType(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['type']);
+  }
+
+  protected static function getOwner(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['owner']);
+  }
+
+  protected static function getLocation(?array $card): string|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return $card['location'];
+  }
+
+  protected static function getPosition(?array $card): int|null
+  {
+    if (!$card) {
+      return null;
+    }
+    return intval($card['position']);
+  }
+
   protected function getCard(int $cardId): ?array
   {
     return $this->game->getCardInfo($cardId);
@@ -1754,6 +1792,30 @@ abstract class AbstractCard
       }
     }
     return $icons;
+  }
+
+  function countExactIconsOnCard($card, $icon): int
+  {
+    $icon_count = 0;
+    if ($card['spot_1'] !== null && $card['spot_1'] == $icon) {
+      $icon_count++;
+    }
+    if ($card['spot_2'] !== null && $card['spot_2'] == $icon) {
+      $icon_count++;
+    }
+    if ($card['spot_3'] !== null && $card['spot_3'] == $icon) {
+      $icon_count++;
+    }
+    if ($card['spot_4'] !== null && $card['spot_4'] == $icon) {
+      $icon_count++;
+    }
+    if ($card['spot_5'] !== null && $card['spot_5'] == $icon) {
+      $icon_count++;
+    }
+    if ($card['spot_6'] !== null && $card['spot_6'] == $icon) {
+      $icon_count++;
+    }
+    return $icon_count;
   }
 
   protected function getBonusIcon(array $card): int

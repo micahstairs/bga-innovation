@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Directions;
 
 class Card441 extends AbstractCard
@@ -21,7 +22,7 @@ class Card441 extends AbstractCard
     if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];
       for ($i = 0; $i < count($stack) - 4; $i++) {
-        $cardIds[] = $stack[$i]['id'];
+        $cardIds[] = self::getId($stack[$i]);
       }
       self::setAuxiliaryArray($cardIds);
       self::setAuxiliaryValue($color); // Track color to return
@@ -31,9 +32,9 @@ class Card441 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue())->onlyCardsInAuxiliaryArray()->build();
+    return self::youMust()->return()->all()->fromYourStack(self::getAuxiliaryValue())->onlyCardsInAuxiliaryArray();
   }
 
   public function afterInteraction()

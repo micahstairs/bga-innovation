@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
@@ -29,9 +30,9 @@ class Card161 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyOtherPlayer()->build();
+    return self::youMust()->chooseCardFrom(Locations::BOARD)->fromAnyOtherPlayer();
   }
 
   public function handleCardChoice(array $card)

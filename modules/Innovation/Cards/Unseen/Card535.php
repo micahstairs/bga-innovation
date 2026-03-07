@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card535 extends AbstractCard
 {
@@ -18,27 +19,19 @@ class Card535 extends AbstractCard
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstInteraction()) {
-      return [
-        'location_from'  => 'board',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->fromYourBoard();
     } else {
-      return [
-        'can_pass'       => true,
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'color'          => [self::getLastSelectedColor()],
-      ];
+      return self::youMay()->return()->withColor(self::getLastSelectedColor())->fromYourBoard();
     }
   }
 
   public function handleCardChoice(array $card)
   {
     self::incrementAuxiliaryValue();
-    if ($card['age'] == 7) {
+    if (self::getValue($card) == 7) {
       self::setAuxiliaryValue2(self::getAuxiliaryValue2() + 1);
     }
   }

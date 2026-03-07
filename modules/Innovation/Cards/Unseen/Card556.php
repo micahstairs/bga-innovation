@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\CardTypes;
 
 class Card556 extends AbstractCard
@@ -17,19 +18,13 @@ class Card556 extends AbstractCard
   {
     $card1 = self::transferToHand(self::drawAndReveal(9));
     $card2 = self::transferToHand(self::drawAndReveal(9));
-    self::setAuxiliaryArray([$card1['id'], $card2['id']]);
+    self::setAuxiliaryArray([self::getId($card1), self::getId($card2)]);
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'n_min'                           => 1,
-      'n_max'                           => 2,
-      'location_from'                   => 'hand',
-      'return_keyword'                  => true,
-      'card_ids_are_in_auxiliary_array' => true,
-    ];
+    return self::youMust()->return()->minCards(1)->maxCards(2)->onlyCardsInAuxiliaryArray()->fromYourHand();
   }
 
   public function handleCardChoice(array $card)

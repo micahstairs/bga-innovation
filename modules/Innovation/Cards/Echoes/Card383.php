@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 
 class Card383 extends AbstractCard
 {
@@ -19,7 +20,7 @@ class Card383 extends AbstractCard
     } else {
       $values = [];
       foreach (self::getTopCards() as $card) {
-        $values[] = $card['faceup_age'];
+        $values[] = self::getFaceupValue($card);
       }
       if (count(array_unique($values)) === 5) {
         self::setMaxSteps(1);
@@ -28,23 +29,16 @@ class Card383 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
       $values = [];
       foreach (self::getPlayerIds() as $playerId) {
         $values = array_merge($values, self::getUniqueValuesInLocation('hand', $playerId));
       }
-      return [
-        'choose_value' => true,
-        'age'          => $values,
-      ];
+      return self::youMust()->chooseValue($values);
     } else {
-      return [
-        'n'              => 5,
-        'location_from'  => 'score',
-        'return_keyword' => true,
-      ];
+      return self::youMust()->return()->exactly(5)->fromYourScore();
     }
   }
 

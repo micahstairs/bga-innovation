@@ -3,8 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
+use Innovation\Enums\Locations;
 
 class Card430_4E extends AbstractCard
 {
@@ -27,34 +28,27 @@ class Card430_4E extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
       $values = self::getActionScopedAuxiliaryArray();
       $cardIds = [];
-      foreach (self::getCards('score') as $card) {
-        if (in_array($card['age'], $values)) {
+      foreach (self::getCards(Locations::SCORE) as $card) {
+        if (in_array(self::getValue($card), $values)) {
           $cardIds[] = self::getId($card);
         }
       }
       self::setAuxiliaryArray($cardIds);
-      return [
-        'location_from'                   => 'score',
-        'return_keyword'                  => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      return self::youMust()->return()->onlyCardsInAuxiliaryArray()->fromYourScore();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::UP,
-      ];
+      return self::youMay()->splayUp();
     }
   }
 
   function handleCardChoice(array $card)
   {
     if (self::isDemand()) {
-      $remainingValues = self::removeFromActionScopedAuxiliaryArray($card['age']);
+      $remainingValues = self::removeFromActionScopedAuxiliaryArray(self::getValue($card));
       if (count($remainingValues) > 0) {
         self::setNextStep(1);
       }

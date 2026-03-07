@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 
@@ -14,27 +15,15 @@ class Card551 extends AbstractCard
   //   - Tuck a card from any score pile.
   //   - You may splay your red or yellow cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return [
-        'location_from' => 'safe',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'safe',
-        'age'           => self::getMinValueInLocation('safe'),
-      ];
+      $value = self::getMinValueInLocation('safe');
+      return self::youMust()->value($value)->fromYourSafe()->toMine();
     } else if (self::getEffectNumber() === 1) {
-      return [
-        'owner_from'    => 'any player',
-        'location_from' => 'score',
-        'tuck_keyword'  => true,
-      ];
+      return self::youMust()->tuck()->fromAnyScore();
     } else {
-      return [
-        'can_pass'        => true,
-        'splay_direction' => Directions::RIGHT,
-        'color'           => [Colors::RED, Colors::YELLOW],
-      ];
+      return self::youMay()->splayRight([Colors::RED, Colors::YELLOW]);
     }
   }
 

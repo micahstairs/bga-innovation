@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
@@ -12,12 +13,12 @@ class Card51_4E extends AbstractCard
   //   - I DEMAND you transfer all the cards of the value of my choice in your score pile to your hand!
   //   - You may splay your yellow cards right.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isDemand()) {
-      return self::youMust()->chooseValue()->ofMyChoice()->build();
+      return self::youMust()->chooseValue()->ofMyChoice();
     } else {
-      return self::youMay()->splayRight()->withColor(Colors::YELLOW)->build();
+      return self::youMay()->splayRight(Colors::YELLOW);
     }
   }
 

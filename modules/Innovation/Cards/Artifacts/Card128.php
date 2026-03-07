@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 use Innovation\Enums\Locations;
@@ -23,9 +24,9 @@ class Card128 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->non(Colors::RED)->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMine()->build();
+    return self::youMust()->non(Colors::RED)->withIcon(Icons::AUTHORITY)->fromYourBoard()->toMine();
   }
 
   public function compelMightBeEffective(): bool

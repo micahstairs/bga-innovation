@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Locations;
 
 class Card97 extends AbstractCard
@@ -15,12 +16,12 @@ class Card97 extends AbstractCard
   //   - Return a card from your hand. If you return a [10], draw a [10] for every different
   //     value of card in your score pile. If you return an [11], junk all cards in the [11] deck.
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isFirstOrThirdEdition()) {
-      return self::youMay()->return()->fromYourHand()->build();
+      return self::youMay()->return()->fromYourHand();
     } else {
-      return self::youMust()->return()->fromYourHand()->build();
+      return self::youMust()->return()->fromYourHand();
     }
   }
 

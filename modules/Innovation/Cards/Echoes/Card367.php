@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
+use Innovation\Enums\Locations;
 
 class Card367 extends AbstractCard
 {
@@ -40,27 +42,19 @@ class Card367 extends AbstractCard
     }
   }
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
     if (self::isEcho()) {
-      return [
-        'owner_from'  => 'any player',
-        'choose_from' => 'board',
-      ];
+      return self::youMay()->chooseCardFrom(Locations::BOARD)->fromAnyPlayer();
     } else {
-      return [
-        'n'              => 'all',
-        'location_from'  => 'board',
-        'return_keyword' => true,
-        'with_icon'      => Icons::AUTHORITY,
-      ];
+      return self::youMust()->return()->all()->fromYourBoard()->withIcon(Icons::AUTHORITY);
     }
   }
 
   public function handleCardChoice(array $card)
   {
     if (self::isEcho()) {
-      self::splayLeft(self::getColor($card), $card['owner'], self::getPlayerId());
+      self::splayLeft(self::getColor($card), self::getOwner($card), self::getPlayerId());
     } else if (self::isDemand()) {
       self::incrementAuxiliaryValue();
     }

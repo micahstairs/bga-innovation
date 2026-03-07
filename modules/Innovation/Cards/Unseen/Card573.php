@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
+use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Icons;
 
 class Card573 extends AbstractCard
@@ -12,14 +13,9 @@ class Card573 extends AbstractCard
   //   - I demand you meld a card from my score pile! If the melded card has
   //     no [PROSPERITY], repeat this effect!
 
-  public function getInteractionOptions(): array
+  public function getInteractionOptions(): InteractionBuilder
   {
-    return [
-      'owner_from'    => self::getLauncherId(),
-      'location_from' => 'score',
-      'owner_to'      => self::getPlayerId(),
-      'meld_keyword'  => true,
-    ];
+    return self::youMust()->meld()->fromMyScore();
   }
 
   public function handleCardChoice(array $card)
