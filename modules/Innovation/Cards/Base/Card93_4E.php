@@ -16,7 +16,7 @@ class Card93_4E extends AbstractCard
   public function initialExecution()
   {
     if (self::countCards(Locations::SCORE)) {
-      self::setMaxSteps(2);
+      self::setMaxSteps(1);
     }
   }
 
@@ -31,8 +31,13 @@ class Card93_4E extends AbstractCard
 
   public function handleValueChoice(int $value)
   {
+    $numCardsTransferred = 0;
     foreach (self::getCardsKeyedByValue(Locations::SCORE)[$value] as $card) {
       self::transferToHand($card, self::getLauncherId());
+      $numCardsTransferred++;
+    }
+    if ($numCardsTransferred > 0) {
+      self::setMaxSteps(1);
     }
   }
 
