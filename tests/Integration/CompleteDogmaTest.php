@@ -58,6 +58,9 @@ class CompleteDogmaTest extends BaseIntegrationTest
 
     self::setGlobalVariable("debug_mode", 2);
 
+    // Prevent game from ending by achievements during dogma testing
+    self::setGlobalVariable("number_of_achievements_needed_to_win", 100);
+
     error_log("*** STARTING GAME ***");
 
     $numCardsTested = 0;
