@@ -1902,7 +1902,7 @@ class Innovation extends Table
                                 WHEN  {position} THEN {position_plus_delta}
                                 WHEN  {position_plus_delta} THEN {position}
                                 ELSE position
-                                END)F
+                                END)
                 WHERE
                     owner = {player_id} AND
                     location = 'board' AND
