@@ -8591,7 +8591,15 @@ class Innovation extends Table
                 }
             }
 
-            if (!$this->innovationGameState->artifactsExpansionEnabled() || self::getArtifactOnDisplay($player_id)) {
+            if (!$this->innovationGameState->artifactsExpansionEnabled()) {
+                self::trace('digArtifact->promoteCard');
+                $this->gamestate->nextState('promoteCard');
+                return;
+            }
+
+            $artifact_on_display = self::getArtifactOnDisplay($player_id);
+            // In 3E, skip dig entirely when already have an artifact on display. In 4E, still offer seize (rule: "Seizing is possible even if the dig event would have otherwise been ignored").
+            if ($artifact_on_display && !$this->innovationGameState->usingFourthEditionRules()) {
                 self::trace('digArtifact->promoteCard');
                 $this->gamestate->nextState('promoteCard');
                 return;
