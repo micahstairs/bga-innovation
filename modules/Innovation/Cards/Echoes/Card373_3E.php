@@ -48,7 +48,7 @@ class Card373_3E extends AbstractCard
       }
       return self::youMay()->splayRight($colors);
     } else {
-      return self::youMay()->return()->all()->fromYourRevealed();
+      return self::youMust()->return()->all()->fromYourRevealed();
     }
   }
 
