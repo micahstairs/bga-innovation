@@ -1900,8 +1900,9 @@ class Innovation extends Table
                 SET
                     position = (CASE position
                                 WHEN  {position} THEN {position_plus_delta}
-                                ELSE {position}
-                                END)
+                                WHEN  {position_plus_delta} THEN {position}
+                                ELSE position
+                                END)F
                 WHERE
                     owner = {player_id} AND
                     location = 'board' AND
