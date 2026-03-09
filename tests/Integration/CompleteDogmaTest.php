@@ -83,11 +83,13 @@ class CompleteDogmaTest extends BaseIntegrationTest
           break;
         }
 
+        // Do some extra checks to catch bugs
         foreach (self::getPlayerIds() as $playerId) {
           if (self::getCards(Locations::REVEALED, $playerId)) {
             throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
           }
         }
+        $this->assertDecksAreValid();
       } catch (\Exception $e) {
         error_log("FAILED: " . $e->getMessage() . " " . $e->getTraceAsString());
         $totalCards = count($cardIds);

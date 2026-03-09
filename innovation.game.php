@@ -4647,23 +4647,6 @@ class Innovation extends Table
         return Strings::doesStringComeBefore($name1, $name2);
     }
 
-    /**
-     * When getObjectFromDB throws "More than one row", log context and the duplicate rows for debugging.
-     */
-    private function logDuplicateRowsFromGetObject(string $context, string $formattedQuery): void
-    {
-        try {
-            $rows = self::getCollectionFromDB($formattedQuery);
-            $count = is_array($rows) ? count($rows) : 0;
-            error_log("[getObjectFromDB duplicate rows] $context — count: $count");
-            foreach ($rows as $row) {
-                error_log("[getObjectFromDB duplicate rows]   row: " . json_encode($row));
-            }
-        } catch (\Throwable $e) {
-            error_log("[getObjectFromDB duplicate rows] $context — failed to run diagnostic query: " . $e->getMessage());
-        }
-    }
-
     function getDeckTopCard($age, $type)
     {
         /**
@@ -4672,7 +4655,8 @@ class Innovation extends Table
                 -owner, location and position
         **/
 
-        $query = self::format("
+        return self::getObjectFromDB(
+            self::format("
             SELECT
                 *
             FROM
@@ -4683,16 +4667,9 @@ class Innovation extends Table
                 age = {age} AND
                 position = (SELECT MAX(position) FROM card WHERE location = 'deck' AND type = {type} AND age = {age})
         ",
-            array('type' => $type, 'age' => $age)
+                array('type' => $type, 'age' => $age)
+            )
         );
-        try {
-            return self::getObjectFromDB($query);
-        } catch (\RuntimeException $e) {
-            if (strpos($e->getMessage(), 'More than one row') !== false) {
-                $this->logDuplicateRowsFromGetObject("getDeckTopCard(age=$age, type=$type)", $query);
-            }
-            throw $e;
-        }
     }
 
     function getDeckBottomCard($age, $type)
@@ -4703,7 +4680,8 @@ class Innovation extends Table
                 -owner, location and position
         **/
 
-        $query = self::format("
+        return self::getObjectFromDB(
+            self::format("
             SELECT
                 *
             FROM
@@ -4714,16 +4692,9 @@ class Innovation extends Table
                 age = {age} AND
                 position = 0
         ",
-            array('type' => $type, 'age' => $age)
+                array('type' => $type, 'age' => $age)
+            )
         );
-        try {
-            return self::getObjectFromDB($query);
-        } catch (\RuntimeException $e) {
-            if (strpos($e->getMessage(), 'More than one row') !== false) {
-                $this->logDuplicateRowsFromGetObject("getDeckBottomCard(age=$age, type=$type)", $query);
-            }
-            throw $e;
-        }
     }
 
     function getAgeToDrawIn($player_id, $age_min = null)
@@ -5014,7 +4985,8 @@ class Innovation extends Table
         Get the top card of specified color
         (null if the player have no card on his board)
         **/
-        $query = self::format("
+        return self::getObjectFromDB(
+            self::format("
                 SELECT
                     *
                 FROM
@@ -5034,16 +5006,9 @@ class Innovation extends Table
                             color = {color}
                     )
         ",
-            array('player_id' => $player_id, 'color' => $color)
+                array('player_id' => $player_id, 'color' => $color)
+            )
         );
-        try {
-            return self::getObjectFromDB($query);
-        } catch (\RuntimeException $e) {
-            if (strpos($e->getMessage(), 'More than one row') !== false) {
-                $this->logDuplicateRowsFromGetObject("getTopCardOnBoard(player_id=$player_id, color=$color)", $query);
-            }
-            throw $e;
-        }
     }
 
 
