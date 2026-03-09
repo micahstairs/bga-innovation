@@ -1484,6 +1484,14 @@ class Innovation extends Table
             return null;
         }
 
+        // Supply deck is always owner 0; ensure no caller can put a card in deck with a non-zero owner.
+        if ($location_to === 'deck') {
+            if ($owner_to !== 0 && $this->innovationGameState->get('debug_mode') >= 1) {
+                throw new \Exception("Cannot transfer card to deck with owner $owner_to");
+            }
+            $owner_to = 0;
+        }
+
         $bottom_from = array_key_exists('bottom_from', $properties) ? $properties['bottom_from'] : false;
         $bottom_to = array_key_exists('bottom_to', $properties) ? $properties['bottom_to'] : $location_to == 'deck' && !$card['is_relic'];
         $score_keyword = array_key_exists('score_keyword', $properties) ? $properties['score_keyword'] : false;
