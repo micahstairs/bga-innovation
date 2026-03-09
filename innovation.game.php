@@ -9880,7 +9880,7 @@ class Innovation extends Table
 
             if ($card_id === null) { // Digging/stealing artifact
                 $message_for_player = clienttranslate('${You} must make a choice');
-                $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to rotate into a museum');
+                $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to seize');
                 $card_ids = self::getAuxiliaryArray();
                 $options = [
                     [
@@ -9892,7 +9892,7 @@ class Innovation extends Table
                 for ($i = 1; $i < count($card_ids); $i++) {
                     $options[] = [
                         'value' => $i,
-                        'text'  => clienttranslate('Rotate ${card} into a museum'),
+                        'text'  => clienttranslate('Seize ${card}'),
                         'card'  => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
                     ];
                 }
@@ -11668,10 +11668,17 @@ class Innovation extends Table
                     self::digCard($chosen_card, $player_id);
                     self::incStat(1, 'dig_events_number', $player_id);
                 } else {
-                    // If an artifact was stolen from an opponent's museum, rotate the museum and the artifact
+                    // Seize: rotate the artifact and its museum to the current player
                     $museum = self::getCardsInLocation($chosen_card['owner'], Locations::MUSEUMS)[$chosen_card['position'] - 1];
+                    $original_owner_id = $chosen_card['owner'];
                     self::transferCardFromTo($museum, $player_id, Locations::MUSEUMS);
                     self::transferCardFromTo($chosen_card, $player_id, Locations::MUSEUMS);
+                    $original_owner_name = self::getPlayerNameFromId($original_owner_id);
+                    $new_owner_name = self::getPlayerNameFromId($player_id);
+                    $card_args = $this->getNotificationArgsForCardList([$chosen_card]);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} seized ${card} from ${player_name}'), ['player_name' => $original_owner_name, 'card' => $card_args]);
+                    self::notifyPlayer($original_owner_id, 'log', clienttranslate('${player_name} seized ${card} from ${you}'), ['player_name' => $new_owner_name, 'card' => $card_args]);
+                    self::notifyAllPlayersBut([$player_id, $original_owner_id], 'log', clienttranslate('${player_name} seized ${card} from ${original_owner_name}'), ['player_name' => $new_owner_name, 'original_owner_name' => $original_owner_name, 'card' => $card_args]);
                 }
             }
         } catch (EndOfGame $e) {
