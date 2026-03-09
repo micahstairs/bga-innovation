@@ -25,7 +25,7 @@ class Card214_3E extends AbstractCard
     if (!$colors) {
       return self::noInteraction();
     }
-    return self::youMust()->score()->withColor($colors);
+    return self::youMust()->meld()->fromYourScore()->withColor($colors);
   }
 
   public function handleCardChoice(array $card)
@@ -36,7 +36,7 @@ class Card214_3E extends AbstractCard
 
   public function compelMightBeEffective(): bool
   {
-    return self::countCards(Locations::SCORE) > 0;
+    return self::hasCards(Locations::SCORE);
   }
 
 }
