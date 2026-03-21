@@ -39,11 +39,21 @@ declare type InnovationGameDatas = {
 	unseen_expansion_enabled: boolean;
 };
 
+declare interface BgaPlayerPanels {
+	getScoreCounter(playerId: string | number): Counter;
+	getElement(playerId: string | number): HTMLElement;
+}
+
+declare interface BgaUserPreferences {
+	get(prefId: number): number;
+}
+
 declare class BgaGame {
 	gamedatas: InnovationGameDatas;
 	player_id: number;
 	isSpectator: boolean;
 	notifqueue: GameNotifQueue;
+	bga: { playerPanels: BgaPlayerPanels; userPreferences: BgaUserPreferences };
 	scoreCtrl: { [player_id: number]: Counter };
 	prefs: { [index: number]: { value: number } };
 	gameinterface_zoomFactor: number;

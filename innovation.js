@@ -176,39 +176,39 @@ var Innovation = /** @class */ (function (_super) {
             ["junk", "S recto"],
         ]);
         _this.num_cards_in_row = new Map([
-            ["my_hand", -1],
-            ["opponent_hand", -1],
+            ["my_hand", -1], // Computed dynamically
+            ["opponent_hand", -1], // Computed dynamically
             ["display", 1],
-            ["museums", -1],
+            ["museums", -1], // Computed dynamically
             ["deck", 15],
-            ["board", -1],
-            ["forecast", -1],
+            ["board", -1], // Computed dynamically
+            ["forecast", -1], // Computed dynamically
             ["my_forecast_verso", 3],
-            ["score", -1],
+            ["score", -1], // Computed dynamically
             ["my_score_verso", 3],
-            ["safe", -1],
-            ["revealed", 1],
-            ["relics", -1],
-            ["achievements", -1],
-            ["special_achievements", -1],
+            ["safe", -1], // Computed dynamically
+            ["revealed", 1], // Computed dynamically
+            ["relics", -1], // Computed dynamically
+            ["achievements", -1], // Computed dynamically
+            ["special_achievements", -1], // Computed dynamically
             ["available_museums", 5],
             ["junk", 1], // TODO(4E): Compute this dynamically
         ]);
         _this.delta = {
-            "my_hand": { "x": 189, "y": 133 },
-            "opponent_hand": { "x": 35, "y": 49 },
-            "display": { "x": 189, "y": 133 },
-            "museums": { "x": 189, "y": 133 },
-            "deck": { "x": 3, "y": 3 },
-            "board": { "x": 0, "y": 0 },
-            "forecast": { "x": 35, "y": 49 },
-            "my_forecast_verso": { "x": 189, "y": 133 },
-            "score": { "x": 35, "y": 49 },
-            "my_score_verso": { "x": 189, "y": 133 },
-            "safe": { "x": 35, "y": 49 },
-            "revealed": { "x": 189, "y": 133 },
-            "achievements": { "x": 35, "y": 49 },
-            "available_museums": { "x": 35, "y": 49 },
+            "my_hand": { "x": 189, "y": 133 }, // +7
+            "opponent_hand": { "x": 35, "y": 49 }, // + 2
+            "display": { "x": 189, "y": 133 }, // +7
+            "museums": { "x": 189, "y": 133 }, // +7
+            "deck": { "x": 3, "y": 3 }, // overlap
+            "board": { "x": 0, "y": 0 }, // Computed dynamically
+            "forecast": { "x": 35, "y": 49 }, // + 2
+            "my_forecast_verso": { "x": 189, "y": 133 }, // +7
+            "score": { "x": 35, "y": 49 }, // + 2
+            "my_score_verso": { "x": 189, "y": 133 }, // +7
+            "safe": { "x": 35, "y": 49 }, // + 2
+            "revealed": { "x": 189, "y": 133 }, // +7,
+            "achievements": { "x": 35, "y": 49 }, // + 2
+            "available_museums": { "x": 35, "y": 49 }, // + 2
             "junk": { "x": 35, "y": 49 }, // + 2
         };
         _this.incremental_id = 0;
@@ -423,7 +423,7 @@ var Innovation = /** @class */ (function (_super) {
         // PLAYER PANELS
         for (var player_id in this.players) {
             dojo.place("<span class='achievements_to_win'>/".concat(this.gamedatas.number_of_achievements_needed_to_win, "<span>"), $('player_score_' + player_id), "after");
-            dojo.place(this.format_block('jstpl_player_panel', { 'player_id': player_id }), $('player_board_' + player_id));
+            dojo.place(this.format_block('jstpl_player_panel', { 'player_id': player_id }), this.bga.playerPanels.getElement(player_id));
             for (var icon = 1; icon <= 7; icon++) {
                 var infos = { 'player_id': player_id, 'icon': icon };
                 dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
@@ -856,7 +856,7 @@ var Innovation = /** @class */ (function (_super) {
                 // Creation of the zone
                 this.zone["board"][player_id][color] = this.createZone('board', player_id, null, null, color, /*grouped_by_age_type_and_is_relic=*/ false, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ false);
                 // Disable pile counters
-                if (this.prefs[113].value == 1) {
+                if (this.bga.userPreferences.get(113) == 1) {
                     dojo.style("pile_count_".concat(player_id, "_").concat(color), 'display', 'none');
                 }
                 // Splay indicator
@@ -995,7 +995,7 @@ var Innovation = /** @class */ (function (_super) {
         var window_width = Math.max(dojo.window.getBox().w, 640); // 640 is set in game_interface_width.min in gameinfos.inc.php
         var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
         var decks_width = 214;
-        var decks_on_right = this.prefs[112].value == 1;
+        var decks_on_right = this.bga.userPreferences.get(112) == 1;
         var main_area_width;
         if (decks_on_right) {
             main_area_width = window_width - player_panel_width - decks_width;
@@ -1138,7 +1138,7 @@ var Innovation = /** @class */ (function (_super) {
         console.log(args);
         if (this.initializing) { // Here, do things that have to be done on setup but that cannot be done inside the function
             for (var player_id in this.players) { // Displaying player BGA scores
-                this.scoreCtrl[player_id].setValue(this.gamedatas.players[player_id].achievement_count); // BGA score = number of claimed achievements
+                this.bga.playerPanels.getScoreCounter(player_id).setValue(this.gamedatas.players[player_id].achievement_count); // BGA score = number of claimed achievements
                 var tooltip_help = _("Number of achievements. ${n} needed to win").replace('${n}', this.gamedatas.number_of_achievements_needed_to_win.toString());
                 this.addCustomTooltip('player_score_' + player_id, tooltip_help, "");
                 this.addCustomTooltip('icon_point_' + player_id, tooltip_help, "");
@@ -1186,7 +1186,7 @@ var Innovation = /** @class */ (function (_super) {
                     var player_score_aux = player_result.score_aux;
                     // Gold star => BGA score: remove the tooltip which says that it's the number of achievements because it is not the case in end by score or by dogma and set the counter to its appropriate value
                     this.removeTooltip('player_score_' + player_id);
-                    this.scoreCtrl[player_id].setValue(player_score);
+                    this.bga.playerPanels.getScoreCounter(player_id).setValue(player_score);
                     // Silver star => BGA tie breaker: remove the tooltip and set the counter to its appropriate value
                     this.removeTooltip('score_count_container_' + player_id);
                     this.counter["score"][player_id].setValue(player_score_aux);
@@ -1535,11 +1535,11 @@ var Innovation = /** @class */ (function (_super) {
                         for (var i = 0; i < args.options.length; i++) {
                             var option = args.options[i];
                             this.addActionButton("choice_" + option.value, this.format_string_recursive(_(option.text), {
-                                'age': option.age,
-                                'name': option.name,
-                                'splay_direction': option.splay_direction,
-                                'color': option.color,
-                                'card': option.card,
+                                'age': option.age, // Used by cards like Evolution
+                                'name': option.name, // Used by cards like Karaoke
+                                'splay_direction': option.splay_direction, // Used by cards like Sunglasses
+                                'color': option.color, // Used by cards like Sunglasses
+                                'card': option.card, // Used by cards like Scissors
                                 'i18n': option.i18n,
                             }), "action_clicForChooseSpecialOption");
                         }
@@ -2911,7 +2911,7 @@ var Innovation = /** @class */ (function (_super) {
         return ["item_" + id, "age_" + age, "type_" + type, "is_relic_" + parseInt(is_relic), zone_HTML_class.replace(" ", "__")].join("__");
     };
     Innovation.prototype.getCardHTMLClass = function (id, age, type, is_relic, card, zone_HTML_class) {
-        var simplified_card_layout = this.prefs[111].value == 1;
+        var simplified_card_layout = this.bga.userPreferences.get(111) == 1;
         var classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
         if (parseInt(is_relic)) {
             classes.push("relic");
@@ -2950,7 +2950,7 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone_HTML_class);
         var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
         var size = this.getCardSizeInZone(zone_HTML_class);
-        var simplified_card_back = this.prefs[110].value == 2 || age == 11 || type == 5;
+        var simplified_card_back = this.bga.userPreferences.get(110) == 2 || age == 11 || type == 5;
         var HTML_inside = '';
         if (card === null) {
             if (age === null || !simplified_card_back) {
@@ -3005,7 +3005,7 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, "".concat(size, " card"));
         var HTML_id = "browse_card_id_".concat(id);
         var HTML_inside = this.writeOverCard(card, size, HTML_id);
-        var simplified_card_back = this.prefs[110].value == 2;
+        var simplified_card_back = this.bga.userPreferences.get(110) == 2;
         var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
         return "<div id='".concat(HTML_id, "' class='").concat(graphics_class, " ").concat(HTML_class, "'>").concat(HTML_inside, "</div>");
     };
@@ -3857,15 +3857,15 @@ var Innovation = /** @class */ (function (_super) {
         // When confirmation is disabled in game preferences, click the confirmation button instantly
         var wait_time = 0;
         // Short timer (3 seconds)
-        if (this.prefs[101].value == 2) {
+        if (this.bga.userPreferences.get(101) == 2) {
             wait_time = 2;
             // Medium timer (5 seconds)
         }
-        else if (this.prefs[101].value == 3) {
+        else if (this.bga.userPreferences.get(101) == 3) {
             wait_time = 4;
             // Long timer (10 seconds)
         }
-        else if (this.prefs[101].value == 4) {
+        else if (this.bga.userPreferences.get(101) == 4) {
             wait_time = 9;
         }
         this.startActionTimer("meld_confirm_button", wait_time, this.action_confirmMeld, HTML_id);
@@ -3938,15 +3938,15 @@ var Innovation = /** @class */ (function (_super) {
         // When confirmation is disabled in game preferences, click the confirmation button instantly
         var wait_time = 0;
         // Short timer (3 seconds)
-        if (this.prefs[100].value == 2) {
+        if (this.bga.userPreferences.get(100) == 2) {
             wait_time = 2;
             // Medium timer (5 seconds)
         }
-        else if (this.prefs[100].value == 3) {
+        else if (this.bga.userPreferences.get(100) == 3) {
             wait_time = 4;
             // Long timer (10 seconds)
         }
-        else if (this.prefs[100].value == 4) {
+        else if (this.bga.userPreferences.get(100) == 4) {
             wait_time = 9;
         }
         this.startActionTimer("dogma_confirm_timer_button", wait_time, this.action_manuallyConfirmTimerDogma);
@@ -3973,7 +3973,7 @@ var Innovation = /** @class */ (function (_super) {
             this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
             dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
         }
-        else if (this.prefs[102].value == 2 && sharing_players.includes(',')) {
+        else if (this.bga.userPreferences.get(102) == 2 && sharing_players.includes(',')) {
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."), {
                 'age': this.square('N', 'age', card.age, 'type_' + card.type),
                 'card_name': _(card.name),
@@ -4788,7 +4788,7 @@ var Innovation = /** @class */ (function (_super) {
             var player_team = this.players[card.owner_from].player_team;
             for (var player_id in this.players) {
                 if (this.players[player_id].player_team == player_team) {
-                    this.scoreCtrl[player_id].incValue(-1);
+                    this.bga.playerPanels.getScoreCounter(player_id).incValue(-1);
                 }
             }
         }
@@ -4797,7 +4797,7 @@ var Innovation = /** @class */ (function (_super) {
             var player_team = this.players[card.owner_to].player_team;
             for (var player_id in this.players) {
                 if (this.players[player_id].player_team == player_team) {
-                    this.scoreCtrl[player_id].incValue(1);
+                    this.bga.playerPanels.getScoreCounter(player_id).incValue(1);
                 }
             }
         }

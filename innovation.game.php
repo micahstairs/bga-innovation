@@ -206,11 +206,6 @@ class Innovation extends Table
         );
     }
 
-    protected function getGameName()
-    {
-        return "innovation";
-    }
-
     // TODO(4E): Simulate migration.
     function upgradeTableDb($from_version)
     {
@@ -2421,7 +2416,7 @@ class Innovation extends Table
                 return "E";
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
+                throw new BgaVisibleSystemException(self::format(clienttranslate("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
         }
     }
 
@@ -2441,7 +2436,7 @@ class Innovation extends Table
                 break;
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(clienttranslate("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
         }
 
         $transferInfo = self::stripTransferInfoForNotification($transferInfo);
@@ -3956,7 +3951,7 @@ class Innovation extends Table
             $color_in_clear = Colors::render($color);
 
             if ($player_id != $target_player_id) {
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
+                throw new BgaVisibleSystemException(self::format(clienttranslate("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
             }
 
             self::notifyPlayer(
@@ -9278,7 +9273,7 @@ class Innovation extends Table
         if (self::getGameStateValue('debug_mode') >= 1) {
             debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         }
-        throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+        throw new BgaUserException(clienttranslate("Your choice was invalid (try refreshing the page)"));
     }
 
     function argTurn0()

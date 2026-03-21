@@ -104,7 +104,8 @@
 
     /* Completeness */
     "skipDefaultLibCheck": true,                         /* Skip type checking .d.ts files that are included with TypeScript. */
-    // "skipLibCheck": true                              /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,                                /* Skip type checking all .d.ts files (avoids parent node_modules/@types). */
+    "typeRoots": ["./node_modules/@types"]               /* Only this repo’s @types; do not walk up to a parent folder’s node_modules. */
   },
   "files": [
     "src/global.d.ts",

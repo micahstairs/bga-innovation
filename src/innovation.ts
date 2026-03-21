@@ -354,7 +354,7 @@ class Innovation extends BgaGame {
         // PLAYER PANELS
         for (let player_id in this.players) {
             dojo.place(`<span class='achievements_to_win'>/${this.gamedatas.number_of_achievements_needed_to_win}<span>`, $('player_score_' + player_id), "after");
-            dojo.place(this.format_block('jstpl_player_panel', { 'player_id': player_id }), $('player_board_' + player_id));
+            dojo.place(this.format_block('jstpl_player_panel', { 'player_id': player_id }), this.bga.playerPanels.getElement(player_id));
             for (let icon = 1; icon <= 7; icon++) {
                 let infos = { 'player_id': player_id, 'icon': icon };
                 dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
@@ -825,7 +825,7 @@ class Innovation extends BgaGame {
                 this.zone["board"][player_id][color] = this.createZone('board', player_id, null, null, color, /*grouped_by_age_type_and_is_relic=*/ false, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ false);
 
                 // Disable pile counters
-                if (this.prefs[113].value == 1) {
+                if (this.bga.userPreferences.get(113) == 1) {
                     dojo.style(`pile_count_${player_id}_${color}`, 'display', 'none');
                 }
 
@@ -988,7 +988,7 @@ class Innovation extends BgaGame {
         let player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
         let decks_width = 214;
 
-        let decks_on_right = this.prefs[112].value == 1;
+        let decks_on_right = this.bga.userPreferences.get(112) == 1;
 
         let main_area_width: number;
         if (decks_on_right) {
@@ -1149,7 +1149,7 @@ class Innovation extends BgaGame {
         if (this.initializing) { // Here, do things that have to be done on setup but that cannot be done inside the function
 
             for (let player_id in this.players) { // Displaying player BGA scores
-                this.scoreCtrl[player_id].setValue(this.gamedatas.players[player_id].achievement_count); // BGA score = number of claimed achievements
+                this.bga.playerPanels.getScoreCounter(player_id).setValue(this.gamedatas.players[player_id].achievement_count); // BGA score = number of claimed achievements
                 let tooltip_help = _("Number of achievements. ${n} needed to win").replace('${n}', this.gamedatas.number_of_achievements_needed_to_win.toString());
                 this.addCustomTooltip('player_score_' + player_id, tooltip_help, "");
                 this.addCustomTooltip('icon_point_' + player_id, tooltip_help, "");
@@ -1201,7 +1201,7 @@ class Innovation extends BgaGame {
 
                     // Gold star => BGA score: remove the tooltip which says that it's the number of achievements because it is not the case in end by score or by dogma and set the counter to its appropriate value
                     this.removeTooltip('player_score_' + player_id);
-                    this.scoreCtrl[player_id].setValue(player_score);
+                    this.bga.playerPanels.getScoreCounter(player_id).setValue(player_score);
 
                     // Silver star => BGA tie breaker: remove the tooltip and set the counter to its appropriate value
                     this.removeTooltip('score_count_container_' + player_id);
@@ -3092,7 +3092,7 @@ class Innovation extends BgaGame {
     }
 
     getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class: string) {
-        let simplified_card_layout = this.prefs[111].value == 1;
+        let simplified_card_layout = this.bga.userPreferences.get(111) == 1;
         let classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
         if (parseInt(is_relic)) {
             classes.push("relic");
@@ -3136,7 +3136,7 @@ class Innovation extends BgaGame {
         let HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
         let size = this.getCardSizeInZone(zone_HTML_class);
 
-        let simplified_card_back = this.prefs[110].value == 2 || age == 11 || type == 5;
+        let simplified_card_back = this.bga.userPreferences.get(110) == 2 || age == 11 || type == 5;
 
         let HTML_inside = '';
         if (card === null) {
@@ -3190,7 +3190,7 @@ class Innovation extends BgaGame {
         const HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, `${size} card`);
         const HTML_id = `browse_card_id_${id}`;
         const HTML_inside = this.writeOverCard(card, size, HTML_id);
-        const simplified_card_back = this.prefs[110].value == 2;
+        const simplified_card_back = this.bga.userPreferences.get(110) == 2;
         const graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
         return `<div id='${HTML_id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
     }
@@ -4166,15 +4166,15 @@ class Innovation extends BgaGame {
         let wait_time = 0;
 
         // Short timer (3 seconds)
-        if (this.prefs[101].value == 2) {
+        if (this.bga.userPreferences.get(101) == 2) {
             wait_time = 2;
 
             // Medium timer (5 seconds)
-        } else if (this.prefs[101].value == 3) {
+        } else if (this.bga.userPreferences.get(101) == 3) {
             wait_time = 4;
 
             // Long timer (10 seconds)
-        } else if (this.prefs[101].value == 4) {
+        } else if (this.bga.userPreferences.get(101) == 4) {
             wait_time = 9;
         }
 
@@ -4267,15 +4267,15 @@ class Innovation extends BgaGame {
         let wait_time = 0;
 
         // Short timer (3 seconds)
-        if (this.prefs[100].value == 2) {
+        if (this.bga.userPreferences.get(100) == 2) {
             wait_time = 2;
 
             // Medium timer (5 seconds)
-        } else if (this.prefs[100].value == 3) {
+        } else if (this.bga.userPreferences.get(100) == 3) {
             wait_time = 4;
 
             // Long timer (10 seconds)
-        } else if (this.prefs[100].value == 4) {
+        } else if (this.bga.userPreferences.get(100) == 4) {
             wait_time = 9;
         }
 
@@ -4307,7 +4307,7 @@ class Innovation extends BgaGame {
             dojo.destroy("dogma_confirm_timer_button");
             this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
             dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
-        } else if (this.prefs[102].value == 2 && sharing_players.includes(',')) {
+        } else if (this.bga.userPreferences.get(102) == 2 && sharing_players.includes(',')) {
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."),
                 {
                     'age': this.square('N', 'age', card.age, 'type_' + card.type),
@@ -5284,7 +5284,7 @@ class Innovation extends BgaGame {
             let player_team = this.players[card.owner_from].player_team;
             for (let player_id in this.players) {
                 if (this.players[player_id].player_team == player_team) {
-                    this.scoreCtrl[player_id].incValue(-1);
+                    this.bga.playerPanels.getScoreCounter(player_id).incValue(-1);
                 }
             }
         }
@@ -5293,7 +5293,7 @@ class Innovation extends BgaGame {
             let player_team = this.players[card.owner_to].player_team;
             for (let player_id in this.players) {
                 if (this.players[player_id].player_team == player_team) {
-                    this.scoreCtrl[player_id].incValue(1);
+                    this.bga.playerPanels.getScoreCounter(player_id).incValue(1);
                 }
             }
         }
