@@ -27,7 +27,7 @@ class Card475 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->choosePlayer(self::getOpponents());
     } else {
-      return self::youMust()->meld()->fromHand(self::getAuxiliaryValue());
+      return self::youMust()->meld()->fromMyHand()->ofPlayersChoice(self::getAuxiliaryValue());
     }
   }
 
