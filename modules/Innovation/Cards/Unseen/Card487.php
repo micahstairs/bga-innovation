@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
-use Innovation\Enums\Locations;
 
 class Card487 extends AbstractCard
 {
@@ -18,7 +17,7 @@ class Card487 extends AbstractCard
       return self::youMust()->return()->fromYourScore();
     } else {
       $playerOnLeft = $this->game->getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer()[0];
-      return self::youMust()->fromYourHand()->toPlayer($playerOnLeft);
+      return self::youMust()->fromYourHand()->toPlayer($playerOnLeft)->toHand();
     }
   }
 

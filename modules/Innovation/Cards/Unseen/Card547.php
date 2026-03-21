@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
-use Innovation\Enums\Colors;
 use Innovation\Enums\Locations;
 
 class Card547 extends AbstractCard
@@ -20,7 +19,7 @@ class Card547 extends AbstractCard
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else if (self::isSecondNonDemand()) {
-      foreach (self::getCards(Locations::AVAILABLE_ACHIEVEMENTS) as $card) {
+      foreach (self::getCards(Locations::ACHIEVEMENTS) as $card) {
         if (self::isSpecialAchievement($card)) {
           self::draw(7);
         }

@@ -60,7 +60,7 @@ class Card399 extends AbstractCard
         self::drawAndReveal(self::getAuxiliaryValue2());
         return self::youMust()->meld()->fromYourRevealed();
       } else {
-        return self::youMust()->meld()->fromYourRevealed();
+        return self::youMust()->return()->fromYourRevealed();
       }
     } else if (self::isSecondNonDemand()) {
       return self::youMust()->choose([7, 8]);

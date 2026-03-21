@@ -13,7 +13,7 @@ class Card587 extends AbstractCard
 
   public function getInteractionOptions(): InteractionBuilder
   {
-    return self::youMust()->range(1, 11)->toMySafe();
+    return self::youMust()->fromYourAchievements()->range(1, 11)->toMySafe();
   }
 
 }

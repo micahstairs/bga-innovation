@@ -32,11 +32,13 @@ class RandomGameTest extends BaseIntegrationTest
     $edition = $this->tableInstance->getTable()->innovationGameState->getEdition();
     while (self::getCurrentStateName() !== 'gameEnd') {
 
+      // Do some extra checks to catch bugs
       foreach (self::getPlayerIds() as $playerId) {
         if (self::getCards(Locations::REVEALED, $playerId)) {
           throw new \RuntimeException("Player $playerId has cards stuck in the revealed zone");
         }
       }
+      $this->assertDecksAreValid();
 
       // Handle free action at start of turn
       if (self::getCurrentStateName() === 'artifactPlayerTurn') {

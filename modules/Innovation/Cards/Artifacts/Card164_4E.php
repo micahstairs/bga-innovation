@@ -49,6 +49,7 @@ class Card164_4E extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::hasCards(Locations::HAND) || self::getBaseDeckCount(self::getLowestAvailableAchievementValue()) > 0;
+    $value = self::getLowestAvailableAchievementValue();
+    return self::hasCards(Locations::HAND) || ($value && self::getBaseDeckCount($value) > 0);
   }
 }

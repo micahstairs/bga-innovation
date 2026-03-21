@@ -1484,6 +1484,14 @@ class Innovation extends Table
             return null;
         }
 
+        // Supply deck is always owner 0; ensure no caller can put a card in deck with a non-zero owner.
+        if ($location_to === 'deck') {
+            if ($owner_to !== 0 && $this->innovationGameState->get('debug_mode') >= 1) {
+                throw new \Exception("Cannot transfer card to deck with owner $owner_to");
+            }
+            $owner_to = 0;
+        }
+
         $bottom_from = array_key_exists('bottom_from', $properties) ? $properties['bottom_from'] : false;
         $bottom_to = array_key_exists('bottom_to', $properties) ? $properties['bottom_to'] : $location_to == 'deck' && !$card['is_relic'];
         $score_keyword = array_key_exists('score_keyword', $properties) ? $properties['score_keyword'] : false;
@@ -1900,7 +1908,8 @@ class Innovation extends Table
                 SET
                     position = (CASE position
                                 WHEN  {position} THEN {position_plus_delta}
-                                ELSE {position}
+                                WHEN  {position_plus_delta} THEN {position}
+                                ELSE position
                                 END)
                 WHERE
                     owner = {player_id} AND
@@ -8590,7 +8599,15 @@ class Innovation extends Table
                 }
             }
 
-            if (!$this->innovationGameState->artifactsExpansionEnabled() || self::getArtifactOnDisplay($player_id)) {
+            if (!$this->innovationGameState->artifactsExpansionEnabled()) {
+                self::trace('digArtifact->promoteCard');
+                $this->gamestate->nextState('promoteCard');
+                return;
+            }
+
+            $artifact_on_display = self::getArtifactOnDisplay($player_id);
+            // In 3E, skip dig entirely when already have an artifact on display. In 4E, still offer seize (rule: "Seizing is possible even if the dig event would have otherwise been ignored").
+            if ($artifact_on_display && !$this->innovationGameState->usingFourthEditionRules()) {
                 self::trace('digArtifact->promoteCard');
                 $this->gamestate->nextState('promoteCard');
                 return;
@@ -8681,7 +8698,7 @@ class Innovation extends Table
             return self::transferCardFromTo($achievement, $player_id, 'achievements');
         } else {
             $card_args = self::getNotificationArgsForCardList([$achievement]);
-            self::notifyAll('logWithCardTooltips', clienttranslate('${card} has already been claimed.'), ['card' => $card_args, 'card_ids' => [$achievement_id]]);
+            self::notifyAll('logWithCardTooltips', clienttranslate('${card} is not available to be claimed.'), ['card' => $card_args, 'card_ids' => [$achievement_id]]);
             return null;
         }
     }
@@ -9836,7 +9853,7 @@ class Innovation extends Table
 
             if ($card_id === null) { // Digging/stealing artifact
                 $message_for_player = clienttranslate('${You} must make a choice');
-                $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to rotate into a museum');
+                $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to seize');
                 $card_ids = self::getAuxiliaryArray();
                 $options = [
                     [
@@ -9848,7 +9865,7 @@ class Innovation extends Table
                 for ($i = 1; $i < count($card_ids); $i++) {
                     $options[] = [
                         'value' => $i,
-                        'text'  => clienttranslate('Rotate ${card} into a museum'),
+                        'text'  => clienttranslate('Seize ${card}'),
                         'card'  => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
                     ];
                 }
@@ -11624,10 +11641,17 @@ class Innovation extends Table
                     self::digCard($chosen_card, $player_id);
                     self::incStat(1, 'dig_events_number', $player_id);
                 } else {
-                    // If an artifact was stolen from an opponent's museum, rotate the museum and the artifact
+                    // Seize: rotate the artifact and its museum to the current player
                     $museum = self::getCardsInLocation($chosen_card['owner'], Locations::MUSEUMS)[$chosen_card['position'] - 1];
+                    $original_owner_id = $chosen_card['owner'];
                     self::transferCardFromTo($museum, $player_id, Locations::MUSEUMS);
                     self::transferCardFromTo($chosen_card, $player_id, Locations::MUSEUMS);
+                    $original_owner_name = self::getPlayerNameFromId($original_owner_id);
+                    $new_owner_name = self::getPlayerNameFromId($player_id);
+                    $card_args = $this->getNotificationArgsForCardList([$chosen_card]);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} seized ${card} from ${player_name}'), ['player_name' => $original_owner_name, 'card' => $card_args]);
+                    self::notifyPlayer($original_owner_id, 'log', clienttranslate('${player_name} seized ${card} from ${you}'), ['player_name' => $new_owner_name, 'card' => $card_args]);
+                    self::notifyAllPlayersBut([$player_id, $original_owner_id], 'log', clienttranslate('${player_name} seized ${card} from ${original_owner_name}'), ['player_name' => $new_owner_name, 'original_owner_name' => $original_owner_name, 'card' => $card_args]);
                 }
             }
         } catch (EndOfGame $e) {

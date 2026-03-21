@@ -1506,6 +1506,11 @@ abstract class AbstractCard
       $cards = array_merge($cards, self::getCards($location, $playerId));
     }
 
+    // Flag and fountain achievement cards are not real cards — do not junk them.
+    $cards = array_values(array_filter($cards, function ($card) {
+      return self::getId($card) < 1000; // exclude flags (1000–1099) and fountains (≥1100)
+    }));
+
     if (!$cards) {
       return;
     }

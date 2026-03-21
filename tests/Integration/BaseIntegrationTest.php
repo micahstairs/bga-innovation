@@ -236,6 +236,37 @@ abstract class BaseIntegrationTest extends BaseTest
     }, $players);
   }
 
+  /**
+   * Assert deck invariants to catch duplicate positions or wrong owner.
+   * - Supply deck cards (location='deck') must have owner=0.
+   * - Within each (owner, type, age) deck pile, position must be unique.
+   */
+  protected function assertDecksAreValid(): void
+  {
+    $violations = [];
+    $this->tableInstance->withDbConnection(function (Connection $db) use (&$violations) {
+      $wrongOwner = $db->fetchAllAssociative(
+        "SELECT id, owner, location, type, age, position FROM card WHERE location = 'deck' AND owner != 0"
+      );
+      if (!empty($wrongOwner)) {
+        foreach ($wrongOwner as $row) {
+          $violations[] = "Deck card has non-zero owner: " . json_encode($row);
+        }
+      }
+      $dupePositions = $db->fetchAllAssociative(
+        "SELECT owner, type, age, position, COUNT(*) AS cnt FROM card WHERE location = 'deck' GROUP BY owner, type, age, position HAVING cnt > 1"
+      );
+      if (!empty($dupePositions)) {
+        foreach ($dupePositions as $row) {
+          $violations[] = "Duplicate position in deck pile: " . json_encode($row);
+        }
+      }
+    });
+    if (!empty($violations)) {
+      throw new \RuntimeException("Deck invariant violated:\n" . implode("\n", $violations));
+    }
+  }
+
   protected function getCurrentStateName(): string
   {
     return $this->tableInstance->getTable()->getCurrentState()['name'];
