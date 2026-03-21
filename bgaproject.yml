@@ -1,4 +1,5 @@
 # TODO: This is not really being used, since we use environment variables like DB_NAME_PREFIX instead.
+gameName: innovation
 testDb:
   namePrefix: innovation_test_
   user: root
