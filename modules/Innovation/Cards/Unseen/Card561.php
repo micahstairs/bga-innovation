@@ -5,7 +5,6 @@ namespace Innovation\Cards\Unseen;
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
 use Innovation\Enums\Colors;
-use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 
 class Card561 extends AbstractCard
@@ -20,7 +19,7 @@ class Card561 extends AbstractCard
   {
     if (self::isDemand()) {
       $value = $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::ALL, Icons::EFFICIENCY);
-      return self::youMust()->value($value)->withIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine();
+      return self::youMust()->value($value)->withoutIcon(Icons::EFFICIENCY)->fromYourBoard()->toMine();
     } else {
       return self::youMust()->unsplay(self::getColorsWithMostVisibleCards());
     }
