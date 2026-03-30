@@ -85,7 +85,7 @@ class Innovation extends BgaGame {
         ["special_achievements", -1], // Computed dynamically
         ["available_museums", 5],
         ["junk", 1], // Computed dynamically
-    ]); 
+    ]);
 
     delta = {
         "my_hand": { "x": 189, "y": 133 }, // +7
@@ -3215,7 +3215,7 @@ class Innovation extends BgaGame {
 
     createCardForCardBrowser(id: number) {
         const card = this.cards[id];
-        const size = 'M';
+        const size = 'L';
         const HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, `${size} card`);
         const HTML_id = `browse_card_id_${id}`;
         const HTML_inside = this.writeOverCard(card, size, HTML_id);

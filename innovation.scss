@@ -3065,6 +3065,10 @@ $dark-color-4: #220e40;
     $L_x_position: 3;
     $L_y_position: 8;
 
+    // Artifact row: Not sure why this adjustment is needed, but it works.
+    $L_artifact_hex_y_nudge: 3.7;
+    $M_artifact_hex_y_nudge: math.div(math.round(math.div($L_artifact_hex_y_nudge * $M_offset, $L_offset) * 100), 100);
+
     // Base cards
     @for $i from 0 through 104 {
         &.hexagon_icon_#{$i} {
@@ -3095,11 +3099,11 @@ $dark-color-4: #220e40;
     @for $i from 110 through 214 {
         &.hexagon_icon_#{$i} {
             &.M {
-                background-position: -#{$M_x_position + ($i - 110) * $M_offset}px -#{$M_y_position + $M_offset}px;
+                background-position: -#{$M_x_position + ($i - 110) * $M_offset}px -#{$M_y_position + $M_offset - $M_artifact_hex_y_nudge}px;
             }
 
             &.L {
-                background-position: -#{$L_x_position + ($i - 110) * $L_offset}px -#{$L_y_position + $L_offset}px;
+                background-position: -#{$L_x_position + ($i - 110) * $L_offset}px -#{$L_y_position + $L_offset - $L_artifact_hex_y_nudge}px;
             }
         }
     }
@@ -3107,11 +3111,11 @@ $dark-color-4: #220e40;
     @for $i from 450 through 459 {
         &.hexagon_icon_#{$i} {
             &.M {
-                background-position: -#{$M_x_position + ($i - 345) * $M_offset}px -#{$M_y_position + $M_offset}px;
+                background-position: -#{$M_x_position + ($i - 345) * $M_offset}px -#{$M_y_position + $M_offset - $M_artifact_hex_y_nudge}px;
             }
 
             &.L {
-                background-position: -#{$L_x_position + ($i - 345) * $L_offset}px -#{$L_y_position + $L_offset}px;
+                background-position: -#{$L_x_position + ($i - 345) * $L_offset}px -#{$L_y_position + $L_offset - $L_artifact_hex_y_nudge}px;
             }
         }
     }

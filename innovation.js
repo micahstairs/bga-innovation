@@ -3029,7 +3029,7 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.createCardForCardBrowser = function (id) {
         var card = this.cards[id];
-        var size = 'M';
+        var size = 'M'; // NOTE: Update this line to 'L' for testing purposes if you want to be able to easily browser the L cards.
         var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, "".concat(size, " card"));
         var HTML_id = "browse_card_id_".concat(id);
         var HTML_inside = this.writeOverCard(card, size, HTML_id);
