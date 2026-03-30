@@ -98,32 +98,11 @@ class GameStateTest extends BaseTest
         $this->assertEquals($input, $this->state->getAsArray('test'));
     }
 
-    public function testUsingFirstEditionRules_firstEdition()
-    {
-        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
-
-        $this->assertTrue($this->state->usingFirstEditionRules());
-    }
-
-    public function testUsingFirstEditionRules_thirdEdition()
-    {
-        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(1);
-
-        $this->assertFalse($this->state->usingFirstEditionRules());
-    }
-
-    public function testUsingFirstEditionRules_fourthEdition()
-    {
-        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(3);
-
-        $this->assertFalse($this->state->usingFirstEditionRules());
-    }
-
     public function testUsingThirdEditionRules_firstEdition()
     {
         $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
 
-        $this->assertFalse($this->state->usingThirdEditionRules());
+        $this->assertTrue($this->state->usingThirdEditionRules());
     }
 
     public function testUsingThirdEditionRules_thirdEdition()

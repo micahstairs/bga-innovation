@@ -10423,9 +10423,7 @@ class Innovation extends Table
             $this->innovationGameState->set('has_second_action', 1);
         }
         if ($next_player) { // The turn for the current player is over
-            if (!$this->innovationGameState->usingFirstEditionRules()) {
-                self::resetFlagsForMonument();
-            }
+            self::resetFlagsForMonument();
 
             if ($this->innovationGameState->citiesExpansionEnabled()) {
                 $this->innovationGameState->set('endorse_action_state', 1);
