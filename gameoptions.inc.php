@@ -84,8 +84,6 @@ $game_options = array(
         'values'         => array(
             3 => array('name' => totranslate('4th edition'), 'tmdisplay' => totranslate('4th edition')),
             1 => array('name' => totranslate('3rd edition'), 'tmdisplay' => totranslate('3rd edition')),
-            /* TODO(4E): Retire 1st editiion. */
-            // 2 => array('name' => totranslate('1st edition'), 'tmdisplay' => totranslate('1st edition')),
         ),
         'startcondition' => array(
             1 => array(
