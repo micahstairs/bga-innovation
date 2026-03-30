@@ -44,7 +44,7 @@ class Card403 extends AbstractCard
       }
     }
     if (self::isFirstInteraction()) {
-      return self::youMay()->chooseValue([6, 7, 8, 9]);
+      return self::youMay()->choose([6, 7, 8, 9]);
     } else {
       $value = self::getMaxValueInLocation('junk');
       return self::youMust()->achieveIfEligible()->value($value)->fromJunk();
