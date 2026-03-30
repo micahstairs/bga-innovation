@@ -140,11 +140,11 @@ class GameStateTest extends BaseTest
         $this->assertTrue($this->state->usingFourthEditionRules());
     }
 
-    public function testGetEdition_firstEdition()
+    public function testGetEdition_firstEdition_fallbackToThirdEdition()
     {
         $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
 
-        $this->assertEquals(1, $this->state->getEdition());
+        $this->assertEquals(3, $this->state->getEdition());
     }
 
     public function testGetEdition_thirdEdition()
