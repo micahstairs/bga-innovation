@@ -192,7 +192,7 @@ var Innovation = /** @class */ (function (_super) {
             ["achievements", -1], // Computed dynamically
             ["special_achievements", -1], // Computed dynamically
             ["available_museums", 5],
-            ["junk", 1], // TODO(4E): Compute this dynamically
+            ["junk", 1], // Computed dynamically
         ]);
         _this.delta = {
             "my_hand": { "x": 189, "y": 133 }, // +7
@@ -914,6 +914,7 @@ var Innovation = /** @class */ (function (_super) {
         // JUNK
         this.zone["junk"] = {};
         this.zone["junk"]["0"] = this.createZone('junk', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
+        this.setPlacementRules(this.zone["junk"]["0"], /*left_to_right=*/ true);
         for (var type = 0; type <= 5; type++) {
             for (var is_relic = 0; is_relic <= 1; is_relic++) {
                 for (var age = 1; age <= 11; age++) {
@@ -1085,6 +1086,9 @@ var Innovation = /** @class */ (function (_super) {
         this.num_cards_in_row.set("museums", Math.floor(museum_container_width / this.delta.museums.x));
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
         this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
+        if (this.gamedatas.fourth_edition) {
+            this.refreshJunkZoneLayout(window_width);
+        }
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
         for (var player_id in this.players) {
             this.zone["museums"][player_id].updateDisplay();
@@ -1100,6 +1104,30 @@ var Innovation = /** @class */ (function (_super) {
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
+    };
+    /**
+     * Lay out junk card backs in the "Browse all cards" dialog as a multi-column grid (width-based).
+     */
+    Innovation.prototype.refreshJunkZoneLayout = function (windowWidthOverride) {
+        var _a;
+        if (!this.gamedatas.fourth_edition || !((_a = this.zone["junk"]) === null || _a === void 0 ? void 0 : _a["0"])) {
+            return;
+        }
+        var junkZone = this.zone["junk"]["0"];
+        var cardW = this.card_dimensions[junkZone.HTML_class].width;
+        var dx = this.delta.junk.x;
+        var refWidth = (windowWidthOverride !== null && windowWidthOverride !== void 0 ? windowWidthOverride : Math.max(dojo.window.getBox().w, 640)) - 180;
+        var junkEl = $("junk");
+        if (junkEl && junkEl.offsetParent !== null) {
+            var pos = dojo.position(junkEl);
+            if (pos.w > 80) {
+                refWidth = pos.w;
+            }
+        }
+        var junkCols = Math.max(4, Math.min(20, Math.floor((refWidth - cardW) / dx) + 1));
+        this.num_cards_in_row.set("junk", junkCols);
+        dojo.setStyle(junkZone.container_div, 'width', (cardW + (junkCols - 1) * dx) + "px");
+        junkZone.updateDisplay();
     };
     ///////////////////////////////////////////////////
     //// Simple handler management system
@@ -4685,6 +4713,12 @@ var Innovation = /** @class */ (function (_super) {
         dojo.byId('junk').style.display = 'block';
         dojo.byId('browse_card_summaries').style.display = 'none';
         dojo.query('#special_achievement_summaries').addClass('heightless');
+        var self = this;
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                self.refreshJunkZoneLayout();
+            });
+        });
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications

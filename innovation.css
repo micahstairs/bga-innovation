@@ -177,6 +177,11 @@
   margin-top: 10px;
 }
 
+#junk {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 #special_achievement_summaries.heightless,
 #special_achievement_selections.heightless {
   height: 0px;

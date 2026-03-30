@@ -84,8 +84,8 @@ class Innovation extends BgaGame {
         ["achievements", -1], // Computed dynamically
         ["special_achievements", -1], // Computed dynamically
         ["available_museums", 5],
-        ["junk", 1], // TODO(4E): Compute this dynamically
-    ]);
+        ["junk", 1], // Computed dynamically
+    ]); 
 
     delta = {
         "my_hand": { "x": 189, "y": 133 }, // +7
@@ -894,6 +894,7 @@ class Innovation extends BgaGame {
         // JUNK
         this.zone["junk"] = {};
         this.zone["junk"]["0"] = this.createZone('junk', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
+        this.setPlacementRules(this.zone["junk"]["0"], /*left_to_right=*/ true);
         for (let type = 0; type <= 5; type++) {
             for (let is_relic = 0; is_relic <= 1; is_relic++) {
                 for (let age = 1; age <= 11; age++) {
@@ -1082,6 +1083,10 @@ class Innovation extends BgaGame {
         this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
         this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
 
+        if (this.gamedatas.fourth_edition) {
+            this.refreshJunkZoneLayout(window_width);
+        }
+
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
         for (let player_id in this.players) {
             this.zone["museums"][player_id].updateDisplay();
@@ -1097,6 +1102,30 @@ class Innovation extends BgaGame {
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
+    }
+
+    /**
+     * Lay out junk card backs in the "Browse all cards" dialog as a multi-column grid (width-based).
+     */
+    refreshJunkZoneLayout(windowWidthOverride?: number) {
+        if (!this.gamedatas.fourth_edition || !this.zone["junk"]?.["0"]) {
+            return;
+        }
+        const junkZone = this.zone["junk"]["0"];
+        const cardW = this.card_dimensions[junkZone.HTML_class].width;
+        const dx = this.delta.junk.x;
+        let refWidth = (windowWidthOverride ?? Math.max(dojo.window.getBox().w, 640)) - 180;
+        const junkEl = $("junk");
+        if (junkEl && junkEl.offsetParent !== null) {
+            const pos = dojo.position(junkEl);
+            if (pos.w > 80) {
+                refWidth = pos.w;
+            }
+        }
+        const junkCols = Math.max(4, Math.min(20, Math.floor((refWidth - cardW) / dx) + 1));
+        this.num_cards_in_row.set("junk", junkCols);
+        dojo.setStyle(junkZone.container_div, 'width', (cardW + (junkCols - 1) * dx) + "px");
+        junkZone.updateDisplay();
     }
 
     ///////////////////////////////////////////////////
@@ -5161,6 +5190,12 @@ class Innovation extends BgaGame {
         dojo.byId('junk').style.display = 'block';
         dojo.byId('browse_card_summaries').style.display = 'none';
         dojo.query('#special_achievement_summaries').addClass('heightless');
+        const self = this;
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                self.refreshJunkZoneLayout();
+            });
+        });
     }
 
     ///////////////////////////////////////////////////
