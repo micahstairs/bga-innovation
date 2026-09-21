@@ -43,8 +43,6 @@ class Card499 extends AbstractCard
       // Keep track of highest card returned
       self::setAuxiliaryValue(max(self::getValue($card), self::getAuxiliaryValue()));
     }
-    self::transferToHand($card);
-    self::setMaxSteps(2);
   }
 
   public function afterInteraction()
