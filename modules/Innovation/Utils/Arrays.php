@@ -16,13 +16,29 @@ class Arrays
     }
 
     /**
+     * Pack a list of non-negative integers into a signed 32-bit gamestate INT.
+     *
+     * Values 0–30 are stored as bits (2^value). Consecutive 0..n-1 lists longer
+     * than 31 entries use a negative sentinel so choose_from_list can scale
+     * (Blackmail, Karaoke) without overflowing MySQL INT.
+     *
      * @param array $array
      * @return int
      */
     public static function encode(array $array): int
     {
+        $values = array_values($array);
+        sort($values);
+        $n = count($values);
+        if ($n > 31 && $values === range(0, $n - 1)) {
+            return -1 - $n;
+        }
+
         $encodedValue = 0;
-        foreach ($array as $value) {
+        foreach ($values as $value) {
+            if ($value < 0 || $value > 30) {
+                throw new \BgaVisibleSystemException("Arrays::encode cannot pack value $value into a 32-bit INT");
+            }
             $encodedValue += (int) round(pow(2, $value));
         }
         return $encodedValue;
@@ -34,6 +50,10 @@ class Arrays
      */
     public static function decode(int $encodedValue): array
     {
+        if ($encodedValue < -1) {
+            return range(0, -2 - $encodedValue);
+        }
+
         $array = [];
         $value = 0;
         while ($encodedValue > 0) {

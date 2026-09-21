@@ -59,6 +59,9 @@ class Card519 extends AbstractCard
 
   public function afterInteraction()
   {
+    if (!self::isFirstInteraction()) {
+      return;
+    }
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     foreach (self::getCards(Locations::REVEALED) as $card) {
       self::transferToHand($card);
