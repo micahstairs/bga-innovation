@@ -20,7 +20,7 @@ class Card581 extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->splayUp(Colors::GREEN);
     } else {
-      return self::youMust()->meld()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromAnyBoard();
+      return self::youMust()->meld()->non(Colors::YELLOW)->withIcon(Icons::EFFICIENCY)->fromAnyBoard()->fromAnyOtherPlayer();
     }
   }
 
