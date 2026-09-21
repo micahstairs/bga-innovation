@@ -31,7 +31,7 @@ class Card353 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMay()->tuck()->fromYourHand()->withColor([$color]);
     } else {
-      return self::youMust()->return()->fromAnywhereInStack()->withColor([$color])->fromAnyPlayer();
+      return self::youMust()->meld()->fromAnywhereInStack()->withColor([$color])->fromAnyOtherPlayer();
     }
   }
 
@@ -52,9 +52,13 @@ class Card353 extends AbstractCard
         // actually tucked (but after the player decided to tuck a card).
         $this->game->revealCardWithoutMoving(self::getPlayerId(), $drawnCard);
       }
-      self::meld($drawnCard);
-      if (self::wasForeseen()) {
+      if (self::isSecondInteraction()) {
+        self::meld($drawnCard);
+      } else if (self::isFourthEdition() && self::wasForeseen()) {
+        // Meld other boards' cards first so the drawn card from forecast can be melded last (on top).
         self::setMaxSteps(2);
+      } else {
+        self::meld($drawnCard);
       }
     }
   }
