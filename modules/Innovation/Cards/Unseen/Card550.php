@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
-use Innovation\Enums\Locations;
 
 class Card550 extends AbstractCard
 {
@@ -25,7 +24,8 @@ class Card550 extends AbstractCard
     if (self::isFirstInteraction()) {
       return self::youMust()->meld()->fromYourScore();
     } else {
-      return self::youMust()->safeguard()->value(self::getMinValueInLocation(Locations::AVAILABLE_ACHIEVEMENTS));
+      $value = self::getMinValue(self::getAvailableStandardAchievements());
+      return self::youMust()->safeguard()->value($value);
     }
   }
 
