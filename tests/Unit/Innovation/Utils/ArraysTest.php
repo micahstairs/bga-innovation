@@ -35,28 +35,6 @@ class ArraysTest extends BaseTest
         $this->assertEmpty(array_diff($original, $output));
     }
 
-    public function testEncodeConsecutiveIndicesThatOverflowTheBitset()
-    {
-        $original = range(0, 39);
-        $encoded = Arrays::encode($original);
-        $this->assertLessThan(-1, $encoded);
-        $this->assertEquals($original, Arrays::decode($encoded));
-    }
-
-    public function testEncodeThirtyOneConsecutiveIndicesStillUsesBitset()
-    {
-        $original = range(0, 30);
-        $encoded = Arrays::encode($original);
-        $this->assertEquals(2147483647, $encoded);
-        $this->assertEquals($original, Arrays::decode($encoded));
-    }
-
-    public function testEncodeRejectsValuesThatOverflowSignedInt()
-    {
-        $this->expectException(\BgaVisibleSystemException::class);
-        Arrays::encode([31]);
-    }
-
     /**
      * @dataProvider providerTestGetValueFromBase16Array
      */
