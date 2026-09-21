@@ -78,7 +78,7 @@ class Card72 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::isFourthEdition() && (self::hasCards(Locations::HAND) || self::hasCards(Locations::HAND, self::getLauncherId()));
+    return self::isFourthEdition() && (self::getBaseDeckCount(7) > 0 || self::getBaseDeckCount(8) > 0);
   }
 
 }
