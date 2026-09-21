@@ -37,7 +37,7 @@ class Card93_4E extends AbstractCard
       $numCardsTransferred++;
     }
     if ($numCardsTransferred > 0) {
-      self::setMaxSteps(1);
+      self::setMaxSteps(2);
     }
   }
 
