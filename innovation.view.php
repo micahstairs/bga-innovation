@@ -28,11 +28,6 @@ require_once(APP_BASE_PATH . "view/common/game.view.php");
 
 class view_innovation_innovation extends game_view
 {
-    function getGameName()
-    {
-        return "innovation";
-    }
-
     function hex2rgb($hex)
     {
         $hex = str_replace("#", "", $hex);
@@ -95,7 +90,7 @@ class view_innovation_innovation extends game_view
             $rgb = self::hex2rgb($me['player_color']);
             $this->page->insert_block("player", array(
                 "PLAYER_ID"          => $my_id,
-                "PLAYER_NAME"        => self::_("You"),
+                "PLAYER_NAME"        => clienttranslate("You"),
                 "PLAYER_COLOR"       => $me['player_color'] . "; display:none",
                 "PLAYER TEAM"        => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($me['player_color'] == "0000ff" ? _("Blue team") : _("Red team")) : "",
                 "R"                  => $rgb[0],
@@ -103,10 +98,10 @@ class view_innovation_innovation extends game_view
                 "B"                  => $rgb[2],
                 "OPT_FORECAST_CLASS" => " class='forecast_show_window'",
                 "OPT_SCORE_CLASS"    => " class='score_show_window'",
-                "HAND"               => self::_("Hand"),
-                "DISPLAY"            => self::_("Artifact on Display"),
-                "MUSEUMS"            => self::_("Museums"),
-                "SCORE_PILE"         => self::_("Score pile"),
+                "HAND"               => clienttranslate("Hand"),
+                "DISPLAY"            => clienttranslate("Artifact on Display"),
+                "MUSEUMS"            => clienttranslate("Museums"),
+                "SCORE_PILE"         => clienttranslate("Score pile"),
             ));
             // Opponents
             // We have to reorganize players array so that it reflects the real turn order beginning from me
@@ -148,16 +143,16 @@ class view_innovation_innovation extends game_view
                 "PLAYER_ID"          => $player_id,
                 "PLAYER_NAME"        => $player['player_name'],
                 "PLAYER_COLOR"       => $player['player_color'],
-                "PLAYER TEAM"        => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($player['player_color'] == "0000ff" ? self::_("Blue team") : self::_("Red team")) : "",
+                "PLAYER TEAM"        => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($player['player_color'] == "0000ff" ? clienttranslate("Blue team") : clienttranslate("Red team")) : "",
                 "R"                  => $rgb[0],
                 "G"                  => $rgb[1],
                 "B"                  => $rgb[2],
                 "OPT_FORECAST_CLASS" => "",
                 "OPT_SCORE_CLASS"    => "",
-                "HAND"               => self::_("Hand"),
-                "DISPLAY"            => self::_("Artifact on Display"),
-                "MUSEUMS"            => self::_("Museums"),
-                "SCORE_PILE"         => self::_("Score pile"),
+                "HAND"               => clienttranslate("Hand"),
+                "DISPLAY"            => clienttranslate("Artifact on Display"),
+                "MUSEUMS"            => clienttranslate("Museums"),
+                "SCORE_PILE"         => clienttranslate("Score pile"),
             ));
         }
 
@@ -197,12 +192,12 @@ class view_innovation_innovation extends game_view
         for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_6_2", array("TYPE" => 5, "AGE" => $age));
         }
-        $this->page->insert_block("decks", array("DECKS" => self::_("Decks")));
-        $this->page->insert_block("available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")));
-        $this->page->insert_block("standard_achievements", array("STANDARD_ACHIEVEMENTS" => self::_("Standard achievements")));
-        $this->page->insert_block("special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")));
-        $this->page->insert_block("available_museums", array("AVAILABLE_MUSEUMS" => self::_("Available museums")));
-        $this->page->insert_block("junk", array("JUNK" => self::_("Junk")));
+        $this->page->insert_block("decks", array("DECKS" => clienttranslate("Decks")));
+        $this->page->insert_block("available_relics", array("AVAILABLE_RELICS" => clienttranslate("Available relics")));
+        $this->page->insert_block("standard_achievements", array("STANDARD_ACHIEVEMENTS" => clienttranslate("Standard achievements")));
+        $this->page->insert_block("special_achievements", array("SPECIAL_ACHIEVEMENTS" => clienttranslate("Special achievements")));
+        $this->page->insert_block("available_museums", array("AVAILABLE_MUSEUMS" => clienttranslate("Available museums")));
+        $this->page->insert_block("junk", array("JUNK" => clienttranslate("Junk")));
     }
 }
 

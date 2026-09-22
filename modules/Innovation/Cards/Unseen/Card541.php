@@ -17,13 +17,13 @@ class Card541 extends AbstractCard
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      if (self::countCards(Locations::HAND)) {
+      if (self::hasCards(Locations::HAND)) {
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     } else if (self::isThirdNonDemand()) {
-      if (self::countCards(Locations::SCORE)) {
+      if (self::hasCards(Locations::SCORE)) {
         self::setMaxSteps(1);
       } else {
         self::drawAndScore(0);

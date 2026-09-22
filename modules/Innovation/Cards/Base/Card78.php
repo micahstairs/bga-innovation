@@ -17,14 +17,25 @@ class Card78 extends AbstractCard
   //   - I demand you transfer your two highest non-red top cards without [INDUSTRY] of different
   //     colors to my score pile! If you transfer any cards, draw an 8.
 
+  public function initialExecution()
+  {
+    self::setMaxSteps(1);
+    self::setAuxiliaryValue(0); // Track how many cards were transferred during this demand (can't use getNumChosen() because refreshing the selection resets it)
+  }
+
   public function getInteractionOptions(): InteractionBuilder
   {
     return self::youMust()->exactly(2)->highest()->non(Colors::RED)->withoutIcon(Icons::INDUSTRY)->fromYourBoard()->toMyScore()->refreshingSelection();
   }
 
+  public function handleCardChoice(array $card)
+  {
+    self::incrementAuxiliaryValue();
+  }
+
   public function afterInteraction()
   {
-    if (self::getNumChosen() > 0) {
+    if (self::getAuxiliaryValue() > 0) {
       self::draw(8);
     }
   }

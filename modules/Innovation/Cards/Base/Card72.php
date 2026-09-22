@@ -20,7 +20,7 @@ class Card72 extends AbstractCard
   public function initialExecution()
   {
     if (self::isDemand()) {
-      self::setMaxSteps(3);
+      self::setMaxSteps(2);
     } else {
       self::setMaxSteps(1);
     }
@@ -51,7 +51,7 @@ class Card72 extends AbstractCard
 
   public function afterInteraction()
   {
-    if (self::isThirdInteraction()) {
+    if (self::isSecondInteraction()) {
       $this->game->gamestate->changeActivePlayer(self::getLauncherId());
       self::transferToHand(self::getCard(self::getAuxiliaryValue()));
       self::setAuxiliaryValue(-1);
@@ -78,7 +78,7 @@ class Card72 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return self::isFourthEdition() && (self::hasCards(Locations::HAND) || self::hasCards(Locations::HAND, self::getLauncherId()));
+    return self::isFourthEdition() && (self::getBaseDeckCount(7) > 0 || self::getBaseDeckCount(8) > 0);
   }
 
 }

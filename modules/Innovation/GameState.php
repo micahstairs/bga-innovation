@@ -83,17 +83,9 @@ class GameState
     /**
      * @return bool
      */
-    public function usingFirstEditionRules()
-    {
-        return $this->get('game_rules') == 2;
-    }
-
-    /**
-     * @return bool
-     */
     public function usingThirdEditionRules()
     {
-        return $this->get('game_rules') == 1;
+        return $this->get('game_rules') <= 2;
     }
 
     /**
@@ -110,10 +102,7 @@ class GameState
     public function getEdition()
     {
         $value = $this->get('game_rules');
-        if ($value == 2) {
-            return 1;
-        }
-        if ($value == 1) {
+        if ($value <= 2) {
             return 3;
         }
         return 4;

@@ -22,7 +22,7 @@ jobs:
         id: setup-php
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.1:"
+          php-version: "8.1"
       - name: Rename innovation to innovationalpha
         run: php innovation/misc/bgaprojectrename.php innovation innovationalpha
       - name: Delete files that we do not want to upload

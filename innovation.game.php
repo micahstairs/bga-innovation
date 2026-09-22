@@ -206,11 +206,6 @@ class Innovation extends Table
         );
     }
 
-    protected function getGameName()
-    {
-        return "innovation";
-    }
-
     // TODO(4E): Simulate migration.
     function upgradeTableDb($from_version)
     {
@@ -2421,7 +2416,7 @@ class Innovation extends Table
                 return "E";
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
+                throw new BgaVisibleSystemException(self::format(clienttranslate("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
         }
     }
 
@@ -2441,7 +2436,7 @@ class Innovation extends Table
                 break;
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(clienttranslate("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
         }
 
         $transferInfo = self::stripTransferInfoForNotification($transferInfo);
@@ -3956,7 +3951,7 @@ class Innovation extends Table
             $color_in_clear = Colors::render($color);
 
             if ($player_id != $target_player_id) {
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
+                throw new BgaVisibleSystemException(self::format(clienttranslate("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
             }
 
             self::notifyPlayer(
@@ -8630,7 +8625,8 @@ class Innovation extends Table
                 // You first draw up through any empty ages (base cards) before looking at the relevant artifact deck
                 $age_after_drawing_up = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
                 $top_artifact_card = self::getDeckTopCard($age_after_drawing_up, CardTypes::ARTIFACTS);
-                if ($top_artifact_card) {
+                // Skip the dig itself when an artifact is already on display. 4E can still seize.
+                if ($top_artifact_card && !$artifact_on_display) {
                     $card_ids[] = $top_artifact_card['id'];
                 }
                 if ($this->innovationGameState->usingFourthEditionRules()) {
@@ -8655,7 +8651,7 @@ class Innovation extends Table
                 self::trace('digArtifact->preSelectionMove');
                 $this->gamestate->nextState('preSelectionMove');
                 return;
-            } else if ($eligible_for_dig) {
+            } else if ($eligible_for_dig && !$artifact_on_display) {
                 self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_after_drawing_up)));
             }
 
@@ -9278,7 +9274,7 @@ class Innovation extends Table
         if (self::getGameStateValue('debug_mode') >= 1) {
             debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         }
-        throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+        throw new BgaUserException(clienttranslate("Your choice was invalid (try refreshing the page)"));
     }
 
     function argTurn0()
@@ -9855,19 +9851,22 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} must make a choice');
                 $message_for_others = clienttranslate('${player_name} must choose a card to dig or an artifact to seize');
                 $card_ids = self::getAuxiliaryArray();
-                $options = [
-                    [
-                        'value' => 0,
-                        'text'  => clienttranslate('Dig from ${age} deck'),
-                        'age'   => self::getAgeSquareWithType(self::getCardInfo($card_ids[0])['age'], CardTypes::ARTIFACTS),
-                    ],
-                ];
-                for ($i = 1; $i < count($card_ids); $i++) {
-                    $options[] = [
-                        'value' => $i,
-                        'text'  => clienttranslate('Seize ${card}'),
-                        'card'  => $this->getNotificationArgsForCardList([self::getCardInfo($card_ids[$i])]),
-                    ];
+                $options = [];
+                foreach ($card_ids as $i => $id) {
+                    $card = self::getCardInfo($id);
+                    if ($card['location'] === Locations::DECK) {
+                        $options[] = [
+                            'value' => $i,
+                            'text'  => clienttranslate('Dig from ${age} deck'),
+                            'age'   => self::getAgeSquareWithType($card['age'], CardTypes::ARTIFACTS),
+                        ];
+                    } else {
+                        $options[] = [
+                            'value' => $i,
+                            'text'  => clienttranslate('Seize ${card}'),
+                            'card'  => $this->getNotificationArgsForCardList([$card]),
+                        ];
+                    }
                 }
             } else {
                 $executionState = (new ExecutionState($this))
@@ -10428,9 +10427,7 @@ class Innovation extends Table
             $this->innovationGameState->set('has_second_action', 1);
         }
         if ($next_player) { // The turn for the current player is over
-            if (!$this->innovationGameState->usingFirstEditionRules()) {
-                self::resetFlagsForMonument();
-            }
+            self::resetFlagsForMonument();
 
             if ($this->innovationGameState->citiesExpansionEnabled()) {
                 $this->innovationGameState->set('endorse_action_state', 1);
@@ -11637,7 +11634,10 @@ class Innovation extends Table
             } else if ($card_id === null) { // Digging/stealing artifact
                 $card_ids = self::getAuxiliaryArray();
                 $chosen_card = self::getCardInfo($card_ids[$choice]);
-                if ($choice == 0) {
+                if ($chosen_card['location'] === Locations::DECK) {
+                    if (self::getArtifactOnDisplay($player_id) != null) {
+                        self::throwInvalidChoiceException();
+                    }
                     self::digCard($chosen_card, $player_id);
                     self::incStat(1, 'dig_events_number', $player_id);
                 } else {
