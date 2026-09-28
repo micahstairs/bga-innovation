@@ -17,7 +17,7 @@ class Card178_4E extends AbstractCard
       self::drawAndScore(8);
     } else if (self::isSecondNonDemand()) {
       $card = self::drawAndMeld(8);
-      if (self::getFaceupValue($card) == 8) {
+      if ($card) {
         self::setMaxSteps(1);
       }
     }
