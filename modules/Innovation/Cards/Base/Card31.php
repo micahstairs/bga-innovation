@@ -32,14 +32,16 @@ class Card31 extends AbstractCard
       foreach ($launcherCards as $card) {
         self::transferToHand($card, self::getPlayerId());
       }
-    } else {
+    } else if (self::isFirstOrThirdEdition()) {
       self::setMaxSteps(2);
+    } else {
+      self::setMaxSteps(1);
     }
   }
 
   public function getInteractionOptions(): InteractionBuilder
   {
-    if (self::isFirstNonDemand() && self::isFirstInteraction()) {
+    if ((self::isFirstOrThirdEdition() && self::isFirstInteraction()) || (self::isFourthEdition() && self::isFirstNonDemand())) {
       return self::youMust()->revealAndScore()->withIcon(Icons::AUTHORITY)->fromYourHand()->revealingIfUnable();
     } else {
       return self::youMay()->splayLeft(Colors::RED);
