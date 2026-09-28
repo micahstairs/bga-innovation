@@ -28,6 +28,11 @@ class Card553 extends AbstractCard
       if (self::canSplay([Colors::GREEN, Colors::PURPLE]) && !(self::isSplayedRight(Colors::GREEN) && self::isSplayedRight(Colors::PURPLE))) {
         self::setMaxSteps(1);
         self::setAuxiliaryValue($hadNine ? 1 : 0);
+      } else {
+        self::draw(8);
+        if ($hadNine) {
+          self::draw(9);
+        }
       }
     } else if ($hadNine) {
       self::draw(9);
