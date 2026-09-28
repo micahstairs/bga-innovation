@@ -11499,6 +11499,8 @@ class Innovation extends Table
 
             // The player has chosen one card
             $card = self::getCardInfo($selected_card_id);
+            $is_distance_rule_return = self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1
+                || self::getPlayerTableColumn($player_id, 'distance_rule_share_state') == 1;
 
             // Flags
             $owner_to = $this->innovationGameState->get('owner_to');
@@ -11579,12 +11581,14 @@ class Innovation extends Table
                 }
 
                 if ($splay_direction == -1) {
-                    if ($code !== null) {
+                    // A Parley/share-distance return is not a dogma card choice. Transfer the card
+                    // back to the deck, but do not run executeCardTransfer or handleCardChoice.
+                    if (!$is_distance_rule_return && $code !== null) {
                         $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
                         $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
                         $this->innovationGameState->set("owner_last_selected", $card['owner']);
                     }
-                    if ($code !== null && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
+                    if (!$is_distance_rule_return && $code !== null && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
                         // Do nothing since the card transfer was overridden
                     } else if ($location_to == Locations::REVEALED_THEN_HAND) {
                         $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
@@ -11616,7 +11620,7 @@ class Innovation extends Table
                             ]
                         );
                     }
-                    if ($code !== null) {
+                    if (!$is_distance_rule_return && $code !== null) {
                         self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
                         self::setStepMax($executionState->getMaxSteps());
                         self::setStep($executionState->getNextStep() - 1);
