@@ -7,7 +7,6 @@
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  */
 
-require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
 require_once('modules/Innovation/Cards/AbstractCard.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
 require_once('modules/Innovation/Cards/InteractionBuilder.php');
@@ -42,7 +41,7 @@ class EndOfGame extends Exception
 {
 }
 
-class Innovation extends Table
+class Innovation extends \Bga\GameFramework\Table
 {
 
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
@@ -84,9 +83,16 @@ class Innovation extends Table
         //  Here, you can assign labels to global variables you are using for this game.
         //  You can use any number of global variables with IDs between 10 and 99.
         //  If your game has options (variants), you also have to associate here a label to
-        //  the corresponding ID in gameoptions.inc.php.
+        //  the corresponding ID in gameoptions.jsonc.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
+        // The workbench stub does not provide the current framework services.
+        if (!isset($this->bga) && class_exists(\Helpers\LegacyBga::class, false)) {
+            $this->bga = new \Helpers\LegacyBga($this);
+        }
+        if (!method_exists($this->gamestate, 'getCurrentMainState') && class_exists(\Helpers\LegacyGamestate::class, false)) {
+            $this->gamestate = new \Helpers\LegacyGamestate($this->gamestate);
+        }
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
@@ -799,6 +805,9 @@ class Innovation extends Table
         $this->activeNextPlayer();
 
         /************ End of the game initialization *****/
+
+        // State 1 (gameSetup) is provided by the framework. Enter the first game state.
+        return 2;
     }
 
     /*
@@ -835,10 +844,11 @@ class Innovation extends Table
         $current_player_id = self::getCurrentPlayerId(); // !! We must only return information visible by this player !!
 
         // Get information about players
-        $players = self::getCollectionFromDb("SELECT player_id, player_score, player_team, player_color FROM player");
+        $players = self::getCollectionFromDb("SELECT player_id, player_no, player_team FROM player ORDER BY player_no");
         foreach ($players as $player_id => $player) {
-            $result['players'][$player_id]['achievement_count'] = (Integer) ($player['player_score']);
-            $result['players'][$player_id]['player_team'] = (Integer) ($player['player_team']);
+            $result['players'][$player_id]['achievement_count'] = (int) $this->bga->playerScore->get((int) $player_id);
+            $result['players'][$player_id]['player_team'] = (int) $player['player_team'];
+            $result['players'][$player_id]['player_no'] = (int) $player['player_no'];
         }
 
         // Public information
@@ -1001,7 +1011,7 @@ class Innovation extends Table
             $action_number = $this->innovationGameState->get('current_action_number');
             $result['action_number'] = $action_number;
             $card = self::getArtifactOnDisplay($active_player);
-            if ($card !== null && $this->gamestate->state()['name'] == 'artifactPlayerTurn') {
+            if ($card !== null && $this->currentMainStateName() == 'artifactPlayerTurn') {
                 $result['artifact_on_display_icons'] = array();
                 $result['artifact_on_display_icons']['resource_icon'] = $card['dogma_icon'];
                 $result['artifact_on_display_icons']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
@@ -1037,8 +1047,7 @@ class Innovation extends Table
     function getGameProgression()
     {
         // Start or end of game
-        $current_state = $this->gamestate->state();
-        switch ($current_state['name']) {
+        switch ($this->currentMainStateName()) {
             case 'gameSetup':
             case 'turn0':
                 return 0;
@@ -1728,8 +1737,7 @@ class Innovation extends Table
         $card['position'] = $position_to;
         $card['splay_direction'] = $splay_direction_to;
 
-        $current_state = $this->gamestate->state();
-        if ($current_state['name'] != 'gameSetup') {
+        if ($this->currentMainStateName() != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
                 if ($card['type'] == CardTypes::CITIES && !$player_already_lost) {
@@ -2559,7 +2567,7 @@ class Innovation extends Table
                 if ($draw_keyword) {
                     $action_for_player = clienttranslate('draw and meld');
                     $action_for_others = clienttranslate('draw and melds');
-                } else if ($this->gamestate->state()['name'] == 'promoteCardPlayerTurn') {
+                } else if ($this->currentMainStateName() == 'promoteCardPlayerTurn') {
                     $action_for_player = clienttranslate('promote');
                     $action_for_others = clienttranslate('promotes');
                 } else {
@@ -4096,16 +4104,16 @@ class Innovation extends Table
     {
         // Display who won and with how many achievements
         // (There can be weird cases when two players tie or one player get more achievements than needed if two or more special achievements are claimed at the same time)
-        $players = self::getCollectionFromDb("SELECT player_id, player_score FROM player");
+        $achievement_counts = $this->bga->playerScore->getAll();
         $number_of_achievements_needed_to_win = $this->innovationGameState->get('number_of_achievements_needed_to_win');
         $number_of_achievements_winner = $number_of_achievements_needed_to_win;
         $winners = array();
 
-        foreach ($players as $player_id => $player) {
-            if ($player['player_score'] == $number_of_achievements_winner) {
+        foreach ($achievement_counts as $player_id => $achievement_count) {
+            if ($achievement_count == $number_of_achievements_winner) {
                 $winners[] = $player_id;
-            } else if ($player['player_score'] > $number_of_achievements_winner) {
-                $number_of_achievements_winner = $player['player_score'];
+            } else if ($achievement_count > $number_of_achievements_winner) {
+                $number_of_achievements_winner = $achievement_count;
                 $winners = array($player_id);
             }
         }
@@ -5548,33 +5556,8 @@ class Innovation extends Table
     /** Get and update game situation **/
     function incrementBGAScore($player_id, $is_special_achievement)
     { // Increment the BGA score of the team (single player or to player in 2 vs 2 game) (number of achievements) then check if he got enough to win
-        $player = self::getObjectFromDB(
-            self::format(
-                "SELECT
-                player_score, player_team
-            FROM
-                player
-            WHERE
-                player_id={player_id}"
-                ,
-                array('player_id' => $player_id)
-            )
-        );
-
-        $player['player_score']++;
-
-        self::DbQuery(
-            self::format(
-                "UPDATE
-                player
-            SET
-                player_score = {player_score}
-            WHERE
-                player_team={player_team}"
-                ,
-                $player
-            )
-        );
+        $achievement_count = $this->bga->playerScore->get((int) $player_id) + 1;
+        $this->setTeamAchievementScore($player_id, $achievement_count);
 
         // Stats
         self::incStat(1, 'achievements_number', $player_id);
@@ -5582,8 +5565,8 @@ class Innovation extends Table
             self::incStat(1, 'special_achievements_number', $player_id);
         }
 
-        // Was it the last achievement needed for the player for winning?      
-        if ($player['player_score'] >= $this->innovationGameState->get('number_of_achievements_needed_to_win')) {
+        // Was it the last achievement needed for the player for winning?
+        if ($achievement_count >= $this->innovationGameState->get('number_of_achievements_needed_to_win')) {
             $this->innovationGameState->set('game_end_type', 0);
             self::trace('EOG bubbled from self::incrementBGAScore');
             throw new EndOfGame();
@@ -5593,36 +5576,27 @@ class Innovation extends Table
     /** Get and update game situation **/
     function decrementBGAScore($player_id)
     {
-        $player = self::getObjectFromDB(
-            self::format(
-                "SELECT
-                player_score, player_team
-            FROM
-                player
-            WHERE
-                player_id={player_id}"
-                ,
-                array('player_id' => $player_id)
-            )
-        );
-
-        $player['player_score']--;
-
-        self::DbQuery(
-            self::format(
-                "UPDATE
-                player
-            SET
-                player_score = {player_score}
-            WHERE
-                player_team={player_team}"
-                ,
-                $player
-            )
-        );
+        $achievement_count = $this->bga->playerScore->get((int) $player_id) - 1;
+        $this->setTeamAchievementScore($player_id, $achievement_count);
 
         // Stats
         self::incStat(-1, 'achievements_number', $player_id);
+    }
+
+    /** Set the achievement score for a player and their teammate, without a score notification. */
+    private function setTeamAchievementScore($player_id, $achievement_count)
+    {
+        // null suppresses the counter notification; the client updates the panel from card-move notifications.
+        $this->bga->playerScore->set((int) $player_id, (int) $achievement_count, null);
+        $teammate_id = self::getPlayerTeammate($player_id);
+        if ($teammate_id) {
+            $this->bga->playerScore->set((int) $teammate_id, (int) $achievement_count, null);
+        }
+    }
+
+    private function currentMainStateName()
+    {
+        return $this->gamestate->getCurrentMainState()->name;
     }
 
     function getPlayerScore($player_id)
@@ -5643,18 +5617,7 @@ class Innovation extends Table
 
     function getPlayerNumberOfAchievements($player_id)
     { // Player Innovation score is different from the BGA score (number of achievements)
-        return self::getUniqueValueFromDB(
-            self::format("
-        SELECT
-            player_score
-        FROM
-            player
-        WHERE
-            player_id = {player_id}
-        ",
-                array('player_id' => $player_id)
-            )
-        );
+        return $this->bga->playerScore->get((int) $player_id);
     }
 
     function updatePlayerScore($player_id)
@@ -6005,47 +5968,37 @@ class Innovation extends Table
             ");
         }
 
-        self::DbQuery("
-        UPDATE
-            player
-        SET
-            player_score_aux = player_score,
-            player_score = player_innovation_score
-        ");
+        $players = self::getCollectionFromDb("SELECT player_id, player_innovation_score FROM player");
+        foreach ($players as $player_id => $player) {
+            $achievement_count = $this->bga->playerScore->get((int) $player_id);
+            $this->bga->playerScoreAux->set((int) $player_id, (int) $achievement_count, null);
+            $this->bga->playerScore->set((int) $player_id, (int) $player['player_innovation_score'], null);
+        }
     }
 
     function binarizeBGAScore()
     {
         // Called if the game ends by dogma. The innovation score is 1 for winners, 0 for losers. There is no tie-breaker.
-        self::DbQuery(
-            self::format("
-        UPDATE
-            player
-        SET
-            player_score_aux = 0,
-            player_score = (CASE WHEN player_id = {winner} THEN 1 ELSE 0 END)
-        ",
-                array('winner' => $this->innovationGameState->get('winner_by_dogma'))
-            )
-        );
+        $winner = (int) $this->innovationGameState->get('winner_by_dogma');
+        $players = self::getCollectionFromDb("SELECT player_id, player_team FROM player");
+        foreach ($players as $player_id => $player) {
+            $this->bga->playerScoreAux->set((int) $player_id, 0, null);
+            $this->bga->playerScore->set((int) $player_id, (int) $player_id === $winner ? 1 : 0, null);
+        }
 
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'team') {
-            // Add the score of the teammate 0 + 0 for losers, 0 + 1 for winners
-            self::DbQuery("
-            UPDATE
-                player AS a
-                LEFT JOIN (
-                    SELECT
-                        player_team, SUM(player_score) AS team_score
-                    FROM
-                        player
-                    GROUP BY
-                        player_team
-                
-                ) AS b ON a.player_team = b.player_team
-            SET
-                a.player_score = b.team_score
-            ");
+            // Add the score of the teammate: 0 + 0 for losers, 0 + 1 for winners
+            $team_scores = array();
+            foreach ($players as $player_id => $player) {
+                $team = $player['player_team'];
+                if (!isset($team_scores[$team])) {
+                    $team_scores[$team] = 0;
+                }
+                $team_scores[$team] += $this->bga->playerScore->get((int) $player_id);
+            }
+            foreach ($players as $player_id => $player) {
+                $this->bga->playerScore->set((int) $player_id, (int) $team_scores[$player['player_team']], null);
+            }
         }
     }
 
@@ -9462,13 +9415,13 @@ class Innovation extends Table
     function getClaimableValuesIgnoringAvailability($player_id, $score_multiplier = 1)
     {
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
-        $player_score = self::getPlayerScore($player_id) * $score_multiplier;
+        $innovation_score = self::getPlayerScore($player_id) * $score_multiplier;
         $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type = null, $is_relic = false);
 
         $claimable_ages = array();
         for ($age = 1; $age <= 11; $age++) {
             // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
-            if ($age <= $age_max && $player_score >= 5 * $age * ($claimed_achievement_count[$age] + 1)) {
+            if ($age <= $age_max && $innovation_score >= 5 * $age * ($claimed_achievement_count[$age] + 1)) {
                 $claimable_ages[] = $age;
             }
         }

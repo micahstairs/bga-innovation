@@ -18,8 +18,7 @@ trait TestHelpers
      */
     protected function loadGameOptions(): array
     {
-        require 'gameoptions.inc.php';
-        return $game_options;
+        return json_decode(file_get_contents('gameoptions.jsonc'), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -27,7 +26,6 @@ trait TestHelpers
      */
     protected function loadGamePreferences(): array
     {
-        require 'gameoptions.inc.php';
-        return $game_preferences;
+        return json_decode(file_get_contents('gamepreferences.jsonc'), true, 512, JSON_THROW_ON_ERROR);
     }
 }

@@ -132,6 +132,32 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var jstpl_player_panel = '<div class="player_info">\
+    <div class="simple_stats">\
+        <span class="score_count" id="score_count_container_${player_id}">\
+            <span id="score_count_${player_id}"></span>\
+            <span class="square basic icon_score"></span>\
+        </span>\
+        <span class="hand_count" id="hand_count_container_${player_id}">\
+            <span id="hand_count_${player_id}"></span>\
+            <span class="square basic icon_hand"></span>\
+        </span>\
+        <span class="max_age_on_board" id="max_age_on_board_container_${player_id}">\
+            <span id="max_age_on_board_${player_id}"></span>\
+            <span class="square basic icon_age_indicator"></span>\
+        </span>\
+        <span class="forecast_count" id="forecast_count_container_${player_id}">\
+            <span id="forecast_count_${player_id}"></span>\
+            <span><i class="fa fa-lg fa-eye"></i></span>\
+        </span>\
+    </div>\
+    <table class="ressource_table" id="ressources_${player_id}">\
+        <tr id="symbols_${player_id}"></tr>\
+        <tr id="ressource_counts_${player_id}"></tr>\
+    </table>\
+</div>';
+var jstpl_ressource_icon = '<td><div id="ressource_icon_${player_id}_${icon}" class="ressource with_border ressource_${icon} square P icon_${icon}"></div></td>';
+var jstpl_ressource_count = '<td><div id="ressource_count_${player_id}_${icon}" class="ressource with_border ressource_${icon}"></div></td>';
 // @ts-ignore
 BgaGame = /** @class */ (function () {
     function BgaGame() { }
@@ -261,34 +287,122 @@ var Innovation = /** @class */ (function (_super) {
         console.log('innovation constructor');
         return _this;
     }
+    Innovation.prototype.performServerAction = function (action, args, onComplete, validateAction) {
+        if (args === void 0) { args = {}; }
+        if (validateAction === void 0) { validateAction = true; }
+        var call = this.bga.actions.performAction(action, args, { lock: true, checkAction: validateAction });
+        call.then(function () {
+            if (onComplete) {
+                onComplete(false);
+            }
+        }).catch(function () {
+            if (onComplete) {
+                onComplete(true);
+            }
+        });
+    };
     Innovation.prototype.debugTransfer = function (action) {
         var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_transfer.html", {
-            lock: true,
+        this.performServerAction("debug_transfer", {
             card_id: debug_card_list.value,
             transfer_action: action,
-        }, this, function (result) { }, function (is_error) { });
+        }, undefined, false);
     };
     Innovation.prototype.debugTransferAll = function (location_from, location_to) {
-        this.ajaxcall("/innovation/innovation/debug_transfer_all.html", {
-            lock: true,
+        this.performServerAction("debug_transfer_all", {
             location_from: location_from,
             location_to: location_to,
-        }, this, function (result) { }, function (is_error) { });
+        }, undefined, false);
     };
     Innovation.prototype.getDebugCardList = function () {
         return document.getElementById("debug_card_list");
     };
     Innovation.prototype.debugSplay = function (direction) {
         var debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html", {
-            lock: true,
+        this.performServerAction("debug_splay", {
             color: debug_color_list.value,
             direction: direction,
-        }, this, function (result) { }, function (is_error) { });
+        }, undefined, false);
     };
     Innovation.prototype.getDebugColorList = function () {
         return document.getElementById("debug_color_list");
+    };
+    Innovation.prototype.buildGameArea = function (gamedatas) {
+        var _this = this;
+        var players = this.playersInInterfaceOrder(gamedatas);
+        var teamGame = this.isTeamGame(gamedatas.players);
+        var playerHtml = players.map(function (player) { return _this.renderPlayerArea(player, teamGame); }).join('');
+        var html = "<div id=\"main_area_wrapper\">\n    <div id=\"main_area\">\n        <span></span>\n        ".concat(playerHtml, "\n    </div>\n    ").concat(this.renderDecksAndAchievements(), "\n</div>");
+        this.bga.gameArea.getElement().insertAdjacentHTML('beforeend', html);
+    };
+    Innovation.prototype.playersInInterfaceOrder = function (gamedatas) {
+        var _this = this;
+        var players = Object.keys(gamedatas.players).map(function (id) {
+            var player = gamedatas.players[id];
+            return Object.assign({ id: player.id !== undefined ? player.id : Number(id) }, player);
+        });
+        players.sort(function (a, b) { return Number(a.player_no || 0) - Number(b.player_no || 0); });
+        if (this.isSpectator) {
+            return players;
+        }
+        var myIndex = players.findIndex(function (player) { return Number(player.id) === Number(_this.player_id); });
+        if (myIndex <= 0) {
+            return players;
+        }
+        return players.slice(myIndex).concat(players.slice(0, myIndex));
+    };
+    Innovation.prototype.isTeamGame = function (players) {
+        var seen = {};
+        for (var id in players) {
+            var team = String(players[id].player_team);
+            if (seen[team]) {
+                return true;
+            }
+            seen[team] = true;
+        }
+        return false;
+    };
+    Innovation.prototype.hexToRgb = function (hex) {
+        var clean = hex.replace('#', '');
+        var full = clean.length === 3 ? clean.split('').map(function (channel) { return channel + channel; }).join('') : clean;
+        return [
+            parseInt(full.substring(0, 2), 16),
+            parseInt(full.substring(2, 4), 16),
+            parseInt(full.substring(4, 6), 16),
+        ];
+    };
+    Innovation.prototype.renderPlayerArea = function (player, teamGame) {
+        var playerId = player.id;
+        var isMe = !this.isSpectator && Number(playerId) === Number(this.player_id);
+        var color = String(player.color || '').replace('#', '');
+        var rgb = this.hexToRgb(color);
+        var name = isMe ? _('You') : player.name;
+        var nameStyle = isMe ? "#".concat(color, "; display:none") : "#".concat(color);
+        var team = teamGame ? ' - ' + (color === '0000ff' ? _('Blue team') : _('Red team')) : '';
+        var forecastClass = isMe ? " class='forecast_show_window'" : '';
+        var scoreClass = isMe ? " class='score_show_window'" : '';
+        var piles = '';
+        for (var pileColor = 0; pileColor < 5; pileColor++) {
+            piles += "<div class=\"pile_container\">\n                            <div class=\"pile board_".concat(playerId, "\" id=\"board_").concat(playerId, "_").concat(pileColor, "\"><div class=\"pile_count\" id=\"pile_count_").concat(playerId, "_").concat(pileColor, "\"></div>\n                            </div>\n                            <div class=\"splay_indicator\" id=\"splay_indicator_").concat(playerId, "_").concat(pileColor, "\"></div>\n                        </div>");
+        }
+        return "<div id=\"player_".concat(playerId, "\" class=\"player whiteblock\">\n                <p id=\"name_").concat(playerId, "\" style=\"color:").concat(nameStyle, ";\" class='player_name'>").concat(name, "<span>").concat(team, "</span></p>\n                <div id=\"board_").concat(playerId, "\" class=\"board\">\n                    ").concat(piles, "\n                </div>\n                <div id=\"revealed_container_").concat(playerId, "\" class=\"revealed_container\">\n                    <div id=\"revealed_").concat(playerId, "\" class=\"revealed\"></div>\n                </div>\n                <div id=\"artifacts_").concat(playerId, "\" class=\"artifacts\">\n                    <div id=\"display_container_").concat(playerId, "\" class=\"display_container\">\n                        <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                            <p>").concat(_('Artifact on Display'), "</p>\n                            <div id=\"display_").concat(playerId, "\" class=\"display\"></div>\n                        </div>\n                    </div>\n                    <div id=\"museums_container_").concat(playerId, "\" class=\"museums_container\">\n                        <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                            <p>").concat(_('Museums'), "</p>\n                            <div id=\"museums_").concat(playerId, "\" class=\"museums\"></div>\n                        </div>\n                    </div>\n                </div>\n                <div id=\"hand_container_").concat(playerId, "\" class=\"hand_container\">\n                    <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                        <p>").concat(_('Hand'), "</p>\n                        <div id=\"hand_").concat(playerId, "\" class=\"hand\"></div>\n                    </div>\n                </div>\n                <div id=\"progress_").concat(playerId, "\" class=\"progress\">\n                    <div id=\"forecast_container_").concat(playerId, "\" class=\"forecast_container\">\n                        <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                            <p id=\"forecast_text_").concat(playerId, "\"").concat(forecastClass, "></p>\n                            <div id=\"forecast_").concat(playerId, "\" class=\"forecast\"></div>\n                        </div>\n                    </div>\n                    <div id=\"score_container_").concat(playerId, "\" class=\"score_container\">\n                        <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                            <p id=\"score_text_").concat(playerId, "\"").concat(scoreClass, ">").concat(_('Score pile'), "</p>\n                            <div id=\"score_").concat(playerId, "\" class=\"score\"></div>\n                        </div>\n                    </div>\n                    <div id=\"safe_container_").concat(playerId, "\" class=\"safe_container\">\n                        <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                            <p id=\"safe_text_").concat(playerId, "\"></p>\n                            <div id=\"safe_").concat(playerId, "\" class=\"safe\"></div>\n                        </div>\n                    </div>\n                    <div id=\"achievement_container_").concat(playerId, "\" class=\"achievement_container\">\n                        <div style=\"background-color:rgba(").concat(rgb[0], ", ").concat(rgb[1], ", ").concat(rgb[2], ", .2);\">\n                            <p id=\"achievements_text_").concat(playerId, "\"></p>\n                            <div id=\"achievements_").concat(playerId, "\" class=\"achievements\"></div>\n                        </div>\n                    </div>\n                </div>\n            </div>");
+    };
+    Innovation.prototype.renderDeckGroup = function (group, ages) {
+        var sets = '';
+        for (var type = 0; type <= 5; type++) {
+            var piles = '';
+            for (var _i = 0, ages_1 = ages; _i < ages_1.length; _i++) {
+                var age = ages_1[_i];
+                piles += "<div id=\"deck_pile_".concat(type, "_").concat(age, "\" class=\"deck_pile\"><div class=\"deck_count\" id=\"deck_count_").concat(type, "_").concat(age, "\"></div><div class=\"deck\" id=\"deck_").concat(type, "_").concat(age, "\"></div></div>");
+            }
+            sets += "<div id=\"deck_set_".concat(type + 1, "_").concat(group, "\" class=\"deck_set\">").concat(piles, "</div>");
+        }
+        return sets;
+    };
+    Innovation.prototype.renderDecksAndAchievements = function () {
+        var earlyAges = [1, 2, 3, 4, 5];
+        var lateAges = [6, 7, 8, 9, 10, 11];
+        return "<div id=\"decks_and_available_achievements\">\n        <div id=\"decks_and_title\">\n            <p class=\"text_center\" id=\"decks_title\">".concat(_('Decks'), "</p>\n            <div id=\"decks\">\n                <div id=\"decks_1\">\n                    ").concat(this.renderDeckGroup(1, earlyAges), "\n                </div>\n                <div id=\"decks_2\">\n                    ").concat(this.renderDeckGroup(2, lateAges), "\n                </div>\n            </div>\n        </div>\n        <div id=\"available_relics_and_achievements_container\">\n            <div id=\"available_relics_container\">\n                <p class=\"text_center\">").concat(_('Available relics'), "</p>\n                <div id=\"relics\"></div>\n            </div>\n            <div id=\"available_standard_achievements_container\">\n                <p class=\"text_center\">").concat(_('Standard achievements'), "</p>\n                <div id=\"achievements\"></div>\n            </div>\n            <div id=\"available_special_achievements_container\">\n                <p class=\"text_center\">").concat(_('Special achievements'), "</p>\n                <div id=\"special_achievements\"></div>\n            </div>\n            <div id=\"available_museums_container\">\n                <p class=\"text_center\">").concat(_('Available museums'), "</p>\n                <div id=\"available_museums\"></div>\n            </div>\n            <div id=\"junk_container\">\n                <p id=\"junk_header\" class=\"text_center\">").concat(_('Junk'), "</p>\n            </div>\n        </div>\n    </div>");
     };
     /*
         setup:
@@ -304,6 +418,7 @@ var Innovation = /** @class */ (function (_super) {
     */
     Innovation.prototype.setup = function (gamedatas) {
         var _this = this;
+        this.buildGameArea(gamedatas);
         dojo.destroy('debug_output');
         //****** CODE FOR DEBUG MODE
         if (!this.isSpectator && gamedatas.debug_mode == 1) {
@@ -950,7 +1065,6 @@ var Innovation = /** @class */ (function (_super) {
         if (this.gamedatas.unseen_expansion_enabled) {
             this.refreshSafeCounts();
         }
-        this.default_viewport = "width=640"; // 640 is set in game_interface_width.min in gameinfos.inc.php
         this.onScreenWidthChange();
         this.refreshLayout();
         // Force refresh page on resize if width changes
@@ -3029,7 +3143,7 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.createCardForCardBrowser = function (id) {
         var card = this.cards[id];
-        var size = 'M'; // NOTE: Update this line to 'L' for testing purposes if you want to be able to easily browser the L cards.
+        var size = 'L';
         var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, "".concat(size, " card"));
         var HTML_id = "browse_card_id_".concat(id);
         var HTML_inside = this.writeOverCard(card, size, HTML_id);
@@ -3636,10 +3750,9 @@ var Innovation = /** @class */ (function (_super) {
         this.off(cards_in_hand, 'onclick');
         this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
         var self = this;
-        this.ajaxcall("/innovation/innovation/initialMeld.html", {
-            lock: true,
+        this.performServerAction("initialMeld", {
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { self.resurrectClickEvents(is_error); });
+        }, function (isError) { self.resurrectClickEvents(isError); });
     };
     Innovation.prototype.action_clickForUpdatedInitialMeld = function (event) {
         this.deactivateClickEvents();
@@ -3650,10 +3763,9 @@ var Innovation = /** @class */ (function (_super) {
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         dojo.addClass(HTML_id, "selected");
         var self = this;
-        this.ajaxcall("/innovation/innovation/updateInitialMeld.html", {
-            lock: true,
+        this.performServerAction("updateInitialMeld", {
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { self.resurrectClickEvents(is_error); });
+        }, function (isError) { self.resurrectClickEvents(isError); });
     };
     Innovation.prototype.action_clicForSeizeRelicToHand = function () {
         if (!this.checkAction('seizeRelicToHand')) {
@@ -3661,9 +3773,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/seizeRelicToHand.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("seizeRelicToHand", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForSeizeRelicToAchievements = function () {
@@ -3672,9 +3782,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/seizeRelicToAchievements.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("seizeRelicToAchievements", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForPassSeizeRelic = function () {
@@ -3683,9 +3791,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/passSeizeRelic.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("passSeizeRelic", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForDogmaArtifact = function () {
@@ -3694,9 +3800,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/dogmaArtifactOnDisplay.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("dogmaArtifactOnDisplay", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForReturnArtifact = function () {
@@ -3705,9 +3809,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/returnArtifactOnDisplay.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("returnArtifactOnDisplay", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForPassArtifact = function () {
@@ -3716,9 +3818,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/passArtifactOnDisplay.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("passArtifactOnDisplay", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForPassPromote = function () {
@@ -3727,9 +3827,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/passPromoteCard.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("passPromoteCard", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForPromote = function (event) {
@@ -3739,10 +3837,9 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         var self = this;
-        this.ajaxcall("/innovation/innovation/promoteCard.html", {
-            lock: true,
+        this.performServerAction("promoteCard", {
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickCardBackForPromote = function (event) {
@@ -3759,15 +3856,14 @@ var Innovation = /** @class */ (function (_super) {
         var zone = this.getZone(location, owner, undefined, age);
         var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         var self = this;
-        this.ajaxcall("/innovation/innovation/promoteCardBack.html", {
-            lock: true,
+        this.performServerAction("promoteCardBack", {
             owner: owner,
             location: location,
             age: age,
             type: type,
             is_relic: is_relic,
             position: position
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForPassDogmaPromoted = function () {
@@ -3776,9 +3872,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/passDogmaPromotedCard.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("passDogmaPromotedCard", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForDogmaPromoted = function () {
@@ -3787,9 +3881,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/dogmaPromotedCard.html", {
-            lock: true
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("dogmaPromotedCard", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickButtonForAchieveStandardAchievement = function (event) {
@@ -3800,12 +3892,11 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var age = HTML_id.split("_")[2];
         var self = this;
-        this.ajaxcall("/innovation/innovation/achieve.html", {
-            lock: true,
+        this.performServerAction("achieve", {
             owner: 0,
             location: 'achievements',
             age: age,
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickButtonForAchieveSecret = function (event) {
@@ -3816,12 +3907,11 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var age = HTML_id.split("_")[2];
         var self = this;
-        this.ajaxcall("/innovation/innovation/achieve.html", {
-            lock: true,
+        this.performServerAction("achieve", {
             owner: this.player_id,
             location: 'safe',
             age: age,
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickCardBackForAchieve = function (event) {
@@ -3845,15 +3935,14 @@ var Innovation = /** @class */ (function (_super) {
         var zone = this.getZone(location, owner, type, age);
         var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         var self = this;
-        this.ajaxcall("/innovation/innovation/achieveCardBack.html", {
-            lock: true,
+        this.performServerAction("achieveCardBack", {
             owner: owner,
             location: location,
             age: age,
             type: type,
             is_relic: is_relic,
             position: position
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForDraw = function (event) {
@@ -3862,9 +3951,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/draw.html", {
-            lock: true,
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("draw", {}, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickMeld = function (event) {
@@ -3917,10 +4004,9 @@ var Innovation = /** @class */ (function (_super) {
         dojo.destroy("meld_confirm_button");
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         var self = this;
-        this.ajaxcall("/innovation/innovation/meld.html", {
-            lock: true,
+        this.performServerAction("meld", {
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickDogma = function (event_or_html_id, via_alternate_prompt, card_id_to_return) {
@@ -4028,7 +4114,6 @@ var Innovation = /** @class */ (function (_super) {
         dojo.destroy("dogma_confirm_warning_button");
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         var payload = {
-            lock: true,
             card_id: card_id,
         };
         var card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
@@ -4036,7 +4121,7 @@ var Innovation = /** @class */ (function (_super) {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
         var self = this;
-        this.ajaxcall("/innovation/innovation/dogma.html", payload, this, function (result) { }, function (is_error) { if (is_error)
+        this.performServerAction("dogma", payload, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickNonAdjacentDogma = function (event) {
@@ -4138,11 +4223,10 @@ var Innovation = /** @class */ (function (_super) {
         var payment_card_id = this.getCardIdFromHTMLId(HTML_id);
         var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
         var self = this;
-        this.ajaxcall("/innovation/innovation/endorse.html", {
-            lock: true,
+        this.performServerAction("endorse", {
             card_to_endorse_id: card_to_endorse_id,
             payment_card_id: payment_card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForChooseFront = function (event) {
@@ -4185,10 +4269,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         var self = this;
-        this.ajaxcall("/innovation/innovation/choose.html", {
-            lock: true,
+        this.performServerAction("choose", {
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     // TODO(LATER): Remove this once we have a personal preference for confirming card choices.
@@ -4219,15 +4302,14 @@ var Innovation = /** @class */ (function (_super) {
         // Search the position the card is
         var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         var self = this;
-        this.ajaxcall("/innovation/innovation/chooseRecto.html", {
-            lock: true,
+        this.performServerAction("chooseRecto", {
             owner: owner,
             location: location,
             age: age,
             type: type,
             is_relic: is_relic,
             position: position
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickButtonToDecreaseIntegers = function (event) {
@@ -4304,10 +4386,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/chooseSpecialOption.html", {
-            lock: true,
+        this.performServerAction("chooseSpecialOption", {
             choice: choice
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForPassOrStop = function () {
@@ -4331,10 +4412,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/choose.html", {
-            lock: true,
+        this.performServerAction("choose", {
             card_id: -1
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clicForSplay = function (event) {
@@ -4345,10 +4425,9 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var color = HTML_id.substr(6);
         var self = this;
-        this.ajaxcall("/innovation/innovation/choose.html", {
-            lock: true,
+        this.performServerAction("choose", {
             card_id: this.getCardIdFromHTMLId(this.zone["board"][this.player_id][color].items[0].id) // A choose for splay is equivalent as selecting a board card of the right color, by design
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_publicationClicForRearrange = function (event) {
@@ -4373,11 +4452,10 @@ var Innovation = /** @class */ (function (_super) {
         this.publication_original_items = null;
         this.deactivateClickEvents();
         var self = this;
-        this.ajaxcall("/innovation/innovation/publicationRearrange.html", {
-            lock: true,
+        this.performServerAction("publicationRearrange", {
             color: permuted_color,
             permutations_done: permutations_done.join(";"),
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.publicationClicForMove = function (event) {
@@ -4517,10 +4595,9 @@ var Innovation = /** @class */ (function (_super) {
         this.deactivateClickEvents();
         var card_id = dojo.getAttr(event.currentTarget, 'card_id');
         var self = this;
-        this.ajaxcall("/innovation/innovation/chooseSpecialOption.html", {
-            lock: true,
+        this.performServerAction("chooseSpecialOption", {
             choice: card_id,
-        }, this, function (result) { }, function (is_error) { if (is_error)
+        }, function (isError) { if (isError)
             self.resurrectClickEvents(true); });
     };
     Innovation.prototype.decrementMap = function (map, keys) {
@@ -4563,10 +4640,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         if (!this.isSpectator) {
             // Inform the server of this change to make it by default if the player refreshes the page
-            this.ajaxcall("/innovation/innovation/updateDisplayMode.html", {
-                lock: true,
+            this.performServerAction("updateDisplayMode", {
                 display_mode: this.display_mode
-            }, this, function (result) { }, function (is_error) { });
+            }, undefined, false);
         }
     };
     Innovation.prototype.toggle_view = function () {
@@ -4584,10 +4660,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         if (!this.isSpectator) {
             // Inform the server of this change to make it by default if the player refreshes the page
-            this.ajaxcall("/innovation/innovation/updateViewFull.html", {
-                lock: true,
+            this.performServerAction("updateViewFull", {
                 view_full: this.view_full
-            }, this, function (result) { }, function (is_error) { });
+            }, undefined, false);
         }
     };
     Innovation.prototype.click_open_special_achievement_browsing_window = function () {

@@ -19,6 +19,35 @@ declare const define: any;
 declare const ebg: any;
 declare const dojo: Dojo;
 
+var jstpl_player_panel = '<div class="player_info">\
+    <div class="simple_stats">\
+        <span class="score_count" id="score_count_container_${player_id}">\
+            <span id="score_count_${player_id}"></span>\
+            <span class="square basic icon_score"></span>\
+        </span>\
+        <span class="hand_count" id="hand_count_container_${player_id}">\
+            <span id="hand_count_${player_id}"></span>\
+            <span class="square basic icon_hand"></span>\
+        </span>\
+        <span class="max_age_on_board" id="max_age_on_board_container_${player_id}">\
+            <span id="max_age_on_board_${player_id}"></span>\
+            <span class="square basic icon_age_indicator"></span>\
+        </span>\
+        <span class="forecast_count" id="forecast_count_container_${player_id}">\
+            <span id="forecast_count_${player_id}"></span>\
+            <span><i class="fa fa-lg fa-eye"></i></span>\
+        </span>\
+    </div>\
+    <table class="ressource_table" id="ressources_${player_id}">\
+        <tr id="symbols_${player_id}"></tr>\
+        <tr id="ressource_counts_${player_id}"></tr>\
+    </table>\
+</div>';
+
+var jstpl_ressource_icon = '<td><div id="ressource_icon_${player_id}_${icon}" class="ressource with_border ressource_${icon} square P icon_${icon}"></div></td>';
+
+var jstpl_ressource_count = '<td><div id="ressource_count_${player_id}_${icon}" class="ressource with_border ressource_${icon}"></div></td>';
+
 // @ts-ignore
 BgaGame = /** @class */ (function () {
     function BgaGame() { }
@@ -174,27 +203,32 @@ class Innovation extends BgaGame {
         console.log('innovation constructor');
     }
 
+    performServerAction(action: string, args: object = {}, onComplete?: (isError: boolean) => void, validateAction = true) {
+        const call = this.bga.actions.performAction(action, args, { lock: true, checkAction: validateAction });
+        call.then(() => {
+            if (onComplete) {
+                onComplete(false);
+            }
+        }).catch(() => {
+            if (onComplete) {
+                onComplete(true);
+            }
+        });
+    }
+
     debugTransfer(action: string) {
         let debug_card_list = this.getDebugCardList();
-        this.ajaxcall(`/innovation/innovation/debug_transfer.html`,
-            {
-                lock: true,
+        this.performServerAction("debug_transfer", {
                 card_id: debug_card_list.value,
                 transfer_action: action,
-            },
-            this, function (result) { }, function (is_error) { }
-        );
+            }, undefined, false);
     }
 
     debugTransferAll(location_from: string, location_to: string) {
-        this.ajaxcall(`/innovation/innovation/debug_transfer_all.html`,
-            {
-                lock: true,
+        this.performServerAction("debug_transfer_all", {
                 location_from: location_from,
                 location_to: location_to,
-            },
-            this, function (result) { }, function (is_error) { }
-        );
+            }, undefined, false);
     }
 
     getDebugCardList(): HTMLSelectElement {
@@ -203,18 +237,192 @@ class Innovation extends BgaGame {
 
     debugSplay(direction: number) {
         let debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html",
-            {
-                lock: true,
+        this.performServerAction("debug_splay", {
                 color: debug_color_list.value,
                 direction: direction,
-            },
-            this, function (result) { }, function (is_error) { }
-        );
+            }, undefined, false);
     }
 
     getDebugColorList(): HTMLSelectElement {
         return <HTMLSelectElement>document.getElementById("debug_color_list")!;
+    }
+
+    private buildGameArea(gamedatas: any) {
+        const players = this.playersInInterfaceOrder(gamedatas);
+        const teamGame = this.isTeamGame(gamedatas.players);
+        const playerHtml = players.map(player => this.renderPlayerArea(player, teamGame)).join('');
+        const html = `<div id="main_area_wrapper">
+    <div id="main_area">
+        <span></span>
+        ${playerHtml}
+    </div>
+    ${this.renderDecksAndAchievements()}
+</div>`;
+        this.bga.gameArea.getElement().insertAdjacentHTML('beforeend', html);
+    }
+
+    private playersInInterfaceOrder(gamedatas: any): any[] {
+        const players = Object.keys(gamedatas.players).map(id => {
+            const player = gamedatas.players[id];
+            return Object.assign({ id: player.id !== undefined ? player.id : Number(id) }, player);
+        });
+        players.sort((a, b) => Number(a.player_no || 0) - Number(b.player_no || 0));
+        if (this.isSpectator) {
+            return players;
+        }
+        const myIndex = players.findIndex(player => Number(player.id) === Number(this.player_id));
+        if (myIndex <= 0) {
+            return players;
+        }
+        return players.slice(myIndex).concat(players.slice(0, myIndex));
+    }
+
+    private isTeamGame(players: { [id: string]: Player }): boolean {
+        const seen: { [team: string]: boolean } = {};
+        for (const id in players) {
+            const team = String(players[id].player_team);
+            if (seen[team]) {
+                return true;
+            }
+            seen[team] = true;
+        }
+        return false;
+    }
+
+    private hexToRgb(hex: string): [number, number, number] {
+        const clean = hex.replace('#', '');
+        const full = clean.length === 3 ? clean.split('').map(channel => channel + channel).join('') : clean;
+        return [
+            parseInt(full.substring(0, 2), 16),
+            parseInt(full.substring(2, 4), 16),
+            parseInt(full.substring(4, 6), 16),
+        ];
+    }
+
+    private renderPlayerArea(player: any, teamGame: boolean): string {
+        const playerId = player.id;
+        const isMe = !this.isSpectator && Number(playerId) === Number(this.player_id);
+        const color = String(player.color || '').replace('#', '');
+        const rgb = this.hexToRgb(color);
+        const name = isMe ? _('You') : player.name;
+        const nameStyle = isMe ? `#${color}; display:none` : `#${color}`;
+        const team = teamGame ? ' - ' + (color === '0000ff' ? _('Blue team') : _('Red team')) : '';
+        const forecastClass = isMe ? " class='forecast_show_window'" : '';
+        const scoreClass = isMe ? " class='score_show_window'" : '';
+        let piles = '';
+        for (let pileColor = 0; pileColor < 5; pileColor++) {
+            piles += `<div class="pile_container">
+                            <div class="pile board_${playerId}" id="board_${playerId}_${pileColor}"><div class="pile_count" id="pile_count_${playerId}_${pileColor}"></div>
+                            </div>
+                            <div class="splay_indicator" id="splay_indicator_${playerId}_${pileColor}"></div>
+                        </div>`;
+        }
+        return `<div id="player_${playerId}" class="player whiteblock">
+                <p id="name_${playerId}" style="color:${nameStyle};" class='player_name'>${name}<span>${team}</span></p>
+                <div id="board_${playerId}" class="board">
+                    ${piles}
+                </div>
+                <div id="revealed_container_${playerId}" class="revealed_container">
+                    <div id="revealed_${playerId}" class="revealed"></div>
+                </div>
+                <div id="artifacts_${playerId}" class="artifacts">
+                    <div id="display_container_${playerId}" class="display_container">
+                        <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                            <p>${_('Artifact on Display')}</p>
+                            <div id="display_${playerId}" class="display"></div>
+                        </div>
+                    </div>
+                    <div id="museums_container_${playerId}" class="museums_container">
+                        <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                            <p>${_('Museums')}</p>
+                            <div id="museums_${playerId}" class="museums"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="hand_container_${playerId}" class="hand_container">
+                    <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                        <p>${_('Hand')}</p>
+                        <div id="hand_${playerId}" class="hand"></div>
+                    </div>
+                </div>
+                <div id="progress_${playerId}" class="progress">
+                    <div id="forecast_container_${playerId}" class="forecast_container">
+                        <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                            <p id="forecast_text_${playerId}"${forecastClass}></p>
+                            <div id="forecast_${playerId}" class="forecast"></div>
+                        </div>
+                    </div>
+                    <div id="score_container_${playerId}" class="score_container">
+                        <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                            <p id="score_text_${playerId}"${scoreClass}>${_('Score pile')}</p>
+                            <div id="score_${playerId}" class="score"></div>
+                        </div>
+                    </div>
+                    <div id="safe_container_${playerId}" class="safe_container">
+                        <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                            <p id="safe_text_${playerId}"></p>
+                            <div id="safe_${playerId}" class="safe"></div>
+                        </div>
+                    </div>
+                    <div id="achievement_container_${playerId}" class="achievement_container">
+                        <div style="background-color:rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, .2);">
+                            <p id="achievements_text_${playerId}"></p>
+                            <div id="achievements_${playerId}" class="achievements"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    private renderDeckGroup(group: number, ages: number[]): string {
+        let sets = '';
+        for (let type = 0; type <= 5; type++) {
+            let piles = '';
+            for (const age of ages) {
+                piles += `<div id="deck_pile_${type}_${age}" class="deck_pile"><div class="deck_count" id="deck_count_${type}_${age}"></div><div class="deck" id="deck_${type}_${age}"></div></div>`;
+            }
+            sets += `<div id="deck_set_${type + 1}_${group}" class="deck_set">${piles}</div>`;
+        }
+        return sets;
+    }
+
+    private renderDecksAndAchievements(): string {
+        const earlyAges = [1, 2, 3, 4, 5];
+        const lateAges = [6, 7, 8, 9, 10, 11];
+        return `<div id="decks_and_available_achievements">
+        <div id="decks_and_title">
+            <p class="text_center" id="decks_title">${_('Decks')}</p>
+            <div id="decks">
+                <div id="decks_1">
+                    ${this.renderDeckGroup(1, earlyAges)}
+                </div>
+                <div id="decks_2">
+                    ${this.renderDeckGroup(2, lateAges)}
+                </div>
+            </div>
+        </div>
+        <div id="available_relics_and_achievements_container">
+            <div id="available_relics_container">
+                <p class="text_center">${_('Available relics')}</p>
+                <div id="relics"></div>
+            </div>
+            <div id="available_standard_achievements_container">
+                <p class="text_center">${_('Standard achievements')}</p>
+                <div id="achievements"></div>
+            </div>
+            <div id="available_special_achievements_container">
+                <p class="text_center">${_('Special achievements')}</p>
+                <div id="special_achievements"></div>
+            </div>
+            <div id="available_museums_container">
+                <p class="text_center">${_('Available museums')}</p>
+                <div id="available_museums"></div>
+            </div>
+            <div id="junk_container">
+                <p id="junk_header" class="text_center">${_('Junk')}</p>
+            </div>
+        </div>
+    </div>`;
     }
 
     /*
@@ -230,6 +438,7 @@ class Innovation extends BgaGame {
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
     public setup(gamedatas: any) {
+        this.buildGameArea(gamedatas);
         dojo.destroy('debug_output');
 
         //****** CODE FOR DEBUG MODE
@@ -935,7 +1144,6 @@ class Innovation extends BgaGame {
             this.refreshSafeCounts();
         }
 
-        this.default_viewport = "width=640"; // 640 is set in game_interface_width.min in gameinfos.inc.php
         this.onScreenWidthChange();
 
         this.refreshLayout();
@@ -3868,13 +4076,9 @@ class Innovation extends BgaGame {
         this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/initialMeld.html",
-            {
-                lock: true,
+        this.performServerAction("initialMeld", {
                 card_id: card_id
-            },
-            this, function (result) { }, function (is_error) { self.resurrectClickEvents(is_error); }
-        );
+            }, (isError) => { self.resurrectClickEvents(isError); });
     }
 
     action_clickForUpdatedInitialMeld(event: any) {
@@ -3888,13 +4092,9 @@ class Innovation extends BgaGame {
         dojo.addClass(HTML_id, "selected");
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/updateInitialMeld.html",
-            {
-                lock: true,
+        this.performServerAction("updateInitialMeld", {
                 card_id: card_id
-            },
-            this, function (result) { }, function (is_error) { self.resurrectClickEvents(is_error); }
-        );
+            }, (isError) => { self.resurrectClickEvents(isError); });
     }
 
     action_clicForSeizeRelicToHand() {
@@ -3903,12 +4103,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/seizeRelicToHand.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("seizeRelicToHand", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForSeizeRelicToAchievements() {
@@ -3917,12 +4113,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/seizeRelicToAchievements.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("seizeRelicToAchievements", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForPassSeizeRelic() {
@@ -3931,12 +4123,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/passSeizeRelic.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("passSeizeRelic", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForDogmaArtifact() {
@@ -3945,12 +4133,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/dogmaArtifactOnDisplay.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("dogmaArtifactOnDisplay", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForReturnArtifact() {
@@ -3959,12 +4143,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/returnArtifactOnDisplay.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("returnArtifactOnDisplay", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForPassArtifact() {
@@ -3973,12 +4153,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/passArtifactOnDisplay.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("passArtifactOnDisplay", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickForPassPromote() {
@@ -3987,12 +4163,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/passPromoteCard.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("passPromoteCard", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickForPromote(event: any) {
@@ -4003,15 +4175,9 @@ class Innovation extends BgaGame {
         let HTML_id = this.getCardHTMLIdFromEvent(event);
         let card_id = this.getCardIdFromHTMLId(HTML_id);
         let self = this;
-        this.ajaxcall("/innovation/innovation/promoteCard.html",
-            {
-                lock: true,
+        this.performServerAction("promoteCard", {
                 card_id: card_id
-            },
-            this,
-            function (result) { },
-            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickCardBackForPromote(event: any) {
@@ -4029,20 +4195,14 @@ class Innovation extends BgaGame {
         let zone = this.getZone(location, owner, undefined, age);
         let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         let self = this;
-        this.ajaxcall("/innovation/innovation/promoteCardBack.html",
-            {
-                lock: true,
+        this.performServerAction("promoteCardBack", {
                 owner: owner,
                 location: location,
                 age: age,
                 type: type,
                 is_relic: is_relic,
                 position: position
-            },
-            this,
-            function (result) { },
-            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickForPassDogmaPromoted() {
@@ -4051,12 +4211,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/passDogmaPromotedCard.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("passDogmaPromotedCard", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickForDogmaPromoted() {
@@ -4065,12 +4221,8 @@ class Innovation extends BgaGame {
         }
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/dogmaPromotedCard.html",
-            {
-                lock: true
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("dogmaPromotedCard", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickButtonForAchieveStandardAchievement(event: any) {
@@ -4083,15 +4235,11 @@ class Innovation extends BgaGame {
         let age = HTML_id.split("_")[2];
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/achieve.html",
-            {
-                lock: true,
+        this.performServerAction("achieve", {
                 owner: 0,
                 location: 'achievements',
                 age: age,
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickButtonForAchieveSecret(event: any) {
@@ -4104,15 +4252,11 @@ class Innovation extends BgaGame {
         let age = HTML_id.split("_")[2];
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/achieve.html",
-            {
-                lock: true,
+        this.performServerAction("achieve", {
                 owner: this.player_id,
                 location: 'safe',
                 age: age,
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickCardBackForAchieve(event: any) {
@@ -4139,20 +4283,14 @@ class Innovation extends BgaGame {
 
         let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         let self = this;
-        this.ajaxcall("/innovation/innovation/achieveCardBack.html",
-            {
-                lock: true,
+        this.performServerAction("achieveCardBack", {
                 owner: owner,
                 location: location,
                 age: age,
                 type: type,
                 is_relic: is_relic,
                 position: position
-            },
-            this,
-            function (result) { },
-            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForDraw(event: any) {
@@ -4162,12 +4300,8 @@ class Innovation extends BgaGame {
         this.deactivateClickEvents();
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/draw.html",
-            {
-                lock: true,
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+        this.performServerAction("draw", {
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickMeld(event: any) {
@@ -4233,15 +4367,9 @@ class Innovation extends BgaGame {
 
         let card_id = this.getCardIdFromHTMLId(HTML_id);
         let self = this;
-        this.ajaxcall("/innovation/innovation/meld.html",
-            {
-                lock: true,
+        this.performServerAction("meld", {
                 card_id: card_id
-            },
-            this,
-            function (result) { },
-            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickDogma(event_or_html_id: any, via_alternate_prompt: string | null = null, card_id_to_return: number | null = null) {
@@ -4368,7 +4496,6 @@ class Innovation extends BgaGame {
 
         let card_id = this.getCardIdFromHTMLId(HTML_id);
         let payload: any = {
-            lock: true,
             card_id: card_id,
         };
         let card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
@@ -4376,12 +4503,7 @@ class Innovation extends BgaGame {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
         let self = this;
-        this.ajaxcall("/innovation/innovation/dogma.html",
-            payload,
-            this,
-            function (result) { },
-            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
-        );
+        this.performServerAction("dogma", payload, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickNonAdjacentDogma(event: any) {
@@ -4502,16 +4624,10 @@ class Innovation extends BgaGame {
         let card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/endorse.html",
-            {
-                lock: true,
+        this.performServerAction("endorse", {
                 card_to_endorse_id: card_to_endorse_id,
                 payment_card_id: payment_card_id
-            },
-            this,
-            function (result) { },
-            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickForChooseFront(event: any) {
@@ -4564,13 +4680,9 @@ class Innovation extends BgaGame {
         let card_id = this.getCardIdFromHTMLId(HTML_id);
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/choose.html",
-            {
-                lock: true,
+        this.performServerAction("choose", {
                 card_id: card_id
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     // TODO(LATER): Remove this once we have a personal preference for confirming card choices.
@@ -4607,18 +4719,14 @@ class Innovation extends BgaGame {
         let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/chooseRecto.html",
-            {
-                lock: true,
+        this.performServerAction("chooseRecto", {
                 owner: owner,
                 location: location,
                 age: age,
                 type: type,
                 is_relic: is_relic,
                 position: position
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clickButtonToDecreaseIntegers(event: any) {
@@ -4699,13 +4807,9 @@ class Innovation extends BgaGame {
         this.deactivateClickEvents();
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/chooseSpecialOption.html",
-            {
-                lock: true,
+        this.performServerAction("chooseSpecialOption", {
                 choice: choice
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForPassOrStop() {
@@ -4730,13 +4834,9 @@ class Innovation extends BgaGame {
 
         this.deactivateClickEvents();
         let self = this;
-        this.ajaxcall("/innovation/innovation/choose.html",
-            {
-                lock: true,
+        this.performServerAction("choose", {
                 card_id: -1
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_clicForSplay(event: any) {
@@ -4748,13 +4848,9 @@ class Innovation extends BgaGame {
         let HTML_id = this.getCardHTMLIdFromEvent(event);
         let color = HTML_id.substr(6)
         let self = this;
-        this.ajaxcall("/innovation/innovation/choose.html",
-            {
-                lock: true,
+        this.performServerAction("choose", {
                 card_id: this.getCardIdFromHTMLId(this.zone["board"][this.player_id][color].items[0].id) // A choose for splay is equivalent as selecting a board card of the right color, by design
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     action_publicationClicForRearrange(event: any) {
@@ -4785,14 +4881,10 @@ class Innovation extends BgaGame {
         this.deactivateClickEvents();
 
         let self = this;
-        this.ajaxcall("/innovation/innovation/publicationRearrange.html",
-            {
-                lock: true,
+        this.performServerAction("publicationRearrange", {
                 color: permuted_color,
                 permutations_done: permutations_done.join(";"),
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     publicationClicForMove(event: any) {
@@ -4955,13 +5047,9 @@ class Innovation extends BgaGame {
 
         let card_id = dojo.getAttr(event.currentTarget, 'card_id');
         let self = this;
-        this.ajaxcall("/innovation/innovation/chooseSpecialOption.html",
-            {
-                lock: true,
+        this.performServerAction("chooseSpecialOption", {
                 choice: card_id,
-            },
-            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
-        );
+            }, (isError) => { if (isError) self.resurrectClickEvents(true); });
     }
 
     decrementMap(map: Map<number, number>, keys: number[]) {
@@ -5013,13 +5101,9 @@ class Innovation extends BgaGame {
 
         if (!this.isSpectator) {
             // Inform the server of this change to make it by default if the player refreshes the page
-            this.ajaxcall("/innovation/innovation/updateDisplayMode.html",
-                {
-                    lock: true,
+            this.performServerAction("updateDisplayMode", {
                     display_mode: this.display_mode
-                },
-                this, function (result) { }, function (is_error) { }
-            );
+                }, undefined, false);
         }
     }
 
@@ -5043,13 +5127,9 @@ class Innovation extends BgaGame {
 
         if (!this.isSpectator) {
             // Inform the server of this change to make it by default if the player refreshes the page
-            this.ajaxcall("/innovation/innovation/updateViewFull.html",
-                {
-                    lock: true,
+            this.performServerAction("updateViewFull", {
                     view_full: this.view_full
-                },
-                this, function (result) { }, function (is_error) { }
-            );
+                }, undefined, false);
         }
     }
 

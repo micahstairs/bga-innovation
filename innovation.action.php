@@ -17,7 +17,7 @@
  * user interface logic.
  *       
  * If you define a method "myAction" here, then you can call it from your javascript code with:
- * this.ajaxcall( "/innovation/innovation/myAction.html", ...)
+ * this.bga.actions.performAction("myAction", ...)
  *
  */
 
@@ -399,7 +399,7 @@ class action_innovation extends APP_GameAction
         self::setAjaxMode();     
 
         // Retrieve arguments
-        // Note: these arguments correspond to what has been sent through the javascript "ajaxcall" method
+        // Note: these arguments correspond to what has been sent through performAction
         $arg1 = self::getArg("myArgument1", AT_posint, true);
         $arg2 = self::getArg("myArgument2", AT_posint, true);
 

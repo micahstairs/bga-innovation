@@ -1,0 +1,181 @@
+{
+    "table": {
+        "turns_number": {
+            "id": 10,
+            "name": "Number of turns",
+            "type": "int"
+        },
+        "actions_number": {
+            "id": 11,
+            "name": "Number of actions",
+            "type": "int"
+        },
+        "end_achievements": {
+            "id": 12,
+            "name": "End of game by achievement?",
+            "type": "bool"
+        },
+        "end_score": {
+            "id": 13,
+            "name": "End of game by score?",
+            "type": "bool"
+        },
+        "end_dogma": {
+            "id": 14,
+            "name": "End of game by dogma?",
+            "type": "bool"
+        },
+        "fission_triggered": {
+            "id": 15,
+            "name": "Fission card removal triggered?",
+            "type": "bool"
+        }
+    },
+    "player": {
+        "achievements_number": {
+            "id": 10,
+            "name": "Number of achievements",
+            "type": "int"
+        },
+        "score": {
+            "id": 11,
+            "name": "Final score",
+            "type": "int"
+        },
+        "max_age_on_board": {
+            "id": 12,
+            "name": "Final max age on board top cards",
+            "type": "int"
+        },
+        "turns_number": {
+            "id": 13,
+            "name": "Number of turns",
+            "type": "int"
+        },
+        "actions_number": {
+            "id": 14,
+            "name": "Number of actions",
+            "type": "int"
+        },
+        "draw_actions_number": {
+            "id": 15,
+            "name": "Number of draw actions",
+            "type": "int"
+        },
+        "meld_actions_number": {
+            "id": 16,
+            "name": "Number of meld actions",
+            "type": "int"
+        },
+        "dogma_actions_number": {
+            "id": 17,
+            "name": "Number of dogma actions",
+            "type": "int"
+        },
+        "achieve_actions_number": {
+            "id": 18,
+            "name": "Number of achieve actions",
+            "type": "int"
+        },
+        "special_achievements_number": {
+            "id": 19,
+            "name": "Number of claimed special achievements",
+            "type": "int"
+        },
+        "dogma_actions_number_with_i_demand": {
+            "id": 20,
+            "name": "Number of dogma actions with an effective \"I demand\" effect",
+            "type": "int"
+        },
+        "dogma_actions_number_with_sharing": {
+            "id": 21,
+            "name": "Number of dogma actions with an effective sharing",
+            "type": "int"
+        },
+        "i_demand_effects_number": {
+            "id": 22,
+            "name": "Number of times the player has effectivly executed the \"I demand\" effect of an opponent card",
+            "type": "int"
+        },
+        "sharing_effects_number": {
+            "id": 23,
+            "name": "Number of times the player has effectivly shared the effects of an opponent card",
+            "type": "int"
+        },
+        "execution_combo_count": {
+            "id": 90,
+            "name": "Number of times the player was eligible to draw and achieve an 11 due to the Chain Rule",
+            "type": "int"
+        },
+        "dig_events_number": {
+            "id": 24,
+            "name": "Number of artifacts dug",
+            "type": "int"
+        },
+        "free_action_dogma_number": {
+            "id": 25,
+            "name": "Number of times that an artifact on display was executed",
+            "type": "int"
+        },
+        "free_action_return_number": {
+            "id": 26,
+            "name": "Number of artifacts on display returned without being used",
+            "type": "int"
+        },
+        "free_action_pass_number": {
+            "id": 27,
+            "name": "Number of turns that an artifact on display was not used or returned",
+            "type": "int"
+        },
+        "dogma_actions_number_targeting_artifact_on_board": {
+            "id": 28,
+            "name": "Number of dogma actions targeting an artifact on your board",
+            "type": "int"
+        },
+        "dogma_actions_number_with_i_compel": {
+            "id": 29,
+            "name": "Number of dogma actions with an effective \"I compel\" effect",
+            "type": "int"
+        },
+        "i_compel_effects_number": {
+            "id": 30,
+            "name": "Number of times the player has been forced to execute the \"I compel\" effect of an opponent's card",
+            "type": "int"
+        },
+        "relics_seized_number": {
+            "id": 31,
+            "name": "Number of relics seized by player",
+            "type": "int"
+        },
+        "relics_stolen_number": {
+            "id": 32,
+            "name": "Number of relics stolen from player",
+            "type": "int"
+        },
+        "endorse_actions_number": {
+            "id": 40,
+            "name": "Number of endorse actions",
+            "type": "int"
+        },
+        "city_cards_drawn_number": {
+            "id": 41,
+            "name": "Number of city cards drawn",
+            "type": "int"
+        },
+        "foreshadowed_number": {
+            "id": 60,
+            "name": "Number of cards foreshadowed",
+            "type": "int"
+        },
+        "promoted_number": {
+            "id": 61,
+            "name": "Number of cards promoted from forecast",
+            "type": "int"
+        },
+        "executed_echo_effect_number": {
+            "id": 62,
+            "name": "Number of executed echo effects",
+            "type": "int"
+        }
+    }
+}

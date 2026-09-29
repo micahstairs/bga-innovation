@@ -1,0 +1,105 @@
+{
+    "112": {
+        "name": "Position of decks and achievements",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Right"
+            },
+            "2": {
+                "name": "Bottom"
+            }
+        },
+        "default": 1
+    },
+    "100": {
+        "name": "Dogma confirmation",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Disabled"
+            },
+            "2": {
+                "name": "Enabled (short timer)"
+            },
+            "3": {
+                "name": "Enabled (medium timer)"
+            },
+            "4": {
+                "name": "Enabled (long timer)"
+            }
+        },
+        "default": 1
+    },
+    "102": {
+        "name": "Sharing confirmation",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Disabled"
+            },
+            "2": {
+                "name": "Enabled"
+            }
+        },
+        "default": 2
+    },
+    "101": {
+        "name": "Meld confirmation",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Disabled"
+            },
+            "2": {
+                "name": "Enabled (short timer)"
+            },
+            "3": {
+                "name": "Enabled (medium timer)"
+            },
+            "4": {
+                "name": "Enabled (long timer)"
+            }
+        },
+        "default": 1
+    },
+    "110": {
+        "name": "Simplified card backs",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Disabled"
+            },
+            "2": {
+                "name": "Enabled"
+            }
+        },
+        "default": 1
+    },
+    "111": {
+        "name": "Card appearance",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "First edition"
+            },
+            "2": {
+                "name": "Third edition"
+            }
+        },
+        "default": 2
+    },
+    "113": {
+        "name": "Pile size indicators on boards",
+        "needReload": true,
+        "values": {
+            "1": {
+                "name": "Disabled"
+            },
+            "2": {
+                "name": "Enabled"
+            }
+        },
+        "default": 2
+    }
+}
