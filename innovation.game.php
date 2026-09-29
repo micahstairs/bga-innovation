@@ -10475,8 +10475,9 @@ class Innovation extends Table
         $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, $card);
         $launcher_id = self::getLauncherId();
 
-        // Perform one-time setup for the effect
-        if (!$nested_card_state['performed_one_time_setup']) {
+        // Buried echoes clear auxiliary_value when they finish, so wait until
+        // after echoes to run one-time setup.
+        if (!$nested_card_state['performed_one_time_setup'] && $current_effect_type != self::ECHO_EFFECT) {
             $executionState = (new ExecutionState($this))
                 ->setEdition($this->innovationGameState->getEdition())
                 ->setLauncherId($launcher_id);
