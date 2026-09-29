@@ -18,7 +18,8 @@ class Card44_4E extends AbstractCard
     if (self::isFirstNonDemand()) {
       return self::youMay()->splayRight([Colors::YELLOW, Colors::PURPLE]);
     } else {
-      return self::youMay()->tuck()->exactly(self::countSplayedColors())->fromYourHand();
+      $n = self::countSplayedColors();
+      return self::youMay()->tuck()->minCards($n > 0 ? 1 : 0)->maxCards($n)->fromYourHand();
     }
   }
 
