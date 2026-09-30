@@ -4210,6 +4210,52 @@ class Innovation extends \Bga\GameFramework\Table
                 )
             );
         }
+        self::announceScoreEndWinners();
+    }
+
+    function announceScoreEndWinners()
+    {
+        $players = self::getCollectionFromDb("SELECT player_id, player_innovation_score FROM player");
+        $max_score = 0;
+        foreach ($players as $player) {
+            $max_score = max($max_score, (int) $player['player_innovation_score']);
+        }
+        $winner_ids = [];
+        foreach ($players as $player_id => $player) {
+            if ((int) $player['player_innovation_score'] === $max_score) {
+                $winner_ids[] = $player_id;
+            }
+        }
+        if (count($winner_ids) === 1) {
+            $winner_id = $winner_ids[0];
+            self::notifyAllPlayersBut(
+                $winner_id,
+                'log',
+                clienttranslate('${player_name} wins with ${n} points.'),
+                array(
+                    'player_name' => self::getPlayerNameFromId($winner_id),
+                    'n'           => $max_score,
+                )
+            );
+            self::notifyPlayer(
+                $winner_id,
+                'log',
+                clienttranslate('${You} win with ${n} points.'),
+                array(
+                    'You' => 'You',
+                    'n'   => $max_score,
+                )
+            );
+        } else {
+            $names = [];
+            foreach ($winner_ids as $winner_id) {
+                $names[] = self::getPlayerNameFromId($winner_id);
+            }
+            self::notifyAll('log', clienttranslate('${player_names} tie with ${n} points.'), array(
+                'player_names' => implode(', ', $names),
+                'n'            => $max_score,
+            ));
+        }
     }
 
     function notifyEndOfGameByDogma()
@@ -8585,7 +8631,8 @@ class Innovation extends \Bga\GameFramework\Table
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
                         foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
-                            if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
+                            // Same value as the artifact deck being dug (after drawing up through empty ages).
+                            if ($card['color'] !== null && $card['faceup_age'] == $age_after_drawing_up) {
                                 $card_ids[] = $card['id'];
                             }
                         }

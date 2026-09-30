@@ -1319,8 +1319,11 @@ var Innovation = /** @class */ (function (_super) {
                 dojo.query(".current_effect").removeClass("current_effect");
                 break;
             case 'gameEnd':
-                // Set player panels for the last time properly        
-                var result = args.args.result;
+                // Set player panels for the last time properly
+                var result = args.args && args.args.result;
+                if (!result) {
+                    break;
+                }
                 for (var p = 0; p < result.length; p++) {
                     var player_result = result[p];
                     var player_id = player_result.player;

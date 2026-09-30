@@ -1428,8 +1428,11 @@ class Innovation extends BgaGame {
                 dojo.query(".current_effect").removeClass("current_effect");
                 break;
             case 'gameEnd':
-                // Set player panels for the last time properly        
-                let result = args.args.result;
+                // Set player panels for the last time properly
+                let result = args.args && args.args.result;
+                if (!result) {
+                    break;
+                }
                 for (let p = 0; p < result.length; p++) {
                     let player_result = result[p];
                     let player_id = player_result.player;
