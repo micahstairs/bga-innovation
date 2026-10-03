@@ -10975,7 +10975,15 @@ class Innovation extends \Bga\GameFramework\Table
             ->setNextStep(self::getStep() + 1)
             ->setMaxSteps(self::getStepMax());
 
-        $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions()->build();
+        try {
+            $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions()->build();
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::stInteractionStep (interaction options)');
+            self::trace('interactionStep->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
         $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
 
         // Decrease the number of cards to select based on the forecast/safe limit
@@ -11014,7 +11022,15 @@ class Innovation extends \Bga\GameFramework\Table
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
 
             $executionState->setNumChosen(0);
-            self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
+            try {
+                self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
+            } catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::stInteractionStep (aborted interaction)');
+                self::trace('interactionStep->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
             $step = $executionState->getNextStep() - 1;
             self::setStep($step);
             self::setStepMax($executionState->getMaxSteps());
@@ -11174,7 +11190,15 @@ class Innovation extends \Bga\GameFramework\Table
                 $executionState->setCurrentStep(null);
                 $executionState->setNextStep(null);
                 $executionState->setMaxSteps(null);
-                self::getCardInstance($card_id, $executionState)->atEndOfEffect();
+                try {
+                    self::getCardInstance($card_id, $executionState)->atEndOfEffect();
+                } catch (EndOfGame $e) {
+                    // End of the game: the exception has reached the highest level of code
+                    self::trace('EOG bubbled from self::stInterInteractionStep');
+                    self::trace('interInteractionStep->justBeforeGameEnd');
+                    $this->gamestate->nextState('justBeforeGameEnd');
+                    return;
+                }
             }
 
             // End of the turn for the player involved
