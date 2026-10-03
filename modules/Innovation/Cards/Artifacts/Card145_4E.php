@@ -40,7 +40,7 @@ class Card145_4E extends AbstractCard
         break;
       }
     }
-    return $hasIcon && self::countCards(Locations::HAND) > 0;
+    return $hasIcon && self::countCards(Locations::SCORE) > 0;
   }
 
   public function nonDemandsMightBeEffective(): bool

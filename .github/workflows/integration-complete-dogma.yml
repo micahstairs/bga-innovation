@@ -5,12 +5,14 @@ on:
     branches:
       - 'main-4'
 
+
+  pull_request:
 jobs:
   build-test:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:latest
+        image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_DATABASE: innovation_test
