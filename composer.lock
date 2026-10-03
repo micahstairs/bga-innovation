@@ -1138,12 +1138,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "7aae4e068b90eff4b9febe9fc100713e307ab851"
+                "reference": "bdf833e6fdc9a4fcdb6ec4f346c86196d1508cc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/7aae4e068b90eff4b9febe9fc100713e307ab851",
-                "reference": "7aae4e068b90eff4b9febe9fc100713e307ab851",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/bdf833e6fdc9a4fcdb6ec4f346c86196d1508cc2",
+                "reference": "bdf833e6fdc9a4fcdb6ec4f346c86196d1508cc2",
                 "shasum": ""
             },
             "require": {
