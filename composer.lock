@@ -1138,12 +1138,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "0ed734e82d3b15dbac290084609625122b00bf13"
+                "reference": "76e26c5c7be670627868dffb06e3caa93698921c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/0ed734e82d3b15dbac290084609625122b00bf13",
-                "reference": "0ed734e82d3b15dbac290084609625122b00bf13",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/76e26c5c7be670627868dffb06e3caa93698921c",
+                "reference": "76e26c5c7be670627868dffb06e3caa93698921c",
                 "shasum": ""
             },
             "require": {
@@ -1206,7 +1206,7 @@
             "support": {
                 "source": "https://github.com/micahstairs/bga-workbench/tree/master"
             },
-            "time": "2026-03-21T02:42:51+00:00"
+            "time": "2026-10-04T02:09:54+00:00"
         },
         {
             "name": "myclabs/deep-copy",

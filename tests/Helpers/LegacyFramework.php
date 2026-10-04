@@ -84,7 +84,21 @@ class LegacyGamestate
 
     public function getCurrentMainState(): LegacyMainState
     {
-        return new LegacyMainState($this->inner->state());
+        return new LegacyMainState($this->state());
+    }
+
+    public function state(): array
+    {
+        try {
+            return $this->inner->state();
+        } catch (\Exception $e) {
+            // Workbench starts in framework gameSetup (id 1), which is no longer in states.inc.php.
+            return [
+                'name' => 'gameSetup',
+                'type' => 'manager',
+                'transitions' => ['' => 2],
+            ];
+        }
     }
 
     public function __call(string $name, array $args)
