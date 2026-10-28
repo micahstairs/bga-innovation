@@ -28,7 +28,7 @@ jobs:
          username: ${{ secrets.BGA_USERNAME }}
          server: '1.studio.boardgamearena.com'
          port: 2022
-         password: ${{ secrets.BGA_PASSWORD }}
+         ssh_private_key: ${{ secrets.BGA_SSH_PRIVATE_KEY }}
          local_path: './innovationdev'
          remote_path: '.'
          sftp_only: true
