@@ -10760,7 +10760,10 @@ class Innovation extends \Bga\GameFramework\Table
             $set = "Artifacts";
         } else if ($card['type'] == CardTypes::CITIES) {
             require_once("modules/Innovation/Cards/NoOpCard.php");
-            return new \Innovation\Cards\NoOpCard($this, $execution_state, $card_id);
+            // Use a string for the class name (like below), not a leading-backslash qualified name. The alpha
+            // deploy script rewrites leading-backslash references to the game's namespace, which doesn't exist.
+            $classname = "Innovation\\Cards\\NoOpCard";
+            return new $classname($this, $execution_state, $card_id);
         } else if ($card['type'] == CardTypes::ECHOES) {
             $set = "Echoes";
         } else if ($card['type'] == CardTypes::UNSEEN) {
