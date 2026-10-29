@@ -90,7 +90,7 @@ class Innovation extends \Bga\GameFramework\Table
         if (!isset($this->bga) && class_exists(\Helpers\LegacyBga::class, false)) {
             $this->bga = new \Helpers\LegacyBga($this);
         }
-        if (!method_exists($this->gamestate, 'getCurrentMainState') && class_exists(\Helpers\LegacyGamestate::class, false)) {
+        if (isset($this->gamestate) && !method_exists($this->gamestate, 'getCurrentMainState') && class_exists(\Helpers\LegacyGamestate::class, false)) {
             $this->gamestate = new \Helpers\LegacyGamestate($this->gamestate);
         }
         require 'material.inc.php'; // Required for testing purposes
