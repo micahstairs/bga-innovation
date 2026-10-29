@@ -617,10 +617,10 @@ class Innovation extends \Bga\GameFramework\Table
         self::initStat('table', 'actions_number', 0);
         self::initStat('player', 'actions_number', 0);
 
-        self::initStat('table', 'end_achievements', false);
-        self::initStat('table', 'end_score', false);
-        self::initStat('table', 'end_dogma', false);
-        self::initStat('table', 'fission_triggered', false);
+        self::initStat('table', 'end_achievements', 0);
+        self::initStat('table', 'end_score', 0);
+        self::initStat('table', 'end_dogma', 0);
+        self::initStat('table', 'fission_triggered', 0);
 
         self::initStat('player', 'achievements_number', 0);
         self::initStat('player', 'score', 0);
