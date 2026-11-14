@@ -529,18 +529,6 @@ class Innovation extends \Bga\GameFramework\Table
         $this->innovationGameState->setInitial('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
         $this->innovationGameState->setInitial('dogma_had_impact', -1);
         $this->innovationGameState->setInitial('current_nesting_index', -1);
-        self::DbQuery("
-            INSERT INTO nested_card_execution (
-                nesting_index,
-                card_id,
-                executing_as_if_on_card_id,
-                launcher_id,
-                current_player_id,
-                current_effect_type,
-                current_effect_number,
-                step,
-                step_max
-            ) VALUES (0, -1, -1, -1, -1, -1, -1, -1, -1)");
 
         // Flag used for player interaction in dogma to remember what splay is proposed (-1 as default and if the choice does not involve splaying)
         $this->innovationGameState->setInitial('splay_direction', -1);
@@ -8959,25 +8947,43 @@ class Innovation extends \Bga\GameFramework\Table
 
         // Write info in global variables to prepare the first effect
         self::DbQuery("DELETE FROM indexed_auxiliary_value");
-        $this->innovationGameState->set('current_nesting_index', 0);
         self::DbQuery(
             self::format("
-                UPDATE
-                    nested_card_execution
-                SET
-                    card_id = {card_id},
-                    executing_as_if_on_card_id = {card_id},
-                    card_location = '{card_location}',
-                    launcher_id = {launcher_id},
-                    current_effect_type = {effect_type},
-                    current_effect_number = {effect_number},
-                    post_execution_index = 0,
-                    performed_one_time_setup = FALSE
-                WHERE
-                    nesting_index = 0",
+                REPLACE INTO nested_card_execution (
+                    nesting_index,
+                    card_id,
+                    executing_as_if_on_card_id,
+                    card_location,
+                    launcher_id,
+                    current_player_id,
+                    current_effect_type,
+                    current_effect_number,
+                    step,
+                    step_max,
+                    post_execution_index,
+                    performed_one_time_setup,
+                    auxiliary_value,
+                    auxiliary_value_2
+                ) VALUES (
+                    0,
+                    {card_id},
+                    {card_id},
+                    '{card_location}',
+                    {launcher_id},
+                    -1,
+                    {effect_type},
+                    {effect_number},
+                    -1,
+                    -1,
+                    0,
+                    FALSE,
+                    -1,
+                    -1
+                )",
                 array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number)
             )
         );
+        $this->innovationGameState->set('current_nesting_index', 0);
         $this->innovationGameState->set('sharing_bonus', 0);
         $this->innovationGameState->set('dogma_had_impact', 0);
         self::DbQuery("UPDATE player SET distance_rule_share_state = 0");
@@ -10663,22 +10669,7 @@ class Innovation extends \Bga\GameFramework\Table
             if (self::getGameStateValue('release_version') >= 5) {
                 self::DbQuery("DELETE FROM action_scoped_auxiliary_value_table");
             }
-            self::DbQuery("
-                UPDATE
-                    nested_card_execution
-                SET
-                    card_id = -1,
-                    executing_as_if_on_card_id = -1,
-                    launcher_id = -1,
-                    card_location = NULL,
-                    current_player_id = -1,
-                    current_effect_type = -1,
-                    current_effect_number = -1,
-                    auxiliary_value = -1,
-                    auxiliary_value_2 = -1
-                WHERE
-                    nesting_index = 0"
-            );
+            self::DbQuery("DELETE FROM nested_card_execution WHERE nesting_index = 0");
             $this->innovationGameState->set('sharing_bonus', -1);
             self::setStep(-1);
             self::setStepMax(-1);
