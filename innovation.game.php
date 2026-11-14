@@ -1427,7 +1427,7 @@ class Innovation extends \Bga\GameFramework\Table
 
     function digCard($card, $owner_to): ?array
     {
-        return self::transferCardFromTo($card, $owner_to, "display");
+        return self::transferCardFromTo($card, $owner_to, "display", ['draw_keyword' => false]);
     }
 
     function foreshadowCard($card, $owner_to): ?array
@@ -1437,7 +1437,7 @@ class Innovation extends \Bga\GameFramework\Table
 
     function junkCard(array $card, array $properties = []): ?array
     {
-        return self::transferCardFromTo($card, 0, 'junk', $properties);
+        return self::transferCardFromTo($card, 0, 'junk', array_merge(['draw_keyword' => false], $properties));
     }
 
     function removeCard(array $card, array $properties = []): ?array
@@ -1527,8 +1527,7 @@ class Innovation extends \Bga\GameFramework\Table
         }
 
         // Players can only draw an Unseen card on the first draw of a turn
-        if ($card['location'] == 'deck') {
-            // TODO(4E): Is there a bug here when there is the "look" keyword?
+        if ($card['location'] == 'deck' && $draw_keyword) {
             self::setPlayerWillDrawUnseenCardNext($owner_to, false);
         }
 
@@ -6261,7 +6260,7 @@ class Innovation extends \Bga\GameFramework\Table
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false, $meld_keyword = false)
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false, $meld_keyword = false, $draw_keyword = true)
     {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
 
@@ -6308,6 +6307,7 @@ class Innovation extends \Bga\GameFramework\Table
                 'score_keyword' => $location_to === 'score',
                 'meld_keyword'  => $meld_keyword,
                 'bottom_from'   => $bottom_from,
+                'draw_keyword'  => $draw_keyword,
             ]);
         } catch (EndOfGame $e) {
             self::trace('EOG bubbled from self::executeDraw');
@@ -6387,7 +6387,7 @@ class Innovation extends \Bga\GameFramework\Table
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, $type)]);
             return false;
         }
-        self::bulkTransferCards($cards, 0, Locations::JUNK);
+        self::bulkTransferCards($cards, 0, Locations::JUNK, ['draw_keyword' => false]);
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
             ['age' => self::getAgeSquareWithType($age, $type), 'n' => self::renderNumber(count($cards))]
@@ -8524,7 +8524,7 @@ class Innovation extends \Bga\GameFramework\Table
                     if ($num_cards_to_reveal > 0) {
                         $card_ids_to_return = array();
                         for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, CardTypes::BASE);
+                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, CardTypes::BASE, /*bottom_from=*/ false, /*meld_keyword=*/ false, /*draw_keyword=*/ false);
                             self::transferCardFromTo($card, $player_id, 'hand');
                             if (!self::hasRessource($card, $top_middle_icon)) {
                                 $card_ids_to_return[] = $card['id'];
