@@ -1584,7 +1584,7 @@ class Innovation extends \Bga\GameFramework\Table
                 $filter_from .= self::format(" AND color = {color}", array('color' => $color));
                 break;
             case 'removed':
-                $filter_from = self::format("id = {id}", array('id' => $id)); // Always use position 0
+                $filter_from = self::format("id = {id} AND location = 'removed'", array('id' => $id)); // Always use position 0
                 break;
             default:
                 break;
