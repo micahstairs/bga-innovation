@@ -2077,7 +2077,10 @@ class Innovation extends \Bga\GameFramework\Table
 
     function updateGameSituation($card, $transferInfo)
     {
-        self::recordThatChangeOccurred();
+        // Revealing a card does not count for the sharing bonus (rulebook p.11)
+        $is_mere_reveal = ($transferInfo['location_to'] === Locations::REVEALED && !$transferInfo['draw_keyword'])
+            || ($transferInfo['location_from'] === Locations::REVEALED && $transferInfo['location_to'] === Locations::HAND);
+        self::recordThatChangeOccurred($is_mere_reveal);
 
         $bulk_transfer = $transferInfo['bulk_transfer'];
         $last_card_of_bulk_transfer = $transferInfo['last_card_of_bulk_transfer'];
@@ -4261,7 +4264,7 @@ class Innovation extends \Bga\GameFramework\Table
     }
 
     /** This function should be called whenever something changes in the game **/
-    function recordThatChangeOccurred()
+    function recordThatChangeOccurred($is_mere_reveal = false)
     {
 
         $nested_card_state = self::getCurrentNestedCardState();
@@ -4273,6 +4276,11 @@ class Innovation extends \Bga\GameFramework\Table
 
         // Tell all currently executing "The Big Bang" cards that the game state has changed.
         self::DbQuery("UPDATE nested_card_execution SET auxiliary_value = 1 WHERE card_id = 203");
+
+        // Revealing a card does not count for the sharing bonus (rulebook p.11)
+        if ($is_mere_reveal) {
+            return;
+        }
 
         // Mark that the player under effect made a change in the game
         self::markExecutingPlayer($current_player_under_dogma_effect);
