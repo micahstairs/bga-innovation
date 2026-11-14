@@ -4467,7 +4467,7 @@ class Innovation extends BgaGame {
             dojo.destroy("dogma_confirm_timer_button");
             this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
             dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
-        } else if (this.bga.userPreferences.get(102) == 2 && sharing_players.includes(',')) {
+        } else if (this.bga.userPreferences.get(102) == 2 && sharing_players.split(',').filter((player_id) => player_id != '' && player_id != this.player_id).length > 0) {
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."),
                 {
                     'age': this.square('N', 'age', card.age, 'type_' + card.type),
