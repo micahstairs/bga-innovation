@@ -68,6 +68,11 @@ class Card147 extends AbstractCard
 
   public function nonDemandsMightBeEffective(): bool
   {
-    return count(self::filterWithoutValue(self::getCards(Locations::SCORE), 5)) > 0;
+    foreach (self::getPlayerIds() as $playerId) {
+      if (count(self::filterWithoutValue(self::getCards(Locations::SCORE, $playerId), 5)) > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 }
