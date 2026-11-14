@@ -4287,19 +4287,18 @@ class Innovation extends \Bga\GameFramework\Table
         // Remember that part of the dogma had an impact
         $this->innovationGameState->set('dogma_had_impact', 1);
 
-        // We only need to check for sharing bonuses for the initially triggered card (otherwise Blackmail can incorrectly trigger the bonus)
-        if ($nested_card_state['nesting_index'] > 0) {
-            return;
-        }
-
         // The sharing bonus is already on
         if ($this->innovationGameState->get('sharing_bonus') != 0) {
             return;
         }
 
         // A sharing bonus is triggered if an opponent was affected by a non-demand or echo effect
+        // belonging to the initially triggered card. Impact from nested executions counts too, as
+        // long as the outermost effect is a non-demand or echo effect (Blackmail's self-execute is
+        // part of a demand effect, so it must not trigger the bonus).
+        $outermost_card_state = $nested_card_state['nesting_index'] > 0 ? self::getNestedCardState(0) : $nested_card_state;
         $player_who_launched_the_dogma = $this->innovationGameState->get('active_player');
-        if (($current_effect_type == 1 || $current_effect_type == 3) && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {
+        if (($current_effect_type == 1 || $current_effect_type == 3) && ($outermost_card_state['current_effect_type'] == 1 || $outermost_card_state['current_effect_type'] == 3) && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {
             $this->innovationGameState->set('sharing_bonus', 1);
         }
     }
