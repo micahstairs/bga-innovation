@@ -4076,6 +4076,7 @@ var Innovation = /** @class */ (function (_super) {
         dojo.destroy("dogma_confirm_warning_button");
     };
     Innovation.prototype.action_manuallyConfirmTimerDogma = function (event) {
+        var _this = this;
         this.stopActionTimer();
         var HTML_id = dojo.attr('dogma_confirm_timer_button', 'html_id');
         var card_id = dojo.attr(HTML_id, 'card_id');
@@ -4090,7 +4091,7 @@ var Innovation = /** @class */ (function (_super) {
             this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
             dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
         }
-        else if (this.bga.userPreferences.get(102) == 2 && sharing_players.includes(',')) {
+        else if (this.bga.userPreferences.get(102) == 2 && sharing_players.split(',').filter(function (player_id) { return player_id != '' && player_id != _this.player_id; }).length > 0) {
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."), {
                 'age': this.square('N', 'age', card.age, 'type_' + card.type),
                 'card_name': _(card.name),
