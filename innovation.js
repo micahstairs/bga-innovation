@@ -4646,7 +4646,7 @@ var Innovation = /** @class */ (function (_super) {
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
-        if (!this.isSpectator) {
+        if (!this.isReadOnly()) {
             // Inform the server of this change to make it by default if the player refreshes the page
             this.performServerAction("updateDisplayMode", {
                 display_mode: this.display_mode
@@ -4666,7 +4666,7 @@ var Innovation = /** @class */ (function (_super) {
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
-        if (!this.isSpectator) {
+        if (!this.isReadOnly()) {
             // Inform the server of this change to make it by default if the player refreshes the page
             this.performServerAction("updateViewFull", {
                 view_full: this.view_full
