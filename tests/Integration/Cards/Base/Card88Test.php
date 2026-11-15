@@ -28,8 +28,12 @@ class Card88Test extends BaseCardIntegrationTest
     self::assertNotEmpty($cityId, 'Need a city with the efficiency icon');
     self::meld($cityId);
 
-    // Stack a red 10 so the opponent's demand draw triggers the junk.
-    self::debugTransfer(97, 'topdeck');
+    // Put a red 10 (card 97) on top of the age-10 deck so the opponent's demand draw
+    // triggers the junk. (The top of a deck is the highest position.)
+    $this->tableInstance->withDbConnection(function (Connection $db) {
+      $max = $db->fetchOne("SELECT MAX(position) FROM card WHERE location = 'deck' AND type = 0 AND age = 10");
+      $db->executeStatement("UPDATE card SET position = ? WHERE id = 97", [$max + 1]);
+    });
 
     // Pay for the endorse with a card from hand (age 1 is always low enough).
     $handCards = $this->tableInstance->getTable()->getCardsInLocation($launcherId, 'hand');
