@@ -2063,6 +2063,11 @@ class Innovation extends BgaGame {
         dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
         dojo.byId('junk').style.display = 'none';
 
+        if (this.isInReplayMode()) {
+            // The framework destroys popins when stepping through replays, so the junk zone's container must live outside of the popin in order to survive.
+            dojo.place('junk', dojo.body());
+        }
+
         // Make everything clickable
         this.on(dojo.query('#browse_all_cards_button'), 'onclick', 'click_open_card_browsing_window');
         this.on(dojo.query('#close_card_browser_button'), 'onclick', 'click_close_card_browsing_window');
