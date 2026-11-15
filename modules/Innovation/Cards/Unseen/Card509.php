@@ -25,7 +25,7 @@ class Card509 extends AbstractCard
     switch (self::getColor($card)) {
       case Colors::BLUE:
         self::draw(5);
-        self::safeguard($card);
+        self::putBackInSafe($card);
         break;
       case Colors::RED:
         self::achieve($card);

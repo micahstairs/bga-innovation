@@ -7,7 +7,6 @@
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  */
 
-require_once(APP_GAMEMODULE_PATH . 'module/table/table.game.php');
 require_once('modules/Innovation/Cards/AbstractCard.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
 require_once('modules/Innovation/Cards/InteractionBuilder.php');
@@ -42,7 +41,7 @@ class EndOfGame extends Exception
 {
 }
 
-class Innovation extends Table
+class Innovation extends \Bga\GameFramework\Table
 {
 
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
@@ -84,9 +83,16 @@ class Innovation extends Table
         //  Here, you can assign labels to global variables you are using for this game.
         //  You can use any number of global variables with IDs between 10 and 99.
         //  If your game has options (variants), you also have to associate here a label to
-        //  the corresponding ID in gameoptions.inc.php.
+        //  the corresponding ID in gameoptions.jsonc.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
+        // The workbench stub does not provide the current framework services.
+        if (!isset($this->bga) && class_exists(\Helpers\LegacyBga::class, false)) {
+            $this->bga = new \Helpers\LegacyBga($this);
+        }
+        if (isset($this->gamestate) && !method_exists($this->gamestate, 'getCurrentMainState') && class_exists(\Helpers\LegacyGamestate::class, false)) {
+            $this->gamestate = new \Helpers\LegacyGamestate($this->gamestate);
+        }
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
@@ -523,18 +529,6 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
         $this->innovationGameState->setInitial('dogma_had_impact', -1);
         $this->innovationGameState->setInitial('current_nesting_index', -1);
-        self::DbQuery("
-            INSERT INTO nested_card_execution (
-                nesting_index,
-                card_id,
-                executing_as_if_on_card_id,
-                launcher_id,
-                current_player_id,
-                current_effect_type,
-                current_effect_number,
-                step,
-                step_max
-            ) VALUES (0, -1, -1, -1, -1, -1, -1, -1, -1)");
 
         // Flag used for player interaction in dogma to remember what splay is proposed (-1 as default and if the choice does not involve splaying)
         $this->innovationGameState->setInitial('splay_direction', -1);
@@ -611,10 +605,10 @@ class Innovation extends Table
         self::initStat('table', 'actions_number', 0);
         self::initStat('player', 'actions_number', 0);
 
-        self::initStat('table', 'end_achievements', false);
-        self::initStat('table', 'end_score', false);
-        self::initStat('table', 'end_dogma', false);
-        self::initStat('table', 'fission_triggered', false);
+        self::initStat('table', 'end_achievements', 0);
+        self::initStat('table', 'end_score', 0);
+        self::initStat('table', 'end_dogma', 0);
+        self::initStat('table', 'fission_triggered', 0);
 
         self::initStat('player', 'achievements_number', 0);
         self::initStat('player', 'score', 0);
@@ -799,6 +793,9 @@ class Innovation extends Table
         $this->activeNextPlayer();
 
         /************ End of the game initialization *****/
+
+        // State 1 (gameSetup) is provided by the framework. Enter the first game state.
+        return 2;
     }
 
     /*
@@ -835,10 +832,11 @@ class Innovation extends Table
         $current_player_id = self::getCurrentPlayerId(); // !! We must only return information visible by this player !!
 
         // Get information about players
-        $players = self::getCollectionFromDb("SELECT player_id, player_score, player_team, player_color FROM player");
+        $players = self::getCollectionFromDb("SELECT player_id, player_no, player_team FROM player ORDER BY player_no");
         foreach ($players as $player_id => $player) {
-            $result['players'][$player_id]['achievement_count'] = (Integer) ($player['player_score']);
-            $result['players'][$player_id]['player_team'] = (Integer) ($player['player_team']);
+            $result['players'][$player_id]['achievement_count'] = (int) $this->bga->playerScore->get((int) $player_id);
+            $result['players'][$player_id]['player_team'] = (int) $player['player_team'];
+            $result['players'][$player_id]['player_no'] = (int) $player['player_no'];
         }
 
         // Public information
@@ -1001,7 +999,7 @@ class Innovation extends Table
             $action_number = $this->innovationGameState->get('current_action_number');
             $result['action_number'] = $action_number;
             $card = self::getArtifactOnDisplay($active_player);
-            if ($card !== null && $this->gamestate->state()['name'] == 'artifactPlayerTurn') {
+            if ($card !== null && $this->currentMainStateName() == 'artifactPlayerTurn') {
                 $result['artifact_on_display_icons'] = array();
                 $result['artifact_on_display_icons']['resource_icon'] = $card['dogma_icon'];
                 $result['artifact_on_display_icons']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
@@ -1037,8 +1035,7 @@ class Innovation extends Table
     function getGameProgression()
     {
         // Start or end of game
-        $current_state = $this->gamestate->state();
-        switch ($current_state['name']) {
+        switch ($this->currentMainStateName()) {
             case 'gameSetup':
             case 'turn0':
                 return 0;
@@ -1430,7 +1427,7 @@ class Innovation extends Table
 
     function digCard($card, $owner_to): ?array
     {
-        return self::transferCardFromTo($card, $owner_to, "display");
+        return self::transferCardFromTo($card, $owner_to, "display", ['draw_keyword' => false]);
     }
 
     function foreshadowCard($card, $owner_to): ?array
@@ -1440,7 +1437,7 @@ class Innovation extends Table
 
     function junkCard(array $card, array $properties = []): ?array
     {
-        return self::transferCardFromTo($card, 0, 'junk', $properties);
+        return self::transferCardFromTo($card, 0, 'junk', array_merge(['draw_keyword' => false], $properties));
     }
 
     function removeCard(array $card, array $properties = []): ?array
@@ -1530,8 +1527,7 @@ class Innovation extends Table
         }
 
         // Players can only draw an Unseen card on the first draw of a turn
-        if ($card['location'] == 'deck') {
-            // TODO(4E): Is there a bug here when there is the "look" keyword?
+        if ($card['location'] == 'deck' && $draw_keyword) {
             self::setPlayerWillDrawUnseenCardNext($owner_to, false);
         }
 
@@ -1588,7 +1584,7 @@ class Innovation extends Table
                 $filter_from .= self::format(" AND color = {color}", array('color' => $color));
                 break;
             case 'removed':
-                $filter_from = self::format("id = {id}", array('id' => $id)); // Always use position 0
+                $filter_from = self::format("id = {id} AND location = 'removed'", array('id' => $id)); // Always use position 0
                 break;
             default:
                 break;
@@ -1728,8 +1724,7 @@ class Innovation extends Table
         $card['position'] = $position_to;
         $card['splay_direction'] = $splay_direction_to;
 
-        $current_state = $this->gamestate->state();
-        if ($current_state['name'] != 'gameSetup') {
+        if ($this->currentMainStateName() != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
                 if ($card['type'] == CardTypes::CITIES && !$player_already_lost) {
@@ -2081,7 +2076,10 @@ class Innovation extends Table
 
     function updateGameSituation($card, $transferInfo)
     {
-        self::recordThatChangeOccurred();
+        // Revealing a card does not count for the sharing bonus (rulebook p.11)
+        $is_mere_reveal = ($transferInfo['location_to'] === Locations::REVEALED && !$transferInfo['draw_keyword'])
+            || ($transferInfo['location_from'] === Locations::REVEALED && $transferInfo['location_to'] === Locations::HAND);
+        self::recordThatChangeOccurred($is_mere_reveal);
 
         $bulk_transfer = $transferInfo['bulk_transfer'];
         $last_card_of_bulk_transfer = $transferInfo['last_card_of_bulk_transfer'];
@@ -2559,7 +2557,7 @@ class Innovation extends Table
                 if ($draw_keyword) {
                     $action_for_player = clienttranslate('draw and meld');
                     $action_for_others = clienttranslate('draw and melds');
-                } else if ($this->gamestate->state()['name'] == 'promoteCardPlayerTurn') {
+                } else if ($this->currentMainStateName() == 'promoteCardPlayerTurn') {
                     $action_for_player = clienttranslate('promote');
                     $action_for_others = clienttranslate('promotes');
                 } else {
@@ -4096,16 +4094,16 @@ class Innovation extends Table
     {
         // Display who won and with how many achievements
         // (There can be weird cases when two players tie or one player get more achievements than needed if two or more special achievements are claimed at the same time)
-        $players = self::getCollectionFromDb("SELECT player_id, player_score FROM player");
+        $achievement_counts = $this->bga->playerScore->getAll();
         $number_of_achievements_needed_to_win = $this->innovationGameState->get('number_of_achievements_needed_to_win');
         $number_of_achievements_winner = $number_of_achievements_needed_to_win;
         $winners = array();
 
-        foreach ($players as $player_id => $player) {
-            if ($player['player_score'] == $number_of_achievements_winner) {
+        foreach ($achievement_counts as $player_id => $achievement_count) {
+            if ($achievement_count == $number_of_achievements_winner) {
                 $winners[] = $player_id;
-            } else if ($player['player_score'] > $number_of_achievements_winner) {
-                $number_of_achievements_winner = $player['player_score'];
+            } else if ($achievement_count > $number_of_achievements_winner) {
+                $number_of_achievements_winner = $achievement_count;
                 $winners = array($player_id);
             }
         }
@@ -4202,6 +4200,52 @@ class Innovation extends Table
                 )
             );
         }
+        self::announceScoreEndWinners();
+    }
+
+    function announceScoreEndWinners()
+    {
+        $players = self::getCollectionFromDb("SELECT player_id, player_innovation_score FROM player");
+        $max_score = 0;
+        foreach ($players as $player) {
+            $max_score = max($max_score, (int) $player['player_innovation_score']);
+        }
+        $winner_ids = [];
+        foreach ($players as $player_id => $player) {
+            if ((int) $player['player_innovation_score'] === $max_score) {
+                $winner_ids[] = $player_id;
+            }
+        }
+        if (count($winner_ids) === 1) {
+            $winner_id = $winner_ids[0];
+            self::notifyAllPlayersBut(
+                $winner_id,
+                'log',
+                clienttranslate('${player_name} wins with ${n} points.'),
+                array(
+                    'player_name' => self::getPlayerNameFromId($winner_id),
+                    'n'           => $max_score,
+                )
+            );
+            self::notifyPlayer(
+                $winner_id,
+                'log',
+                clienttranslate('${You} win with ${n} points.'),
+                array(
+                    'You' => 'You',
+                    'n'   => $max_score,
+                )
+            );
+        } else {
+            $names = [];
+            foreach ($winner_ids as $winner_id) {
+                $names[] = self::getPlayerNameFromId($winner_id);
+            }
+            self::notifyAll('log', clienttranslate('${player_names} tie with ${n} points.'), array(
+                'player_names' => implode(', ', $names),
+                'n'            => $max_score,
+            ));
+        }
     }
 
     function notifyEndOfGameByDogma()
@@ -4219,7 +4263,7 @@ class Innovation extends Table
     }
 
     /** This function should be called whenever something changes in the game **/
-    function recordThatChangeOccurred()
+    function recordThatChangeOccurred($is_mere_reveal = false)
     {
 
         $nested_card_state = self::getCurrentNestedCardState();
@@ -4232,16 +4276,16 @@ class Innovation extends Table
         // Tell all currently executing "The Big Bang" cards that the game state has changed.
         self::DbQuery("UPDATE nested_card_execution SET auxiliary_value = 1 WHERE card_id = 203");
 
+        // Revealing a card does not count for the sharing bonus (rulebook p.11)
+        if ($is_mere_reveal) {
+            return;
+        }
+
         // Mark that the player under effect made a change in the game
         self::markExecutingPlayer($current_player_under_dogma_effect);
 
         // Remember that part of the dogma had an impact
         $this->innovationGameState->set('dogma_had_impact', 1);
-
-        // We only need to check for sharing bonuses for the initially triggered card (otherwise Blackmail can incorrectly trigger the bonus)
-        if ($nested_card_state['nesting_index'] > 0) {
-            return;
-        }
 
         // The sharing bonus is already on
         if ($this->innovationGameState->get('sharing_bonus') != 0) {
@@ -4249,8 +4293,12 @@ class Innovation extends Table
         }
 
         // A sharing bonus is triggered if an opponent was affected by a non-demand or echo effect
+        // belonging to the initially triggered card. Impact from nested executions counts too, as
+        // long as the outermost effect is a non-demand or echo effect (Blackmail's self-execute is
+        // part of a demand effect, so it must not trigger the bonus).
+        $outermost_card_state = $nested_card_state['nesting_index'] > 0 ? self::getNestedCardState(0) : $nested_card_state;
         $player_who_launched_the_dogma = $this->innovationGameState->get('active_player');
-        if (($current_effect_type == 1 || $current_effect_type == 3) && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {
+        if (($current_effect_type == 1 || $current_effect_type == 3) && ($outermost_card_state['current_effect_type'] == 1 || $outermost_card_state['current_effect_type'] == 3) && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {
             $this->innovationGameState->set('sharing_bonus', 1);
         }
     }
@@ -5548,33 +5596,8 @@ class Innovation extends Table
     /** Get and update game situation **/
     function incrementBGAScore($player_id, $is_special_achievement)
     { // Increment the BGA score of the team (single player or to player in 2 vs 2 game) (number of achievements) then check if he got enough to win
-        $player = self::getObjectFromDB(
-            self::format(
-                "SELECT
-                player_score, player_team
-            FROM
-                player
-            WHERE
-                player_id={player_id}"
-                ,
-                array('player_id' => $player_id)
-            )
-        );
-
-        $player['player_score']++;
-
-        self::DbQuery(
-            self::format(
-                "UPDATE
-                player
-            SET
-                player_score = {player_score}
-            WHERE
-                player_team={player_team}"
-                ,
-                $player
-            )
-        );
+        $achievement_count = $this->bga->playerScore->get((int) $player_id) + 1;
+        $this->setTeamAchievementScore($player_id, $achievement_count);
 
         // Stats
         self::incStat(1, 'achievements_number', $player_id);
@@ -5582,8 +5605,8 @@ class Innovation extends Table
             self::incStat(1, 'special_achievements_number', $player_id);
         }
 
-        // Was it the last achievement needed for the player for winning?      
-        if ($player['player_score'] >= $this->innovationGameState->get('number_of_achievements_needed_to_win')) {
+        // Was it the last achievement needed for the player for winning?
+        if ($achievement_count >= $this->innovationGameState->get('number_of_achievements_needed_to_win')) {
             $this->innovationGameState->set('game_end_type', 0);
             self::trace('EOG bubbled from self::incrementBGAScore');
             throw new EndOfGame();
@@ -5593,36 +5616,27 @@ class Innovation extends Table
     /** Get and update game situation **/
     function decrementBGAScore($player_id)
     {
-        $player = self::getObjectFromDB(
-            self::format(
-                "SELECT
-                player_score, player_team
-            FROM
-                player
-            WHERE
-                player_id={player_id}"
-                ,
-                array('player_id' => $player_id)
-            )
-        );
-
-        $player['player_score']--;
-
-        self::DbQuery(
-            self::format(
-                "UPDATE
-                player
-            SET
-                player_score = {player_score}
-            WHERE
-                player_team={player_team}"
-                ,
-                $player
-            )
-        );
+        $achievement_count = $this->bga->playerScore->get((int) $player_id) - 1;
+        $this->setTeamAchievementScore($player_id, $achievement_count);
 
         // Stats
         self::incStat(-1, 'achievements_number', $player_id);
+    }
+
+    /** Set the achievement score for a player and their teammate, without a score notification. */
+    private function setTeamAchievementScore($player_id, $achievement_count)
+    {
+        // null suppresses the counter notification; the client updates the panel from card-move notifications.
+        $this->bga->playerScore->set((int) $player_id, (int) $achievement_count, null);
+        $teammate_id = self::getPlayerTeammate($player_id);
+        if ($teammate_id) {
+            $this->bga->playerScore->set((int) $teammate_id, (int) $achievement_count, null);
+        }
+    }
+
+    private function currentMainStateName()
+    {
+        return $this->gamestate->getCurrentMainState()->name;
     }
 
     function getPlayerScore($player_id)
@@ -5643,18 +5657,7 @@ class Innovation extends Table
 
     function getPlayerNumberOfAchievements($player_id)
     { // Player Innovation score is different from the BGA score (number of achievements)
-        return self::getUniqueValueFromDB(
-            self::format("
-        SELECT
-            player_score
-        FROM
-            player
-        WHERE
-            player_id = {player_id}
-        ",
-                array('player_id' => $player_id)
-            )
-        );
+        return $this->bga->playerScore->get((int) $player_id);
     }
 
     function updatePlayerScore($player_id)
@@ -6005,47 +6008,37 @@ class Innovation extends Table
             ");
         }
 
-        self::DbQuery("
-        UPDATE
-            player
-        SET
-            player_score_aux = player_score,
-            player_score = player_innovation_score
-        ");
+        $players = self::getCollectionFromDb("SELECT player_id, player_innovation_score FROM player");
+        foreach ($players as $player_id => $player) {
+            $achievement_count = $this->bga->playerScore->get((int) $player_id);
+            $this->bga->playerScoreAux->set((int) $player_id, (int) $achievement_count, null);
+            $this->bga->playerScore->set((int) $player_id, (int) $player['player_innovation_score'], null);
+        }
     }
 
     function binarizeBGAScore()
     {
         // Called if the game ends by dogma. The innovation score is 1 for winners, 0 for losers. There is no tie-breaker.
-        self::DbQuery(
-            self::format("
-        UPDATE
-            player
-        SET
-            player_score_aux = 0,
-            player_score = (CASE WHEN player_id = {winner} THEN 1 ELSE 0 END)
-        ",
-                array('winner' => $this->innovationGameState->get('winner_by_dogma'))
-            )
-        );
+        $winner = (int) $this->innovationGameState->get('winner_by_dogma');
+        $players = self::getCollectionFromDb("SELECT player_id, player_team FROM player");
+        foreach ($players as $player_id => $player) {
+            $this->bga->playerScoreAux->set((int) $player_id, 0, null);
+            $this->bga->playerScore->set((int) $player_id, (int) $player_id === $winner ? 1 : 0, null);
+        }
 
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'team') {
-            // Add the score of the teammate 0 + 0 for losers, 0 + 1 for winners
-            self::DbQuery("
-            UPDATE
-                player AS a
-                LEFT JOIN (
-                    SELECT
-                        player_team, SUM(player_score) AS team_score
-                    FROM
-                        player
-                    GROUP BY
-                        player_team
-                
-                ) AS b ON a.player_team = b.player_team
-            SET
-                a.player_score = b.team_score
-            ");
+            // Add the score of the teammate: 0 + 0 for losers, 0 + 1 for winners
+            $team_scores = array();
+            foreach ($players as $player_id => $player) {
+                $team = $player['player_team'];
+                if (!isset($team_scores[$team])) {
+                    $team_scores[$team] = 0;
+                }
+                $team_scores[$team] += $this->bga->playerScore->get((int) $player_id);
+            }
+            foreach ($players as $player_id => $player) {
+                $this->bga->playerScore->set((int) $player_id, (int) $team_scores[$player['player_team']], null);
+            }
         }
     }
 
@@ -6274,7 +6267,7 @@ class Innovation extends Table
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false, $meld_keyword = false)
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false, $meld_keyword = false, $draw_keyword = true)
     {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
 
@@ -6321,6 +6314,7 @@ class Innovation extends Table
                 'score_keyword' => $location_to === 'score',
                 'meld_keyword'  => $meld_keyword,
                 'bottom_from'   => $bottom_from,
+                'draw_keyword'  => $draw_keyword,
             ]);
         } catch (EndOfGame $e) {
             self::trace('EOG bubbled from self::executeDraw');
@@ -6400,7 +6394,7 @@ class Innovation extends Table
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'), ['age' => self::getAgeSquareWithType($age, $type)]);
             return false;
         }
-        self::bulkTransferCards($cards, 0, Locations::JUNK);
+        self::bulkTransferCards($cards, 0, Locations::JUNK, ['draw_keyword' => false]);
         self::notifyGeneralInfo(
             clienttranslate('The ${age} deck, which contained ${n} card(s), was junked.'),
             ['age' => self::getAgeSquareWithType($age, $type), 'n' => self::renderNumber(count($cards))]
@@ -8537,7 +8531,7 @@ class Innovation extends Table
                     if ($num_cards_to_reveal > 0) {
                         $card_ids_to_return = array();
                         for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, CardTypes::BASE);
+                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, CardTypes::BASE, /*bottom_from=*/ false, /*meld_keyword=*/ false, /*draw_keyword=*/ false);
                             self::transferCardFromTo($card, $player_id, 'hand');
                             if (!self::hasRessource($card, $top_middle_icon)) {
                                 $card_ids_to_return[] = $card['id'];
@@ -8632,7 +8626,8 @@ class Innovation extends Table
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
                         foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
-                            if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
+                            // Same value as the artifact deck being dug (after drawing up through empty ages).
+                            if ($card['color'] !== null && $card['faceup_age'] == $age_after_drawing_up) {
                                 $card_ids[] = $card['id'];
                             }
                         }
@@ -8959,25 +8954,43 @@ class Innovation extends Table
 
         // Write info in global variables to prepare the first effect
         self::DbQuery("DELETE FROM indexed_auxiliary_value");
-        $this->innovationGameState->set('current_nesting_index', 0);
         self::DbQuery(
             self::format("
-                UPDATE
-                    nested_card_execution
-                SET
-                    card_id = {card_id},
-                    executing_as_if_on_card_id = {card_id},
-                    card_location = '{card_location}',
-                    launcher_id = {launcher_id},
-                    current_effect_type = {effect_type},
-                    current_effect_number = {effect_number},
-                    post_execution_index = 0,
-                    performed_one_time_setup = FALSE
-                WHERE
-                    nesting_index = 0",
+                REPLACE INTO nested_card_execution (
+                    nesting_index,
+                    card_id,
+                    executing_as_if_on_card_id,
+                    card_location,
+                    launcher_id,
+                    current_player_id,
+                    current_effect_type,
+                    current_effect_number,
+                    step,
+                    step_max,
+                    post_execution_index,
+                    performed_one_time_setup,
+                    auxiliary_value,
+                    auxiliary_value_2
+                ) VALUES (
+                    0,
+                    {card_id},
+                    {card_id},
+                    '{card_location}',
+                    {launcher_id},
+                    -1,
+                    {effect_type},
+                    {effect_number},
+                    -1,
+                    -1,
+                    0,
+                    FALSE,
+                    -1,
+                    -1
+                )",
                 array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number)
             )
         );
+        $this->innovationGameState->set('current_nesting_index', 0);
         $this->innovationGameState->set('sharing_bonus', 0);
         $this->innovationGameState->set('dogma_had_impact', 0);
         self::DbQuery("UPDATE player SET distance_rule_share_state = 0");
@@ -9462,13 +9475,13 @@ class Innovation extends Table
     function getClaimableValuesIgnoringAvailability($player_id, $score_multiplier = 1)
     {
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
-        $player_score = self::getPlayerScore($player_id) * $score_multiplier;
+        $innovation_score = self::getPlayerScore($player_id) * $score_multiplier;
         $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type = null, $is_relic = false);
 
         $claimable_ages = array();
         for ($age = 1; $age <= 11; $age++) {
             // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
-            if ($age <= $age_max && $player_score >= 5 * $age * ($claimed_achievement_count[$age] + 1)) {
+            if ($age <= $age_max && $innovation_score >= 5 * $age * ($claimed_achievement_count[$age] + 1)) {
                 $claimable_ages[] = $age;
             }
         }
@@ -10475,8 +10488,9 @@ class Innovation extends Table
         $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, $card);
         $launcher_id = self::getLauncherId();
 
-        // Perform one-time setup for the effect
-        if (!$nested_card_state['performed_one_time_setup']) {
+        // Buried echoes clear auxiliary_value when they finish, so wait until
+        // after echoes to run one-time setup.
+        if (!$nested_card_state['performed_one_time_setup'] && $current_effect_type != self::ECHO_EFFECT) {
             $executionState = (new ExecutionState($this))
                 ->setEdition($this->innovationGameState->getEdition())
                 ->setLauncherId($launcher_id);
@@ -10662,22 +10676,7 @@ class Innovation extends Table
             if (self::getGameStateValue('release_version') >= 5) {
                 self::DbQuery("DELETE FROM action_scoped_auxiliary_value_table");
             }
-            self::DbQuery("
-                UPDATE
-                    nested_card_execution
-                SET
-                    card_id = -1,
-                    executing_as_if_on_card_id = -1,
-                    launcher_id = -1,
-                    card_location = NULL,
-                    current_player_id = -1,
-                    current_effect_type = -1,
-                    current_effect_number = -1,
-                    auxiliary_value = -1,
-                    auxiliary_value_2 = -1
-                WHERE
-                    nesting_index = 0"
-            );
+            self::DbQuery("DELETE FROM nested_card_execution WHERE nesting_index = 0");
             $this->innovationGameState->set('sharing_bonus', -1);
             self::setStep(-1);
             self::setStepMax(-1);
@@ -10759,7 +10758,10 @@ class Innovation extends Table
             $set = "Artifacts";
         } else if ($card['type'] == CardTypes::CITIES) {
             require_once("modules/Innovation/Cards/NoOpCard.php");
-            return new \Innovation\Cards\NoOpCard($this, $execution_state, $card_id);
+            // Use a string for the class name (like below), not a leading-backslash qualified name. The alpha
+            // deploy script rewrites leading-backslash references to the game's namespace, which doesn't exist.
+            $classname = "Innovation\\Cards\\NoOpCard";
+            return new $classname($this, $execution_state, $card_id);
         } else if ($card['type'] == CardTypes::ECHOES) {
             $set = "Echoes";
         } else if ($card['type'] == CardTypes::UNSEEN) {
@@ -10974,7 +10976,15 @@ class Innovation extends Table
             ->setNextStep(self::getStep() + 1)
             ->setMaxSteps(self::getStepMax());
 
-        $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions()->build();
+        try {
+            $compact_options = self::getCardInstance($card_id, $executionState)->getInteractionOptions()->build();
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::stInteractionStep (interaction options)');
+            self::trace('interactionStep->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
         $options = self::expandInteractionOptions($compact_options, $player_id, /*is_refreshing_options*/ false);
 
         // Decrease the number of cards to select based on the forecast/safe limit
@@ -11013,7 +11023,15 @@ class Innovation extends Table
             self::notifyIfLocationLimitShrunkSelection($executionState->getPlayerId());
 
             $executionState->setNumChosen(0);
-            self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
+            try {
+                self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
+            } catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::stInteractionStep (aborted interaction)');
+                self::trace('interactionStep->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
             $step = $executionState->getNextStep() - 1;
             self::setStep($step);
             self::setStepMax($executionState->getMaxSteps());
@@ -11173,7 +11191,15 @@ class Innovation extends Table
                 $executionState->setCurrentStep(null);
                 $executionState->setNextStep(null);
                 $executionState->setMaxSteps(null);
-                self::getCardInstance($card_id, $executionState)->atEndOfEffect();
+                try {
+                    self::getCardInstance($card_id, $executionState)->atEndOfEffect();
+                } catch (EndOfGame $e) {
+                    // End of the game: the exception has reached the highest level of code
+                    self::trace('EOG bubbled from self::stInterInteractionStep');
+                    self::trace('interInteractionStep->justBeforeGameEnd');
+                    $this->gamestate->nextState('justBeforeGameEnd');
+                    return;
+                }
             }
 
             // End of the turn for the player involved
@@ -11499,6 +11525,8 @@ class Innovation extends Table
 
             // The player has chosen one card
             $card = self::getCardInfo($selected_card_id);
+            $is_distance_rule_return = self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1
+                || self::getPlayerTableColumn($player_id, 'distance_rule_share_state') == 1;
 
             // Flags
             $owner_to = $this->innovationGameState->get('owner_to');
@@ -11579,12 +11607,14 @@ class Innovation extends Table
                 }
 
                 if ($splay_direction == -1) {
-                    if ($code !== null) {
+                    // A Parley/share-distance return is not a dogma card choice. Transfer the card
+                    // back to the deck, but do not run executeCardTransfer or handleCardChoice.
+                    if (!$is_distance_rule_return && $code !== null) {
                         $this->innovationGameState->set("age_last_selected", $card['age'] ?? -1);
                         $this->innovationGameState->set("color_last_selected", $card['color'] ?? -1);
                         $this->innovationGameState->set("owner_last_selected", $card['owner']);
                     }
-                    if ($code !== null && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
+                    if (!$is_distance_rule_return && $code !== null && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
                         // Do nothing since the card transfer was overridden
                     } else if ($location_to == Locations::REVEALED_THEN_HAND) {
                         $card = self::transferCardFromTo($card, $owner_to, Locations::REVEALED);
@@ -11616,7 +11646,7 @@ class Innovation extends Table
                             ]
                         );
                     }
-                    if ($code !== null) {
+                    if (!$is_distance_rule_return && $code !== null) {
                         self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
                         self::setStepMax($executionState->getMaxSteps());
                         self::setStep($executionState->getNextStep() - 1);

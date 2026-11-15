@@ -1,0 +1,194 @@
+{
+    "100": {
+        "name": "Game type",
+        "values": {
+            "1": {
+                "name": "Classic game"
+            },
+            "2": {
+                "name": "2 vs 2, random teams",
+                "tmdisplay": "Team game (2 vs 2)",
+                "beta": true,
+                "nobeginner": true
+            },
+            "3": {
+                "name": "2 vs 2, by table order (1st/2nd vs 3rd/4th)",
+                "tmdisplay": "Team game (2 vs 2)",
+                "beta": true,
+                "nobeginner": true
+            },
+            "4": {
+                "name": "2 vs 2, by table order (1st/3rd vs 2nd/4th)",
+                "tmdisplay": "Team game (2 vs 2)",
+                "beta": true,
+                "nobeginner": true
+            },
+            "5": {
+                "name": "2 vs 2, by table order (1st/4th vs 2nd/3rd)",
+                "tmdisplay": "Team game (2 vs 2)",
+                "beta": true,
+                "nobeginner": true
+            }
+        },
+        "startcondition": {
+            "1": [],
+            "2": [
+                {
+                    "type": "minplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                },
+                {
+                    "type": "maxplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                }
+            ],
+            "3": [
+                {
+                    "type": "minplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                },
+                {
+                    "type": "maxplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                }
+            ],
+            "4": [
+                {
+                    "type": "minplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                },
+                {
+                    "type": "maxplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                }
+            ],
+            "5": [
+                {
+                    "type": "minplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                },
+                {
+                    "type": "maxplayers",
+                    "value": 4,
+                    "message": "Team game is only available for 4 players"
+                }
+            ]
+        }
+    },
+    "101": {
+        "name": "Game rules",
+        "values": {
+            "3": {
+                "name": "4th edition",
+                "tmdisplay": "4th edition"
+            },
+            "1": {
+                "name": "3rd edition",
+                "tmdisplay": "3rd edition"
+            }
+        },
+        "startcondition": {
+            "1": [
+                {
+                    "type": "maxplayers",
+                    "value": 4,
+                    "gamestartonly": true,
+                    "message": "5 player games can only be played when using the 4th edition rules"
+                },
+                {
+                    "type": "otheroption",
+                    "id": 106,
+                    "value": 1,
+                    "message": "The Unseen expansion can only be played when using the 4th edition rules"
+                }
+            ],
+            "3": [
+                {
+                    "type": "otheroptionisnot",
+                    "id": 102,
+                    "value": 3,
+                    "message": "Relics are not part of the 4th edition rules"
+                }
+            ]
+        }
+    },
+    "102": {
+        "name": "Artifacts of History expansion",
+        "values": {
+            "1": {
+                "name": "Disable"
+            },
+            "2": {
+                "name": "Enable",
+                "nobeginner": true,
+                "tmdisplay": "Artifacts Expansion"
+            },
+            "3": {
+                "name": "Enable with Relics (3rd edition only)",
+                "nobeginner": true,
+                "tmdisplay": "Artifacts Expansion with Relics"
+            }
+        }
+    },
+    "103": {
+        "name": "Cities of Destiny expansion",
+        "values": {
+            "1": {
+                "name": "Disable"
+            },
+            "2": {
+                "name": "Enable",
+                "nobeginner": true,
+                "tmdisplay": "Cities Expansion"
+            }
+        }
+    },
+    "104": {
+        "name": "Echoes of the Past expansion",
+        "values": {
+            "1": {
+                "name": "Disable"
+            },
+            "2": {
+                "name": "Enable",
+                "nobeginner": true,
+                "tmdisplay": "Echoes Expansion"
+            }
+        }
+    },
+    "106": {
+        "name": "The Unseen expansion",
+        "values": {
+            "1": {
+                "name": "Disable"
+            },
+            "2": {
+                "name": "Enable",
+                "nobeginner": true,
+                "tmdisplay": "Unseen Expansion"
+            }
+        }
+    },
+    "110": {
+        "name": "Extra achievement to win",
+        "values": {
+            "1": {
+                "name": "Disable",
+                "description": "An extra achievement will still be added to the win requirement for each enabled expansion"
+            },
+            "2": {
+                "name": "Enable",
+                "tmdisplay": "Extra Achievement",
+                "description": "An extra achievement will be added to the win requirement (in addition to an achievement being added for each enabled expansion)",
+                "nobeginner": true
+            }
+        }
+    }
+}

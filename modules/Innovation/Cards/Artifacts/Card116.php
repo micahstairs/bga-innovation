@@ -30,10 +30,35 @@ class Card116 extends AbstractCard
   public function handleCardChoice(array $card)
   {
     $topCard = self::getTopCardOfColor(self::getColor($card));
-    if (self::isFourthEdition() && self::isTheirTurn()) {
-      self::superExecute($topCard);
-    } else {
-      self::selfExecute($topCard);
+    $super = self::isFourthEdition() && self::isTheirTurn();
+    error_log(sprintf(
+      'Priest-King handleCardChoice player=%s scored=%s color=%s top=%s mode=%s launcher=%s',
+      self::getPlayerId(),
+      $card['id'] ?? 'none',
+      $card['color'] ?? 'none',
+      $topCard['id'] ?? 'none',
+      $super ? 'super' : 'self',
+      self::getLauncherId()
+    ));
+    try {
+      if ($super) {
+        self::superExecute($topCard);
+      } else {
+        self::selfExecute($topCard);
+      }
+    } catch (\EndOfGame $e) {
+      throw $e;
+    } catch (\Exception $e) {
+      error_log(sprintf(
+        'Priest-King %sExecute failed scored=%s top=%s: %s in %s:%s',
+        $super ? 'super' : 'self',
+        $card['id'] ?? 'none',
+        $topCard['id'] ?? 'none',
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine()
+      ));
+      throw $e;
     }
   }
 

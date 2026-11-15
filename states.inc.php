@@ -50,16 +50,7 @@
 // Game State Diagram (not complete): https://docs.google.com/drawings/d/1oKv79jHr1t2C8VjWJCkfSAN8FoGzT8rkM9hVooFV4S0
 $machinestates = array(
 
-    // The initial state. Please do not modify.
-    1  => array(
-        "name"        => "gameSetup",
-        "description" => clienttranslate('Game setup'),
-        "type"        => "manager",
-        "action"      => "stGameSetup",
-        "transitions" => array("" => 2)
-    ),
-
-    // Note: ID=2 => your first state
+    // State 1 (gameSetup) is provided by the framework. setupNewGame returns 2.
 
     2  => array(
         "name"              => "turn0",
@@ -336,15 +327,7 @@ $machinestates = array(
         "transitions"           => array("" => 99)
     ),
 
-    // Final state.
-    // Please do not modify.
-    99 => array(
-        "name"        => "gameEnd",
-        "description" => clienttranslate('End of game'),
-        "type"        => "manager",
-        "action"      => "stGameEnd",
-        "args"        => "argGameEnd"
-    )
+    // State 99 (gameEnd) is provided by the framework.
 
 );
 

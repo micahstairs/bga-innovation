@@ -22,6 +22,7 @@ $vendorDir = __DIR__ . '/../vendor';
 require_once $vendorDir . '/autoload.php';
 require_once 'Helpers/Mocks.php';
 require_once 'Helpers/TestHelpers.php';
+require_once 'Helpers/LegacyFramework.php';
 require_once 'BaseTest.php';
 require_once 'Integration/BaseIntegrationTest.php';
 require_once 'Integration/Cards/BaseCardIntegrationTest.php';
@@ -35,4 +36,8 @@ foreach (glob($cardsDir . '/Base/*.php') as $filename) {
 }
 
 StubProductionEnvironment::stub();
+require_once APP_GAMEMODULE_PATH . 'module/table/table.game.php';
+if (!class_exists(\Bga\GameFramework\Table::class, false)) {
+    class_alias('Table', \Bga\GameFramework\Table::class);
+}
 require_once "$gameName.game.php";

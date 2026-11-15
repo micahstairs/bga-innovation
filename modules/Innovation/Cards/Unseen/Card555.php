@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\AbstractCard;
 use Innovation\Cards\InteractionBuilder;
-use Innovation\Enums\Directions;
 
 class Card555 extends AbstractCard
 {
@@ -44,9 +43,9 @@ class Card555 extends AbstractCard
     self::setAuxiliaryValue($choice);
   }
 
-  public function afterInteraction()
+  public function handleSplayChoice(int $color, bool $splayChanged)
   {
-    if (self::isSecondInteraction() && self::getAuxiliaryValue() === 2) {
+    if (self::getAuxiliaryValue() === 2 && $splayChanged) {
       self::draw(9);
     }
   }

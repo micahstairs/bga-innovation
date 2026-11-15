@@ -34,13 +34,13 @@ class Card145_4E extends AbstractCard
   public function compelMightBeEffective(): bool
   {
     $hasIcon = false;
-    foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, Icons::AUTHORITY)) {
+    foreach (Colors::ALL as $color) {
+      if (self::getIconCountInStack($color, Icons::AUTHORITY)) {
         $hasIcon = true;
         break;
       }
     }
-    return $hasIcon && self::countCards(Locations::HAND) > 0;
+    return $hasIcon && self::countCards(Locations::SCORE) > 0;
   }
 
   public function nonDemandsMightBeEffective(): bool

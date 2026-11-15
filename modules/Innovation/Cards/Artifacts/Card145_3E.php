@@ -36,7 +36,7 @@ class Card145_3E extends AbstractCard
       }
     }
 
-    return $hasIcon && self::hasCards(Locations::HAND);
+    return $hasIcon && self::hasCards(Locations::SCORE);
   }
 
 }

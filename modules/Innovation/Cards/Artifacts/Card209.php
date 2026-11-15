@@ -20,7 +20,7 @@ class Card209 extends AbstractCard
     $hasMostCards = true;
     $numCards = self::countCards(Locations::SCORE);
     foreach (self::getOtherPlayerIds() as $playerId) {
-      if (self::countCards(Locations::SCORE, $playerId) > $numCards) {
+      if (self::countCards(Locations::SCORE, $playerId) >= $numCards) {
         $hasMostCards = false;
         break;
       }

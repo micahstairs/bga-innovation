@@ -20,6 +20,8 @@ declare type Player = {
 	zombie: number;
 
 	// Populated by Innovation::getAllDatas
+	id?: number;
+	player_no?: number;
 	achievement_count: number;
 	player_team: number;
 }
@@ -48,12 +50,29 @@ declare interface BgaUserPreferences {
 	get(prefId: number): number;
 }
 
+declare interface BgaActions {
+	performAction(
+		action: string,
+		args?: object,
+		options?: { lock?: boolean; checkAction?: boolean; checkPossibleActions?: boolean }
+	): Promise<void>;
+}
+
+declare interface BgaGameArea {
+	getElement(): HTMLElement;
+}
+
 declare class BgaGame {
 	gamedatas: InnovationGameDatas;
 	player_id: number;
 	isSpectator: boolean;
 	notifqueue: GameNotifQueue;
-	bga: { playerPanels: BgaPlayerPanels; userPreferences: BgaUserPreferences };
+	bga: {
+		playerPanels: BgaPlayerPanels;
+		userPreferences: BgaUserPreferences;
+		actions: BgaActions;
+		gameArea: BgaGameArea;
+	};
 	scoreCtrl: { [player_id: number]: Counter };
 	prefs: { [index: number]: { value: number } };
 	gameinterface_zoomFactor: number;

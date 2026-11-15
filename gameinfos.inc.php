@@ -67,7 +67,11 @@ $gameinfos = [
         //  default: null (ie: no limit, the game interface is as big as the player's screen allows it).
         //  maximum possible value: unlimited
         //  minimum possible value: 740
-        'max' => null
+        'max' => null,
+
+        // Scale the whole page through a 640px logical viewport when the screen is narrower.
+        // This is the supported replacement for the old default_viewport = "width=640" setting.
+        'autoscale' => 'viewport',
     ),
 
 ];

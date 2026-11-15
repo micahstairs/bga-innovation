@@ -88,12 +88,15 @@ abstract class BaseCardIntegrationTest extends BaseIntegrationTest
   }
 
   /* Initiate a dogma action (assumes the card is on the player's board). If the ID is null, it's assumed the card under test is the one that should be dogma'd. */
-  protected function dogma(int $id = null)
+  protected function dogma(int $id = null, int $playerId = null)
   {
     if ($id === null) {
       $id = self::getCardIdFromTestClassName();
     }
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    $this->tableInstance->getTable()->gamestate->changeActivePlayer($playerId);
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
@@ -118,9 +121,11 @@ abstract class BaseCardIntegrationTest extends BaseIntegrationTest
   }
 
   /* Return cards or draw 1s until the hand is of the specified size */
-  protected function setHandSize(int $targetSize)
+  protected function setHandSize(int $targetSize, int $playerId = null)
   {
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
     $currentSize = $this->tableInstance->getTable()->countCardsInLocation($playerId, "hand");
     while ($currentSize > $targetSize) {
       $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, "hand");
@@ -135,6 +140,71 @@ abstract class BaseCardIntegrationTest extends BaseIntegrationTest
       $this->tableInstance->getTable()->executeDraw($playerId, 1);
       $currentSize++;
     }
+  }
+
+  protected function debugTransfer(int $cardId, string $action, int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
+      ->stubArgs(["card_id" => $cardId, "transfer_action" => $action])
+      ->debug_transfer();
+    return $this->tableInstance->getTable()->getCardInfo($cardId);
+  }
+
+  protected function debugSplay(int $color, int $direction, int $playerId = null): void
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
+      ->stubArgs(["color" => $color, "direction" => $direction])
+      ->debug_splay();
+  }
+
+  protected function chooseSpecial(int $choice): void
+  {
+    $playerId = self::getActivePlayerId();
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
+      ->stubArg("choice", $choice)
+      ->chooseSpecialOption();
+    $this->tableInstance->advanceGame();
+  }
+
+  protected function getCard(int $cardId): array
+  {
+    return $this->tableInstance->getTable()->getCardInfo($cardId);
+  }
+
+  protected function getSpecialChoiceType(): string
+  {
+    $choiceType = self::getGlobalVariable('special_type_of_choice');
+    if ($choiceType <= 0) {
+      return '';
+    }
+    return $this->tableInstance->getTable()->decodeSpecialTypeOfChoice($choiceType);
+  }
+
+  protected function junkBaseDeckOfAge(int $age): void
+  {
+    foreach (self::getCards('deck') as $card) {
+      if (intval($card['age']) === $age && intval($card['type']) === 0) {
+        self::debugTransfer(intval($card['id']), 'junk');
+      }
+    }
+  }
+
+  protected function scoreFromDeck(int $age, int $playerId = null): array
+  {
+    $card = self::drawBaseCard($age, $playerId);
+    return self::debugTransfer(intval($card['id']), 'score', $playerId);
   }
 
   protected function getMaxAgeOnBoard(int $playerId = null): int
