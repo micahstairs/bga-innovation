@@ -563,11 +563,11 @@ class Innovation extends BgaGame {
         // PLAYER PANELS
         for (let player_id in this.players) {
             dojo.place(`<span class='achievements_to_win'>/${this.gamedatas.number_of_achievements_needed_to_win}<span>`, $('player_score_' + player_id), "after");
-            dojo.place(this.format_block('jstpl_player_panel', { 'player_id': player_id }), this.bga.playerPanels.getElement(player_id));
+            dojo.place(this.format_string(jstpl_player_panel, { 'player_id': player_id }), this.bga.playerPanels.getElement(player_id));
             for (let icon = 1; icon <= 7; icon++) {
                 let infos = { 'player_id': player_id, 'icon': icon };
-                dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
-                dojo.place(this.format_block('jstpl_ressource_count', infos), $('ressource_counts_' + player_id));
+                dojo.place(this.format_string(jstpl_ressource_icon, infos), $('symbols_' + player_id));
+                dojo.place(this.format_string(jstpl_ressource_count, infos), $('ressource_counts_' + player_id));
             }
             if (!this.gamedatas.fourth_edition) {
                 dojo.style(`ressource_icon_${player_id}_7`, 'display', 'none');
