@@ -13,12 +13,14 @@ class UpgradeTableDbTest extends BaseIntegrationTest
 
   private function getColumnType(string $tableName): string
   {
-    return $this->tableInstance->withDbConnection(function (Connection $db) use ($tableName) {
-      return strtolower(strval($db->fetchOne(
+    $type = '';
+    $this->tableInstance->withDbConnection(function (Connection $db) use ($tableName, &$type) {
+      $type = strtolower(strval($db->fetchOne(
         "SELECT COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = 'nesting_index'",
         [$tableName]
       )));
     });
+    return $type;
   }
 
   private function forceUnsigned(string $tableName): void
