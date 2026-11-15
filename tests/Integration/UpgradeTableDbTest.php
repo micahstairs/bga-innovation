@@ -83,4 +83,26 @@ class UpgradeTableDbTest extends BaseIntegrationTest
 
     self::assertStringNotContainsString('unsigned', $this->getColumnType('auxiliary_value_table'));
   }
+  public function test_signedMainUnsignedSavepointAndUnrelatedCopy()
+  {
+    $this->createUnsignedSavepointCopy();
+    $this->tableInstance->withDbConnection(function (Connection $db) {
+      $db->executeStatement("CREATE TABLE `zzXsavepointXauxiliaryXvalueXtable` LIKE `zz_savepoint_auxiliary_value_table`");
+    });
+    $this->tableInstance->getTable()->migrateAuxiliaryValueTableNestingIndex();
+    self::assertStringNotContainsString('unsigned', $this->getColumnType('auxiliary_value_table'));
+    self::assertStringNotContainsString('unsigned', $this->getColumnType('zz_savepoint_auxiliary_value_table'));
+    self::assertStringContainsString('unsigned', $this->getColumnType('zzXsavepointXauxiliaryXvalueXtable'));
+  }
+
+  public function test_widerUnsignedTypeIsNotNarrowed()
+  {
+    $this->tableInstance->withDbConnection(function (Connection $db) {
+      $db->executeStatement("ALTER TABLE `auxiliary_value_table` MODIFY COLUMN `nesting_index` INT UNSIGNED NOT NULL");
+    });
+    $this->tableInstance->getTable()->migrateAuxiliaryValueTableNestingIndex();
+    self::assertStringContainsString('unsigned', $this->getColumnType('auxiliary_value_table'));
+    self::assertStringNotContainsString('smallint', $this->getColumnType('auxiliary_value_table'));
+  }
+
 }
