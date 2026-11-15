@@ -17,7 +17,9 @@ class Card88Test extends BaseCardIntegrationTest
     $opponentId = $playerIds[0] === $launcherId ? $playerIds[1] : $playerIds[0];
 
     // Give the opponent a card on their board so the junk has an observable effect.
-    self::meld(0, $opponentId);
+    $this->tableInstance->withDbConnection(function (Connection $db) use ($opponentId) {
+      $db->executeStatement("UPDATE card SET location = 'board', owner = ?, position = 0 WHERE id = 0", [$opponentId]);
+    });
 
     // The launcher needs a top city featuring Fission's icon (efficiency, 6) to endorse it.
     // The city must not be red, or it would cover Fission on the red stack.
@@ -26,7 +28,14 @@ class Card88Test extends BaseCardIntegrationTest
       $cityId = intval($db->fetchOne("SELECT id FROM card WHERE type = 2 AND color != 1 AND (spot_1 = 6 OR spot_2 = 6 OR spot_3 = 6 OR spot_4 = 6 OR spot_5 = 6 OR spot_6 = 6) ORDER BY age DESC LIMIT 1"));
     });
     self::assertNotEmpty($cityId, 'Need a city with the efficiency icon');
-    self::meld($cityId);
+    // Place the city directly on the launcher's board (debug meld uses the current player,
+    // which is not necessarily the launcher in this scenario).
+    $this->tableInstance->withDbConnection(function (Connection $db) use ($launcherId, $cityId) {
+      $db->executeStatement("UPDATE card SET location = 'board', owner = ?, position = 0 WHERE id = ?", [$launcherId, $cityId]);
+    });
+    $this->tableInstance->withDbConnection(function (Connection $db) use ($launcherId, $cityId) {
+      self::assertEquals('board/'.$launcherId, $db->fetchOne("SELECT CONCAT(location, '/', owner) FROM card WHERE id = ?", [$cityId]), 'City must be on the launcher board');
+    });
 
     // Put a red 10 (card 97) on top of the age-10 deck so the opponent's demand draw
     // triggers the junk. (The top of a deck is the highest position.)
