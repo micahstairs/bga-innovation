@@ -222,7 +222,7 @@ class Innovation extends \Bga\GameFramework\Table
      */
     function migrateAuxiliaryValueTableNestingIndex()
     {
-        $unsigned_copies = self::getObjectListFromDB("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND COLUMN_NAME = 'nesting_index' AND COLUMN_TYPE LIKE '%unsigned%' AND TABLE_NAME IN ('auxiliary_value_table', 'zz_savepoint_auxiliary_value_table')");
+        $unsigned_copies = self::getObjectListFromDB("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND COLUMN_NAME = 'nesting_index' AND COLUMN_TYPE LIKE 'smallint%unsigned' AND TABLE_NAME IN ('auxiliary_value_table', 'zz_savepoint_auxiliary_value_table')");
         foreach ($unsigned_copies as $copy) {
             self::DbQuery("ALTER TABLE `" . $copy['TABLE_NAME'] . "` MODIFY COLUMN `nesting_index` SMALLINT NOT NULL");
         }
