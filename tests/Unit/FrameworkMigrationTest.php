@@ -45,15 +45,20 @@ class FrameworkMigrationTest extends TestCase
         $this->assertSame([], $offenders, "These references break under the new framework class hierarchy:\n" . implode("\n", $offenders));
     }
 
-    public function testNoByNameTemplateCallsInGameJs()
+    public function testNoFormatBlockCallsOnTemplates()
     {
+        // format_block() evals its first argument, so it breaks under the new framework JS loader
+        // whether the template is passed by name (ReferenceError: scoped variables) or by value
+        // (SyntaxError: eval of raw HTML). Templates must go through format_string() instead.
         $root = dirname(__DIR__, 2);
         $offenders = [];
-        foreach (file("$root/innovation.js") as $index => $line) {
-            if (preg_match("/format_block\\('/", $line)) {
-                $offenders[] = 'innovation.js:' . ($index + 1) . ': ' . trim($line);
+        foreach (['innovation.js', 'src/innovation.ts'] as $file) {
+            foreach (file("$root/$file") as $index => $line) {
+                if (preg_match("/format_block\\(\\s*['\"]?jstpl/", $line)) {
+                    $offenders[] = $file . ':' . ($index + 1) . ': ' . trim($line);
+                }
             }
         }
-        $this->assertSame([], $offenders, "By-name template lookups break under the new framework JS loader; use format_string() with the template variable instead:\n" . implode("\n", $offenders));
+        $this->assertSame([], $offenders, "format_block() on templates breaks under the new framework JS loader; use format_string() instead:\n" . implode("\n", $offenders));
     }
 }
