@@ -21,8 +21,9 @@ class Card88Test extends BaseCardIntegrationTest
 
     // The launcher needs a top city featuring Fission's icon (efficiency, 6) to endorse it.
     // The city must not be red, or it would cover Fission on the red stack.
-    $cityId = $this->tableInstance->withDbConnection(function (Connection $db) {
-      return $db->fetchOne("SELECT id FROM card WHERE type = 2 AND color != 1 AND (spot_1 = 6 OR spot_2 = 6 OR spot_3 = 6 OR spot_4 = 6 OR spot_5 = 6 OR spot_6 = 6) ORDER BY age DESC LIMIT 1");
+    $cityId = null;
+    $this->tableInstance->withDbConnection(function (Connection $db) use (&$cityId) {
+      $cityId = intval($db->fetchOne("SELECT id FROM card WHERE type = 2 AND color != 1 AND (spot_1 = 6 OR spot_2 = 6 OR spot_3 = 6 OR spot_4 = 6 OR spot_5 = 6 OR spot_6 = 6) ORDER BY age DESC LIMIT 1"));
     });
     self::assertNotEmpty($cityId, 'Need a city with the efficiency icon');
     self::meld($cityId);
