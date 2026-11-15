@@ -222,9 +222,21 @@ class Innovation extends \Bga\GameFramework\Table
      */
     function migrateAuxiliaryValueTableNestingIndex()
     {
-        $unsigned_copies = self::getObjectListFromDB("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND COLUMN_NAME = 'nesting_index' AND COLUMN_TYPE LIKE 'smallint%unsigned' AND TABLE_NAME IN ('auxiliary_value_table', 'zz_savepoint_auxiliary_value_table')");
-        foreach ($unsigned_copies as $copy) {
-            self::DbQuery("ALTER TABLE `" . $copy['TABLE_NAME'] . "` MODIFY COLUMN `nesting_index` SMALLINT NOT NULL");
+        foreach (array('auxiliary_value_table', 'zz_savepoint_auxiliary_value_table') as $table_name) {
+            // SHOW TABLES is scoped to this game's database. LIKE treats underscores as
+            // wildcards, so require an exact returned name before inspecting a copy.
+            $matches = self::getObjectListFromDB("SHOW TABLES LIKE '" . $table_name . "'");
+            foreach ($matches as $match) {
+                if (reset($match) !== $table_name) {
+                    continue;
+                }
+                $columns = self::getObjectListFromDB("SHOW COLUMNS FROM `" . $table_name . "` LIKE 'nesting_index'");
+                foreach ($columns as $column) {
+                    if ($column['Field'] === 'nesting_index' && preg_match('/^smallint(?:\(\d+\))? unsigned$/i', $column['Type'])) {
+                        self::DbQuery("ALTER TABLE `" . $table_name . "` MODIFY COLUMN `nesting_index` SMALLINT NOT NULL");
+                    }
+                }
+            }
         }
     }
 
