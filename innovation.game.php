@@ -212,17 +212,26 @@ class Innovation extends \Bga\GameFramework\Table
         );
     }
 
-    // TODO(4E): Simulate migration.
-    function upgradeTableDb($from_version)
+    /**
+     * Migrates auxiliary_value_table.nesting_index from UNSIGNED to signed (the search icon
+     * interaction uses a nesting index of -1). Every existing copy of the table is migrated,
+     * including the savepoint copy when one exists. Copies which are already migrated are left
+     * alone. Do not use applyDbUpgradeToAllDB for this: it also targets the savepoint copy,
+     * which does not exist for many tables, so the ALTER would log a "table doesn't exist"
+     * error on the first load of every active table after each deploy.
+     */
+    function migrateAuxiliaryValueTableNestingIndex()
     {
-        // Migrate every copy of the table which still has the old unsigned column type (including
-        // the savepoint copy when one exists). Do not use applyDbUpgradeToAllDB for this: it also
-        // targets the savepoint copy, which does not exist for many tables, so the ALTER logs a
-        // "table doesn't exist" error on the first load of every active table after each deploy.
         $unsigned_copies = self::getObjectListFromDB("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND COLUMN_NAME = 'nesting_index' AND COLUMN_TYPE LIKE '%unsigned%' AND TABLE_NAME IN ('auxiliary_value_table', 'zz_savepoint_auxiliary_value_table')");
         foreach ($unsigned_copies as $copy) {
             self::DbQuery("ALTER TABLE `" . $copy['TABLE_NAME'] . "` MODIFY COLUMN `nesting_index` SMALLINT NOT NULL");
         }
+    }
+
+    // TODO(4E): Simulate migration.
+    function upgradeTableDb($from_version)
+    {
+        self::migrateAuxiliaryValueTableNestingIndex();
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'player_icon_count_7'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `player_icon_count_7` SMALLINT UNSIGNED NOT NULL DEFAULT 0;");
         }
