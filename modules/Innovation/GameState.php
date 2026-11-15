@@ -6,7 +6,7 @@ use Innovation\Utils\Arrays;
 
 class GameState
 {
-    /** @var \Table $game */
+    /** @var \Bga\GameFramework\Table $game */
     private $game;
 
     /**
