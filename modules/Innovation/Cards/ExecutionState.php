@@ -33,9 +33,9 @@ class ExecutionState
   /* The next interaction that will be executed */
   private ?int $nextStep = null;
 
-  protected \Table $game;
+  protected \Bga\GameFramework\Table $game;
 
-  function __construct(\Table $game)
+  function __construct(\Bga\GameFramework\Table $game)
   {
     $this->game = $game;
   }
