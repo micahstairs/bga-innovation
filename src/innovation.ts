@@ -5107,7 +5107,7 @@ class Innovation extends BgaGame {
             }
         }
 
-        if (!this.isSpectator) {
+        if (!this.isReadOnly()) {
             // Inform the server of this change to make it by default if the player refreshes the page
             this.performServerAction("updateDisplayMode", {
                     display_mode: this.display_mode
@@ -5133,7 +5133,7 @@ class Innovation extends BgaGame {
             }
         }
 
-        if (!this.isSpectator) {
+        if (!this.isReadOnly()) {
             // Inform the server of this change to make it by default if the player refreshes the page
             this.performServerAction("updateViewFull", {
                     view_full: this.view_full
