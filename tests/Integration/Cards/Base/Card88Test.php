@@ -45,7 +45,7 @@ class Card88Test extends BaseCardIntegrationTest
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($launcherId)
       ->stubActivePlayerId($launcherId)
-      ->stubArgs(['card_to_endorse_id' => 88, 'card_for_payment_id' => $paymentId])
+      ->stubArgs(['card_to_endorse_id' => 88, 'payment_card_id' => $paymentId])
       ->endorse();
     $this->tableInstance->getTable()->stubCurrentPlayerId($launcherId);
     $this->tableInstance->advanceGame();
