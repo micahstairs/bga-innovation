@@ -86,6 +86,7 @@ declare class BgaGame {
 	format_string_recursive(log: string, args: any): void;
 	inherited(args: any): any;
 	format_block(id: string, args: any): any;
+	format_string(id: string, args: any): any;
 
 	isCurrentPlayerActive(): boolean;
 	getActivePlayerId(): number;
