@@ -61,4 +61,93 @@ class FrameworkMigrationTest extends TestCase
         }
         $this->assertSame([], $offenders, "format_block() on templates breaks under the new framework JS loader; use format_string() instead:\n" . implode("\n", $offenders));
     }
+
+    public function testWireActionNamesDeclaredInStates()
+    {
+        // The new framework's performAction() validates the wire action name against the current
+        // state's possibleactions client-side and silently rejects mismatches (this broke alpha, see
+        // https://boardgamearena.com/bug?id=256606), so every wire action name the JS sends with
+        // client-side validation enabled must be declared in the state(s) where it is used.
+        $root = dirname(__DIR__, 2);
+
+        // Collect the wire action names sent with client-side validation enabled.
+        $wireActions = [];
+        foreach (['src/innovation.ts', 'innovation.js'] as $file) {
+            $source = file_get_contents("$root/$file");
+            preg_match_all('/performServerAction\(\s*"([a-zA-Z_]+)"([\s\S]*?)\);/', $source, $calls, PREG_SET_ORDER);
+            foreach ($calls as $call) {
+                // Calls passing validateAction=false (debug and view-preference actions) are exempt.
+                if (!preg_match('/,\s*false\s*$/', $call[2])) {
+                    $wireActions[$call[1]] = true;
+                }
+            }
+        }
+        $this->assertNotEmpty($wireActions);
+
+        // Parse each state's possibleactions from states.inc.php. Slice per-state blocks first so a
+        // state without possibleactions cannot swallow the next state's list (arrays may be
+        // multi-line).
+        $statesSource = file_get_contents("$root/states.inc.php");
+        $statesSource = preg_replace('~//[^\n]*~', '', $statesSource);
+        preg_match_all('/^\s*\d+\s*=>\s*array\(/m', $statesSource, $offsets, PREG_OFFSET_CAPTURE);
+        $this->assertNotEmpty($offsets[0]);
+        $declaredByState = [];
+        foreach ($offsets[0] as $i => $offset) {
+            $start = $offset[1];
+            $end = $offsets[0][$i + 1][1] ?? strlen($statesSource);
+            $block = substr($statesSource, $start, $end - $start);
+            if (!preg_match('/"name"\s*=>\s*"(\w+)"/', $block, $nameMatch)) {
+                continue;
+            }
+            if (preg_match('/"possibleactions"\s*=>\s*(?:array\(|\[)(.*?)(?:\)|\])/s', $block, $actionsMatch)) {
+                preg_match_all('/"([a-zA-Z]+)"/', $actionsMatch[1], $names);
+                $declaredByState[$nameMatch[1]] = $names[1];
+            }
+        }
+
+        // State-specific bindings: each wire action name must be declared in the state whose
+        // interactions send it.
+        $expectedBindings = [
+            'initialMeld' => ['turn0'],
+            'updateInitialMeld' => ['turn0'],
+            'draw' => ['playerTurn'],
+            'meld' => ['playerTurn'],
+            'dogma' => ['playerTurn'],
+            'endorse' => ['playerTurn'],
+            'achieve' => ['playerTurn'],
+            'achieveCardBack' => ['playerTurn'],
+            'choose' => ['selectionMove'],
+            'chooseSpecialOption' => ['selectionMove'],
+            'chooseRecto' => ['selectionMove'],
+            'publicationRearrange' => ['selectionMove'],
+            'seizeRelicToHand' => ['relicPlayerTurn'],
+            'seizeRelicToAchievements' => ['relicPlayerTurn'],
+            'passSeizeRelic' => ['relicPlayerTurn'],
+            'dogmaArtifactOnDisplay' => ['artifactPlayerTurn'],
+            'returnArtifactOnDisplay' => ['artifactPlayerTurn'],
+            'passArtifactOnDisplay' => ['artifactPlayerTurn'],
+            'passPromoteCard' => ['promoteCardPlayerTurn'],
+            'promoteCard' => ['promoteCardPlayerTurn'],
+            'promoteCardBack' => ['promoteCardPlayerTurn'],
+            'passDogmaPromotedCard' => ['dogmaPromotedPlayerTurn'],
+            'dogmaPromotedCard' => ['dogmaPromotedPlayerTurn'],
+        ];
+        $offenders = [];
+        foreach ($expectedBindings as $wireAction => $states) {
+            foreach ($states as $state) {
+                if (!in_array($wireAction, $declaredByState[$state] ?? [], true)) {
+                    $offenders[] = "$wireAction is not declared in possibleactions of state $state";
+                }
+            }
+        }
+        // Generic layer: every validated wire action name must be declared somewhere, so a new
+        // action with a misspelled or undeclared wire name fails here even without a binding above.
+        $allDeclared = array_merge(...array_values($declaredByState));
+        foreach (array_keys($wireActions) as $wireAction) {
+            if (!in_array($wireAction, $allDeclared, true)) {
+                $offenders[] = "$wireAction is sent with client-side validation but declared in no state's possibleactions";
+            }
+        }
+        $this->assertSame([], $offenders, "Wire action names must match possibleactions under the new framework:\n" . implode("\n", $offenders));
+    }
 }

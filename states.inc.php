@@ -77,7 +77,7 @@ $machinestates = array(
         "description"       => clienttranslate('${actplayer} must take ${qualified_action}'),
         "descriptionmyturn" => clienttranslate('${You} must take ${qualified_action}:'),
         "type"              => "activeplayer",
-        "possibleactions"   => array("draw", "meld", "dogma", "endorse", "achieve"),
+        "possibleactions"   => array("draw", "meld", "dogma", "endorse", "achieve", "achieveCardBack"),
         "args"              => "argPlayerTurn",
         "transitions"       => array(
             "interPlayerTurn"   => 5,
@@ -202,7 +202,9 @@ $machinestates = array(
         "description"       => clienttranslate('${card_name}: ${message_for_others}'), // The content is generated in argSelectionMove
         "descriptionmyturn" => clienttranslate('${card_name}: ${message_for_player}') . ' ', // The content is generated in argSelectionMove
         "type"              => "activeplayer",
-        "possibleactions"   => array("choose"),
+        // The JS sends each family of interaction with its own wire action name; the new framework
+        // validates the wire name against possibleactions client-side, so all of them must be listed.
+        "possibleactions"   => array("choose", "chooseSpecialOption", "chooseRecto", "publicationRearrange"),
         "args"              => "argSelectionMove",
         "transitions"       => array("interSelectionMove" => 14, "interInteractionStep" => 11 /* for zombie only*/ , "justBeforeGameEnd" => 98)
     ),
