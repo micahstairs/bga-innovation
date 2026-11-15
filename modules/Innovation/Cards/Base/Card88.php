@@ -53,6 +53,12 @@ class Card88 extends AbstractCard
             array('player_id' => self::getLauncherId(), 'nesting_index' => $this->game->innovationGameState->get('current_nesting_index'))
           )
         );
+
+        // The Dogma action is now complete. If it was endorsed, treat the endorsed repeat as
+        // already done so the launcher does not execute the non-demand effect again (#234612).
+        if ($this->game->innovationGameState->get('endorse_action_state') == 2) {
+          $this->game->innovationGameState->set('endorse_action_state', 3);
+        }
       } else {
         self::transferToHand($card);
       }
