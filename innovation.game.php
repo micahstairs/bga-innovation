@@ -212,10 +212,38 @@ class Innovation extends \Bga\GameFramework\Table
         );
     }
 
+    /**
+     * Migrates auxiliary_value_table.nesting_index from UNSIGNED to signed (the search icon
+     * interaction uses a nesting index of -1). Every existing copy of the table is migrated,
+     * including the savepoint copy when one exists. Copies which are already migrated are left
+     * alone. Do not use applyDbUpgradeToAllDB for this: it also targets the savepoint copy,
+     * which does not exist for many tables, so the ALTER would log a "table doesn't exist"
+     * error on the first load of every active table after each deploy.
+     */
+    function migrateAuxiliaryValueTableNestingIndex()
+    {
+        foreach (array('auxiliary_value_table', 'zz_savepoint_auxiliary_value_table') as $table_name) {
+            // SHOW TABLES is scoped to this game's database. LIKE treats underscores as
+            // wildcards, so require an exact returned name before inspecting a copy.
+            $matches = self::getObjectListFromDB("SHOW TABLES LIKE '" . $table_name . "'");
+            foreach ($matches as $match) {
+                if (reset($match) !== $table_name) {
+                    continue;
+                }
+                $columns = self::getObjectListFromDB("SHOW COLUMNS FROM `" . $table_name . "` LIKE 'nesting_index'");
+                foreach ($columns as $column) {
+                    if ($column['Field'] === 'nesting_index' && preg_match('/^smallint(?:\(\d+\))? unsigned$/i', $column['Type'])) {
+                        self::DbQuery("ALTER TABLE `" . $table_name . "` MODIFY COLUMN `nesting_index` SMALLINT NOT NULL");
+                    }
+                }
+            }
+        }
+    }
+
     // TODO(4E): Simulate migration.
     function upgradeTableDb($from_version)
     {
-        self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_auxiliary_value_table MODIFY COLUMN `nesting_index` SMALLINT NOT NULL;");
+        self::migrateAuxiliaryValueTableNestingIndex();
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'player_icon_count_7'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `player_icon_count_7` SMALLINT UNSIGNED NOT NULL DEFAULT 0;");
         }
