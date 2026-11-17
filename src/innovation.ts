@@ -205,6 +205,12 @@ class Innovation extends BgaGame {
 
     performServerAction(action: string, args: object = {}, onComplete?: (isError: boolean) => void, validateAction = true) {
         const call = this.bga.actions.performAction(action, args, { lock: true, checkAction: validateAction });
+        if (!call) {
+            if (onComplete) {
+                onComplete(true);
+            }
+            return;
+        }
         call.then(() => {
             if (onComplete) {
                 onComplete(false);
