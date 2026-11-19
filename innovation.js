@@ -4206,6 +4206,7 @@ var Innovation = /** @class */ (function (_super) {
         this.on(payment_cards, 'onclick', 'action_confirmEndorse');
         payment_cards.forEach(function (node) {
             dojo.attr(node, 'card_to_endorse_id', card_id);
+            dojo.attr(node, 'card_to_endorse_html_id', HTML_id);
         });
     };
     Innovation.prototype.action_cancelEndorse = function (event) {
@@ -4213,6 +4214,7 @@ var Innovation = /** @class */ (function (_super) {
         dojo.destroy("endorse_cancel_button");
         dojo.destroy("dogma_without_endorse_button");
         dojo.destroy("endorse_button");
+        dojo.destroy("endorse_confirm_warning_button");
         var cards_in_hand = this.selectMyCardsInHand();
         cards_in_hand.removeClass("mid_dogma");
         this.off(cards_in_hand, 'onclick');
@@ -4228,14 +4230,42 @@ var Innovation = /** @class */ (function (_super) {
         this.action_clickDogma(event, /*via_alternate_prompt=*/ 'endorse');
     };
     Innovation.prototype.action_confirmEndorse = function (event) {
+        var _this = this;
+        if (!this.checkAction('endorse')) {
+            return;
+        }
+        var HTML_id = this.getCardHTMLIdFromEvent(event);
+        var payment_card_id = this.getCardIdFromHTMLId(HTML_id);
+        var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
+        var card_to_endorse_html_id = dojo.attr(HTML_id, 'card_to_endorse_html_id');
+        var sharing_players = dojo.attr(card_to_endorse_html_id, 'sharing_players') || '';
+        if (this.gamedatas.fourth_edition && this.bga.userPreferences.get(102) == 2 && sharing_players.split(',').some(function (player_id) { return player_id != '' && player_id != _this.player_id; })) {
+            var card = this.cards[card_to_endorse_id];
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."), {
+                'age': this.square('N', 'age', card.age, 'type_' + card.type),
+                'card_name': _(card.name),
+                'players': this.getOtherPlayersCommaSeparated(sharing_players.split(','))
+            });
+            this.off(dojo.query(".mid_dogma"), 'onclick');
+            dojo.query(".clickable").removeClass("clickable");
+            dojo.destroy("dogma_without_endorse_button");
+            this.addActionButton("endorse_confirm_warning_button", _("Confirm"), "action_confirmWarningEndorse");
+            dojo.attr('endorse_confirm_warning_button', 'card_to_endorse_id', card_to_endorse_id);
+            dojo.attr('endorse_confirm_warning_button', 'payment_card_id', payment_card_id);
+            return;
+        }
+        this.performEndorse(card_to_endorse_id, payment_card_id);
+    };
+    Innovation.prototype.action_confirmWarningEndorse = function (event) {
+        this.performEndorse(dojo.attr('endorse_confirm_warning_button', 'card_to_endorse_id'), dojo.attr('endorse_confirm_warning_button', 'payment_card_id'));
+    };
+    Innovation.prototype.performEndorse = function (card_to_endorse_id, payment_card_id) {
         if (!this.checkAction('endorse')) {
             return;
         }
         dojo.destroy("endorse_cancel_button");
         dojo.destroy("dogma_without_endorse_button");
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var payment_card_id = this.getCardIdFromHTMLId(HTML_id);
-        var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
+        dojo.destroy("endorse_confirm_warning_button");
         var self = this;
         this.performServerAction("endorse", {
             card_to_endorse_id: card_to_endorse_id,
