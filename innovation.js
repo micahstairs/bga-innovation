@@ -291,6 +291,12 @@ var Innovation = /** @class */ (function (_super) {
         if (args === void 0) { args = {}; }
         if (validateAction === void 0) { validateAction = true; }
         var call = this.bga.actions.performAction(action, args, { lock: true, checkAction: validateAction });
+        if (!call) {
+            if (onComplete) {
+                onComplete(true);
+            }
+            return;
+        }
         call.then(function () {
             if (onComplete) {
                 onComplete(false);
@@ -3345,7 +3351,7 @@ var Innovation = /** @class */ (function (_super) {
             this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
             this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
         }
-        else if (id_from == id_to && card.age !== null && zone_from.HTML_class == zone_to.HTML_class) {
+        else if (id_from == id_to && (card.age !== null || isMuseum(card.id)) && zone_from.HTML_class == zone_to.HTML_class) {
             this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
             this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
         }

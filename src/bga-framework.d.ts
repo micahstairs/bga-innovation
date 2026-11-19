@@ -55,7 +55,7 @@ declare interface BgaActions {
 		action: string,
 		args?: object,
 		options?: { lock?: boolean; checkAction?: boolean; checkPossibleActions?: boolean }
-	): Promise<void>;
+	): Promise<void> | undefined;
 }
 
 declare interface BgaGameArea {

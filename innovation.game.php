@@ -8654,8 +8654,7 @@ class Innovation extends \Bga\GameFramework\Table
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
                         foreach (self::getCardsInLocation($opponent_id, Locations::MUSEUMS) as $card) {
-                            // Same value as the artifact deck being dug (after drawing up through empty ages).
-                            if ($card['color'] !== null && $card['faceup_age'] == $age_after_drawing_up) {
+                            if ($card['color'] !== null && $card['faceup_age'] == $previous_top_card['faceup_age']) {
                                 $card_ids[] = $card['id'];
                             }
                         }

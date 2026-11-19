@@ -87,7 +87,6 @@ class Card350 extends AbstractCard
       } else {
         self::score($card);
       }
-      self::transferToScorePile($card);
     }
   }
 
