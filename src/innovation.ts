@@ -1120,6 +1120,10 @@ class Innovation extends BgaGame {
                 }
             }
         }
+        for (const card of gamedatas.junked_special_achievements ?? []) {
+            this.createAndAddToZone(this.zone["junk"]["0"], card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), null);
+            this.addTooltipForCard(card);
+        }
         if (!this.gamedatas.fourth_edition) {
             dojo.byId('junk_container').style.display = 'none';
         }
@@ -3282,7 +3286,7 @@ class Innovation extends BgaGame {
 
         // A relative position makes it easy to decide if this new card should go before or after another card.
         // The cards are sorted by age, breaking ties by their type, and then breaking ties with non-relics first.
-        let relative_position = ((parseInt(age) * 6) + parseInt(type)) * 2 + parseInt(is_relic);
+        let relative_position = ((age === null ? Infinity : parseInt(age) * 6) + parseInt(type)) * 2 + parseInt(is_relic);
 
         let p = 0;
         for (let i = 0; i < zone.items.length; i++) {
@@ -3290,7 +3294,7 @@ class Innovation extends BgaGame {
             let item_age = this.getCardAgeFromHTMLId(item.id);
             let item_type = this.getCardTypeFromHTMLId(item.id);
             let item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
-            let item_relative_position = ((item_age * 6) + item_type) * 2 + item_is_relic;
+            let item_relative_position = ((isNaN(item_age) ? Infinity : item_age * 6) + item_type) * 2 + item_is_relic;
 
             if (item_relative_position < relative_position) {
                 continue;
@@ -3660,7 +3664,7 @@ class Innovation extends BgaGame {
 
         // A relative position makes it easy to decide if this new card should go before or after another card.
         // We want the cards sorted by age, breaking ties by their type, and then breaking ties by placing non-relics first.
-        let relative_position = ((parseInt(age) * 6) + parseInt(type)) * 2 + parseInt(is_relic);
+        let relative_position = ((age === null ? Infinity : parseInt(age) * 6) + parseInt(type)) * 2 + parseInt(is_relic);
 
         // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
         let weight: number = -1;
@@ -3670,7 +3674,7 @@ class Innovation extends BgaGame {
             let item_age = this.getCardAgeFromHTMLId(item.id);
             let item_type = this.getCardTypeFromHTMLId(item.id);
             let item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
-            let item_relative_position = ((item_age * 6) + item_type) * 2 + item_is_relic;
+            let item_relative_position = ((isNaN(item_age) ? Infinity : item_age * 6) + item_type) * 2 + item_is_relic;
 
             // We have not reached the group the card can be put into
             if (zone.grouped_by_age_type_and_is_relic && item_relative_position < relative_position) {
@@ -5477,11 +5481,16 @@ class Innovation extends BgaGame {
             let top_card = pile[pile.length - 1];
             let center_of_top_card = dojo.query(`#${top_card.id} > .card_title`)[0];
             this.createAndAddToZone(zone_to, null, null, card.type, card.is_relic, card.id, center_of_top_card.id, card);
-        } else if (is_fountain_or_flag && card.owner_to == 0 || (card.location_to == 'junk' && card.age == null)) {
+        } else if (is_fountain_or_flag && card.owner_to == 0) {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
-        } else if (card.location_from == 'junk' && card.age == null) { // Unjunking a special achievement
-            // TODO(4E): See if we can remove this special case and just handle it by calling moveBetweenZones below.
-            this.createAndAddToZone(zone_to, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), null);
+        } else if (card.age === null && (card.location_from === 'junk' || card.location_to === 'junk')) {
+            if (zone_from.HTML_class === zone_to.HTML_class) {
+                this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
+                this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
+            } else {
+                this.createAndAddToZone(zone_to, card.position_to, card.age, card.type, card.is_relic, id_to, this.getCardHTMLId(id_from, card.age, card.type, card.is_relic, zone_from.HTML_class), null);
+                this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+            }
         } else {
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
         }

@@ -900,6 +900,11 @@ class Innovation extends \Bga\GameFramework\Table
             }
         }
 
+        $result['junked_special_achievements'] = array_values(array_filter(
+            self::getCardsInLocation(0, 'junk'),
+            fn($card) => $card['age'] === null && $card['id'] < 1000
+        ));
+
         // Backs of the cards in hands
         $result['hand_counts'] = array();
         for ($type = 0; $type <= 5; $type++) {
