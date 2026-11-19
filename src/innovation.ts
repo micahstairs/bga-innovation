@@ -3640,7 +3640,7 @@ class Innovation extends BgaGame {
         if (card.location_from == "board" && card.location_to == "board" && card.owner_from == card.owner_to) {
             this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
             this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
-        } else if (id_from == id_to && card.age !== null && zone_from.HTML_class == zone_to.HTML_class) {
+        } else if (id_from == id_to && (card.age !== null || isMuseum(card.id)) && zone_from.HTML_class == zone_to.HTML_class) {
             this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
             this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
         } else {
