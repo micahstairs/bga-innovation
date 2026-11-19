@@ -291,6 +291,12 @@ var Innovation = /** @class */ (function (_super) {
         if (args === void 0) { args = {}; }
         if (validateAction === void 0) { validateAction = true; }
         var call = this.bga.actions.performAction(action, args, { lock: true, checkAction: validateAction });
+        if (!call) {
+            if (onComplete) {
+                onComplete(true);
+            }
+            return;
+        }
         call.then(function () {
             if (onComplete) {
                 onComplete(false);
