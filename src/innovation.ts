@@ -1825,6 +1825,15 @@ class Innovation extends BgaGame {
                                     'i18n': option.i18n,
                                 }
                                 ), "action_clicForChooseSpecialOption")
+                            // A choice can repeat the same card name (for example, Meld or Score).
+                            // Each occurrence needs its own ID before registering its tooltip.
+                            dojo.query("#choice_" + option.value + " .card_name").forEach((node: HTMLElement, index: number) => {
+                                let match = node.className.match(/(?:^|\s)card_id_(\d+)(?:\s|$)/);
+                                if (match && this.canShowCardTooltip(Number(match[1]))) {
+                                    node.id = "choice_" + option.value + "_card_" + index;
+                                    this.addCustomTooltip(node.id, this.getTooltipForCard(Number(match[1])), "");
+                                }
+                            });
                         }
                         last_button_id = "choice_" + args.options[args.options.length - 1].value;
                     } else if (splay_choice) {
