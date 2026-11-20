@@ -4686,7 +4686,16 @@ var Innovation = /** @class */ (function (_super) {
         this.my_score_verso_window.show();
     };
     Innovation.prototype.click_close_score_window = function () {
-        this.my_score_verso_window.hide();
+        // BGA wraps dijit.Dialog in popindialog. Its animated hide can finish after
+        // selectionMove opens this window (for example Translation), hiding it again.
+        // Close the wrapper immediately; native dijit handles interrupted fades itself.
+        var wrappedDialog = this.my_score_verso_window.thisDlg;
+        if (wrappedDialog) {
+            wrappedDialog.hide(false);
+        }
+        else {
+            this.my_score_verso_window.hide();
+        }
     };
     Innovation.prototype.toggle_displayMode = function () {
         // Indicate the change of display mode
