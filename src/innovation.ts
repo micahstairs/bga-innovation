@@ -5139,7 +5139,15 @@ class Innovation extends BgaGame {
     }
 
     click_close_score_window() {
-        this.my_score_verso_window!.hide();
+        // BGA wraps dijit.Dialog in popindialog. Its animated hide can finish after
+        // selectionMove opens this window (for example Translation), hiding it again.
+        // Close the wrapper immediately; native dijit handles interrupted fades itself.
+        const wrappedDialog = (this.my_score_verso_window as any).thisDlg;
+        if (wrappedDialog) {
+            wrappedDialog.hide(false);
+        } else {
+            this.my_score_verso_window!.hide();
+        }
     }
 
     toggle_displayMode() {
