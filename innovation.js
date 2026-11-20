@@ -1083,6 +1083,20 @@ var Innovation = /** @class */ (function (_super) {
         window.onresize = function () {
             self.refreshLayout();
         };
+        // Moving logs to a second column changes the player-panel width without
+        // resizing the window. Reflow before the decks overlap those panels.
+        var playerPanel = document.getElementById('right-side');
+        if (playerPanel && typeof ResizeObserver !== 'undefined') {
+            var previousWidth_1 = playerPanel.getBoundingClientRect().width;
+            this.playerPanelResizeObserver = new ResizeObserver(function () {
+                var width = playerPanel.getBoundingClientRect().width;
+                if (width !== previousWidth_1) {
+                    previousWidth_1 = width;
+                    _this.refreshLayout();
+                }
+            });
+            this.playerPanelResizeObserver.observe(playerPanel);
+        }
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
         console.log("Ending game setup");

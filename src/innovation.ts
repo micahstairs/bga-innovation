@@ -197,6 +197,7 @@ class Innovation extends BgaGame {
     _actionTimerId: number | undefined = undefined;
 
     isLoadingComplete = false;
+    private playerPanelResizeObserver?: ResizeObserver;
 
     constructor() {
         super();
@@ -1161,6 +1162,21 @@ class Innovation extends BgaGame {
         // Force refresh page on resize if width changes
         window.onresize = function () {
             self.refreshLayout();
+        }
+
+        // Moving logs to a second column changes the player-panel width without
+        // resizing the window. Reflow before the decks overlap those panels.
+        const playerPanel = document.getElementById('right-side');
+        if (playerPanel && typeof ResizeObserver !== 'undefined') {
+            let previousWidth = playerPanel.getBoundingClientRect().width;
+            this.playerPanelResizeObserver = new ResizeObserver(() => {
+                const width = playerPanel.getBoundingClientRect().width;
+                if (width !== previousWidth) {
+                    previousWidth = width;
+                    this.refreshLayout();
+                }
+            });
+            this.playerPanelResizeObserver.observe(playerPanel);
         }
 
         // Setup game notifications to handle (see "setupNotifications" method below)
