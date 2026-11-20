@@ -1601,6 +1601,7 @@ var Innovation = /** @class */ (function (_super) {
     //                        action status bar (ie: the HTML links in the status bar).
     //        
     Innovation.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _this = this;
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'relicPlayerTurn':
@@ -1688,10 +1689,9 @@ var Innovation = /** @class */ (function (_super) {
                         last_button_id = "choice_0";
                     }
                     else if (args.special_type_of_choice != 0 && args.special_type_of_choice != 6) {
-                        // Add a button for each available options
-                        for (var i = 0; i < args.options.length; i++) {
+                        var _loop_1 = function (i) {
                             var option = args.options[i];
-                            this.addActionButton("choice_" + option.value, this.format_string_recursive(_(option.text), {
+                            this_1.addActionButton("choice_" + option.value, this_1.format_string_recursive(_(option.text), {
                                 'age': option.age, // Used by cards like Evolution
                                 'name': option.name, // Used by cards like Karaoke
                                 'splay_direction': option.splay_direction, // Used by cards like Sunglasses
@@ -1699,6 +1699,20 @@ var Innovation = /** @class */ (function (_super) {
                                 'card': option.card, // Used by cards like Scissors
                                 'i18n': option.i18n,
                             }), "action_clicForChooseSpecialOption");
+                            // A choice can repeat the same card name (for example, Meld or Score).
+                            // Each occurrence needs its own ID before registering its tooltip.
+                            dojo.query("#choice_" + option.value + " .card_name").forEach(function (node, index) {
+                                var match = node.className.match(/(?:^|\s)card_id_(\d+)(?:\s|$)/);
+                                if (match && _this.canShowCardTooltip(Number(match[1]))) {
+                                    node.id = "choice_" + option.value + "_card_" + index;
+                                    _this.addCustomTooltip(node.id, _this.getTooltipForCard(Number(match[1])), "");
+                                }
+                            });
+                        };
+                        var this_1 = this;
+                        // Add a button for each available options
+                        for (var i = 0; i < args.options.length; i++) {
+                            _loop_1(i);
                         }
                         last_button_id = "choice_" + args.options[args.options.length - 1].value;
                     }
