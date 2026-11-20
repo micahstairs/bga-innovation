@@ -3639,7 +3639,7 @@ var Innovation = /** @class */ (function (_super) {
                 return self.card_dimensions[zone.HTML_class].width + (zone.items.length - visible_indices.length) * small_overlap + (visible_indices.length - 1) * big_overlap;
             };
             // Shrink overlap if the pile is going to be too wide
-            var max_total_width = dojo.position('player_' + zone.owner).w - 25;
+            var max_total_width = Number(dojo.style('player_' + zone.owner, 'width')) - 25;
             var compact_overlap = this.compact_overlap_for_splay;
             // If compact mode isn't enough, then we also need to reduce the visibility on cards with echo effects
             if (calculateWidth(compact_overlap, overlap_if_expanded) > max_total_width) {
@@ -3678,7 +3678,7 @@ var Innovation = /** @class */ (function (_super) {
                         delta_y_if_expanded = self.overlap_for_unsplayed;
                         break;
                     case 1: // Splayed left
-                        x_beginning = control_width - w;
+                        x_beginning = width - w;
                         delta_x = -overlap;
                         delta_x_if_expanded = -overlap_if_expanded;
                         break;
